@@ -26,6 +26,7 @@ interface SettingsForm {
   sender_email: string;
   sender_name: string;
   gemini_api_key: string;
+  anthropic_api_key: string;
 }
 
 const initialSettings: SettingsForm = {
@@ -39,6 +40,7 @@ const initialSettings: SettingsForm = {
   sender_email: "",
   sender_name: "",
   gemini_api_key: "",
+  anthropic_api_key: "",
 };
 
 export default function SettingsPage() {
@@ -64,6 +66,7 @@ export default function SettingsPage() {
             sender_email: data.settings.sender_email || "",
             sender_name: data.settings.sender_name || "",
             gemini_api_key: data.settings.gemini_api_key || "",
+            anthropic_api_key: data.settings.anthropic_api_key || "",
           });
         }
       } catch {
@@ -165,7 +168,7 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle>AI Website Generation</CardTitle>
             <CardDescription>
-              Power the website generator with Google Gemini AI
+              Power the website generator with Gemini and Claude AI. Both run in parallel when configured.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -184,6 +187,24 @@ export default function SettingsPage() {
                 className="underline hover:text-foreground"
               >
                 Google AI Studio
+              </a>
+            </p>
+            <Separator />
+            <ApiKeyInput
+              id="anthropic_api_key"
+              label="Anthropic API Key (Claude)"
+              value={settings.anthropic_api_key}
+              placeholder="sk-ant-..."
+            />
+            <p className="text-xs text-muted-foreground">
+              Get an API key from{" "}
+              <a
+                href="https://console.anthropic.com/settings/keys"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-foreground"
+              >
+                Anthropic Console
               </a>
             </p>
           </CardContent>

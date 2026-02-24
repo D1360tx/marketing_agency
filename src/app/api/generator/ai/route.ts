@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { generateWebsite } from "@/lib/gemini";
+import { generateWebsiteWithClaude } from "@/lib/claude";
 
 export async function POST(request: Request) {
   try {
@@ -22,43 +23,70 @@ export async function POST(request: Request) {
       );
     }
 
-    // Resolve Gemini API key: user settings → env var
-    let apiKey = process.env.GEMINI_API_KEY || "";
+    // Resolve API keys: user settings → env var
+    let geminiKey = process.env.GEMINI_API_KEY || "";
+    let anthropicKey = process.env.ANTHROPIC_API_KEY || "";
 
     try {
       const { data: settings } = await supabase
         .from("user_settings")
-        .select("gemini_api_key")
+        .select("gemini_api_key, anthropic_api_key")
         .eq("user_id", user.id)
         .single();
 
       if (settings?.gemini_api_key) {
-        apiKey = settings.gemini_api_key;
+        geminiKey = settings.gemini_api_key;
+      }
+      if (settings?.anthropic_api_key) {
+        anthropicKey = settings.anthropic_api_key;
       }
     } catch {
-      // No settings row or column doesn't exist yet — fall through to env var
+      // No settings row — fall through to env vars
     }
 
-    if (!apiKey) {
+    if (!geminiKey && !anthropicKey) {
       return NextResponse.json(
         {
           error:
-            "Gemini API key not configured. Add it in Settings or set GEMINI_API_KEY env var.",
+            "No AI API keys configured. Add a Gemini or Anthropic key in Settings.",
         },
         { status: 400 }
       );
     }
 
-    const html = await generateWebsite(apiKey, templateId, data, scrapedContent);
+    // Run both generators in parallel
+    const [geminiResult, claudeResult] = await Promise.allSettled([
+      geminiKey
+        ? generateWebsite(geminiKey, templateId, data, scrapedContent)
+        : Promise.reject(new Error("No Gemini API key")),
+      anthropicKey
+        ? generateWebsiteWithClaude(anthropicKey, templateId, data, scrapedContent)
+        : Promise.reject(new Error("No Anthropic API key")),
+    ]);
 
-    if (!html) {
+    const geminiHtml =
+      geminiResult.status === "fulfilled" ? geminiResult.value : null;
+    const claudeHtml =
+      claudeResult.status === "fulfilled" ? claudeResult.value : null;
+
+    if (!geminiHtml && !claudeHtml) {
+      const errors = [
+        geminiResult.status === "rejected" ? `Gemini: ${geminiResult.reason}` : null,
+        claudeResult.status === "rejected" ? `Claude: ${claudeResult.reason}` : null,
+      ]
+        .filter(Boolean)
+        .join("; ");
       return NextResponse.json(
-        { error: "Failed to generate website content" },
+        { error: `All generators failed. ${errors}` },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({ html });
+    return NextResponse.json({
+      html: geminiHtml || claudeHtml,
+      claudeHtml: claudeHtml || null,
+      geminiHtml: geminiHtml || null,
+    });
   } catch (err) {
     console.error("AI generation error:", err);
     return NextResponse.json(

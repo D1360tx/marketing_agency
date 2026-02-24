@@ -63,8 +63,9 @@ export default function GeneratorPage() {
   // AI generation state
   const [generating, setGenerating] = useState(false);
   const [aiHTML, setAiHTML] = useState<string | null>(null);
+  const [claudeHTML, setClaudeHTML] = useState<string | null>(null);
   const [aiError, setAiError] = useState<string | null>(null);
-  const [previewMode, setPreviewMode] = useState<"template" | "ai">("template");
+  const [previewMode, setPreviewMode] = useState<"template" | "gemini" | "claude">("template");
   const [fullscreen, setFullscreen] = useState(false);
 
   // Save state
@@ -186,8 +187,14 @@ export default function GeneratorPage() {
     }
   }
 
+  function getActiveHtml() {
+    if (previewMode === "claude" && claudeHTML) return claudeHTML;
+    if (previewMode === "gemini" && aiHTML) return aiHTML;
+    return aiHTML || claudeHTML || null;
+  }
+
   function handleExportHTML() {
-    const html = aiHTML || generateStandaloneHTML(selectedTemplate, data);
+    const html = getActiveHtml() || generateStandaloneHTML(selectedTemplate, data);
     const blob = new Blob([html], { type: "text/html" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -219,8 +226,9 @@ export default function GeneratorPage() {
         return;
       }
 
-      setAiHTML(result.html);
-      setPreviewMode("ai");
+      setAiHTML(result.geminiHtml || result.html);
+      setClaudeHTML(result.claudeHtml || null);
+      setPreviewMode(result.geminiHtml ? "gemini" : result.claudeHtml ? "claude" : "gemini");
     } catch {
       setAiError("Failed to connect to AI service");
     } finally {
@@ -229,7 +237,7 @@ export default function GeneratorPage() {
   }
 
   async function handleSave() {
-    const html = aiHTML || generateStandaloneHTML(selectedTemplate, data);
+    const html = getActiveHtml() || generateStandaloneHTML(selectedTemplate, data);
     setSaving(true);
     setShareUrl(null);
 
@@ -441,7 +449,7 @@ export default function GeneratorPage() {
                 onClick={handleExportHTML}
               >
                 <Download className="mr-2 h-4 w-4" />
-                {aiHTML ? "Download AI Website" : "Export HTML"}
+                {aiHTML || claudeHTML ? "Download AI Website" : "Export HTML"}
               </Button>
               <Button
                 className="flex-1"
@@ -489,7 +497,7 @@ export default function GeneratorPage() {
                   <Eye className="h-4 w-4" /> Preview
                 </CardTitle>
                 <div className="flex items-center gap-2">
-                  {aiHTML && (
+                  {(aiHTML || claudeHTML) && (
                     <div className="flex rounded-md border">
                       <button
                         className={`px-3 py-1 text-xs font-medium transition-colors ${
@@ -501,19 +509,33 @@ export default function GeneratorPage() {
                       >
                         Template
                       </button>
-                      <button
-                        className={`px-3 py-1 text-xs font-medium transition-colors ${
-                          previewMode === "ai"
-                            ? "bg-primary text-primary-foreground"
-                            : "text-muted-foreground hover:text-foreground"
-                        }`}
-                        onClick={() => setPreviewMode("ai")}
-                      >
-                        AI Generated
-                      </button>
+                      {aiHTML && (
+                        <button
+                          className={`px-3 py-1 text-xs font-medium transition-colors ${
+                            previewMode === "gemini"
+                              ? "bg-primary text-primary-foreground"
+                              : "text-muted-foreground hover:text-foreground"
+                          }`}
+                          onClick={() => setPreviewMode("gemini")}
+                        >
+                          Gemini
+                        </button>
+                      )}
+                      {claudeHTML && (
+                        <button
+                          className={`px-3 py-1 text-xs font-medium transition-colors ${
+                            previewMode === "claude"
+                              ? "bg-primary text-primary-foreground"
+                              : "text-muted-foreground hover:text-foreground"
+                          }`}
+                          onClick={() => setPreviewMode("claude")}
+                        >
+                          Claude
+                        </button>
+                      )}
                     </div>
                   )}
-                  {previewMode === "ai" && aiHTML && (
+                  {(previewMode === "gemini" || previewMode === "claude") && getActiveHtml() && (
                     <Button
                       variant="outline"
                       size="sm"
@@ -535,15 +557,15 @@ export default function GeneratorPage() {
                   <div className="flex h-[500px] flex-col items-center justify-center gap-3 bg-muted/30">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
                     <div className="text-center">
-                      <p className="text-sm font-medium">Generating website with AI...</p>
-                      <p className="text-xs text-muted-foreground">This may take 15-30 seconds</p>
+                      <p className="text-sm font-medium">Generating websites with Gemini & Claude...</p>
+                      <p className="text-xs text-muted-foreground">This may take 30-60 seconds</p>
                     </div>
                   </div>
-                ) : previewMode === "ai" && aiHTML ? (
+                ) : (previewMode === "gemini" || previewMode === "claude") && getActiveHtml() ? (
                   <div className="relative bg-muted/20" style={{ height: "600px", overflow: "hidden" }}>
                     <iframe
-                      srcDoc={aiHTML}
-                      title="AI Generated Website Preview"
+                      srcDoc={getActiveHtml()!}
+                      title={`${previewMode === "gemini" ? "Gemini" : "Claude"} Generated Website Preview`}
                       className="border-0"
                       sandbox="allow-same-origin allow-scripts"
                       style={{
@@ -564,17 +586,41 @@ export default function GeneratorPage() {
       </div>
 
       {/* Fullscreen preview modal */}
-      {fullscreen && aiHTML && (
+      {fullscreen && getActiveHtml() && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm">
           <div className="flex h-full flex-col">
             <div className="flex items-center justify-between px-4 py-2" style={{ background: "#18181b", borderBottom: "1px solid #3f3f46" }}>
               <div className="flex items-center gap-3">
                 <span className="text-sm font-medium text-white">
-                  {data.businessName} — Full Preview
+                  {data.businessName} — {previewMode === "claude" ? "Claude" : "Gemini"} Preview
                 </span>
                 <Badge variant="secondary" className="text-xs">
                   {templates.find((t) => t.id === selectedTemplate)?.name}
                 </Badge>
+                {aiHTML && claudeHTML && (
+                  <div className="flex rounded-md border border-zinc-700">
+                    <button
+                      className={`px-3 py-1 text-xs font-medium transition-colors ${
+                        previewMode === "gemini"
+                          ? "bg-white text-black"
+                          : "text-zinc-400 hover:text-white"
+                      }`}
+                      onClick={() => setPreviewMode("gemini")}
+                    >
+                      Gemini
+                    </button>
+                    <button
+                      className={`px-3 py-1 text-xs font-medium transition-colors ${
+                        previewMode === "claude"
+                          ? "bg-white text-black"
+                          : "text-zinc-400 hover:text-white"
+                      }`}
+                      onClick={() => setPreviewMode("claude")}
+                    >
+                      Claude
+                    </button>
+                  </div>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -595,8 +641,8 @@ export default function GeneratorPage() {
             </div>
             <div className="flex-1">
               <iframe
-                srcDoc={aiHTML}
-                title="AI Generated Website Full Preview"
+                srcDoc={getActiveHtml()!}
+                title={`${previewMode === "claude" ? "Claude" : "Gemini"} Generated Website Full Preview`}
                 className="h-full w-full border-0"
                 sandbox="allow-same-origin allow-scripts"
               />
