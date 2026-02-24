@@ -1,0 +1,2272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adept Plumbing | Austin's Trusted Master Plumber Since 2000</title>
+  <meta name="description" content="Adept Plumbing — Licensed Master Plumber serving Austin, TX and surrounding areas since 2000. Quality parts, fair rates, lifetime confidence in every job.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ========================================
+       RESET & BASE
+       ======================================== */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --green-900: #0F2620;
+      --green-800: #1A3C34;
+      --green-700: #245247;
+      --green-600: #2E685A;
+      --green-500: #3A7D6E;
+      --green-400: #5A9B8E;
+      --green-100: #DAE8E4;
+      --green-50: #EDF4F2;
+      --copper-700: #9A5F3A;
+      --copper-600: #B06E42;
+      --copper: #C17F59;
+      --copper-400: #D4A07E;
+      --copper-300: #E0BA9F;
+      --copper-100: #F2E4D6;
+      --cream: #FAF7F2;
+      --cream-dark: #F0EBE3;
+      --white: #FFFFFF;
+      --text-primary: #1A1F1D;
+      --text-secondary: #4A5652;
+      --text-tertiary: #7A8682;
+      --border: #D8D4CE;
+      --border-light: #E8E4DE;
+
+      --font-serif: 'Fraunces', Georgia, serif;
+      --font-sans: 'Outfit', system-ui, sans-serif;
+
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      font-weight: 400;
+      color: var(--text-primary);
+      background: var(--cream);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button {
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* ========================================
+       UTILITY
+       ======================================== */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+    }
+
+    /* ========================================
+       REVEAL ANIMATIONS
+       ======================================== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-40px);
+      transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+    }
+
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(40px);
+      transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+    }
+
+    .reveal-left.visible,
+    .reveal-right.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* ========================================
+       TYPOGRAPHY
+       ======================================== */
+    .heading-xl {
+      font-family: var(--font-serif);
+      font-weight: 500;
+      font-size: clamp(2.5rem, 5vw + 1rem, 4.25rem);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .heading-lg {
+      font-family: var(--font-serif);
+      font-weight: 500;
+      font-size: clamp(2rem, 3.5vw + 0.5rem, 3.25rem);
+      line-height: 1.12;
+      letter-spacing: -0.015em;
+    }
+
+    .heading-md {
+      font-family: var(--font-serif);
+      font-weight: 500;
+      font-size: clamp(1.5rem, 2vw + 0.5rem, 2rem);
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+    }
+
+    .heading-sm {
+      font-family: var(--font-serif);
+      font-weight: 500;
+      font-size: 1.25rem;
+      line-height: 1.3;
+    }
+
+    .eyebrow {
+      font-family: var(--font-sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--copper);
+    }
+
+    .body-lg {
+      font-size: 1.125rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
+    .body-md {
+      font-size: 1rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+
+    /* ========================================
+       BUTTONS
+       ======================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-sans);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      padding: 14px 28px;
+      border-radius: 6px;
+      transition: all 0.35s var(--ease-out);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary {
+      background: var(--green-800);
+      color: var(--white);
+    }
+
+    .btn-primary:hover {
+      background: var(--green-700);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(26, 60, 52, 0.25);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--green-800);
+      border: 1.5px solid var(--green-800);
+    }
+
+    .btn-secondary:hover {
+      background: var(--green-800);
+      color: var(--white);
+      transform: translateY(-2px);
+    }
+
+    .btn-copper {
+      background: var(--copper);
+      color: var(--white);
+    }
+
+    .btn-copper:hover {
+      background: var(--copper-700);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(193, 127, 89, 0.3);
+    }
+
+    .btn-white {
+      background: var(--white);
+      color: var(--green-800);
+    }
+
+    .btn-white:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+
+    .btn svg {
+      width: 18px;
+      height: 18px;
+      transition: transform 0.3s var(--ease-out);
+    }
+
+    .btn:hover svg {
+      transform: translateX(3px);
+    }
+
+    /* ========================================
+       NAVBAR
+       ======================================== */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 0 24px;
+      transition: all 0.4s var(--ease-out);
+    }
+
+    .navbar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0;
+      transition: padding 0.4s var(--ease-out);
+    }
+
+    .navbar.scrolled {
+      background: rgba(250, 247, 242, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .navbar.scrolled .navbar-inner {
+      padding: 14px 0;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--green-800);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .nav-logo-icon svg {
+      width: 22px;
+      height: 22px;
+      color: var(--copper-300);
+    }
+
+    .nav-logo-text {
+      font-family: var(--font-serif);
+      font-weight: 600;
+      font-size: 1.25rem;
+      color: var(--green-800);
+      letter-spacing: -0.01em;
+    }
+
+    .nav-links {
+      display: none;
+      list-style: none;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: color 0.3s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--copper);
+      border-radius: 1px;
+      transition: width 0.3s var(--ease-out);
+    }
+
+    .nav-links a:hover {
+      color: var(--green-800);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-cta {
+      display: none;
+    }
+
+    .nav-phone-mobile {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      font-size: 0.9375rem;
+      color: var(--green-800);
+    }
+
+    .nav-phone-mobile svg {
+      width: 18px;
+      height: 18px;
+      color: var(--copper);
+    }
+
+    /* Mobile menu button */
+    .mobile-menu-btn {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 4px;
+      margin-left: 16px;
+    }
+
+    .mobile-menu-btn span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--green-800);
+      border-radius: 2px;
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .mobile-menu-btn.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .mobile-menu-btn.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .mobile-menu-btn.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
+
+    /* Mobile menu overlay */
+    .mobile-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--cream);
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s var(--ease-out);
+    }
+
+    .mobile-menu.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .mobile-menu nav {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .mobile-menu a {
+      font-family: var(--font-serif);
+      font-size: 1.75rem;
+      font-weight: 500;
+      color: var(--green-800);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s var(--ease-out);
+    }
+
+    .mobile-menu.open a {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .mobile-menu.open a:nth-child(1) { transition-delay: 0.1s; }
+    .mobile-menu.open a:nth-child(2) { transition-delay: 0.15s; }
+    .mobile-menu.open a:nth-child(3) { transition-delay: 0.2s; }
+    .mobile-menu.open a:nth-child(4) { transition-delay: 0.25s; }
+    .mobile-menu.open a:nth-child(5) { transition-delay: 0.3s; }
+    .mobile-menu.open a:nth-child(6) { transition-delay: 0.35s; }
+
+    .mobile-menu .mobile-cta {
+      margin-top: 16px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s var(--ease-out);
+    }
+
+    .mobile-menu.open .mobile-cta {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 0.4s;
+    }
+
+    @media (min-width: 900px) {
+      .nav-links { display: flex; }
+      .nav-cta { display: inline-flex; }
+      .nav-phone-mobile { display: none; }
+      .mobile-menu-btn { display: none; }
+    }
+
+    /* ========================================
+       HERO
+       ======================================== */
+    .hero {
+      padding: 160px 24px 100px;
+      position: relative;
+      overflow: hidden;
+      background: var(--cream);
+    }
+
+    .hero-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--green-50);
+      border: 1px solid var(--green-100);
+      padding: 8px 16px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+    }
+
+    .hero-badge-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--green-500);
+      border-radius: 50%;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.3); }
+    }
+
+    .hero-badge span {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--green-700);
+    }
+
+    .hero-title {
+      margin-bottom: 24px;
+    }
+
+    .hero-title .accent {
+      color: var(--copper);
+      font-style: italic;
+    }
+
+    .hero-description {
+      max-width: 520px;
+      margin-bottom: 36px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 48px;
+    }
+
+    .hero-trust {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .hero-trust-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero-trust-item svg {
+      width: 20px;
+      height: 20px;
+      color: var(--copper);
+      flex-shrink: 0;
+    }
+
+    .hero-trust-item span {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .hero-image-wrapper {
+      position: relative;
+    }
+
+    .hero-image {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      border-radius: 16px;
+    }
+
+    .hero-image-card {
+      position: absolute;
+      bottom: -20px;
+      left: -12px;
+      background: var(--white);
+      padding: 18px 22px;
+      border-radius: 12px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .hero-image-card-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--copper-100);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-image-card-icon svg {
+      width: 22px;
+      height: 22px;
+      color: var(--copper-700);
+    }
+
+    .hero-image-card-text strong {
+      display: block;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .hero-image-card-text span {
+      font-size: 0.8125rem;
+      color: var(--text-tertiary);
+    }
+
+    @media (min-width: 900px) {
+      .hero {
+        padding: 180px 24px 120px;
+      }
+      .hero-inner {
+        grid-template-columns: 1fr 1fr;
+        gap: 64px;
+      }
+      .hero-image {
+        height: 520px;
+      }
+      .hero-image-card {
+        bottom: -24px;
+        left: -32px;
+      }
+    }
+
+    /* ========================================
+       SOCIAL PROOF BAR
+       ======================================== */
+    .proof-bar {
+      background: var(--green-800);
+      padding: 40px 24px;
+      overflow: hidden;
+    }
+
+    .proof-bar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .proof-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      width: 100%;
+    }
+
+    .proof-stat {
+      text-align: center;
+      padding: 8px;
+    }
+
+    .proof-stat-number {
+      font-family: var(--font-serif);
+      font-size: 2.25rem;
+      font-weight: 600;
+      color: var(--copper-300);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .proof-stat-label {
+      font-size: 0.8125rem;
+      color: var(--green-100);
+      font-weight: 400;
+    }
+
+    .proof-divider {
+      width: 100%;
+      height: 1px;
+      background: rgba(255,255,255,0.12);
+    }
+
+    .proof-brands {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .proof-brands-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--green-400);
+      margin-right: 8px;
+    }
+
+    .proof-brand {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--cream-dark);
+      transition: background 0.3s;
+    }
+
+    .proof-brand:hover {
+      background: rgba(255,255,255,0.14);
+    }
+
+    @media (min-width: 768px) {
+      .proof-stats {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .proof-bar-inner {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+      .proof-stats {
+        width: auto;
+        gap: 48px;
+      }
+      .proof-divider {
+        width: 1px;
+        height: 60px;
+      }
+    }
+
+    /* ========================================
+       SERVICES
+       ======================================== */
+    .services {
+      padding: 100px 24px;
+      background: var(--cream);
+    }
+
+    .services-header {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 64px;
+    }
+
+    .services-header .eyebrow {
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .services-header .heading-lg {
+      margin-bottom: 16px;
+    }
+
+    .services-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .service-card {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 24px 28px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      transition: all 0.35s var(--ease-out);
+      border: 1px solid var(--border-light);
+      cursor: default;
+    }
+
+    .service-card:hover {
+      border-color: var(--copper-300);
+      box-shadow: 0 4px 20px rgba(193, 127, 89, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .service-card-number {
+      font-family: var(--font-serif);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--copper);
+      width: 32px;
+      height: 32px;
+      background: var(--copper-100);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .service-card-content h3 {
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .service-card-content p {
+      font-size: 0.8125rem;
+      color: var(--text-tertiary);
+    }
+
+    .service-card-arrow {
+      margin-left: auto;
+      width: 20px;
+      height: 20px;
+      color: var(--border);
+      transition: all 0.3s var(--ease-out);
+      flex-shrink: 0;
+    }
+
+    .service-card:hover .service-card-arrow {
+      color: var(--copper);
+      transform: translateX(4px);
+    }
+
+    /* Feature services — top 3 with images */
+    .services-featured {
+      max-width: 1200px;
+      margin: 0 auto 48px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .service-featured {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      min-height: 280px;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    .service-featured img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s var(--ease-out);
+    }
+
+    .service-featured:hover img {
+      transform: scale(1.04);
+    }
+
+    .service-featured::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(15, 38, 32, 0.85) 0%, rgba(15, 38, 32, 0.3) 50%, transparent 100%);
+    }
+
+    .service-featured-content {
+      position: relative;
+      z-index: 2;
+      padding: 32px;
+      width: 100%;
+    }
+
+    .service-featured-content .eyebrow {
+      color: var(--copper-300);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .service-featured-content h3 {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .service-featured-content p {
+      font-size: 0.9375rem;
+      color: rgba(255,255,255,0.75);
+      max-width: 360px;
+    }
+
+    @media (min-width: 768px) {
+      .services-featured {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .services-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* ========================================
+       ABOUT / PHILOSOPHY
+       ======================================== */
+    .about {
+      padding: 100px 24px;
+      background: var(--white);
+    }
+
+    .about-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .about-image-col {
+      position: relative;
+    }
+
+    .about-image-main {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      border-radius: 16px;
+    }
+
+    .about-image-badge {
+      position: absolute;
+      top: -16px;
+      right: -8px;
+      background: var(--green-800);
+      color: var(--white);
+      padding: 20px 24px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(26, 60, 52, 0.2);
+    }
+
+    .about-image-badge strong {
+      display: block;
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--copper-300);
+      line-height: 1;
+    }
+
+    .about-image-badge span {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--green-100);
+    }
+
+    .about-content .eyebrow {
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    .about-content .heading-lg {
+      margin-bottom: 24px;
+    }
+
+    .about-story {
+      margin-bottom: 32px;
+    }
+
+    .about-story p {
+      margin-bottom: 16px;
+    }
+
+    .about-quote {
+      background: var(--cream);
+      border-left: 3px solid var(--copper);
+      padding: 24px 28px;
+      border-radius: 0 12px 12px 0;
+      margin-bottom: 32px;
+    }
+
+    .about-quote blockquote {
+      font-family: var(--font-serif);
+      font-size: 1.125rem;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--green-800);
+      line-height: 1.6;
+    }
+
+    .about-quote cite {
+      display: block;
+      margin-top: 12px;
+      font-family: var(--font-sans);
+      font-style: normal;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .about-credentials {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .about-credential {
+      background: var(--green-50);
+      padding: 16px 18px;
+      border-radius: 10px;
+    }
+
+    .about-credential-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-tertiary);
+      margin-bottom: 4px;
+    }
+
+    .about-credential-value {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--green-800);
+    }
+
+    @media (min-width: 900px) {
+      .about-inner {
+        grid-template-columns: 5fr 6fr;
+        gap: 80px;
+      }
+      .about-image-main {
+        height: 560px;
+      }
+      .about-image-badge {
+        top: -20px;
+        right: -24px;
+      }
+    }
+
+    /* ========================================
+       WHY CHOOSE US
+       ======================================== */
+    .why {
+      padding: 100px 24px;
+      background: var(--cream);
+    }
+
+    .why-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .why-header {
+      text-align: center;
+      max-width: 560px;
+      margin: 0 auto 64px;
+    }
+
+    .why-header .eyebrow {
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .why-card {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 36px 32px;
+      border: 1px solid var(--border-light);
+      transition: all 0.35s var(--ease-out);
+    }
+
+    .why-card:hover {
+      border-color: var(--green-100);
+      box-shadow: 0 8px 32px rgba(26, 60, 52, 0.06);
+      transform: translateY(-4px);
+    }
+
+    .why-card-icon {
+      width: 52px;
+      height: 52px;
+      background: var(--green-50);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .why-card-icon svg {
+      width: 26px;
+      height: 26px;
+      color: var(--green-700);
+    }
+
+    .why-card h3 {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+    }
+
+    .why-card p {
+      font-size: 0.9375rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    @media (min-width: 768px) {
+      .why-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .why-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* ========================================
+       SERVICE AREAS
+       ======================================== */
+    .areas {
+      padding: 100px 24px;
+      background: var(--white);
+      position: relative;
+    }
+
+    .areas-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .areas-header {
+      max-width: 560px;
+      margin-bottom: 64px;
+    }
+
+    .areas-header .eyebrow {
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    .areas-header .heading-lg {
+      margin-bottom: 16px;
+    }
+
+    .areas-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    .areas-cities h3 {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .areas-cities h3 svg {
+      width: 22px;
+      height: 22px;
+      color: var(--copper);
+    }
+
+    .areas-city-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 40px;
+    }
+
+    .area-tag {
+      background: var(--cream);
+      border: 1px solid var(--border-light);
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      transition: all 0.25s var(--ease-out);
+    }
+
+    .area-tag:hover {
+      border-color: var(--copper-300);
+      background: var(--copper-100);
+    }
+
+    .areas-zips h3 {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .areas-zips h3 svg {
+      width: 22px;
+      height: 22px;
+      color: var(--copper);
+    }
+
+    .areas-zip-group {
+      margin-bottom: 20px;
+    }
+
+    .areas-zip-group-label {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-tertiary);
+      margin-bottom: 10px;
+    }
+
+    .areas-zip-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .zip-tag {
+      background: var(--green-50);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--green-700);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .areas-image {
+      border-radius: 16px;
+      overflow: hidden;
+      height: 300px;
+    }
+
+    .areas-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    @media (min-width: 900px) {
+      .areas-layout {
+        grid-template-columns: 1fr 1fr;
+        gap: 64px;
+      }
+      .areas-image {
+        height: 100%;
+        min-height: 400px;
+      }
+    }
+
+    /* ========================================
+       CTA SECTION
+       ======================================== */
+    .cta {
+      padding: 100px 24px;
+      background: var(--green-800);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(193, 127, 89, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .cta .eyebrow {
+      color: var(--copper-300);
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    .cta .heading-lg {
+      color: var(--white);
+      margin-bottom: 20px;
+    }
+
+    .cta .body-lg {
+      color: var(--green-100);
+      max-width: 540px;
+      margin: 0 auto 36px;
+    }
+
+    .cta-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 40px;
+    }
+
+    .cta-contact {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 32px;
+    }
+
+    .cta-contact-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cta-contact-item svg {
+      width: 18px;
+      height: 18px;
+      color: var(--copper-300);
+    }
+
+    .cta-contact-item a {
+      font-size: 0.9375rem;
+      color: var(--green-100);
+      transition: color 0.3s;
+    }
+
+    .cta-contact-item a:hover {
+      color: var(--white);
+    }
+
+    /* ========================================
+       FOOTER
+       ======================================== */
+    .footer {
+      background: var(--green-900);
+      padding: 64px 24px 40px;
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      margin-bottom: 48px;
+    }
+
+    .footer-brand {
+      max-width: 320px;
+    }
+
+    .footer-brand .nav-logo {
+      margin-bottom: 16px;
+    }
+
+    .footer-brand .nav-logo-text {
+      color: var(--white);
+    }
+
+    .footer-brand p {
+      font-size: 0.9375rem;
+      color: var(--green-400);
+      line-height: 1.6;
+    }
+
+    .footer-col h4 {
+      font-family: var(--font-sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--green-400);
+      margin-bottom: 16px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+    }
+
+    .footer-col li {
+      margin-bottom: 10px;
+    }
+
+    .footer-col a {
+      font-size: 0.9375rem;
+      color: var(--cream-dark);
+      transition: color 0.3s;
+    }
+
+    .footer-col a:hover {
+      color: var(--copper-300);
+    }
+
+    .footer-col .footer-contact-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .footer-col .footer-contact-item svg {
+      width: 16px;
+      height: 16px;
+      color: var(--copper-400);
+      flex-shrink: 0;
+    }
+
+    .footer-col .footer-contact-item span,
+    .footer-col .footer-contact-item a {
+      font-size: 0.9375rem;
+      color: var(--cream-dark);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+      text-align: center;
+    }
+
+    .footer-bottom p {
+      font-size: 0.8125rem;
+      color: var(--green-400);
+    }
+
+    .footer-bottom a {
+      color: var(--copper-400);
+    }
+
+    @media (min-width: 768px) {
+      .footer-top {
+        grid-template-columns: 2fr 1fr 1fr 1.2fr;
+        gap: 48px;
+      }
+      .footer-bottom {
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: left;
+      }
+    }
+
+    /* ========================================
+       SCROLL-TO-TOP BUTTON
+       ======================================== */
+    .scroll-top {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      width: 48px;
+      height: 48px;
+      background: var(--green-800);
+      color: var(--white);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: all 0.35s var(--ease-out);
+      z-index: 100;
+      box-shadow: 0 4px 16px rgba(26, 60, 52, 0.25);
+      pointer-events: none;
+    }
+
+    .scroll-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .scroll-top:hover {
+      background: var(--green-700);
+      transform: translateY(-3px);
+    }
+
+    .scroll-top svg {
+      width: 20px;
+      height: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===================== NAVBAR ===================== -->
+  <header class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a href="#" class="nav-logo" aria-label="Adept Plumbing home">
+        <div class="nav-logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h4a2 2 0 0 1 2 2v6H6v-6a2 2 0 0 1 0-4V6a2 2 0 0 1 2-2h4"/><path d="M14 6h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2"/><path d="M18 14h-4v6h6v-4a2 2 0 0 0-2-2z"/></svg>
+        </div>
+        <span class="nav-logo-text">Adept Plumbing</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#why">Why Us</a></li>
+        <li><a href="#areas">Areas</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+
+      <a href="tel:5123016330" class="btn btn-primary nav-cta">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        512-301-6330
+      </a>
+
+      <a href="tel:5123016330" class="nav-phone-mobile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Call
+      </a>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <nav>
+      <a href="#services" onclick="closeMobileMenu()">Services</a>
+      <a href="#about" onclick="closeMobileMenu()">About</a>
+      <a href="#why" onclick="closeMobileMenu()">Why Us</a>
+      <a href="#areas" onclick="closeMobileMenu()">Service Areas</a>
+      <a href="#contact" onclick="closeMobileMenu()">Contact</a>
+      <div class="mobile-cta">
+        <a href="tel:5123016330" class="btn btn-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          512-301-6330
+        </a>
+      </div>
+    </nav>
+  </div>
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-badge reveal">
+          <div class="hero-badge-dot"></div>
+          <span>Serving Austin Since 2000</span>
+        </div>
+
+        <h1 class="heading-xl hero-title reveal reveal-delay-1">
+          The plumber Austin trusts for a <span class="accent">lifetime.</span>
+        </h1>
+
+        <p class="body-lg hero-description reveal reveal-delay-2">
+          Licensed Master Plumber Christian Hulot-Sage brings 25+ years of expertise, quality parts, and old-school craftsmanship to every job. One call, one plumber, done right.
+        </p>
+
+        <div class="hero-actions reveal reveal-delay-3">
+          <a href="tel:5123016330" class="btn btn-primary">
+            Call 512-301-6330
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+          <a href="#services" class="btn btn-secondary">
+            View Services
+          </a>
+        </div>
+
+        <div class="hero-trust reveal reveal-delay-4">
+          <div class="hero-trust-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>License #19269</span>
+          </div>
+          <div class="hero-trust-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <span>Angie's List Award</span>
+          </div>
+          <div class="hero-trust-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span>Locally Owned</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-image-wrapper reveal-right">
+        <img
+          class="hero-image"
+          src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1400&q=80"
+          alt="Professional plumber at work in an Austin home"
+          loading="eager"
+        >
+        <div class="hero-image-card">
+          <div class="hero-image-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div class="hero-image-card-text">
+            <strong>Master Plumber</strong>
+            <span>Licensed since June 2000</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SOCIAL PROOF BAR ===================== -->
+  <section class="proof-bar" aria-label="Credentials and brand partners">
+    <div class="proof-bar-inner">
+      <div class="proof-stats">
+        <div class="proof-stat reveal">
+          <div class="proof-stat-number">25+</div>
+          <div class="proof-stat-label">Years of Experience</div>
+        </div>
+        <div class="proof-stat reveal reveal-delay-1">
+          <div class="proof-stat-number">15</div>
+          <div class="proof-stat-label">Core Services</div>
+        </div>
+        <div class="proof-stat reveal reveal-delay-2">
+          <div class="proof-stat-number">18</div>
+          <div class="proof-stat-label">Zip Codes Served</div>
+        </div>
+        <div class="proof-stat reveal reveal-delay-3">
+          <div class="proof-stat-number">1</div>
+          <div class="proof-stat-label">Master Plumber</div>
+        </div>
+      </div>
+      <div class="proof-divider"></div>
+      <div class="proof-brands reveal">
+        <span class="proof-brands-label">Trusted Brands</span>
+        <span class="proof-brand">Delta</span>
+        <span class="proof-brand">Grohe</span>
+        <span class="proof-brand">Kohler</span>
+        <span class="proof-brand">Moen</span>
+        <span class="proof-brand">Price Pfister</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SERVICES ===================== -->
+  <section class="services" id="services">
+    <div class="services-header reveal">
+      <span class="eyebrow">Our Services</span>
+      <h2 class="heading-lg">Complete plumbing solutions for your home</h2>
+      <p class="body-md">From routine maintenance to emergency repairs, we bring expert-level care to every job with quality parts and the latest technology.</p>
+    </div>
+
+    <!-- Featured Services -->
+    <div class="services-featured">
+      <div class="service-featured reveal">
+        <img src="https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=800&q=80" alt="Modern kitchen with quality plumbing fixtures" loading="lazy">
+        <div class="service-featured-content">
+          <span class="eyebrow">Most Requested</span>
+          <h3>Water Heater Service</h3>
+          <p>Expert repair and replacement to keep your hot water flowing reliably.</p>
+        </div>
+      </div>
+      <div class="service-featured reveal reveal-delay-1">
+        <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800&q=80" alt="Clean modern bathroom with professional fixtures" loading="lazy">
+        <div class="service-featured-content">
+          <span class="eyebrow">Comprehensive</span>
+          <h3>Sewer Line Services</h3>
+          <p>Video inspection, cleaning, repair, and full replacement available.</p>
+        </div>
+      </div>
+      <div class="service-featured reveal reveal-delay-2">
+        <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80" alt="Professional plumbing tools and equipment" loading="lazy">
+        <div class="service-featured-content">
+          <span class="eyebrow">Emergency Ready</span>
+          <h3>Pipe Repair</h3>
+          <p>Quick, lasting pipe repair and replacement with quality materials.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- All Services Grid -->
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="service-card-number">01</div>
+        <div class="service-card-content">
+          <h3>Water Line Repair or Replacement</h3>
+        </div>
+        <svg class="service-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-card-number">02</div>
+        <div class="service-card-content">
+          <h3>Sewer Line Inspection &amp; Repair</h3>
+          <p>Video inspection available</p>
+        </div>
+        <svg class="service-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-card-number">03</div>
+        <div class="service-card-content">
+          <h3>Sewer Line Cleaning</h3>
+        </div>
+        <svg class="service-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+
+      <div class="service-card reveal">
+        <div class="service-card-number">04</div>
+        <div class="service-card-content">
+          <h3>Pipe Repair and Replacement</h3>
+        </div>
+        <svg class="service-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-card-number">05</div>
+        <div class="service-card-content">
+          <h3>Water Heater Repair or Replacement</h3>
+        </div>
+        <svg class="service-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-card-number">06</div>
+        <div class="service-card-content">
+          <h3>Lift Station Repair or Installation</h3>
+        </div>
+        <svg class="service-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+
+      <div class="service-card reveal">
+        <div class="service-card-number">07</div>
+        <div class="service-card-content">
+          <h3>Drain Repair Work</h3>
+        </div>
+        <svg class="service-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-card-number">08</div>
+        <div class="service-card-content">
+          <h3>Clogged Drain Cleaning</h3>
+        </div>
+        <svg class="service-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-card-number">09</div>
+        <div class="service-card-content">
+          <h3>Garbage Disposal Repair &amp; Maintenance</h3>
+        </div>
+        <svg class="service-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+
+      <div class="service-card reveal">
+        <div class="service-card-number">10</div>
+        <div class="service-card-content">
+          <h3>Dishwasher Installation and Repair</h3>
+        </div>
+        <svg class="service-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-card-number">11</div>
+        <div class="service-card-content">
+          <h3>Water Softener Installation and Repair</h3>
+        </div>
+        <svg class="service-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-card-number">12</div>
+        <div class="service-card-content">
+          <h3>Boiler Repair and Replacement</h3>
+        </div>
+        <svg class="service-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+
+      <div class="service-card reveal">
+        <div class="service-card-number">13</div>
+        <div class="service-card-content">
+          <h3>Tub, Toilet &amp; Sink Repair</h3>
+        </div>
+        <svg class="service-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-card-number">14</div>
+        <div class="service-card-content">
+          <h3>Circulating Pump Repair &amp; Installation</h3>
+        </div>
+        <svg class="service-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-card-number">15</div>
+        <div class="service-card-content">
+          <h3>Waste Pump Repair and Installation</h3>
+        </div>
+        <svg class="service-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ABOUT / PHILOSOPHY ===================== -->
+  <section class="about" id="about">
+    <div class="about-inner">
+      <div class="about-image-col reveal-left">
+        <img
+          class="about-image-main"
+          src="https://images.unsplash.com/photo-1613545325278-f24b0cae1224?w=1400&q=80"
+          alt="A well-maintained Austin home with quality plumbing"
+          loading="lazy"
+        >
+        <div class="about-image-badge">
+          <strong>25+</strong>
+          <span>Years</span>
+        </div>
+      </div>
+
+      <div class="about-content reveal-right">
+        <span class="eyebrow">Meet Your Plumber</span>
+        <h2 class="heading-lg">Old-school craftsmanship, modern expertise</h2>
+
+        <div class="about-story">
+          <p class="body-md">
+            After working for two of Austin's large plumbing companies, owner Christian Hulot-Sage came to realize that good help is hard to find. So he started Adept Plumbing to be different from what he had experienced in the industry.
+          </p>
+          <p class="body-md">
+            Christian grows his business mainly from word of mouth, consistently validating his reputation as a conscientious, quality plumber. He is equipped with the latest technology, completely self-sufficient, and uses only quality parts on every job.
+          </p>
+        </div>
+
+        <div class="about-quote">
+          <blockquote>
+            "I want my customers to know that they called the right plumber and to feel confident in my work for a lifetime."
+          </blockquote>
+          <cite>Christian Hulot-Sage, Owner &amp; Master Plumber</cite>
+        </div>
+
+        <div class="about-credentials">
+          <div class="about-credential">
+            <div class="about-credential-label">License</div>
+            <div class="about-credential-value">#19269</div>
+          </div>
+          <div class="about-credential">
+            <div class="about-credential-label">Licensed Since</div>
+            <div class="about-credential-value">June 2000</div>
+          </div>
+          <div class="about-credential">
+            <div class="about-credential-label">Title</div>
+            <div class="about-credential-value">Master Plumber</div>
+          </div>
+          <div class="about-credential">
+            <div class="about-credential-label">Recognition</div>
+            <div class="about-credential-value">Angie's List Award</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== WHY CHOOSE US ===================== -->
+  <section class="why" id="why">
+    <div class="why-inner">
+      <div class="why-header reveal">
+        <span class="eyebrow">Why Adept</span>
+        <h2 class="heading-lg">What sets us apart from the rest</h2>
+        <p class="body-md">We believe great plumbing is about more than just fixing pipes. It is about trust, transparency, and treating your home like our own.</p>
+      </div>
+
+      <div class="why-grid">
+        <div class="why-card reveal">
+          <div class="why-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <h3>One Plumber, Start to Finish</h3>
+          <p>Christian handles every job personally. No subcontractors, no hand-offs. You get a Licensed Master Plumber on every call.</p>
+        </div>
+
+        <div class="why-card reveal reveal-delay-1">
+          <div class="why-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3>Quality Parts Only</h3>
+          <p>We never cut corners. Every repair uses premium parts from trusted brands like Kohler, Moen, Delta, and Grohe for lasting results.</p>
+        </div>
+
+        <div class="why-card reveal reveal-delay-2">
+          <div class="why-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <h3>Fair, Transparent Pricing</h3>
+          <p>Honest hourly rates with up to 20 minutes of travel time included in your first hour. No surprise fees, no upselling.</p>
+        </div>
+
+        <div class="why-card reveal">
+          <div class="why-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          </div>
+          <h3>Latest Technology</h3>
+          <p>Completely self-sufficient with cutting-edge tools including video sewer inspection. We arrive ready for anything.</p>
+        </div>
+
+        <div class="why-card reveal reveal-delay-1">
+          <div class="why-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <h3>Award-Winning Service</h3>
+          <p>Recognized with the Angie's List Super Service Award. Our reputation is built entirely on word-of-mouth referrals.</p>
+        </div>
+
+        <div class="why-card reveal reveal-delay-2">
+          <div class="why-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <h3>Locally Owned &amp; Operated</h3>
+          <p>Proudly independent and Austin-based. We are your neighbors, and we take pride in keeping our community's homes running smoothly.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SERVICE AREAS ===================== -->
+  <section class="areas" id="areas">
+    <div class="areas-inner">
+      <div class="areas-header reveal">
+        <span class="eyebrow">Service Areas</span>
+        <h2 class="heading-lg">Proudly serving Austin and the surrounding Hill Country</h2>
+        <p class="body-md">From downtown Austin to Dripping Springs, we cover the communities that make Central Texas home.</p>
+      </div>
+
+      <div class="areas-layout">
+        <div class="reveal-left">
+          <div class="areas-cities">
+            <h3>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Cities We Serve
+            </h3>
+            <div class="areas-city-list">
+              <span class="area-tag">Austin</span>
+              <span class="area-tag">Barton Springs</span>
+              <span class="area-tag">Bee Cave</span>
+              <span class="area-tag">Cat Mountain</span>
+              <span class="area-tag">Dripping Springs</span>
+              <span class="area-tag">Mount Bonnell</span>
+            </div>
+          </div>
+
+          <div class="areas-zips">
+            <h3>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              Zip Codes
+            </h3>
+
+            <div class="areas-zip-group">
+              <div class="areas-zip-group-label">Austin</div>
+              <div class="areas-zip-list">
+                <span class="zip-tag">78701</span>
+                <span class="zip-tag">78703</span>
+                <span class="zip-tag">78704</span>
+                <span class="zip-tag">78723</span>
+                <span class="zip-tag">78735</span>
+                <span class="zip-tag">78736</span>
+                <span class="zip-tag">78737</span>
+                <span class="zip-tag">78741</span>
+                <span class="zip-tag">78744</span>
+                <span class="zip-tag">78745</span>
+                <span class="zip-tag">78746</span>
+                <span class="zip-tag">78748</span>
+                <span class="zip-tag">78749</span>
+                <span class="zip-tag">78753</span>
+                <span class="zip-tag">78757</span>
+                <span class="zip-tag">78758</span>
+                <span class="zip-tag">78759</span>
+              </div>
+            </div>
+
+            <div class="areas-zip-group">
+              <div class="areas-zip-group-label">Dripping Springs</div>
+              <div class="areas-zip-list">
+                <span class="zip-tag">78620</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="areas-image reveal-right">
+          <img
+            src="https://images.unsplash.com/photo-1613545325278-f24b0cae1224?w=1400&q=80"
+            alt="Beautiful Austin-area home exterior"
+            loading="lazy"
+          >
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CTA ===================== -->
+  <section class="cta" id="contact">
+    <div class="cta-inner reveal">
+      <span class="eyebrow">Ready to Get Started?</span>
+      <h2 class="heading-lg">Call Austin's most trusted plumber today</h2>
+      <p class="body-lg">Whether it is a leaky faucet or a full sewer line replacement, Christian is ready to help. One call is all it takes.</p>
+
+      <div class="cta-actions">
+        <a href="tel:5123016330" class="btn btn-copper">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Call 512-301-6330
+        </a>
+        <a href="mailto:christian@adeptplumbing.com" class="btn btn-white">
+          Email Us
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="cta-contact">
+        <div class="cta-contact-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <a href="mailto:christian@adeptplumbing.com">christian@adeptplumbing.com</a>
+        </div>
+        <div class="cta-contact-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <a href="https://maps.google.com/?q=11301+Southwest+Oak+Austin+TX+78737" target="_blank" rel="noopener">11301 Southwest Oak, Austin, TX 78737</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <div class="nav-logo-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h4a2 2 0 0 1 2 2v6H6v-6a2 2 0 0 1 0-4V6a2 2 0 0 1 2-2h4"/><path d="M14 6h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2"/><path d="M18 14h-4v6h6v-4a2 2 0 0 0-2-2z"/></svg>
+            </div>
+            <span class="nav-logo-text">Adept Plumbing</span>
+          </div>
+          <p>Independent, locally-owned plumbing service in Austin, TX. Licensed Master Plumber providing quality craftsmanship since 2000.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="#services">Water Lines</a></li>
+            <li><a href="#services">Sewer Lines</a></li>
+            <li><a href="#services">Water Heaters</a></li>
+            <li><a href="#services">Drain Cleaning</a></li>
+            <li><a href="#services">Pipe Repair</a></li>
+            <li><a href="#services">All 15 Services</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#about">About Christian</a></li>
+            <li><a href="#why">Why Choose Us</a></li>
+            <li><a href="#areas">Service Areas</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <div class="footer-contact-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <a href="tel:5123016330">512-301-6330</a>
+          </div>
+          <div class="footer-contact-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <a href="mailto:christian@adeptplumbing.com">christian@adeptplumbing.com</a>
+          </div>
+          <div class="footer-contact-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>11301 Southwest Oak<br>Austin, TX 78737</span>
+          </div>
+          <div class="footer-contact-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>License #19269</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Adept Plumbing. All rights reserved. Master Plumber License #19269.</p>
+        <p>Designed for <a href="https://austin-plumber.com" target="_blank" rel="noopener">austin-plumber.com</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scroll to top -->
+  <button class="scroll-top" id="scrollTop" aria-label="Scroll to top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+
+  <!-- ===================== JAVASCRIPT ===================== -->
+  <script>
+    // Intersection Observer for scroll reveal animations
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px 0px -60px 0px',
+      threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Navbar scroll behavior
+    const navbar = document.getElementById('navbar');
+    let lastScroll = 0;
+
+    window.addEventListener('scroll', () => {
+      const currentScroll = window.pageYOffset;
+
+      if (currentScroll > 80) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+
+      lastScroll = currentScroll;
+    }, { passive: true });
+
+    // Mobile menu
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenuBtn.classList.toggle('active');
+      mobileMenu.classList.toggle('open');
+      document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+    });
+
+    function closeMobileMenu() {
+      mobileMenuBtn.classList.remove('active');
+      mobileMenu.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // Scroll to top button
+    const scrollTopBtn = document.getElementById('scrollTop');
+
+    window.addEventListener('scroll', () => {
+      if (window.pageYOffset > 600) {
+        scrollTopBtn.classList.add('visible');
+      } else {
+        scrollTopBtn.classList.remove('visible');
+      }
+    }, { passive: true });
+
+    scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const targetId = this.getAttribute('href');
+        if (targetId === '#') return;
+
+        e.preventDefault();
+        const target = document.querySelector(targetId);
+        if (target) {
+          const offsetTop = target.offsetTop - 80;
+          window.scrollTo({
+            top: offsetTop,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+
+    // Counter animation for proof stats
+    function animateCounters() {
+      document.querySelectorAll('.proof-stat-number').forEach(counter => {
+        const target = counter.textContent;
+        const numericValue = parseInt(target);
+        const suffix = target.replace(/[0-9]/g, '');
+
+        if (isNaN(numericValue)) return;
+
+        let current = 0;
+        const increment = Math.max(1, Math.floor(numericValue / 30));
+        const timer = setInterval(() => {
+          current += increment;
+          if (current >= numericValue) {
+            current = numericValue;
+            clearInterval(timer);
+          }
+          counter.textContent = current + suffix;
+        }, 40);
+      });
+    }
+
+    // Trigger counter animation when proof bar is visible
+    const proofBar = document.querySelector('.proof-bar');
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounters();
+          counterObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    counterObserver.observe(proofBar);
+  </script>
+</body>
+</html>

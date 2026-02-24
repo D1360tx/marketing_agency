@@ -1,0 +1,2425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adept Plumbing | Master Plumber — Austin, TX</title>
+  <meta name="description" content="Licensed Master Plumber serving Austin, Dripping Springs, Bee Cave & Barton Creek since 2000. Fair rates, quality parts, old-school craftsmanship. Call 512-301-6330.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══════════════════════════════════════════
+       ADEPT PLUMBING V2 — Editorial / Warm Earthy Luxury
+       ══════════════════════════════════════════ */
+
+    :root {
+      --forest: #1A3C34;
+      --forest-deep: #0F2A23;
+      --cream: #F5F0E8;
+      --cream-dark: #E8E0D2;
+      --copper: #B87333;
+      --copper-light: #D4955A;
+      --copper-glow: rgba(184, 115, 51, 0.15);
+      --charcoal: #2A2A2A;
+      --text: #1E1E1E;
+      --text-soft: #5A5A52;
+      --white: #FEFCF9;
+      --border: rgba(26, 60, 52, 0.12);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      color: var(--text);
+      background: var(--cream);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .serif { font-family: 'Playfair Display', serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* ── Grain / Texture Overlay ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      pointer-events: none;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideRight {
+      from { opacity: 0; transform: translateX(-60px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes slideLeft {
+      from { opacity: 0; transform: translateX(60px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes tickerScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    @keyframes breathe {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes copper-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(184, 115, 51, 0.4); }
+      50% { box-shadow: 0 0 0 12px rgba(184, 115, 51, 0); }
+    }
+
+    @keyframes dash-draw {
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                  transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-40px);
+      transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                  transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .reveal-left.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(40px);
+      transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                  transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .reveal-right.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* ══════════════════════════════════════════
+       NAVBAR
+       ══════════════════════════════════════════ */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 5vw;
+      transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .navbar.scrolled {
+      padding: 12px 5vw;
+      background: rgba(245, 240, 232, 0.92);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--forest);
+    }
+
+    .nav-brand .brand-mark {
+      width: 40px;
+      height: 40px;
+      background: var(--forest);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--copper);
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .nav-brand:hover .brand-mark {
+      transform: rotate(-10deg) scale(1.05);
+    }
+
+    .nav-brand-text {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--forest);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-soft);
+      letter-spacing: 0.02em;
+      position: relative;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1.5px;
+      background: var(--copper);
+      transition: width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .nav-links a:hover {
+      color: var(--forest);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      background: var(--forest);
+      color: var(--cream);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-cta:hover {
+      background: var(--forest-deep);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(26, 60, 52, 0.2);
+    }
+
+    .mobile-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    .mobile-toggle span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--forest);
+      transition: all 0.3s ease;
+    }
+
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .mobile-toggle { display: flex; }
+    }
+
+    /* ══════════════════════════════════════════
+       HERO — Editorial Split
+       ══════════════════════════════════════════ */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 140px 5vw 80px 8vw;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-left::before {
+      content: '';
+      position: absolute;
+      top: 60%;
+      left: -20%;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: var(--copper-glow);
+      filter: blur(100px);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: fadeUp 0.8s 0.2s both;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      width: 40px;
+      height: 1.5px;
+      background: var(--copper);
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 5.5vw, 5.5rem);
+      font-weight: 700;
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+      color: var(--forest);
+      animation: fadeUp 0.8s 0.35s both;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--copper);
+      display: block;
+      margin-top: 4px;
+    }
+
+    .hero-body {
+      margin-top: 28px;
+      font-size: 1.05rem;
+      color: var(--text-soft);
+      line-height: 1.7;
+      max-width: 440px;
+      animation: fadeUp 0.8s 0.5s both;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+      animation: fadeUp 0.8s 0.65s both;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 36px;
+      background: var(--forest);
+      color: var(--cream);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--forest-deep);
+      transform: translateX(-100%);
+      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .btn-primary:hover::before {
+      transform: translateX(0);
+    }
+
+    .btn-primary span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(26, 60, 52, 0.25);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 36px;
+      background: transparent;
+      color: var(--forest);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border-radius: 4px;
+      border: 1.5px solid var(--forest);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background: var(--forest);
+      color: var(--cream);
+      transform: translateY(-2px);
+    }
+
+    .hero-meta {
+      display: flex;
+      gap: 32px;
+      margin-top: 56px;
+      animation: fadeUp 0.8s 0.8s both;
+    }
+
+    .hero-meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .hero-meta-item .value {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--forest);
+    }
+
+    .hero-meta-item .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+    }
+
+    /* Hero Right — Image Panel */
+    .hero-right {
+      position: relative;
+      overflow: hidden;
+      animation: scaleIn 1s 0.3s both;
+    }
+
+    .hero-right img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .hero-right::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(26, 60, 52, 0.3) 0%,
+        rgba(26, 60, 52, 0.05) 50%,
+        rgba(184, 115, 51, 0.1) 100%
+      );
+      mix-blend-mode: multiply;
+    }
+
+    .hero-image-badge {
+      position: absolute;
+      bottom: 40px;
+      left: 40px;
+      z-index: 3;
+      background: rgba(245, 240, 232, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 20px 28px;
+      border-radius: 4px;
+      animation: fadeUp 0.8s 1s both;
+    }
+
+    .hero-image-badge .badge-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 6px;
+    }
+
+    .hero-image-badge .badge-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--forest);
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+      .hero-left {
+        padding: 140px 6vw 60px;
+      }
+      .hero-right {
+        height: 50vh;
+        min-height: 300px;
+      }
+      .hero h1 {
+        font-size: clamp(2.5rem, 8vw, 4rem);
+      }
+      .hero-meta {
+        gap: 20px;
+      }
+      .hero-image-badge {
+        bottom: 20px;
+        left: 20px;
+        padding: 14px 20px;
+      }
+    }
+
+    /* ══════════════════════════════════════════
+       SERVICE TICKER — Horizontal Marquee
+       ══════════════════════════════════════════ */
+    .ticker-wrap {
+      background: var(--forest);
+      padding: 18px 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .ticker {
+      display: flex;
+      animation: tickerScroll 40s linear infinite;
+      width: max-content;
+    }
+
+    .ticker-item {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 0 20px;
+      white-space: nowrap;
+      color: var(--cream);
+      font-size: 0.85rem;
+      font-weight: 400;
+      letter-spacing: 0.03em;
+    }
+
+    .ticker-item .divider {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--copper);
+      flex-shrink: 0;
+    }
+
+    .ticker:hover {
+      animation-play-state: paused;
+    }
+
+    /* ══════════════════════════════════════════
+       SERVICES — Magazine Grid
+       ══════════════════════════════════════════ */
+    .services {
+      padding: 120px 5vw;
+      position: relative;
+    }
+
+    .services::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 40%;
+      height: 100%;
+      background: var(--white);
+      z-index: 0;
+    }
+
+    .services-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: end;
+      margin-bottom: 64px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .services-header .section-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .services-header .section-eyebrow::before {
+      content: '';
+      width: 30px;
+      height: 1.5px;
+      background: var(--copper);
+    }
+
+    .section-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 3.5vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--forest);
+    }
+
+    .section-heading em {
+      font-style: italic;
+      color: var(--copper);
+    }
+
+    .services-header .section-desc {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text-soft);
+      max-width: 400px;
+      align-self: end;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      position: relative;
+      z-index: 1;
+    }
+
+    .service-card {
+      background: var(--white);
+      padding: 40px 32px;
+      position: relative;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      cursor: default;
+      overflow: hidden;
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background: var(--copper);
+      transition: width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .service-card:hover::before {
+      width: 100%;
+    }
+
+    .service-card:hover {
+      background: var(--cream);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 48px rgba(26, 60, 52, 0.08);
+      z-index: 2;
+    }
+
+    .service-card .card-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: var(--copper);
+      letter-spacing: 0.05em;
+      margin-bottom: 16px;
+    }
+
+    .service-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--forest);
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+
+    .service-card p {
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      line-height: 1.6;
+    }
+
+    .service-card .card-arrow {
+      position: absolute;
+      bottom: 24px;
+      right: 24px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: all 0.3s ease;
+      color: var(--copper);
+      font-size: 0.85rem;
+    }
+
+    .service-card:hover .card-arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .services-more {
+      position: relative;
+      z-index: 1;
+      margin-top: 40px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.85rem;
+      color: var(--text-soft);
+    }
+
+    .services-more a {
+      color: var(--copper);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+
+    .services-more a:hover {
+      color: var(--forest);
+    }
+
+    @media (max-width: 900px) {
+      .services::before { display: none; }
+      .services-header { grid-template-columns: 1fr; gap: 24px; }
+      .services-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .services-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ══════════════════════════════════════════
+       ALL SERVICES — Expandable List
+       ══════════════════════════════════════════ */
+    .all-services {
+      position: relative;
+      z-index: 1;
+      margin-top: 48px;
+      padding: 48px;
+      background: var(--forest-deep);
+      border-radius: 4px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px 48px;
+    }
+
+    .all-services-title {
+      grid-column: 1 / -1;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 8px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(245, 240, 232, 0.08);
+    }
+
+    .all-services-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(245, 240, 232, 0.06);
+      color: rgba(245, 240, 232, 0.75);
+      font-size: 0.85rem;
+      line-height: 1.4;
+      transition: color 0.3s ease;
+    }
+
+    .all-services-item:hover {
+      color: var(--cream);
+    }
+
+    .all-services-item .item-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--copper);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    @media (max-width: 900px) {
+      .all-services { grid-template-columns: 1fr 1fr; padding: 32px; }
+    }
+    @media (max-width: 600px) {
+      .all-services { grid-template-columns: 1fr; }
+    }
+
+    /* ══════════════════════════════════════════
+       ABOUT / PHILOSOPHY — Asymmetric Editorial
+       ══════════════════════════════════════════ */
+    .about {
+      padding: 0;
+      display: grid;
+      grid-template-columns: 45% 55%;
+      min-height: 100vh;
+    }
+
+    .about-image {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .about-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .about-image:hover img {
+      transform: scale(1.04);
+    }
+
+    .about-image::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to right,
+        transparent 60%,
+        var(--forest-deep) 100%
+      );
+    }
+
+    .about-content {
+      background: var(--forest-deep);
+      color: var(--cream);
+      padding: 100px 6vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+
+    .about-content .section-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .about-content .section-eyebrow::before {
+      content: '';
+      width: 30px;
+      height: 1.5px;
+      background: var(--copper);
+    }
+
+    .about-content .heading {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 32px;
+    }
+
+    .about-content .heading em {
+      font-style: italic;
+      color: var(--copper);
+    }
+
+    .about-pullquote {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.2rem, 2vw, 1.6rem);
+      font-style: italic;
+      line-height: 1.5;
+      color: rgba(245, 240, 232, 0.9);
+      border-left: 3px solid var(--copper);
+      padding-left: 28px;
+      margin: 32px 0;
+      max-width: 500px;
+    }
+
+    .about-attribution {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--copper);
+      letter-spacing: 0.05em;
+      margin-top: 8px;
+      padding-left: 28px;
+    }
+
+    .about-body {
+      font-size: 0.95rem;
+      line-height: 1.75;
+      color: rgba(245, 240, 232, 0.6);
+      max-width: 480px;
+      margin-top: 24px;
+    }
+
+    .about-credentials {
+      display: flex;
+      gap: 32px;
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 1px solid rgba(245, 240, 232, 0.08);
+      flex-wrap: wrap;
+    }
+
+    .credential {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .credential .cred-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--cream);
+    }
+
+    .credential .cred-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(245, 240, 232, 0.35);
+    }
+
+    @media (max-width: 900px) {
+      .about {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+      .about-image {
+        height: 50vh;
+        min-height: 300px;
+      }
+      .about-image::after {
+        background: linear-gradient(
+          to bottom,
+          transparent 50%,
+          var(--forest-deep) 100%
+        );
+      }
+      .about-content {
+        padding: 60px 6vw;
+      }
+    }
+
+    /* ══════════════════════════════════════════
+       PROCESS — Numbered Steps
+       ══════════════════════════════════════════ */
+    .process {
+      padding: 120px 5vw;
+      background: var(--white);
+      position: relative;
+    }
+
+    .process-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .process-header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    .process-header .section-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .process-header .section-eyebrow::before,
+    .process-header .section-eyebrow::after {
+      content: '';
+      width: 30px;
+      height: 1.5px;
+      background: var(--copper);
+    }
+
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      position: relative;
+    }
+
+    .process-steps::before {
+      content: '';
+      position: absolute;
+      top: 60px;
+      left: 16.66%;
+      right: 16.66%;
+      height: 1px;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--copper) 0px,
+        var(--copper) 8px,
+        transparent 8px,
+        transparent 16px
+      );
+      opacity: 0.4;
+    }
+
+    .process-step {
+      text-align: center;
+      padding: 0 32px;
+      position: relative;
+    }
+
+    .step-number {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 2px solid var(--copper);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--copper);
+      background: var(--white);
+      position: relative;
+      z-index: 2;
+      transition: all 0.4s ease;
+    }
+
+    .process-step:hover .step-number {
+      background: var(--copper);
+      color: var(--white);
+      animation: copper-pulse 2s infinite;
+    }
+
+    .process-step h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--forest);
+      margin-bottom: 12px;
+    }
+
+    .process-step p {
+      font-size: 0.9rem;
+      color: var(--text-soft);
+      line-height: 1.65;
+    }
+
+    @media (max-width: 768px) {
+      .process-steps {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+      .process-steps::before { display: none; }
+    }
+
+    /* ══════════════════════════════════════════
+       SERVICE AREA — Map Inspired
+       ══════════════════════════════════════════ */
+    .area {
+      padding: 120px 5vw;
+      background: var(--cream);
+      position: relative;
+    }
+
+    .area-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .area-layout {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 80px;
+      margin-top: 64px;
+      align-items: start;
+    }
+
+    .area-cities-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .area-city {
+      padding: 20px 24px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: all 0.3s ease;
+      cursor: default;
+    }
+
+    .area-city:hover {
+      border-color: var(--copper);
+      transform: translateX(6px);
+      box-shadow: 0 4px 20px rgba(26, 60, 52, 0.06);
+    }
+
+    .area-city .city-marker {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--copper);
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .area-city:hover .city-marker {
+      animation: copper-pulse 1.5s infinite;
+    }
+
+    .area-city .city-name {
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: var(--forest);
+    }
+
+    .area-note {
+      margin-top: 20px;
+      font-size: 0.85rem;
+      color: var(--text-soft);
+    }
+
+    .area-note a {
+      color: var(--copper);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .area-note a:hover {
+      text-decoration: underline;
+    }
+
+    /* Zip codes panel */
+    .zips-panel {
+      background: var(--forest-deep);
+      border-radius: 4px;
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .zips-panel::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -30%;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: rgba(184, 115, 51, 0.08);
+      filter: blur(60px);
+    }
+
+    .zips-panel-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .zips-group {
+      margin-bottom: 28px;
+    }
+
+    .zips-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .zips-group-label {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--cream);
+      margin-bottom: 14px;
+    }
+
+    .zip-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      position: relative;
+    }
+
+    .zip-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      padding: 6px 14px;
+      border: 1px solid rgba(245, 240, 232, 0.1);
+      border-radius: 3px;
+      color: rgba(245, 240, 232, 0.7);
+      transition: all 0.3s ease;
+      cursor: default;
+    }
+
+    .zip-tag:hover {
+      border-color: var(--copper);
+      color: var(--copper);
+      background: rgba(184, 115, 51, 0.08);
+    }
+
+    @media (max-width: 900px) {
+      .area-layout {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .area-cities-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ══════════════════════════════════════════
+       BRANDS — Refined Partner Display
+       ══════════════════════════════════════════ */
+    .brands {
+      padding: 80px 5vw;
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brands-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+
+    .brands-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      white-space: nowrap;
+    }
+
+    .brands-list {
+      display: flex;
+      align-items: center;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+
+    .brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--forest);
+      opacity: 0.35;
+      transition: opacity 0.3s ease;
+      cursor: default;
+    }
+
+    .brand-name:hover {
+      opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+      .brands-inner {
+        flex-direction: column;
+        text-align: center;
+      }
+      .brands-list {
+        justify-content: center;
+        gap: 32px;
+      }
+    }
+
+    /* ══════════════════════════════════════════
+       CTA — Full-Width Dramatic
+       ══════════════════════════════════════════ */
+    .cta {
+      position: relative;
+      padding: 140px 5vw;
+      background: var(--forest);
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        url('https://images.unsplash.com/photo-1613545325278-f24b0cae1224?w=1400&q=80') center/cover;
+      opacity: 0.08;
+      filter: grayscale(100%);
+    }
+
+    .cta::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 800px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(184, 115, 51, 0.12) 0%, transparent 70%);
+    }
+
+    .cta-content {
+      position: relative;
+      z-index: 2;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .cta-content .section-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .cta-content .section-eyebrow::before,
+    .cta-content .section-eyebrow::after {
+      content: '';
+      width: 30px;
+      height: 1.5px;
+      background: var(--copper);
+    }
+
+    .cta h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 4vw, 3.5rem);
+      font-weight: 700;
+      color: var(--cream);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+
+    .cta h2 em {
+      font-style: italic;
+      color: var(--copper);
+    }
+
+    .cta-desc {
+      font-size: 1.05rem;
+      color: rgba(245, 240, 232, 0.6);
+      line-height: 1.6;
+      margin-bottom: 40px;
+    }
+
+    .cta-actions {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn-copper {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 18px 40px;
+      background: var(--copper);
+      color: var(--white);
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .btn-copper:hover {
+      background: var(--copper-light);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(184, 115, 51, 0.3);
+    }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 18px 40px;
+      background: transparent;
+      color: var(--cream);
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+      border-radius: 4px;
+      border: 1.5px solid rgba(245, 240, 232, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .btn-ghost:hover {
+      border-color: rgba(245, 240, 232, 0.5);
+      background: rgba(245, 240, 232, 0.05);
+    }
+
+    .cta-phone {
+      margin-top: 40px;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.5rem, 3vw, 2.5rem);
+      font-weight: 700;
+    }
+
+    .cta-phone a {
+      color: var(--cream);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .cta-phone a:hover {
+      color: var(--copper);
+    }
+
+    .cta-address {
+      margin-top: 16px;
+      font-size: 0.85rem;
+      color: rgba(245, 240, 232, 0.4);
+    }
+
+    /* ══════════════════════════════════════════
+       FOOTER — Editorial
+       ══════════════════════════════════════════ */
+    .footer {
+      background: var(--charcoal);
+      color: var(--cream);
+      padding: 80px 5vw 40px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1.2fr;
+      gap: 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-brand .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--cream);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .footer-brand .footer-logo .logo-circle {
+      width: 32px;
+      height: 32px;
+      background: var(--forest);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--copper);
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .footer-brand p {
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: rgba(245, 240, 232, 0.45);
+      max-width: 300px;
+    }
+
+    .footer-brand .award-badge {
+      margin-top: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border: 1px solid rgba(184, 115, 51, 0.3);
+      border-radius: 4px;
+      font-size: 0.72rem;
+      color: var(--copper);
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.05em;
+    }
+
+    .footer-col h4 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--copper);
+      margin-bottom: 20px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+    }
+
+    .footer-col ul li {
+      margin-bottom: 10px;
+    }
+
+    .footer-col ul a {
+      color: rgba(245, 240, 232, 0.5);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.3s ease;
+    }
+
+    .footer-col ul a:hover {
+      color: var(--cream);
+    }
+
+    .footer-contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .footer-contact-item .icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      margin-top: 3px;
+      color: var(--copper);
+    }
+
+    .footer-contact-item a,
+    .footer-contact-item span {
+      color: rgba(245, 240, 232, 0.5);
+      text-decoration: none;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      transition: color 0.3s ease;
+    }
+
+    .footer-contact-item a:hover {
+      color: var(--cream);
+    }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 60px auto 0;
+      padding-top: 24px;
+      border-top: 1px solid rgba(245, 240, 232, 0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-bottom p {
+      font-size: 0.72rem;
+      color: rgba(245, 240, 232, 0.25);
+    }
+
+    .footer-bottom .license {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: rgba(245, 240, 232, 0.3);
+      letter-spacing: 0.05em;
+    }
+
+    @media (max-width: 900px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ══════════════════════════════════════════
+       UTILITY & DECORATIVE
+       ══════════════════════════════════════════ */
+
+    /* Decorative corner brackets */
+    .corner-bracket {
+      position: relative;
+    }
+
+    .corner-bracket::before,
+    .corner-bracket::after {
+      content: '';
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border-color: var(--copper);
+      border-style: solid;
+      opacity: 0.3;
+    }
+
+    .corner-bracket::before {
+      top: -8px;
+      left: -8px;
+      border-width: 2px 0 0 2px;
+    }
+
+    .corner-bracket::after {
+      bottom: -8px;
+      right: -8px;
+      border-width: 0 2px 2px 0;
+    }
+
+    /* Scroll-to-top */
+    .scroll-top {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--forest);
+      color: var(--cream);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s ease;
+      z-index: 999;
+      box-shadow: 0 4px 20px rgba(26, 60, 52, 0.2);
+    }
+
+    .scroll-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .scroll-top:hover {
+      background: var(--copper);
+      transform: translateY(-3px);
+    }
+
+    /* Selection colors */
+    ::selection {
+      background: var(--copper);
+      color: var(--white);
+    }
+
+    /* Smooth image loading */
+    img {
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+
+    img.loaded {
+      opacity: 1;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--cream);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--forest);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--copper);
+    }
+
+    /* ── Responsive helpers ── */
+    @media (max-width: 600px) {
+      .hero-actions {
+        flex-direction: column;
+      }
+      .hero-actions .btn-primary,
+      .hero-actions .btn-secondary {
+        width: 100%;
+        justify-content: center;
+      }
+      .cta-actions {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ════════════════════════════════════════════
+       NAVBAR
+       ════════════════════════════════════════════ -->
+  <nav class="navbar" id="navbar">
+    <a href="#" class="nav-brand">
+      <div class="brand-mark">A</div>
+      <span class="nav-brand-text">Adept Plumbing</span>
+    </a>
+
+    <div class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#about">Philosophy</a>
+      <a href="#process">Process</a>
+      <a href="#area">Service Area</a>
+    </div>
+
+    <a href="tel:5123016330" class="nav-cta">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      512-301-6330
+    </a>
+
+    <button class="mobile-toggle" aria-label="Menu" onclick="document.querySelector('.nav-links').classList.toggle('mobile-open')">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- ════════════════════════════════════════════
+       HERO — Editorial Split
+       ════════════════════════════════════════════ -->
+  <section class="hero" id="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Licensed Master Plumber &middot; Austin, TX</div>
+      <h1>
+        Craftsmanship<br>
+        <em>that endures.</em>
+      </h1>
+      <p class="hero-body">
+        Old-school pride. Modern precision. Christian Hulot-Sage has served Austin and the Hill Country since 2000 with one promise: do it once, do it right.
+      </p>
+      <div class="hero-actions">
+        <a href="tel:5123016330" class="btn-primary"><span>Get a Free Estimate</span></a>
+        <a href="#services" class="btn-secondary">Explore Services</a>
+      </div>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="value">25+</span>
+          <span class="label">Years Licensed</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="value">15</span>
+          <span class="label">Services</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="value">6</span>
+          <span class="label">Cities Served</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <img src="https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=1400&q=80" alt="Modern kitchen with premium plumbing fixtures" onload="this.classList.add('loaded')">
+      <div class="hero-image-badge">
+        <div class="badge-label">Angie's List</div>
+        <div class="badge-value">Super Service Award</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       SERVICE TICKER
+       ════════════════════════════════════════════ -->
+  <div class="ticker-wrap">
+    <div class="ticker" id="ticker">
+      <div class="ticker-item"><span class="divider"></span>Water Line Repair</div>
+      <div class="ticker-item"><span class="divider"></span>Sewer Line Inspection</div>
+      <div class="ticker-item"><span class="divider"></span>Pipe Repair</div>
+      <div class="ticker-item"><span class="divider"></span>Water Heater Service</div>
+      <div class="ticker-item"><span class="divider"></span>Drain Cleaning</div>
+      <div class="ticker-item"><span class="divider"></span>Garbage Disposal</div>
+      <div class="ticker-item"><span class="divider"></span>Dishwasher Install</div>
+      <div class="ticker-item"><span class="divider"></span>Water Softener</div>
+      <div class="ticker-item"><span class="divider"></span>Boiler Repair</div>
+      <div class="ticker-item"><span class="divider"></span>Toilet &amp; Sink Work</div>
+      <div class="ticker-item"><span class="divider"></span>Lift Stations</div>
+      <div class="ticker-item"><span class="divider"></span>Circulating Pumps</div>
+      <div class="ticker-item"><span class="divider"></span>Waste Pump Service</div>
+      <!-- Duplicate for seamless loop -->
+      <div class="ticker-item"><span class="divider"></span>Water Line Repair</div>
+      <div class="ticker-item"><span class="divider"></span>Sewer Line Inspection</div>
+      <div class="ticker-item"><span class="divider"></span>Pipe Repair</div>
+      <div class="ticker-item"><span class="divider"></span>Water Heater Service</div>
+      <div class="ticker-item"><span class="divider"></span>Drain Cleaning</div>
+      <div class="ticker-item"><span class="divider"></span>Garbage Disposal</div>
+      <div class="ticker-item"><span class="divider"></span>Dishwasher Install</div>
+      <div class="ticker-item"><span class="divider"></span>Water Softener</div>
+      <div class="ticker-item"><span class="divider"></span>Boiler Repair</div>
+      <div class="ticker-item"><span class="divider"></span>Toilet &amp; Sink Work</div>
+      <div class="ticker-item"><span class="divider"></span>Lift Stations</div>
+      <div class="ticker-item"><span class="divider"></span>Circulating Pumps</div>
+      <div class="ticker-item"><span class="divider"></span>Waste Pump Service</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       SERVICES — Magazine Grid
+       ════════════════════════════════════════════ -->
+  <section class="services" id="services">
+    <div class="services-header">
+      <div class="reveal">
+        <div class="section-eyebrow">Our Expertise</div>
+        <h2 class="section-heading">
+          Full-service plumbing,<br>
+          <em>done right.</em>
+        </h2>
+      </div>
+      <p class="section-desc reveal" style="transition-delay: 0.15s;">
+        From emergency repairs to planned installations, Adept Plumbing brings 25+ years of master-level expertise to every job. We are equipped with the latest technology and use only quality parts.
+      </p>
+    </div>
+
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="card-num">01</div>
+        <h3>Water Heater Repair &amp; Replacement</h3>
+        <p>Expert diagnosis and service for all water heater types. Efficient replacement with premium units when repair isn't viable.</p>
+        <div class="card-arrow">&rarr;</div>
+      </div>
+
+      <div class="service-card reveal" style="transition-delay: 0.08s;">
+        <div class="card-num">02</div>
+        <h3>Sewer Line Inspection &amp; Repair</h3>
+        <p>Advanced video inspection technology. Complete sewer line cleaning, repair, and replacement services.</p>
+        <div class="card-arrow">&rarr;</div>
+      </div>
+
+      <div class="service-card reveal" style="transition-delay: 0.16s;">
+        <div class="card-num">03</div>
+        <h3>Pipe Repair &amp; Replacement</h3>
+        <p>Broken, leaking, or corroded pipes resolved swiftly. We work with copper, PVC, PEX, and all modern materials.</p>
+        <div class="card-arrow">&rarr;</div>
+      </div>
+
+      <div class="service-card reveal" style="transition-delay: 0.24s;">
+        <div class="card-num">04</div>
+        <h3>Clogged Drain Cleaning</h3>
+        <p>Professional drain clearing for sinks, tubs, showers, and main lines. We eliminate clogs at their source.</p>
+        <div class="card-arrow">&rarr;</div>
+      </div>
+
+      <div class="service-card reveal" style="transition-delay: 0.32s;">
+        <div class="card-num">05</div>
+        <h3>Tub, Toilet &amp; Sink Work</h3>
+        <p>Repair and replacement of all bathroom and kitchen fixtures. New installations for renovation projects.</p>
+        <div class="card-arrow">&rarr;</div>
+      </div>
+
+      <div class="service-card reveal" style="transition-delay: 0.4s;">
+        <div class="card-num">06</div>
+        <h3>Water Softener Systems</h3>
+        <p>Professional installation and repair of water softener systems to dramatically improve your home's water quality.</p>
+        <div class="card-arrow">&rarr;</div>
+      </div>
+    </div>
+
+    <!-- Full services list -->
+    <div class="all-services reveal">
+      <div class="all-services-title">Complete Service Directory &mdash; 15 Services</div>
+
+      <div class="all-services-item">
+        <span class="item-num">01</span>
+        Water Line Repair or Replacement
+      </div>
+      <div class="all-services-item">
+        <span class="item-num">02</span>
+        Sewer Line Inspection, Repair or Replacement
+      </div>
+      <div class="all-services-item">
+        <span class="item-num">03</span>
+        Sewer Line Cleaning
+      </div>
+      <div class="all-services-item">
+        <span class="item-num">04</span>
+        Pipe Repair and Replacement
+      </div>
+      <div class="all-services-item">
+        <span class="item-num">05</span>
+        Water Heater Repair or Replacement
+      </div>
+      <div class="all-services-item">
+        <span class="item-num">06</span>
+        Lift Station Repair or Installation
+      </div>
+      <div class="all-services-item">
+        <span class="item-num">07</span>
+        Drain Repair Work
+      </div>
+      <div class="all-services-item">
+        <span class="item-num">08</span>
+        Clogged Drain Cleaning
+      </div>
+      <div class="all-services-item">
+        <span class="item-num">09</span>
+        Garbage Disposal Repair &amp; Maintenance
+      </div>
+      <div class="all-services-item">
+        <span class="item-num">10</span>
+        Dishwasher Installation and Repair
+      </div>
+      <div class="all-services-item">
+        <span class="item-num">11</span>
+        Water Softener Installation and Repair
+      </div>
+      <div class="all-services-item">
+        <span class="item-num">12</span>
+        Boiler Repair and Replacement
+      </div>
+      <div class="all-services-item">
+        <span class="item-num">13</span>
+        Tub, Toilet and Sink Repair &amp; Replacement
+      </div>
+      <div class="all-services-item">
+        <span class="item-num">14</span>
+        Circulating Pump Repair and Installation
+      </div>
+      <div class="all-services-item">
+        <span class="item-num">15</span>
+        Waste Pump Repair and Installation
+      </div>
+    </div>
+
+    <div class="services-more reveal">
+      Need something not listed? <a href="tel:5123016330">Call 512-301-6330</a> &mdash; we'll work with you.
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       ABOUT / PHILOSOPHY — Asymmetric Split
+       ════════════════════════════════════════════ -->
+  <section class="about" id="about">
+    <div class="about-image">
+      <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1400&q=80" alt="Professional plumber at work" onload="this.classList.add('loaded')">
+    </div>
+
+    <div class="about-content">
+      <div class="section-eyebrow reveal-right">The Adept Difference</div>
+
+      <h2 class="heading reveal-right" style="transition-delay: 0.1s;">
+        Good help is<br>hard to find.<br>
+        <em>So I became it.</em>
+      </h2>
+
+      <div class="about-pullquote corner-bracket reveal-right" style="transition-delay: 0.2s;">
+        "I want my customers to know that they called the right plumber and to feel confident in my work for a lifetime."
+      </div>
+      <div class="about-attribution reveal-right" style="transition-delay: 0.25s;">
+        &mdash; Christian Hulot-Sage, Owner &amp; Licensed Master Plumber
+      </div>
+
+      <p class="about-body reveal-right" style="transition-delay: 0.3s;">
+        After working for two of Austin's large plumbing companies, Christian came to realize that quality and care were being sacrificed for volume. He started Adept Plumbing to be different &mdash; growing the business mainly through word of mouth, consistently validating his reputation as a conscientious, quality plumber. Completely self-sufficient and equipped with the latest technology, he uses only quality parts and brings an old-school pride to every job.
+      </p>
+
+      <div class="about-credentials reveal-right" style="transition-delay: 0.4s;">
+        <div class="credential">
+          <span class="cred-value">License #19269</span>
+          <span class="cred-label">Master Plumber</span>
+        </div>
+        <div class="credential">
+          <span class="cred-value">Since 2000</span>
+          <span class="cred-label">Licensed June 6</span>
+        </div>
+        <div class="credential">
+          <span class="cred-value">Fair Rates</span>
+          <span class="cred-label">20 min travel incl.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       PROCESS
+       ════════════════════════════════════════════ -->
+  <section class="process" id="process">
+    <div class="process-inner">
+      <div class="process-header reveal">
+        <div class="section-eyebrow">How It Works</div>
+        <h2 class="section-heading">
+          Simple, honest,<br><em>effective.</em>
+        </h2>
+      </div>
+
+      <div class="process-steps">
+        <div class="process-step reveal" style="transition-delay: 0.1s;">
+          <div class="step-number">1</div>
+          <h3>Call &amp; Assess</h3>
+          <p>Reach out by phone or email. Christian arrives promptly, evaluates the issue with the latest diagnostic technology, and provides an honest, upfront assessment. No hidden fees.</p>
+        </div>
+
+        <div class="process-step reveal" style="transition-delay: 0.25s;">
+          <div class="step-number">2</div>
+          <h3>Repair &amp; Restore</h3>
+          <p>Using only quality parts from trusted brands, the work gets done efficiently and with pride. Licensed, insured, and completely self-sufficient &mdash; no subcontractors.</p>
+        </div>
+
+        <div class="process-step reveal" style="transition-delay: 0.4s;">
+          <div class="step-number">3</div>
+          <h3>Trust &amp; Guarantee</h3>
+          <p>Walk-through of completed work, full cleanup, and confidence that it's built to last. Fair hourly rates with 20 minutes of travel time included in your first hour.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       SERVICE AREA
+       ════════════════════════════════════════════ -->
+  <section class="area" id="area">
+    <div class="area-inner">
+      <div class="reveal">
+        <div class="services-header" style="margin-bottom: 0;">
+          <div>
+            <div class="section-eyebrow">Where We Serve</div>
+            <h2 class="section-heading">Austin &amp; the<br><em>Hill Country.</em></h2>
+          </div>
+          <p class="section-desc">
+            Fast, local, and knowledgeable. Adept Plumbing proudly serves Austin and surrounding communities with the same care and precision every time.
+          </p>
+        </div>
+      </div>
+
+      <div class="area-layout">
+        <div>
+          <div class="area-cities-grid">
+            <div class="area-city reveal-left" style="transition-delay: 0.05s;">
+              <span class="city-marker"></span>
+              <span class="city-name">Austin</span>
+            </div>
+            <div class="area-city reveal-left" style="transition-delay: 0.1s;">
+              <span class="city-marker"></span>
+              <span class="city-name">Dripping Springs</span>
+            </div>
+            <div class="area-city reveal-left" style="transition-delay: 0.15s;">
+              <span class="city-marker"></span>
+              <span class="city-name">Bee Cave</span>
+            </div>
+            <div class="area-city reveal-left" style="transition-delay: 0.2s;">
+              <span class="city-marker"></span>
+              <span class="city-name">Barton Springs</span>
+            </div>
+            <div class="area-city reveal-left" style="transition-delay: 0.25s;">
+              <span class="city-marker"></span>
+              <span class="city-name">Cat Mountain</span>
+            </div>
+            <div class="area-city reveal-left" style="transition-delay: 0.3s;">
+              <span class="city-marker"></span>
+              <span class="city-name">Mount Bonnell</span>
+            </div>
+          </div>
+          <p class="area-note reveal" style="transition-delay: 0.35s;">
+            Don't see your area? <a href="tel:5123016330">Call 512-301-6330</a> &mdash; we're happy to discuss.
+          </p>
+        </div>
+
+        <div class="zips-panel reveal-right">
+          <div class="zips-panel-title">Coverage by Zip Code</div>
+
+          <div class="zips-group">
+            <div class="zips-group-label">Austin</div>
+            <div class="zip-tags">
+              <span class="zip-tag">78701</span>
+              <span class="zip-tag">78703</span>
+              <span class="zip-tag">78704</span>
+              <span class="zip-tag">78723</span>
+              <span class="zip-tag">78735</span>
+              <span class="zip-tag">78736</span>
+              <span class="zip-tag">78737</span>
+              <span class="zip-tag">78741</span>
+              <span class="zip-tag">78744</span>
+              <span class="zip-tag">78745</span>
+              <span class="zip-tag">78746</span>
+              <span class="zip-tag">78748</span>
+              <span class="zip-tag">78749</span>
+              <span class="zip-tag">78753</span>
+              <span class="zip-tag">78757</span>
+              <span class="zip-tag">78758</span>
+              <span class="zip-tag">78759</span>
+            </div>
+          </div>
+
+          <div class="zips-group">
+            <div class="zips-group-label">Dripping Springs</div>
+            <div class="zip-tags">
+              <span class="zip-tag">78620</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       BRANDS
+       ════════════════════════════════════════════ -->
+  <div class="brands">
+    <div class="brands-inner reveal">
+      <span class="brands-label">Trusted Brand Partners</span>
+      <div class="brands-list">
+        <span class="brand-name">Delta</span>
+        <span class="brand-name">Grohe</span>
+        <span class="brand-name">Kohler</span>
+        <span class="brand-name">Moen</span>
+        <span class="brand-name">Price Pfister</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       CTA
+       ════════════════════════════════════════════ -->
+  <section class="cta" id="contact">
+    <div class="cta-content">
+      <div class="section-eyebrow reveal">Ready When You Are</div>
+      <h2 class="reveal" style="transition-delay: 0.1s;">The right plumber<br>is <em>one call away.</em></h2>
+      <p class="cta-desc reveal" style="transition-delay: 0.2s;">
+        Whether it's an emergency or a scheduled project, Christian brings the same dedication, quality parts, and old-school craftsmanship to every job.
+      </p>
+      <div class="cta-actions reveal" style="transition-delay: 0.3s;">
+        <a href="tel:5123016330" class="btn-copper">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Call Now
+        </a>
+        <a href="mailto:christian@adeptplumbing.com" class="btn-ghost">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Email Christian
+        </a>
+      </div>
+      <div class="cta-phone reveal" style="transition-delay: 0.4s;">
+        <a href="tel:5123016330">512-301-6330</a>
+      </div>
+      <p class="cta-address reveal" style="transition-delay: 0.45s;">
+        11301 Southwest Oak, Austin, TX 78737
+      </p>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       FOOTER
+       ════════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <span class="logo-circle">A</span>
+          Adept Plumbing
+        </div>
+        <p>Independent, locally-owned plumbing service. Old-school craftsmanship meets modern technology. Serving Austin and the Hill Country since 2000.</p>
+        <div class="award-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Angie's List Super Service Award
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#services">Water Heaters</a></li>
+          <li><a href="#services">Sewer Lines</a></li>
+          <li><a href="#services">Drain Cleaning</a></li>
+          <li><a href="#services">Pipe Repair</a></li>
+          <li><a href="#services">Fixture Work</a></li>
+          <li><a href="#services">Water Softeners</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Service Area</h4>
+        <ul>
+          <li><a href="#area">Austin</a></li>
+          <li><a href="#area">Dripping Springs</a></li>
+          <li><a href="#area">Bee Cave</a></li>
+          <li><a href="#area">Barton Springs</a></li>
+          <li><a href="#area">Cat Mountain</a></li>
+          <li><a href="#area">Mount Bonnell</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <div class="footer-contact-item">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <a href="tel:5123016330">512-301-6330</a>
+        </div>
+        <div class="footer-contact-item">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <a href="mailto:christian@adeptplumbing.com">christian@adeptplumbing.com</a>
+        </div>
+        <div class="footer-contact-item">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>11301 Southwest Oak<br>Austin, TX 78737</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2026 Adept Plumbing. All rights reserved.</p>
+      <span class="license">Master Plumber License #19269 &middot; Licensed Since June 6, 2000</span>
+    </div>
+  </footer>
+
+  <!-- Scroll to top -->
+  <button class="scroll-top" id="scrollTop" aria-label="Scroll to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+
+  <!-- ════════════════════════════════════════════
+       SCRIPTS
+       ════════════════════════════════════════════ -->
+  <script>
+    // ── Navbar scroll state ──
+    const navbar = document.getElementById('navbar');
+    let lastScroll = 0;
+
+    function handleScroll() {
+      const scrollY = window.scrollY;
+
+      if (scrollY > 80) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+
+      // Scroll-to-top button
+      const scrollBtn = document.getElementById('scrollTop');
+      if (scrollY > 600) {
+        scrollBtn.classList.add('visible');
+      } else {
+        scrollBtn.classList.remove('visible');
+      }
+
+      lastScroll = scrollY;
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // ── Intersection Observer for reveal animations ──
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    });
+
+    document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => {
+      revealObserver.observe(el);
+    });
+
+    // ── Smooth scroll for anchor links ──
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          const navHeight = 80;
+          const targetPos = target.getBoundingClientRect().top + window.scrollY - navHeight;
+          window.scrollTo({ top: targetPos, behavior: 'smooth' });
+        }
+      });
+    });
+
+    // ── Image lazy loading + fade ──
+    document.querySelectorAll('img').forEach(img => {
+      if (img.complete) {
+        img.classList.add('loaded');
+      }
+    });
+
+    // ── Mobile nav ──
+    const mobileStyles = document.createElement('style');
+    mobileStyles.textContent = `
+      @media (max-width: 900px) {
+        .nav-links.mobile-open {
+          display: flex !important;
+          flex-direction: column;
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: var(--cream);
+          z-index: 9999;
+          align-items: center;
+          justify-content: center;
+          gap: 32px;
+          animation: fadeIn 0.3s ease;
+        }
+        .nav-links.mobile-open a {
+          font-size: 1.5rem;
+          font-family: 'Playfair Display', serif;
+          color: var(--forest);
+        }
+      }
+    `;
+    document.head.appendChild(mobileStyles);
+
+    // ── Parallax-like subtle movement on hero image ──
+    const heroRight = document.querySelector('.hero-right img');
+    if (heroRight && window.innerWidth > 900) {
+      window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY;
+        if (scrollY < window.innerHeight) {
+          heroRight.style.transform = `scale(1.05) translateY(${scrollY * 0.04}px)`;
+        }
+      }, { passive: true });
+    }
+
+    // ── Service card subtle tilt on mouse ──
+    document.querySelectorAll('.service-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        card.style.transform = `translateY(-3px) perspective(600px) rotateX(${y * -3}deg) rotateY(${x * 3}deg)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'translateY(0) perspective(600px) rotateX(0) rotateY(0)';
+      });
+    });
+
+    // ── Counter animation for hero meta values ──
+    function animateCounter(element, target, suffix = '') {
+      let current = 0;
+      const increment = target / 40;
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          current = target;
+          clearInterval(timer);
+        }
+        element.textContent = Math.floor(current) + suffix;
+      }, 30);
+    }
+
+    const heroMeta = document.querySelectorAll('.hero-meta-item .value');
+    if (heroMeta.length >= 3) {
+      setTimeout(() => {
+        animateCounter(heroMeta[0], 25, '+');
+        animateCounter(heroMeta[1], 15, '');
+        animateCounter(heroMeta[2], 6, '');
+      }, 1200);
+    }
+  </script>
+</body>
+</html>
