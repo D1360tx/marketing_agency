@@ -43,15 +43,88 @@ const templateVars = [
   { key: "rating", label: "Rating" },
 ];
 
-const defaultEmailTemplate = `Hi {{business_name}},
+const emailTemplates: Record<string, { name: string; subject: string; body: string }> = {
+  website_pain: {
+    name: "Website Pain Point",
+    subject: "Quick question about {{business_name}}'s website",
+    body: `Hi {{business_name}},
 
-I was looking at local businesses in {{city}} and noticed your website could use some improvements. Our analysis gave it a grade of {{website_grade}}.
+I was checking out local {{city}} businesses online and came across yours — your Google reviews look great, but your website isn't doing you justice.
 
-We specialize in building modern, fast, mobile-friendly websites for businesses like yours. We'd love to show you what a refreshed online presence could look like.
+Most customers check a website before calling. If it's slow, outdated, or hard to use on a phone, they move on to a competitor.
 
-Would you be open to a quick 10-minute call this week?
+We build modern, mobile-friendly websites for local service businesses — usually live in 48 hours, no setup fees.
 
-Best regards`;
+Would it be worth a 10-minute call this week to show you what we'd build for you?
+
+Diego
+Booked Out`,
+  },
+  no_website: {
+    name: "No Website",
+    subject: "{{business_name}} — your competitors have websites",
+    body: `Hi {{business_name}},
+
+I noticed you don't have a website yet. In {{city}}, most of your competitors do — and that means customers searching online aren't finding you.
+
+We build clean, professional websites for local service businesses starting at $299. Usually live within 48 hours.
+
+Worth a quick 10-minute chat? I can show you exactly what we'd build.
+
+Diego
+Booked Out`,
+  },
+  google_reviews: {
+    name: "Google Reviews",
+    subject: "More Google reviews = more calls for {{business_name}}",
+    body: `Hi {{business_name}},
+
+Quick question — are you actively asking your customers for Google reviews after each job?
+
+Most local businesses in {{city}} aren't, and it's costing them leads. Google ranks businesses with more reviews higher, which means more calls.
+
+We set up an automated system that sends your customers a review request right after the job is done. Takes zero effort on your end.
+
+Mind if I show you how it works on a quick call this week?
+
+Diego
+Booked Out`,
+  },
+  social_proof: {
+    name: "Social Proof / FOMO",
+    subject: "How {{city}} businesses are getting more calls",
+    body: `Hi {{business_name}},
+
+We recently helped a local {{city}} business go from 12 Google reviews to 47 in under 60 days — their phone started ringing noticeably more.
+
+The secret? An automated review request system that texts or emails customers right after the job. Most say yes because the timing is perfect.
+
+We also redesigned their website while we were at it. The whole thing was live in 48 hours.
+
+Would love to show you what this could look like for {{business_name}}. Have 10 minutes this week?
+
+Diego
+Booked Out`,
+  },
+  cold_call_followup: {
+    name: "Post Cold Call Follow-Up",
+    subject: "Following up — {{business_name}}",
+    body: `Hi {{business_name}},
+
+Just tried giving you a call — wanted to follow up by email.
+
+We help local service businesses in {{city}} get more customers through a better website and automated Google review requests.
+
+If you're open to it, I'd love to show you a quick demo. Takes about 10 minutes and there's no pitch — just showing you what's possible.
+
+What does your schedule look like this week?
+
+Diego
+Booked Out`,
+  },
+};
+
+const defaultEmailTemplate = emailTemplates.website_pain.body;
 
 const defaultSmsTemplate = `Hi {{business_name}}! We noticed your website scored {{website_grade}}. We help businesses in {{city}} get modern, fast websites. Interested in a free consultation? Reply YES`;
 
@@ -59,9 +132,8 @@ export default function NewCampaignPage() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [type, setType] = useState<"email" | "sms">("email");
-  const [subject, setSubject] = useState(
-    "Your website could be working harder for you, {{business_name}}"
-  );
+  const [selectedTemplate, setSelectedTemplate] = useState("website_pain");
+  const [subject, setSubject] = useState(emailTemplates.website_pain.subject);
   const [body, setBody] = useState(defaultEmailTemplate);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -289,15 +361,37 @@ export default function NewCampaignPage() {
                   </Select>
                 </div>
                 {type === "email" && (
-                  <div className="space-y-2">
-                    <Label htmlFor="subject">Subject Line</Label>
-                    <Input
-                      id="subject"
-                      value={subject}
-                      onChange={(e) => setSubject(e.target.value)}
-                      required
-                    />
-                  </div>
+                  <>
+                    <div className="space-y-2">
+                      <Label>Quick-load Template</Label>
+                      <Select
+                        value={selectedTemplate}
+                        onValueChange={(val) => {
+                          setSelectedTemplate(val);
+                          setSubject(emailTemplates[val].subject);
+                          setBody(emailTemplates[val].body);
+                        }}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Choose a template..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.entries(emailTemplates).map(([key, t]) => (
+                            <SelectItem key={key} value={key}>{t.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="subject">Subject Line</Label>
+                      <Input
+                        id="subject"
+                        value={subject}
+                        onChange={(e) => setSubject(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </>
                 )}
               </CardContent>
             </Card>
