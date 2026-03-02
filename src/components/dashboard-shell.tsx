@@ -22,6 +22,7 @@ import {
   Menu,
   Megaphone,
   Globe,
+  Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +31,7 @@ const navigation = [
   { name: "Prospector", href: "/prospector", icon: Search },
   { name: "Leads", href: "/leads", icon: Users },
   { name: "Campaigns", href: "/campaigns", icon: Mail },
+  { name: "Sequences", href: "/sequences", icon: Zap },
   { name: "Generator", href: "/generator", icon: Globe },
   { name: "Settings", href: "/settings", icon: Settings },
 ];

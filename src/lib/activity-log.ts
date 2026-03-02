@@ -8,7 +8,8 @@ export type ActivityType =
   | "email_sent"
   | "sms_sent"
   | "email_found"
-  | "score_updated";
+  | "score_updated"
+  | "drip_enrolled";
 
 export async function logActivity(
   supabase: SupabaseClient,

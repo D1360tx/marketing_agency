@@ -169,3 +169,98 @@ export const campaignCreateSchema = z.object({
   subject_template: z.string().nullable().optional(),
   body_template: z.string().min(1, "Body template is required"),
 });
+
+// --- Drip Sequences ---
+
+export const dripSequenceStatusValues = [
+  "draft",
+  "active",
+  "paused",
+  "archived",
+] as const;
+export type DripSequenceStatus = (typeof dripSequenceStatusValues)[number];
+
+export const dripSequenceSchema = z.object({
+  id: z.string().uuid(),
+  user_id: z.string().uuid(),
+  name: z.string(),
+  description: z.string().nullable(),
+  channel: z.enum(["email", "sms"]),
+  status: z.enum(dripSequenceStatusValues),
+  created_at: z.string(),
+  updated_at: z.string(),
+});
+
+export type DripSequence = z.infer<typeof dripSequenceSchema>;
+
+export const dripStepSchema = z.object({
+  id: z.string().uuid(),
+  sequence_id: z.string().uuid(),
+  step_order: z.number(),
+  delay_days: z.number(),
+  subject_template: z.string().nullable(),
+  body_template: z.string(),
+  created_at: z.string(),
+  updated_at: z.string(),
+});
+
+export type DripStep = z.infer<typeof dripStepSchema>;
+
+export const dripEnrollmentStatusValues = [
+  "active",
+  "paused",
+  "completed",
+  "cancelled",
+] as const;
+
+export const dripEnrollmentSchema = z.object({
+  id: z.string().uuid(),
+  sequence_id: z.string().uuid(),
+  prospect_id: z.string().uuid(),
+  user_id: z.string().uuid(),
+  current_step: z.number(),
+  status: z.enum(dripEnrollmentStatusValues),
+  enrolled_at: z.string(),
+  last_sent_at: z.string().nullable(),
+  next_send_at: z.string().nullable(),
+  completed_at: z.string().nullable(),
+});
+
+export type DripEnrollment = z.infer<typeof dripEnrollmentSchema>;
+
+export const dripMessageSchema = z.object({
+  id: z.string().uuid(),
+  enrollment_id: z.string().uuid(),
+  step_id: z.string().uuid(),
+  prospect_id: z.string().uuid(),
+  user_id: z.string().uuid(),
+  channel: z.enum(["email", "sms"]),
+  to_address: z.string(),
+  subject: z.string().nullable(),
+  body: z.string(),
+  status: z.enum(messageStatusValues),
+  sent_at: z.string().nullable(),
+  opened_at: z.string().nullable(),
+  replied_at: z.string().nullable(),
+  error_message: z.string().nullable(),
+  created_at: z.string(),
+});
+
+export type DripMessage = z.infer<typeof dripMessageSchema>;
+
+export type DripSequenceWithSteps = DripSequence & {
+  drip_steps?: DripStep[];
+};
+
+export const dripSequenceCreateSchema = z.object({
+  name: z.string().min(1, "Sequence name is required"),
+  description: z.string().nullable().optional(),
+  channel: z.enum(["email", "sms"]),
+  steps: z.array(
+    z.object({
+      delay_days: z.number().min(0),
+      subject_template: z.string().nullable().optional(),
+      body_template: z.string().min(1, "Step body is required"),
+    })
+  ).min(1, "At least one step is required"),
+});
