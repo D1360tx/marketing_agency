@@ -269,7 +269,7 @@ export async function processDripQueue(
       }
 
       const senderEmail = settings?.sender_email || "onboarding@resend.dev";
-      const senderName = settings?.sender_name || "AgencyFlow";
+      const senderName = settings?.sender_name || "Booked Out";
       const from = `${senderName} <${senderEmail}>`;
       const unsubscribeUrl = buildUnsubscribeUrl(baseUrl, userId, toAddress);
 

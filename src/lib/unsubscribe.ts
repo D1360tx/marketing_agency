@@ -1,7 +1,7 @@
 import { createHmac } from "crypto";
 
 const SECRET =
-  process.env.UNSUBSCRIBE_SECRET || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "agencyflow-unsub-secret";
+  process.env.UNSUBSCRIBE_SECRET || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "bookedout-unsub-secret";
 
 /**
  * Generate an HMAC-signed unsubscribe token containing userId and email.

@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Modern Websites for Local Businesses | AgencyFlow",
+  title: "Modern Websites for Local Businesses | Booked Out",
   description:
     "Your website is losing you customers. We build fast, modern, mobile-friendly websites that turn visitors into calls. Free website audit included.",
 };
@@ -30,7 +30,7 @@ export default function LandingPage() {
                 </svg>
               </div>
               <span className="text-xl font-bold text-gray-900">
-                AgencyFlow
+                Booked Out
               </span>
             </div>
             <div className="hidden md:flex items-center gap-8">
@@ -456,7 +456,7 @@ export default function LandingPage() {
                   />
                 </svg>
               </div>
-              <span className="text-lg font-bold text-white">AgencyFlow</span>
+              <span className="text-lg font-bold text-white">Booked Out</span>
             </div>
             <div className="flex gap-6 text-sm text-gray-400">
               <a href="#services" className="hover:text-white transition-colors">
@@ -473,7 +473,7 @@ export default function LandingPage() {
               </a>
             </div>
             <p className="text-sm text-gray-500">
-              © {new Date().getFullYear()} AgencyFlow. All rights reserved.
+              © {new Date().getFullYear()} Booked Out. All rights reserved.
             </p>
           </div>
         </div>

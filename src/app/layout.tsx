@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AgencyFlow - Marketing Agency Automation",
+  title: "Booked Out - Marketing Agency Automation",
   description:
     "Find businesses with poor websites, analyze their online presence, and win them as clients.",
 };

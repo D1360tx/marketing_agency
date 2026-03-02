@@ -144,7 +144,7 @@ async function extractEmailsFromPage(url: string): Promise<string[]> {
   const response = await fetch(url, {
     headers: {
       "User-Agent":
-        "Mozilla/5.0 (compatible; AgencyFlow/1.0; +https://agencyflow.app)",
+        "Mozilla/5.0 (compatible; Booked Out/1.0; +https://bookedout.app)",
     },
     redirect: "follow",
     signal: AbortSignal.timeout(10000), // 10s timeout

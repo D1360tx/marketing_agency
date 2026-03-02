@@ -54,7 +54,7 @@ function SidebarContent({ pathname }: { pathname: string }) {
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
           <Megaphone className="h-4 w-4 text-primary-foreground" />
         </div>
-        <span className="text-lg font-semibold">AgencyFlow</span>
+        <span className="text-lg font-semibold">Booked Out</span>
       </div>
       <Separator />
       <nav className="flex-1 space-y-1 px-3 py-4">
@@ -120,7 +120,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary">
                 <Megaphone className="h-3.5 w-3.5 text-primary-foreground" />
               </div>
-              <span className="font-semibold">AgencyFlow</span>
+              <span className="font-semibold">Booked Out</span>
             </div>
           </header>
 
