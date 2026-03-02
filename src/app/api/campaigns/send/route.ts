@@ -140,8 +140,8 @@ export async function POST(request: Request) {
         );
       }
 
-      const senderEmail = settings?.sender_email || "onboarding@resend.dev";
-      const senderName = settings?.sender_name || "Booked Out";
+      const senderEmail = settings?.sender_email || process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
+      const senderName = settings?.sender_name || process.env.RESEND_FROM_NAME || "Booked Out";
       const from = `${senderName} <${senderEmail}>`;
 
       let sentCount = 0;
