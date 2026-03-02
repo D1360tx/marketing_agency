@@ -24,6 +24,7 @@ import {
   Globe,
   Zap,
   BarChart3,
+  Star,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -35,6 +36,7 @@ const navigation = [
   { name: "Sequences", href: "/sequences", icon: Zap },
   { name: "Generator", href: "/generator", icon: Globe },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
+  { name: "Reviews", href: "/reviews", icon: Star },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
