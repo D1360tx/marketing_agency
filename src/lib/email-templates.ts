@@ -9,6 +9,7 @@ export function renderHtmlEmail(params: {
   previewUrl?: string;
   ctaText?: string;
   ctaUrl?: string;
+  trackingPixelHtml?: string;
 }): string {
   const {
     body,
@@ -17,6 +18,7 @@ export function renderHtmlEmail(params: {
     previewUrl,
     ctaText,
     ctaUrl,
+    trackingPixelHtml,
   } = params;
 
   // Convert plain text body to HTML paragraphs
@@ -106,6 +108,7 @@ export function renderHtmlEmail(params: {
       </td>
     </tr>
   </table>
+  ${trackingPixelHtml || ""}
 </body>
 </html>`;
 }

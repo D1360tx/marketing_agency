@@ -23,6 +23,7 @@ import {
   Megaphone,
   Globe,
   Zap,
+  BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -33,6 +34,7 @@ const navigation = [
   { name: "Campaigns", href: "/campaigns", icon: Mail },
   { name: "Sequences", href: "/sequences", icon: Zap },
   { name: "Generator", href: "/generator", icon: Globe },
+  { name: "Analytics", href: "/analytics", icon: BarChart3 },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 

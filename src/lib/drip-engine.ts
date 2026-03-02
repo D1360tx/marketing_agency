@@ -8,6 +8,10 @@ import {
 import { renderHtmlEmail } from "@/lib/email-templates";
 import { buildUnsubscribeUrl } from "@/lib/unsubscribe";
 import { logActivity } from "@/lib/activity-log";
+import {
+  buildTrackingPixelHtml,
+  injectClickTracking,
+} from "@/lib/tracking";
 
 /**
  * Enroll a prospect into a drip sequence.
@@ -228,6 +232,29 @@ export async function processDripQueue(
       ? interpolateTemplate(step.subject_template, vars)
       : undefined;
 
+    // Pre-create the message record so we have an ID for tracking
+    const { data: dripMsg } = await supabase
+      .from("drip_messages")
+      .insert({
+        enrollment_id: enrollment.id,
+        step_id: step.id,
+        prospect_id: prospect.id,
+        user_id: userId,
+        channel: sequence.channel,
+        to_address: toAddress,
+        subject: subject || null,
+        body,
+        status: "pending",
+      })
+      .select("id")
+      .single();
+
+    const messageId = dripMsg?.id;
+    if (!messageId) {
+      failed++;
+      continue;
+    }
+
     // Send the message
     let sendResult: { success: boolean; error?: string } = {
       success: false,
@@ -246,11 +273,24 @@ export async function processDripQueue(
       const from = `${senderName} <${senderEmail}>`;
       const unsubscribeUrl = buildUnsubscribeUrl(baseUrl, userId, toAddress);
 
-      const html = renderHtmlEmail({
+      const trackingParams = {
+        userId,
+        messageType: "drip" as const,
+        messageId,
+        prospectId: prospect.id,
+      };
+
+      const trackingPixel = buildTrackingPixelHtml(baseUrl, trackingParams);
+
+      let html = renderHtmlEmail({
         body,
         senderName,
         unsubscribeUrl,
+        trackingPixelHtml: trackingPixel,
       });
+
+      // Wrap links with click tracking
+      html = injectClickTracking(html, baseUrl, trackingParams);
 
       sendResult = await sendEmail({
         apiKey,
@@ -283,20 +323,15 @@ export async function processDripQueue(
       });
     }
 
-    // Record the drip message
-    await supabase.from("drip_messages").insert({
-      enrollment_id: enrollment.id,
-      step_id: step.id,
-      prospect_id: prospect.id,
-      user_id: userId,
-      channel: sequence.channel,
-      to_address: toAddress,
-      subject: subject || null,
-      body,
-      status: sendResult.success ? "sent" : "failed",
-      sent_at: sendResult.success ? now : null,
-      error_message: sendResult.error || null,
-    });
+    // Update the message status
+    await supabase
+      .from("drip_messages")
+      .update({
+        status: sendResult.success ? "sent" : "failed",
+        sent_at: sendResult.success ? now : null,
+        error_message: sendResult.error || null,
+      })
+      .eq("id", messageId);
 
     if (sendResult.success) {
       sent++;

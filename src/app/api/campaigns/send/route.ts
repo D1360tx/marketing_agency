@@ -9,6 +9,10 @@ import {
 import { renderHtmlEmail } from "@/lib/email-templates";
 import { buildUnsubscribeUrl } from "@/lib/unsubscribe";
 import { logActivity } from "@/lib/activity-log";
+import {
+  buildTrackingPixelHtml,
+  injectClickTracking,
+} from "@/lib/tracking";
 
 const BATCH_SIZE = 5;
 const BATCH_DELAY_MS = 500;
@@ -176,12 +180,25 @@ export async function POST(request: Request) {
             msg.to_address
           );
 
-          const html = renderHtmlEmail({
+          const trackingParams = {
+            userId: user.id,
+            messageType: "campaign" as const,
+            messageId: msg.id,
+            prospectId: prospect.id,
+          };
+
+          const trackingPixel = buildTrackingPixelHtml(baseUrl, trackingParams);
+
+          let html = renderHtmlEmail({
             body,
             senderName,
             unsubscribeUrl,
             previewUrl: vars.preview_url || undefined,
+            trackingPixelHtml: trackingPixel,
           });
+
+          // Wrap all links with click tracking
+          html = injectClickTracking(html, baseUrl, trackingParams);
 
           const result = await sendEmail({
             apiKey,
