@@ -29,13 +29,36 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Redirect unauthenticated users to login (except for auth pages)
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith("/login") &&
-    !request.nextUrl.pathname.startsWith("/signup") &&
-    !request.nextUrl.pathname.startsWith("/auth")
-  ) {
+  // Public routes that don't require authentication
+  const publicRoutes = [
+    "/login",
+    "/signup",
+    "/auth",
+    "/landing",
+    "/api/track",
+    "/api/unsubscribe",
+    "/unsubscribe",
+    "/preview",
+    "/sites",
+  ];
+
+  const isPublicRoute = publicRoutes.some((route) =>
+    request.nextUrl.pathname.startsWith(route)
+  );
+
+  // Landing page: show to unauthenticated, redirect authenticated to dashboard
+  if (request.nextUrl.pathname === "/") {
+    if (!user) {
+      // Show landing page for visitors
+      const url = request.nextUrl.clone();
+      url.pathname = "/landing";
+      return NextResponse.rewrite(url);
+    }
+    // Authenticated users see the dashboard (handled by (dashboard)/page.tsx)
+  }
+
+  // Redirect unauthenticated users to login (except for public routes)
+  if (!user && !isPublicRoute && request.nextUrl.pathname !== "/") {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
