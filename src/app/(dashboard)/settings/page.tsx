@@ -16,6 +16,7 @@ import { Loader2, Save, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 
 interface SettingsForm {
+  brave_api_key: string;
   outscraper_api_key: string;
   google_pagespeed_key: string;
   hunter_api_key: string;
@@ -30,6 +31,7 @@ interface SettingsForm {
 }
 
 const initialSettings: SettingsForm = {
+  brave_api_key: "",
   outscraper_api_key: "",
   google_pagespeed_key: "",
   hunter_api_key: "",
@@ -56,6 +58,7 @@ export default function SettingsPage() {
         const data = await res.json();
         if (data.settings) {
           setSettings({
+            brave_api_key: data.settings.brave_api_key || "",
             outscraper_api_key: data.settings.outscraper_api_key || "",
             google_pagespeed_key: data.settings.google_pagespeed_key || "",
             hunter_api_key: data.settings.hunter_api_key || "",
@@ -212,30 +215,69 @@ export default function SettingsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Data Collection</CardTitle>
+            <CardTitle>Business Search</CardTitle>
             <CardDescription>
-              APIs for finding and analyzing businesses
+              Find local businesses to prospect. Brave Search is free and used as the primary source.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <ApiKeyInput
+              id="brave_api_key"
+              label="Brave Search API Key (Recommended — Free)"
+              value={settings.brave_api_key}
+              placeholder="BSA..."
+            />
+            <p className="text-xs text-muted-foreground">
+              Free $5/mo credit (~2,000 searches). Get a key from{" "}
+              <a
+                href="https://brave.com/search/api/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-foreground"
+              >
+                Brave Search API
+              </a>
+            </p>
+            <Separator />
+            <ApiKeyInput
               id="outscraper_api_key"
-              label="Outscraper API Key"
+              label="Outscraper API Key (Fallback — Paid)"
               value={settings.outscraper_api_key}
               placeholder="Your Outscraper API key"
             />
+            <p className="text-xs text-muted-foreground">
+              Optional fallback. Only used if Brave Search fails.
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Website Analysis & Email Discovery</CardTitle>
+            <CardDescription>
+              Analyze prospect websites and find contact emails. Email extraction from websites is automatic and free — Hunter.io is an optional fallback.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <ApiKeyInput
               id="google_pagespeed_key"
-              label="Google PageSpeed API Key"
+              label="Google PageSpeed API Key (Optional)"
               value={settings.google_pagespeed_key}
               placeholder="Your Google API key"
             />
+            <p className="text-xs text-muted-foreground">
+              Optional — PageSpeed works without a key but has lower rate limits.
+            </p>
+            <Separator />
             <ApiKeyInput
               id="hunter_api_key"
-              label="Hunter.io API Key"
+              label="Hunter.io API Key (Email Fallback — Paid)"
               value={settings.hunter_api_key}
               placeholder="Your Hunter.io API key"
             />
+            <p className="text-xs text-muted-foreground">
+              Optional fallback for email discovery. Emails are first extracted directly from websites for free.
+            </p>
           </CardContent>
         </Card>
 

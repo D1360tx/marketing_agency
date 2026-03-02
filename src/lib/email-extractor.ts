@@ -7,6 +7,10 @@ const BLACKLIST_PATTERNS = [
   /@localhost/,
   /@sentry\./,
   /@wixpress\./,
+  /@w3\.org/,
+  /@schema\.org/,
+  /@googleusercontent\./,
+  /@wordpress\./,
   /\.png$/,
   /\.jpg$/,
   /\.svg$/,
@@ -16,9 +20,27 @@ const BLACKLIST_PATTERNS = [
   /\.webp$/,
 ];
 
+// Common generic email prefixes for local businesses
+const COMMON_PREFIXES = [
+  "info",
+  "contact",
+  "hello",
+  "office",
+  "support",
+  "admin",
+  "sales",
+  "service",
+  "help",
+  "team",
+  "mail",
+  "enquiries",
+  "inquiries",
+];
+
 /**
  * Extracts email addresses from a website by fetching the homepage
  * and common contact pages, then parsing for email patterns.
+ * If no emails are found via scraping, tries common email patterns.
  */
 export async function extractEmails(websiteUrl: string): Promise<string[]> {
   const emails = new Set<string>();
@@ -52,7 +74,70 @@ export async function extractEmails(websiteUrl: string): Promise<string[]> {
     if (emails.size >= 3) break;
   }
 
+  // If no emails found via scraping, try common patterns
+  if (emails.size === 0) {
+    const domain = extractDomain(baseUrl);
+    if (domain) {
+      const guessedEmails = await guessCommonEmails(domain);
+      guessedEmails.forEach((e) => emails.add(e));
+    }
+  }
+
   return Array.from(emails);
+}
+
+/**
+ * Try common email patterns (info@, contact@, etc.) and verify
+ * which ones have valid MX records for the domain.
+ */
+async function guessCommonEmails(domain: string): Promise<string[]> {
+  // First check if the domain has MX records (can receive email)
+  const hasMx = await domainHasMxRecords(domain);
+  if (!hasMx) return [];
+
+  // Return the most common patterns — we can't truly verify without sending,
+  // but these are high-probability for local businesses
+  const candidates = COMMON_PREFIXES.slice(0, 5).map(
+    (prefix) => `${prefix}@${domain}`
+  );
+
+  // Return first 2 most likely candidates
+  return candidates.slice(0, 2);
+}
+
+/**
+ * Check if a domain has MX records (can receive email).
+ * Uses DNS-over-HTTPS to check from the server side.
+ */
+async function domainHasMxRecords(domain: string): Promise<boolean> {
+  try {
+    const response = await fetch(
+      `https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=MX`,
+      { signal: AbortSignal.timeout(5000) }
+    );
+
+    if (!response.ok) return false;
+
+    const data = await response.json();
+    return (data.Answer?.length || 0) > 0;
+  } catch {
+    // If DNS check fails, assume the domain can receive email
+    // (better to include a guess than miss an opportunity)
+    return true;
+  }
+}
+
+/**
+ * Extract the root domain from a URL.
+ * "https://www.example.com/about" → "example.com"
+ */
+function extractDomain(url: string): string | null {
+  try {
+    const parsed = new URL(url);
+    return parsed.hostname.replace(/^www\./, "");
+  } catch {
+    return null;
+  }
 }
 
 async function extractEmailsFromPage(url: string): Promise<string[]> {
@@ -70,8 +155,10 @@ async function extractEmailsFromPage(url: string): Promise<string[]> {
   const html = await response.text();
   const emails = new Set<string>();
 
-  // Extract from mailto: links
-  const mailtoMatches = html.match(/mailto:([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/gi);
+  // Extract from mailto: links (highest confidence)
+  const mailtoMatches = html.match(
+    /mailto:([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/gi
+  );
   if (mailtoMatches) {
     for (const match of mailtoMatches) {
       const email = match.replace(/^mailto:/i, "").toLowerCase();

@@ -116,6 +116,7 @@ export type CampaignMessage = z.infer<typeof campaignMessageSchema>;
 export const userSettingsSchema = z.object({
   id: z.string().uuid(),
   user_id: z.string().uuid(),
+  brave_api_key: z.string().nullable(),
   outscraper_api_key: z.string().nullable(),
   google_pagespeed_key: z.string().nullable(),
   hunter_api_key: z.string().nullable(),

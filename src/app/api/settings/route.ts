@@ -46,6 +46,7 @@ export async function POST(request: Request) {
       .upsert(
         {
           user_id: user.id,
+          brave_api_key: body.brave_api_key || null,
           outscraper_api_key: body.outscraper_api_key || null,
           google_pagespeed_key: body.google_pagespeed_key || null,
           hunter_api_key: body.hunter_api_key || null,
