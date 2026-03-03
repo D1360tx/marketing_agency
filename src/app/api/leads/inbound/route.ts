@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     const resend = new Resend(process.env.RESEND_API_KEY);
     await resend.emails.send({
       from: `Booked Out <diego@trybookedout.com>`,
-      to: "smoliker@gmail.com",
+      to: "dcamp905@gmail.com",
       subject: `🔥 New inbound lead: ${business_name}`,
       html: `
         <h2>New lead from trybookedout.com</h2>
