@@ -100,7 +100,7 @@ function SectionHeader({
 export default function LandingPage() {
   const [geoLoading, setGeoLoading] = useState(true);
   const [city, setCity] = useState<string>("");
-  const [region, setRegion] = useState<string>("Texas");
+  const [region, setRegion] = useState<string>("");
 
   const [faqOpen, setFaqOpen] = useState<Record<string, boolean>>({
     website: false,
@@ -129,14 +129,14 @@ export default function LandingPage() {
 
         const nextCity = data?.city && isNonEmpty(data.city) ? data.city : "";
         const nextRegion =
-          data?.region && isNonEmpty(data.region) ? data.region : "Texas";
+          data?.region && isNonEmpty(data.region) ? data.region : "";
 
         setCity(nextCity);
         setRegion(nextRegion);
       } catch {
         if (!alive) return;
         setCity("");
-        setRegion("Texas");
+        setRegion("");
       } finally {
         if (!alive) return;
         setGeoLoading(false);
@@ -791,7 +791,7 @@ export default function LandingPage() {
               {
                 key: "cities",
                 q: "What cities do you serve?",
-                a: "Texas suburbs and surrounding areas. The important part: we only work with 1 business per trade per city - so you're not funding your competitor.",
+                a: "Cities across the US. The important part: we only work with 1 business per trade per city - so you're not funding your competitor.",
               },
               {
                 key: "speed",
@@ -982,7 +982,7 @@ export default function LandingPage() {
             <div>
               <div className="text-base font-semibold text-white">Booked Out</div>
               <div className="mt-1 text-sm text-white/60">
-                Websites + review automation for local service businesses in Texas.
+                Websites + review automation for local service businesses nationwide.
               </div>
               <div className="mt-3 flex flex-col gap-1 text-sm">
                 <a href="tel:+15125550100" className="inline-flex items-center gap-2 text-orange-200 hover:text-orange-100">

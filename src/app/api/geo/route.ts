@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const FALLBACK = { city: "", region: "Texas" } as const;
+const FALLBACK = { city: "", region: "" } as const;
 
 function pickClientIp(headers: Headers): string | null {
   const xff = headers.get("x-forwarded-for");
