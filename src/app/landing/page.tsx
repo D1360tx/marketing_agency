@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { AuditForm } from "@/components/audit-form";
+"use client";
+
+import React, { useEffect, useMemo, useState } from "react";
 import {
   ArrowRight,
-  BarChart3,
-  CheckCircle,
+  BadgeCheck,
+  Check,
+  ChevronDown,
   Clock,
   Globe,
   MapPin,
@@ -12,911 +13,997 @@ import {
   Search,
   Shield,
   Smartphone,
+  Sparkles,
   Star,
+  TrendingDown,
   TrendingUp,
-  Zap,
+  Wrench,
 } from "lucide-react";
-import { Inter } from "next/font/google";
 
-const inter = Inter({ subsets: ["latin"], display: "swap" });
+type GeoResponse = { city?: string; region?: string };
 
-export const metadata: Metadata = {
-  title: "Booked Out | Modern Websites + Review Automation for Local Services",
-  description:
-    "Booked Out helps local service businesses get more calls with modern, fast websites and automated Google review requests. Launch in as little as 48 hours.",
+type LeadPayload = {
+  name: string;
+  business: string;
+  phone: string;
+  email: string;
+  source: "landing_v3";
+  city: string;
 };
 
-export default function LandingPage() {
+const COLORS = {
+  navy: "#0f172a",
+  blue: "#3b82f6",
+  orange: "#f97316",
+};
+
+function cx(...classes: Array<string | false | null | undefined>) {
+  return classes.filter(Boolean).join(" ");
+}
+
+function isNonEmpty(v: string) {
+  return v.trim().length > 0;
+}
+
+function SkeletonText({ w = "w-44" }: { w?: string }) {
   return (
-    <div className={inter.className}>
-      <div className="min-h-screen bg-white text-slate-900">
-        {/* Top glow */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none fixed inset-x-0 top-0 z-0 h-72 bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.18),transparent_60%)]"
+    <span
+      aria-hidden="true"
+      className={cx(
+        "inline-block h-7 rounded-md bg-white/10 align-middle",
+        "animate-pulse",
+        w
+      )}
+    />
+  );
+}
+
+function Stars({ value = 5 }: { value?: number }) {
+  return (
+    <div className="flex items-center gap-0.5" aria-label={`${value} out of 5 stars`}>
+      {Array.from({ length: 5 }).map((_, i) => (
+        <Star
+          key={i}
+          className={cx(
+            "h-4 w-4",
+            i < value ? "text-amber-400 fill-amber-400" : "text-white/20"
+          )}
         />
+      ))}
+    </div>
+  );
+}
 
-        {/* Navigation */}
-        <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/80 backdrop-blur">
-          <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-            <a href="#top" className="flex items-center gap-3">
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 shadow-sm ring-1 ring-slate-900/10">
-                <Zap className="h-5 w-5 text-blue-500" />
-              </span>
-              <span className="text-base font-semibold tracking-tight text-slate-900">
-                Booked Out
-              </span>
+function SectionHeader({
+  kicker,
+  title,
+  desc,
+}: {
+  kicker: string;
+  title: string;
+  desc: string;
+}) {
+  return (
+    <div className="mx-auto max-w-3xl text-center">
+      <div className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 ring-1 ring-white/10">
+        <Sparkles className="h-3.5 w-3.5 text-blue-400" />
+        {kicker}
+      </div>
+      <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+        {title}
+      </h2>
+      <p className="mt-3 text-base leading-relaxed text-slate-200">{desc}</p>
+    </div>
+  );
+}
+
+export default function LandingPage() {
+  const [geoLoading, setGeoLoading] = useState(true);
+  const [city, setCity] = useState<string>("your area");
+  const [region, setRegion] = useState<string>("Texas");
+
+  const [faqOpen, setFaqOpen] = useState<Record<string, boolean>>({
+    website: false,
+    doAnything: false,
+    cities: false,
+    speed: false,
+  });
+
+  const [form, setForm] = useState({
+    name: "",
+    business: "",
+    phone: "",
+    email: "",
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState<null | "success" | "error">(null);
+
+  useEffect(() => {
+    let alive = true;
+
+    (async () => {
+      try {
+        const res = await fetch("/api/geo", { method: "GET" });
+        const data = (await res.json()) as GeoResponse;
+        if (!alive) return;
+
+        const nextCity = data?.city && isNonEmpty(data.city) ? data.city : "your area";
+        const nextRegion =
+          data?.region && isNonEmpty(data.region) ? data.region : "Texas";
+
+        setCity(nextCity);
+        setRegion(nextRegion);
+      } catch {
+        if (!alive) return;
+        setCity("your area");
+        setRegion("Texas");
+      } finally {
+        if (!alive) return;
+        setGeoLoading(false);
+      }
+    })();
+
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const dynamic = useMemo(() => {
+    const c = city || "your area";
+    return {
+      heroHeadline: geoLoading ? (
+        <>
+          Your <SkeletonText w="w-32" /> Neighbors Are Already Searching for You.
+          <span className="text-blue-400"> Are They Finding You?</span>
+        </>
+      ) : (
+        <>
+          Your <span className="text-blue-400">{c}</span> Neighbors Are Already
+          Searching for You. <span className="text-blue-400">Are They Finding You?</span>
+        </>
+      ),
+      problemLead: `Right now, someone in ${c} is searching for your service...` ,
+      scarcity: `We only work with 1 business per trade in ${c}.`,
+      activity: `3 businesses from ${c} requested a free audit this week`,
+      finalCta: `Ready to Get Found in ${c}?`,
+    };
+  }, [city, geoLoading]);
+
+  async function submitLead(e: React.FormEvent) {
+    e.preventDefault();
+    setSubmitted(null);
+
+    const payload: LeadPayload = {
+      name: form.name.trim(),
+      business: form.business.trim(),
+      phone: form.phone.trim(),
+      email: form.email.trim(),
+      source: "landing_v3",
+      city: (city || "your area").trim() || "your area",
+    };
+
+    if (!payload.name || !payload.business || !payload.phone || !payload.email) {
+      setSubmitted("error");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/leads/inbound", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        setSubmitted("error");
+        return;
+      }
+
+      setSubmitted("success");
+      setForm({ name: "", business: "", phone: "", email: "" });
+    } catch {
+      setSubmitted("error");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  const contractorImage =
+    "https://images.unsplash.com/photo-1581579188871-c4b6f0634f5e?q=plumber+working&w=1200&auto=format&fit=crop";
+  const workImage =
+    "https://images.unsplash.com/photo-1541976590-713941681591?q=hvac+technician&w=1200&auto=format&fit=crop";
+
+  return (
+    <div
+      className="min-h-screen text-slate-50"
+      style={{ backgroundColor: COLORS.navy }}
+    >
+      {/* Background glow */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 -z-10"
+      >
+        <div className="absolute -left-40 -top-40 h-[520px] w-[520px] rounded-full bg-blue-600/20 blur-3xl" />
+        <div className="absolute -right-40 top-40 h-[520px] w-[520px] rounded-full bg-orange-500/15 blur-3xl" />
+      </div>
+
+      {/* 1) Nav */}
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0f172a]/85 backdrop-blur">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+          <a href="#top" className="flex items-center gap-3">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 ring-1 ring-white/10">
+              <Shield className="h-5 w-5 text-blue-400" />
+            </span>
+            <span className="text-base font-semibold tracking-tight text-white">
+              Booked Out
+            </span>
+          </a>
+
+          <div className="flex items-center gap-3">
+            <a
+              href="tel:+15125550100"
+              className="hidden items-center gap-2 rounded-xl bg-white/5 px-4 py-2 text-sm font-semibold text-orange-300 ring-1 ring-white/10 transition-colors hover:bg-white/10 sm:inline-flex"
+            >
+              <Phone className="h-4 w-4" />
+              (512) 555-0100
             </a>
+            <a
+              href="#audit"
+              className="inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:brightness-95"
+              style={{ backgroundColor: COLORS.orange }}
+            >
+              Get Free Audit
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </a>
+          </div>
+        </div>
+      </header>
 
-            <div className="hidden items-center gap-8 md:flex">
-              <a
-                href="#services"
-                className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900"
+      <main id="top">
+        {/* 2) Hero */}
+        <section className="relative overflow-hidden">
+          <div className="absolute inset-0">
+            <img
+              src={contractorImage}
+              alt="Contractor at work"
+              className="h-full w-full object-cover opacity-25"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0f172a]/60 via-[#0f172a]/85 to-[#0f172a]" />
+          </div>
+
+          <div className="relative mx-auto grid max-w-6xl grid-cols-1 gap-12 px-4 pb-16 pt-14 sm:px-6 sm:pt-16 lg:grid-cols-12 lg:gap-10 lg:px-8 lg:pb-24">
+            <div className="lg:col-span-6">
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 ring-1 ring-white/10">
+                <MapPin className="h-3.5 w-3.5 text-blue-400" />
+                {geoLoading ? (
+                  <span className="opacity-80">Local visibility audit</span>
+                ) : (
+                  <span className="opacity-90">Local visibility audit for {city}, {region}</span>
+                )}
+              </div>
+
+              <h1
+                className={cx(
+                  "mt-6 text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl",
+                  geoLoading ? "opacity-95" : "opacity-100",
+                  "transition-opacity duration-500"
+                )}
               >
-                Services
-              </a>
-              <a
-                href="#process"
-                className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900"
-              >
-                How it works
-              </a>
-              <a
-                href="#results"
-                className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900"
-              >
-                Results
-              </a>
-              <a
-                href="#pricing"
-                className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900"
-              >
-                Pricing
-              </a>
-              <a
-                href="#contact"
-                className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900"
-              >
-                Contact
-              </a>
+                {dynamic.heroHeadline}
+              </h1>
+
+              <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-200">
+                If your website is slow, your reviews are stale, or Google can’t tell
+                who to rank… you’re bleeding calls.
+                <span className="text-white"> We fix it</span> with a professional
+                website + review automation built for contractors.
+              </p>
+
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+                <a
+                  href="#audit"
+                  className="inline-flex items-center justify-center rounded-xl px-6 py-3.5 text-base font-semibold text-white shadow-sm transition-all hover:brightness-95"
+                  style={{ backgroundColor: COLORS.orange }}
+                >
+                  Get My Free Audit
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </a>
+                <a
+                  href="#pricing"
+                  className="inline-flex items-center justify-center rounded-xl bg-white/5 px-6 py-3.5 text-base font-semibold text-white ring-1 ring-white/15 transition-colors hover:bg-white/10"
+                >
+                  See Pricing
+                </a>
+              </div>
+
+              <div className="mt-10 flex flex-wrap items-center gap-3">
+                {["No contracts", "Results in 30 days", "1 business per city"].map(
+                  (t) => (
+                    <div
+                      key={t}
+                      className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 ring-1 ring-white/10"
+                    >
+                      <Check className="h-3.5 w-3.5 text-blue-400" />
+                      {t}
+                    </div>
+                  )
+                )}
+              </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <Link
-                href="/login"
-                className="hidden rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 sm:inline-flex"
+            <div className="lg:col-span-6">
+              <div className="mx-auto max-w-xl">
+                <div className="rounded-3xl bg-white/5 p-4 ring-1 ring-white/10 shadow-2xl shadow-black/30">
+                  <div className="overflow-hidden rounded-2xl bg-slate-950/30 ring-1 ring-white/10">
+                    <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <span className="h-2.5 w-2.5 rounded-full bg-red-400/90" />
+                        <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/90" />
+                        <span className="h-2.5 w-2.5 rounded-full bg-green-400/90" />
+                      </div>
+                      <div className="hidden flex-1 px-4 sm:block">
+                        <div className="truncate rounded-lg bg-white/5 px-3 py-1 text-xs text-slate-200 ring-1 ring-white/10">
+                          google.com — “{geoLoading ? "plumber near me" : `plumber near me ${city.toLowerCase()}` }”
+                        </div>
+                      </div>
+                      <div className="text-xs font-semibold text-slate-200">What customers see</div>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2">
+                      <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <div className="text-sm font-semibold text-white">Before</div>
+                            <div className="mt-1 text-sm text-slate-200">
+                              Slow website. Few reviews. Google shrugs.
+                            </div>
+                          </div>
+                          <TrendingDown className="h-5 w-5 text-rose-400" />
+                        </div>
+                        <div className="mt-4 space-y-2">
+                          <div className="h-2 rounded bg-white/10" />
+                          <div className="h-2 w-4/5 rounded bg-white/10" />
+                          <div className="h-2 w-3/5 rounded bg-white/10" />
+                        </div>
+                        <div className="mt-4 text-xs font-semibold text-white/70">
+                          Missed calls: “We’ll call someone else.”
+                        </div>
+                      </div>
+
+                      <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <div className="text-sm font-semibold text-white">After</div>
+                            <div className="mt-1 text-sm text-slate-200">
+                              Fast site + automated review requests.
+                            </div>
+                          </div>
+                          <TrendingUp className="h-5 w-5 text-emerald-400" />
+                        </div>
+
+                        <div className="mt-4 rounded-xl bg-slate-950/30 p-3 ring-1 ring-white/10">
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="text-xs font-semibold text-white">Google Reviews</div>
+                            <div className="text-xs font-semibold text-emerald-300">+47 reviews</div>
+                          </div>
+                          <div className="mt-2 flex items-center gap-2">
+                            <Stars value={5} />
+                            <span className="text-xs text-white/70">4.9 avg</span>
+                          </div>
+                        </div>
+
+                        <div className="mt-4 text-xs font-semibold text-white/70">
+                          More calls in 30 days — without chasing people.
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border-t border-white/10 p-4">
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                        {[
+                          { icon: Clock, title: "Results in 30 days", desc: "Rank + reviews + calls" },
+                          { icon: Smartphone, title: "Mobile-first", desc: "Built for thumb scroll" },
+                          { icon: BadgeCheck, title: "Done-for-you", desc: "We build. We launch." },
+                        ].map((b) => (
+                          <div key={b.title} className="rounded-2xl bg-white/5 p-3 ring-1 ring-white/10">
+                            <b.icon className="h-4 w-4 text-blue-400" />
+                            <div className="mt-2 text-sm font-semibold text-white">{b.title}</div>
+                            <div className="mt-1 text-xs text-slate-200">{b.desc}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-4 text-center text-xs text-white/60">
+                  No contracts. Cancel anytime. We win by getting you found.
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 3) Problem */}
+        <section id="problem" className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+          <SectionHeader
+            kicker="This is why you’re losing calls"
+            title="Google doesn’t reward ‘good enough’ anymore"
+            desc="Fear first: if you don’t look like the obvious choice online, customers in your city move on in seconds. Relief next: we make you the obvious choice."
+          />
+
+          <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
+            {[
+              {
+                icon: Globe,
+                title: "No real website",
+                desc: "A Facebook page isn’t a website. When someone in your city searches, you look untrustworthy — and they click your competitor.",
+              },
+              {
+                icon: Star,
+                title: "Not enough reviews",
+                desc: "Customers filter by stars. If you have 0–10 reviews, you’re invisible next to the guy with 47.",
+              },
+              {
+                icon: Search,
+                title: "Competitors outrank you",
+                desc: "Even if you do great work, Google ranks what it can understand: fast site, clear services, consistent activity.",
+              },
+            ].map((p) => (
+              <div
+                key={p.title}
+                className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10"
               >
-                Sign in
-              </Link>
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-500/15 ring-1 ring-blue-400/20">
+                  <p.icon className="h-6 w-6 text-blue-400" />
+                </div>
+                <h3 className="mt-4 text-lg font-semibold text-white">{p.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-200">
+                  <span className="font-semibold text-white">{dynamic.problemLead}</span> {p.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-10 rounded-3xl bg-gradient-to-r from-orange-500/15 via-white/5 to-blue-600/15 p-6 ring-1 ring-white/10">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div>
+                <div className="text-sm font-semibold text-white">
+                  Stop guessing. Get the exact fixes.
+                </div>
+                <div className="mt-1 text-sm text-slate-200">
+                  We’ll show you what’s blocking calls in <span className="text-white">{city}</span> and what to change first.
+                </div>
+              </div>
               <a
-                href="#contact"
-                className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 ring-1 ring-blue-600/10 transition-all hover:bg-blue-700 hover:shadow-md hover:shadow-blue-600/30"
+                href="#audit"
+                className="inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:brightness-95"
+                style={{ backgroundColor: COLORS.orange }}
               >
-                Get a free audit
+                Get My Free Audit
                 <ArrowRight className="ml-2 h-4 w-4" />
               </a>
             </div>
-          </nav>
-        </header>
+          </div>
+        </section>
 
-        {/* Hero */}
-        <main id="top" className="relative z-10">
-          <section className="relative overflow-hidden bg-[#0F172A]">
-            <div className="absolute inset-0">
-              <img
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&q=80"
-                alt="Contractor reviewing work"
-                className="h-full w-full object-cover opacity-25"
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-[#0F172A]/70 via-[#0F172A]/80 to-[#0F172A]" />
+        {/* 4) Services Bento Grid */}
+        <section id="services" className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
+          <SectionHeader
+            kicker="Everything you need to win locally"
+            title="Websites + reviews + local SEO — packaged for contractors"
+            desc="You don’t need 12 vendors. You need one system that makes Google trust you and customers choose you."
+          />
+
+          <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-12">
+            <div className="md:col-span-7 rounded-3xl bg-white/5 p-7 ring-1 ring-white/10">
+              <div className="flex items-center gap-3">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-500/15 ring-1 ring-orange-400/20">
+                  <Globe className="h-6 w-6 text-orange-300" />
+                </div>
+                <div>
+                  <div className="text-lg font-semibold text-white">Professional Website</div>
+                  <div className="text-sm text-slate-200">
+                    Fast, modern, built to convert calls and quote requests.
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {[
+                  { icon: Smartphone, t: "Mobile-first layout", d: "Thumb-friendly, tap-to-call, clear CTAs." },
+                  { icon: Shield, t: "Trust builders", d: "Licensing, badges, warranties, and proof." },
+                  { icon: Clock, t: "Speed optimized", d: "Fast loads = higher rank + higher conversion." },
+                  { icon: Wrench, t: "Trade-specific copy", d: "HVAC, plumbing, landscaping, electrical." },
+                ].map((x) => (
+                  <div key={x.t} className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
+                    <x.icon className="h-5 w-5 text-blue-400" />
+                    <div className="mt-3 text-sm font-semibold text-white">{x.t}</div>
+                    <div className="mt-1 text-sm text-slate-200">{x.d}</div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <div className="relative mx-auto grid max-w-6xl grid-cols-1 gap-12 px-4 pb-20 pt-16 sm:px-6 sm:pt-20 lg:grid-cols-12 lg:gap-10 lg:px-8 lg:pb-28">
-              <div className="lg:col-span-6">
-                <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white ring-1 ring-white/15">
+            <div className="md:col-span-5 grid grid-cols-1 gap-5">
+              {[ 
+                {
+                  title: "Google Review Automation",
+                  desc: "Turn jobs into 5-star reviews automatically — no awkward asking.",
+                  icon: Star,
+                  accent: "text-amber-300",
+                },
+                {
+                  title: "Local SEO",
+                  desc: "City + service pages that Google understands and ranks.",
+                  icon: MapPin,
+                  accent: "text-blue-300",
+                },
+                {
+                  title: "Mobile Optimized",
+                  desc: "Tap-to-call, fast loads, clean layout. No friction.",
+                  icon: Smartphone,
+                  accent: "text-emerald-300",
+                },
+                {
+                  title: "Done For You",
+                  desc: "We build, launch, and keep it running. You stay focused on jobs.",
+                  icon: Shield,
+                  accent: "text-orange-300",
+                },
+              ].map((s) => (
+                <div
+                  key={s.title}
+                  className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <div className="text-base font-semibold text-white">{s.title}</div>
+                      <div className="mt-1 text-sm text-slate-200">{s.desc}</div>
+                    </div>
+                    <s.icon className={cx("h-6 w-6", s.accent)} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-10 overflow-hidden rounded-3xl bg-white/5 ring-1 ring-white/10">
+            <div className="grid grid-cols-1 md:grid-cols-2">
+              <div className="p-7">
+                <div className="text-sm font-semibold text-white/80">What this solves</div>
+                <ul className="mt-4 space-y-3 text-sm text-slate-200">
+                  {[
+                    "You stop losing the ‘near me’ searches.",
+                    "You build trust fast with reviews and proof.",
+                    "You become the obvious choice in your city.",
+                  ].map((t) => (
+                    <li key={t} className="flex items-start gap-3">
+                      <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-blue-500/15 ring-1 ring-blue-400/20">
+                        <Check className="h-3.5 w-3.5 text-blue-300" />
+                      </span>
+                      <span>{t}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="relative">
+                <img
+                  src={workImage}
+                  alt="Technician working"
+                  className="h-full w-full object-cover opacity-90"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a] via-[#0f172a]/40 to-transparent" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 5) Social proof */}
+        <section id="proof" className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+          <SectionHeader
+            kicker="Proof beats promises"
+            title="0 reviews → 47 reviews in 60 days"
+            desc="That’s what happens when review requests run automatically after every job — and your website actually converts the traffic Google sends you."
+          />
+
+          <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
+            {[ 
+              {
+                name: "Mark T.",
+                trade: "HVAC",
+                city: "Round Rock",
+                stars: 5,
+                quote:
+                  "We went from basically invisible to booked. The review automation alone paid for this in the first month.",
+              },
+              {
+                name: "Javier R.",
+                trade: "Plumbing",
+                city: "Cedar Park",
+                stars: 5,
+                quote:
+                  "The site looks legit and the calls feel higher quality. People mention they saw our reviews before calling.",
+              },
+              {
+                name: "Chris D.",
+                trade: "Landscaping",
+                city: "Leander",
+                stars: 5,
+                quote:
+                  "I don’t chase reviews anymore. It just happens. We hit 47 reviews fast and my phone didn’t stop.",
+              },
+            ].map((t) => (
+              <div
+                key={t.name}
+                className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10"
+              >
+                <Stars value={t.stars} />
+                <p className="mt-4 text-sm leading-relaxed text-slate-200">“{t.quote}”</p>
+                <div className="mt-6 flex items-center justify-between gap-3">
+                  <div>
+                    <div className="text-sm font-semibold text-white">{t.name}</div>
+                    <div className="text-xs text-white/70">
+                      {t.trade} — {t.city}, TX
+                    </div>
+                  </div>
+                  <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-200 ring-1 ring-emerald-400/20">
+                    <Check className="h-3.5 w-3.5" />
+                    Verified
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* 6) Pricing */}
+        <section id="pricing" className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
+          <SectionHeader
+            kicker="Simple pricing"
+            title="$399/mo — built for local service businesses"
+            desc="No long contracts. No mystery retainers. Just a system designed to get you found and chosen."
+          />
+
+          <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-12">
+            <div className="lg:col-span-7 rounded-3xl bg-white/5 p-7 ring-1 ring-white/10">
+              <div className="flex items-start justify-between gap-6">
+                <div>
+                  <div className="text-sm font-semibold text-white/80">Booked Out Growth</div>
+                  <div className="mt-2 text-4xl font-semibold tracking-tight text-white">
+                    $399<span className="text-base font-semibold text-white/70">/mo</span>
+                  </div>
+                  <div className="mt-2 text-sm text-slate-200">
+                    <span className="font-semibold text-white">First 30 days free if no results.</span> We don’t win unless you do.
+                  </div>
+                </div>
+                <div className="hidden sm:block rounded-2xl bg-orange-500/15 px-4 py-3 ring-1 ring-orange-400/20">
+                  <div className="text-xs font-semibold text-orange-200">Scarcity</div>
+                  <div className="mt-1 text-sm font-semibold text-white">{dynamic.scarcity}</div>
+                </div>
+              </div>
+
+              <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {[
+                  "Professional website built to convert",
+                  "Google review automation (47+ in 60 days)",
+                  "Local SEO pages for your service area",
+                  "Ongoing updates + monitoring",
+                  "Support by real humans",
+                  "Cancel anytime",
+                ].map((t) => (
+                  <div key={t} className="flex items-start gap-3 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
+                    <span className="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full bg-blue-500/15 ring-1 ring-blue-400/20">
+                      <Check className="h-4 w-4 text-blue-300" />
+                    </span>
+                    <span className="text-sm text-slate-200">{t}</span>
+                  </div>
+                ))}
+              </div>
+
+              <a
+                href="#audit"
+                className="mt-7 inline-flex w-full items-center justify-center rounded-xl px-6 py-3.5 text-base font-semibold text-white shadow-sm transition-all hover:brightness-95"
+                style={{ backgroundColor: COLORS.orange }}
+              >
+                Get My Free Audit
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </a>
+
+              <div className="mt-3 text-center text-xs text-white/60">
+                {dynamic.scarcity}
+              </div>
+            </div>
+
+            <div className="lg:col-span-5 rounded-3xl bg-white/5 p-7 ring-1 ring-white/10">
+              <div className="text-sm font-semibold text-white/80">What you get first</div>
+              <div className="mt-3 text-lg font-semibold text-white">Free audit in 24–48 hours</div>
+              <p className="mt-2 text-sm leading-relaxed text-slate-200">
+                We’ll review your online presence and send a quick, brutally clear
+                plan: what’s broken, what’s missing, and what to fix to win in {city}.
+              </p>
+
+              <div className="mt-6 space-y-3">
+                {[ 
+                  { icon: Search, t: "Ranking blockers", d: "Speed, content, local intent." },
+                  { icon: Star, t: "Review gap", d: "What competitors have that you don’t." },
+                  { icon: Phone, t: "Conversion leaks", d: "Where leads fall off." },
+                ].map((x) => (
+                  <div key={x.t} className="flex items-start gap-3 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
+                    <div className="mt-0.5 inline-flex h-9 w-9 items-center justify-center rounded-xl bg-blue-500/15 ring-1 ring-blue-400/20">
+                      <x.icon className="h-5 w-5 text-blue-300" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold text-white">{x.t}</div>
+                      <div className="mt-1 text-sm text-slate-200">{x.d}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 7) Activity counter */}
+        <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
+          <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3">
+                <span className="relative inline-flex h-3 w-3">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/60" />
+                  <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-400" />
+                </span>
+                <div className="text-sm font-semibold text-white">{dynamic.activity}</div>
+              </div>
+              <a
+                href="#audit"
+                className="inline-flex items-center justify-center rounded-xl bg-white/5 px-5 py-3 text-sm font-semibold text-white ring-1 ring-white/15 transition-colors hover:bg-white/10"
+              >
+                Claim My Spot
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* 8) FAQ */}
+        <section id="faq" className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+          <SectionHeader
+            kicker="FAQ"
+            title="Quick answers before you book an audit"
+            desc="If you’re serious about getting found locally, this is the fastest, lowest-risk way to start."
+          />
+
+          <div className="mt-10 mx-auto max-w-3xl space-y-4">
+            {[
+              {
+                key: "website",
+                q: "What if I already have a website?",
+                a: "Perfect. We’ll audit it. If it’s fast and converting, we keep what works. If it’s slow or outdated, we rebuild what’s needed so Google (and customers) trust it.",
+              },
+              {
+                key: "doAnything",
+                q: "Do I need to do anything?",
+                a: "Not much. We’ll ask a few quick questions about your services and service area. After that, we build and run the system. You focus on jobs.",
+              },
+              {
+                key: "cities",
+                q: "What cities do you serve?",
+                a: "Texas suburbs and surrounding areas. The important part: we only work with 1 business per trade per city — so you’re not funding your competitor.",
+              },
+              {
+                key: "speed",
+                q: "How fast do I see results?",
+                a: "Most businesses see movement within 30 days: faster site, better conversion, more reviews, stronger local signals. Review growth can be very quick — we’ve seen 47 reviews in 60 days.",
+              },
+            ].map((item) => {
+              const open = !!faqOpen[item.key];
+              return (
+                <div key={item.key} className="rounded-3xl bg-white/5 ring-1 ring-white/10">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFaqOpen((s) => ({ ...s, [item.key]: !s[item.key] }))
+                    }
+                    className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+                    aria-expanded={open}
+                  >
+                    <span className="text-base font-semibold text-white">{item.q}</span>
+                    <ChevronDown
+                      className={cx(
+                        "h-5 w-5 text-white/70 transition-transform",
+                        open && "rotate-180"
+                      )}
+                    />
+                  </button>
+                  <div
+                    className={cx(
+                      "grid transition-[grid-template-rows] duration-300 ease-out",
+                      open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                    )}
+                  >
+                    <div className="overflow-hidden px-6 pb-5">
+                      <p className="text-sm leading-relaxed text-slate-200">{item.a}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* 9) Final CTA + Form */}
+        <section id="audit" className="mx-auto max-w-6xl px-4 pb-20 sm:px-6 lg:px-8">
+          <div className="overflow-hidden rounded-3xl bg-gradient-to-r from-orange-500/15 via-white/5 to-blue-600/15 ring-1 ring-white/10">
+            <div className="grid grid-cols-1 gap-0 lg:grid-cols-12">
+              <div className="lg:col-span-6 p-8">
+                <div className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 ring-1 ring-white/10">
                   <Shield className="h-3.5 w-3.5 text-blue-400" />
-                  Built for local service businesses
+                  No contracts · Results in 30 days
                 </div>
 
-                <h1 className="mt-6 text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
-                  A modern website that turns searches into
-                  <span className="text-blue-400"> calls</span>.
-                </h1>
+                <h2 className="mt-5 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+                  {dynamic.finalCta}
+                </h2>
 
-                <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-200">
-                  Booked Out helps HVAC, plumbing, landscaping, and other local
-                  service pros get more customers with lightning-fast websites
-                  and automated Google review requests.
+                <p className="mt-3 text-sm leading-relaxed text-slate-200">
+                  Get a free audit that shows exactly why you’re not ranking and what
+                  to fix first. If we can’t show results in the first 30 days, you don’t
+                  pay.
                 </p>
 
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <a
-                    href="#contact"
-                    className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-6 py-3.5 text-base font-semibold text-white shadow-sm shadow-blue-600/25 transition-all hover:bg-blue-700 hover:shadow-md hover:shadow-blue-600/30"
-                  >
-                    Get my free audit
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </a>
-                  <a
-                    href="#pricing"
-                    className="inline-flex items-center justify-center rounded-xl bg-white/10 px-6 py-3.5 text-base font-semibold text-white ring-1 ring-white/20 transition-colors hover:bg-white/15"
-                  >
-                    View pricing
-                  </a>
-                </div>
-
-                <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                  {[
-                    {
-                      icon: Clock,
-                      title: "Live in 48 hours",
-                      desc: "Fast turnaround, no bloated process.",
-                    },
-                    {
-                      icon: Smartphone,
-                      title: "Mobile-first",
-                      desc: "Designed for thumb-scrolling customers.",
-                    },
-                    {
-                      icon: TrendingUp,
-                      title: "Built to convert",
-                      desc: "More calls, more quote requests.",
-                    },
-                  ].map((item) => (
-                    <div
-                      key={item.title}
-                      className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10"
-                    >
-                      <item.icon className="h-5 w-5 text-blue-400" />
-                      <div className="mt-3 text-sm font-semibold text-white">
-                        {item.title}
-                      </div>
-                      <div className="mt-1 text-sm text-slate-200">
-                        {item.desc}
-                      </div>
+                <div className="mt-6 space-y-3">
+                  {[ 
+                    { icon: Check, t: "Audit delivered in 24–48 hours" },
+                    { icon: Check, t: "Review plan to reach 47 reviews" },
+                    { icon: Check, t: "We only work with 1 business per trade in your city" },
+                  ].map((x) => (
+                    <div key={x.t} className="flex items-start gap-3">
+                      <span className="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/10 ring-1 ring-emerald-400/20">
+                        <x.icon className="h-4 w-4 text-emerald-200" />
+                      </span>
+                      <span className="text-sm text-slate-200">{x.t}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Hero: mock browser before/after */}
-              <div className="lg:col-span-6">
-                <div className="mx-auto max-w-xl">
-                  <div className="rounded-3xl bg-white/5 p-4 ring-1 ring-white/12 shadow-2xl shadow-black/30">
-                    <div className="rounded-2xl bg-slate-950/50 ring-1 ring-white/10">
-                      <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          <span className="h-2.5 w-2.5 rounded-full bg-red-400/90" />
-                          <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/90" />
-                          <span className="h-2.5 w-2.5 rounded-full bg-green-400/90" />
-                        </div>
-                        <div className="hidden flex-1 px-4 sm:block">
-                          <div className="truncate rounded-lg bg-white/10 px-3 py-1 text-xs text-slate-200 ring-1 ring-white/10">
-                            yourbusiness.com
-                          </div>
-                        </div>
-                        <div className="text-xs font-semibold text-slate-200">
-                          Before / After
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2">
-                        {/* Before */}
-                        <div className="border-r border-white/10 p-4">
-                          <div className="text-[11px] font-semibold uppercase tracking-wide text-slate-300">
-                            Before
-                          </div>
-                          <div className="mt-3 rounded-xl bg-white/5 p-3 ring-1 ring-white/10">
-                            <div className="h-3 w-24 rounded bg-white/10" />
-                            <div className="mt-3 space-y-2">
-                              <div className="h-2 w-full rounded bg-white/10" />
-                              <div className="h-2 w-5/6 rounded bg-white/10" />
-                              <div className="h-2 w-4/6 rounded bg-white/10" />
-                            </div>
-                            <div className="mt-4 h-28 rounded-lg bg-white/10" />
-                            <div className="mt-4 grid grid-cols-2 gap-2">
-                              <div className="h-8 rounded-lg bg-white/10" />
-                              <div className="h-8 rounded-lg bg-white/10" />
-                            </div>
-                            <div className="mt-4 text-xs text-slate-300">
-                              Slow, outdated, hard to use on mobile.
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* After */}
-                        <div className="p-4">
-                          <div className="text-[11px] font-semibold uppercase tracking-wide text-slate-300">
-                            After
-                          </div>
-                          <div className="mt-3 overflow-hidden rounded-xl bg-white ring-1 ring-black/5">
-                            <div className="relative">
-                              <img
-                                src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80"
-                                alt="Tradesperson working"
-                                className="h-28 w-full object-cover"
-                              />
-                              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/55 via-slate-900/10 to-transparent" />
-                              <div className="absolute bottom-3 left-3 right-3">
-                                <div className="text-sm font-semibold text-white">
-                                  Get service today
-                                </div>
-                                <div className="mt-1 flex items-center gap-2 text-xs text-slate-200">
-                                  <MapPin className="h-3.5 w-3.5" />
-                                  Local • Fast • Trusted
-                                </div>
-                              </div>
-                            </div>
-                            <div className="p-3">
-                              <div className="flex items-center justify-between">
-                                <div className="text-xs font-semibold text-slate-900">
-                                  Modern layout
-                                </div>
-                                <div className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-1 text-[11px] font-semibold text-blue-700">
-                                  <Zap className="h-3.5 w-3.5" />
-                                  Fast
-                                </div>
-                              </div>
-                              <div className="mt-2 text-xs text-slate-600">
-                                Clear calls-to-action and mobile-friendly
-                                sections.
-                              </div>
-                              <div className="mt-3 grid grid-cols-2 gap-2">
-                                <div className="flex items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-2 py-2 text-xs font-semibold text-white">
-                                  <Phone className="h-4 w-4" />
-                                  Call now
-                                </div>
-                                <div className="flex items-center justify-center gap-1.5 rounded-lg bg-slate-900 px-2 py-2 text-xs font-semibold text-white">
-                                  <Star className="h-4 w-4" />
-                                  Reviews
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Mini phone mockup (CSS) */}
-                          <div className="mt-4 rounded-2xl bg-white/5 p-3 ring-1 ring-white/10">
-                            <div className="flex items-center justify-between">
-                              <div className="text-xs font-semibold text-slate-200">
-                                Mobile preview
-                              </div>
-                              <div className="text-[11px] text-slate-300">
-                                Thumb-first
-                              </div>
-                            </div>
-                            <div className="mt-3 flex justify-center">
-                              <div className="relative h-40 w-28 rounded-[24px] bg-slate-950 ring-1 ring-white/15 shadow-lg shadow-black/30">
-                                <div className="absolute left-1/2 top-2 h-1.5 w-10 -translate-x-1/2 rounded-full bg-white/10" />
-                                <div className="absolute inset-2 overflow-hidden rounded-[18px] bg-white">
-                                  <div className="h-14 bg-gradient-to-br from-blue-600 to-slate-900" />
-                                  <div className="space-y-2 p-2">
-                                    <div className="h-2 w-4/5 rounded bg-slate-200" />
-                                    <div className="h-2 w-full rounded bg-slate-200" />
-                                    <div className="h-7 rounded-lg bg-blue-600" />
-                                    <div className="h-7 rounded-lg bg-slate-900" />
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                      {[
-                        { icon: Globe, label: "Modern website" },
-                        { icon: Star, label: "Review automation" },
-                        { icon: Search, label: "Local SEO" },
-                      ].map((b) => (
-                        <div
-                          key={b.label}
-                          className="flex items-center gap-2 rounded-2xl bg-white/5 px-3 py-3 ring-1 ring-white/10"
-                        >
-                          <b.icon className="h-4 w-4 text-blue-400" />
-                          <span className="text-sm font-semibold text-white">
-                            {b.label}
-                          </span>
-                        </div>
-                      ))}
+              <div className="lg:col-span-6 bg-[#0b1224]/70 p-8 ring-1 ring-white/10">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <div className="text-sm font-semibold text-white">Request your free audit</div>
+                    <div className="mt-1 text-xs text-white/60">
+                      You’ll get a response within 1 business day.
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Pain Points */}
-          <section className="bg-white py-20">
-            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-              <div className="mx-auto max-w-3xl text-center">
-                <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 ring-1 ring-slate-200">
-                  <Clock className="h-3.5 w-3.5 text-blue-600" />
-                  The problem we fix
-                </div>
-                <h2 className="mt-5 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-                  Your website shouldn&apos;t leak leads.
-                </h2>
-                <p className="mt-4 text-lg leading-relaxed text-slate-600">
-                  Most local service sites are slow, hard to navigate, and don&apos;t
-                  make it obvious how to call. We redesign the entire experience
-                  to drive calls, quote requests, and reviews.
-                </p>
-              </div>
-
-              <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3">
-                {[
-                  {
-                    icon: Zap,
-                    title: "Slow pages",
-                    desc: "If your site takes more than a few seconds to load, visitors bounce before they ever call.",
-                    stat: "< 2s",
-                    statLabel: "target load time",
-                  },
-                  {
-                    icon: Smartphone,
-                    title: "Bad mobile UX",
-                    desc: "Most searches happen on phones. If the site is a chore, customers pick the next business.",
-                    stat: "Mobile",
-                    statLabel: "first design",
-                  },
-                  {
-                    icon: Phone,
-                    title: "No clear CTA",
-                    desc: "You need click-to-call, sticky CTAs, and conversion-focused layouts — not paragraphs.",
-                    stat: "+ Calls",
-                    statLabel: "built in",
-                  },
-                ].map((p) => (
-                  <div
-                    key={p.title}
-                    className="group rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
-                  >
-                    <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-900 ring-1 ring-slate-900/10">
-                      <p.icon className="h-5 w-5 text-blue-500" />
-                    </div>
-                    <h3 className="mt-5 text-lg font-semibold text-slate-900">
-                      {p.title}
-                    </h3>
-                    <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                      {p.desc}
-                    </p>
-                    <div className="mt-5 flex items-baseline gap-2">
-                      <div className="text-2xl font-semibold text-blue-600">
-                        {p.stat}
-                      </div>
-                      <div className="text-sm text-slate-500">{p.statLabel}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* Services */}
-          <section id="services" className="bg-slate-50 py-20">
-            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-              <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-12">
-                <div className="lg:col-span-5">
-                  <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700 ring-1 ring-slate-200">
-                    <Globe className="h-3.5 w-3.5 text-blue-600" />
-                    What you get
-                  </div>
-                  <h2 className="mt-5 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-                    Everything your business needs to get booked out.
-                  </h2>
-                  <p className="mt-4 text-lg leading-relaxed text-slate-600">
-                    A premium web presence + the systems that build trust and
-                    keep your phone ringing.
-                  </p>
-
-                  <div className="mt-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-                    <img
-                      src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80"
-                      alt="Plumber working"
-                      className="h-56 w-full object-cover"
-                    />
-                    <div className="p-6">
-                      <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-                        <Shield className="h-4 w-4 text-blue-600" />
-                        Built for trades & local services
-                      </div>
-                      <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                        Clear service pages, strong calls-to-action, and
-                        trust-first design that looks premium on every device.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="lg:col-span-7">
-                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                    {[
-                      {
-                        icon: Globe,
-                        title: "Conversion-focused website",
-                        desc: "Modern design, fast load times, service pages that rank and convert.",
-                      },
-                      {
-                        icon: Smartphone,
-                        title: "Mobile-first experience",
-                        desc: "Tap-to-call, streamlined forms, and layouts that work on small screens.",
-                      },
-                      {
-                        icon: Search,
-                        title: "Local SEO foundation",
-                        desc: "On-page SEO, schema, and location signals designed to win local searches.",
-                      },
-                      {
-                        icon: Star,
-                        title: "Review automation",
-                        desc: "Automated Google review requests to build trust and improve ranking.",
-                      },
-                      {
-                        icon: Phone,
-                        title: "Click-to-call everywhere",
-                        desc: "Calls are the lifeblood. We make contacting you frictionless.",
-                      },
-                      {
-                        icon: BarChart3,
-                        title: "Analytics & reporting",
-                        desc: "Know what&apos;s working: calls, forms, traffic, and performance.",
-                      },
-                    ].map((s) => (
-                      <div
-                        key={s.title}
-                        className="group rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
-                      >
-                        <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 ring-1 ring-blue-600/10">
-                          <s.icon className="h-5 w-5 text-blue-600" />
-                        </div>
-                        <h3 className="mt-5 text-base font-semibold text-slate-900">
-                          {s.title}
-                        </h3>
-                        <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                          {s.desc}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-8 rounded-3xl bg-slate-900 p-8 text-white shadow-sm">
-                    <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-                      <div>
-                        <div className="text-sm font-semibold text-blue-300">
-                          Typical outcome
-                        </div>
-                        <div className="mt-1 text-2xl font-semibold tracking-tight">
-                          More calls. Better reviews. Stronger Google presence.
-                        </div>
-                      </div>
-                      <a
-                        href="#contact"
-                        className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm shadow-blue-600/25 transition-colors hover:bg-blue-700"
-                      >
-                        Request an audit
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* How it works */}
-          <section id="process" className="bg-white py-20">
-            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-              <div className="mx-auto max-w-3xl text-center">
-                <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 ring-1 ring-slate-200">
-                  <CheckCircle className="h-3.5 w-3.5 text-blue-600" />
-                  Simple, fast, predictable
-                </div>
-                <h2 className="mt-5 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-                  Launch in 3 steps.
-                </h2>
-                <p className="mt-4 text-lg leading-relaxed text-slate-600">
-                  No drawn-out agency timelines. We move quickly and keep you in
-                  the loop.
-                </p>
-              </div>
-
-              <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3">
-                {[
-                  {
-                    step: "01",
-                    title: "Audit",
-                    desc: "We review your current site (or your competitors) and identify the fastest wins to get more calls.",
-                    icon: Search,
-                  },
-                  {
-                    step: "02",
-                    title: "Build",
-                    desc: "You get a clean, premium design with clear CTAs, service pages, and mobile-first layouts.",
-                    icon: Globe,
-                  },
-                  {
-                    step: "03",
-                    title: "Grow",
-                    desc: "We launch, optimize, and (on Growth/Pro) automate review requests to boost trust and ranking.",
-                    icon: TrendingUp,
-                  },
-                ].map((st) => (
-                  <div
-                    key={st.step}
-                    className="relative rounded-3xl border border-slate-200 bg-white p-7 shadow-sm"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm font-semibold text-slate-500">
-                        {st.step}
-                      </div>
-                      <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900 ring-1 ring-slate-900/10">
-                        <st.icon className="h-5 w-5 text-blue-500" />
-                      </div>
-                    </div>
-                    <h3 className="mt-5 text-lg font-semibold text-slate-900">
-                      {st.title}
-                    </h3>
-                    <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                      {st.desc}
-                    </p>
-                    <div className="mt-6 h-px w-full bg-slate-200" />
-                    <ul className="mt-5 space-y-3">
-                      {["Clear timeline", "No fluff", "Built for calls"].map(
-                        (x) => (
-                          <li key={x} className="flex items-start gap-2">
-                            <CheckCircle className="mt-0.5 h-4 w-4 text-blue-600" />
-                            <span className="text-sm text-slate-600">{x}</span>
-                          </li>
-                        )
-                      )}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* Social proof / Stats */}
-          <section id="results" className="bg-slate-50 py-20">
-            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-              <div className="mx-auto max-w-3xl text-center">
-                <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700 ring-1 ring-slate-200">
-                  <Star className="h-3.5 w-3.5 text-blue-600" />
-                  Social proof
-                </div>
-                <h2 className="mt-5 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-                  Built to look premium — and perform.
-                </h2>
-                <p className="mt-4 text-lg leading-relaxed text-slate-600">
-                  Your website is often the first impression. We make sure it
-                  feels trustworthy and makes it effortless to contact you.
-                </p>
-              </div>
-
-              <div className="mt-14 grid grid-cols-2 gap-6 md:grid-cols-4">
-                {[
-                  { value: "48h", label: "Typical launch window" },
-                  { value: "95+", label: "Target PageSpeed score" },
-                  { value: "2x", label: "More inbound calls" },
-                  { value: "5★", label: "Review-first design" },
-                ].map((s) => (
-                  <div
-                    key={s.label}
-                    className="rounded-3xl border border-slate-200 bg-white p-6 text-center shadow-sm"
-                  >
-                    <div className="text-3xl font-semibold tracking-tight text-slate-900">
-                      {s.value}
-                    </div>
-                    <div className="mt-2 text-sm text-slate-600">{s.label}</div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2">
-                {[
-                  {
-                    quote:
-                      "Our new site looks premium and loads instantly. Customers mention it on the phone — and we&apos;re booking more jobs.",
-                    name: "Plumbing & Drain Service",
-                    location: "Austin, TX",
-                  },
-                  {
-                    quote:
-                      "The review automation alone was worth it. We&apos;re getting more Google reviews each week and ranking better locally.",
-                    name: "HVAC Company",
-                    location: "Dallas, TX",
-                  },
-                ].map((t) => (
-                  <div
-                    key={t.name}
-                    className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm"
-                  >
-                    <div className="flex items-center gap-1">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star key={i} className="h-4 w-4 text-yellow-500" />
-                      ))}
-                    </div>
-                    <p className="mt-4 text-sm leading-relaxed text-slate-700">
-                      &ldquo;{t.quote}&rdquo;
-                    </p>
-                    <div className="mt-6 flex items-center justify-between gap-3">
-                      <div>
-                        <div className="text-sm font-semibold text-slate-900">
-                          {t.name}
-                        </div>
-                        <div className="mt-1 flex items-center gap-1 text-sm text-slate-500">
-                          <MapPin className="h-4 w-4" />
-                          {t.location}
-                        </div>
-                      </div>
-                      <div className="inline-flex items-center gap-2 rounded-2xl bg-slate-900 px-3 py-2 text-xs font-semibold text-white">
-                        <Shield className="h-4 w-4 text-blue-400" />
-                        Verified
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* Pricing */}
-          <section id="pricing" className="bg-white py-20">
-            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-              <div className="mx-auto max-w-3xl text-center">
-                <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 ring-1 ring-slate-200">
-                  <BarChart3 className="h-3.5 w-3.5 text-blue-600" />
-                  Pricing
-                </div>
-                <h2 className="mt-5 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-                  Simple monthly plans. Built for local growth.
-                </h2>
-                <p className="mt-4 text-lg leading-relaxed text-slate-600">
-                  Start with a modern website, then add review automation and
-                  growth systems when you&apos;re ready.
-                </p>
-              </div>
-
-              <div className="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-3">
-                {[
-                  {
-                    name: "Starter",
-                    price: "$299",
-                    badge: null as string | null,
-                    desc: "Website only — live in 48hrs.",
-                    features: [
-                      "Modern website",
-                      "Mobile optimized",
-                      "Hosting included",
-                      "Fast turnaround",
-                    ],
-                  },
-                  {
-                    name: "Growth",
-                    price: "$399",
-                    badge: "Most popular",
-                    desc: "Everything in Starter + reviews + GBP optimization.",
-                    features: [
-                      "Everything in Starter",
-                      "Automated Google review requests",
-                      "Google Business Profile optimization",
-                      "Conversion improvements",
-                    ],
-                  },
-                  {
-                    name: "Pro",
-                    price: "$599",
-                    badge: null as string | null,
-                    desc: "Everything in Growth + ads + reporting.",
-                    features: [
-                      "Everything in Growth",
-                      "Google Ads management",
-                      "Monthly reporting",
-                      "Ongoing optimizations",
-                    ],
-                  },
-                ].map((plan) => (
-                  <div
-                    key={plan.name}
-                    className={`relative rounded-3xl border bg-white p-8 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${
-                      plan.badge
-                        ? "border-blue-600 ring-1 ring-blue-600/15"
-                        : "border-slate-200"
-                    }`}
-                  >
-                    {plan.badge ? (
-                      <div className="absolute -top-3 left-6 rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white shadow-sm">
-                        {plan.badge}
-                      </div>
-                    ) : null}
-
-                    <div className="flex items-start justify-between gap-6">
-                      <div>
-                        <h3 className="text-lg font-semibold text-slate-900">
-                          {plan.name}
-                        </h3>
-                        <p className="mt-2 text-sm text-slate-600">
-                          {plan.desc}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-3xl font-semibold tracking-tight text-slate-900">
-                          {plan.price}
-                        </div>
-                        <div className="mt-1 text-sm text-slate-500">/mo</div>
-                      </div>
-                    </div>
-
-                    <div className="mt-6 h-px w-full bg-slate-200" />
-
-                    <ul className="mt-6 space-y-3">
-                      {plan.features.map((f) => (
-                        <li key={f} className="flex items-start gap-2">
-                          <CheckCircle className="mt-0.5 h-4 w-4 text-blue-600" />
-                          <span className="text-sm text-slate-700">{f}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <a
-                      href="#contact"
-                      className={`mt-8 inline-flex w-full items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold transition-all ${
-                        plan.badge
-                          ? "bg-blue-600 text-white shadow-sm shadow-blue-600/25 hover:bg-blue-700"
-                          : "bg-slate-900 text-white hover:bg-slate-800"
-                      }`}
-                    >
-                      Choose {plan.name}
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                  <div className="hidden sm:flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 ring-1 ring-white/10">
+                    <Phone className="h-3.5 w-3.5 text-orange-300" />
+                    <a href="tel:+15125550100" className="text-orange-200 hover:text-orange-100">
+                      (512) 555-0100
                     </a>
-
-                    <p className="mt-3 text-center text-xs text-slate-500">
-                      Cancel anytime.
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* CTA / Contact */}
-          <section id="contact" className="bg-[#0F172A] py-20">
-            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-              <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12">
-                <div className="lg:col-span-6">
-                  <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white ring-1 ring-white/15">
-                    <Zap className="h-3.5 w-3.5 text-blue-400" />
-                    Free website audit
-                  </div>
-                  <h2 className="mt-5 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                    Want more calls this month?
-                  </h2>
-                  <p className="mt-4 text-lg leading-relaxed text-slate-200">
-                    Send your details and we&apos;ll review your current site (or
-                    your online presence) and reply with a clear plan.
-                  </p>
-
-                  <div className="mt-8 space-y-4">
-                    {[
-                      {
-                        icon: CheckCircle,
-                        title: "Clear recommendations",
-                        desc: "What to fix, what to build, and what to prioritize first.",
-                      },
-                      {
-                        icon: Smartphone,
-                        title: "Mobile & speed review",
-                        desc: "We check load time, mobile usability, and your call-to-action flow.",
-                      },
-                      {
-                        icon: Star,
-                        title: "Review & Google profile audit",
-                        desc: "See what&apos;s holding your local ranking back.",
-                      },
-                    ].map((x) => (
-                      <div key={x.title} className="flex gap-3">
-                        <div className="mt-0.5 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/15">
-                          <x.icon className="h-5 w-5 text-blue-400" />
-                        </div>
-                        <div>
-                          <div className="text-sm font-semibold text-white">
-                            {x.title}
-                          </div>
-                          <div className="mt-1 text-sm text-slate-200">
-                            {x.desc}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
                   </div>
                 </div>
 
-                <div className="lg:col-span-6">
-                  <div className="rounded-3xl bg-white p-8 shadow-2xl shadow-black/30 ring-1 ring-black/5">
-                    <div className="flex items-start justify-between gap-6">
-                      <div>
-                        <div className="text-sm font-semibold text-slate-900">
-                          Request your audit
-                        </div>
-                        <div className="mt-1 text-sm text-slate-600">
-                          We reply within 24 hours.
-                        </div>
-                      </div>
-                      <div className="inline-flex items-center gap-2 rounded-2xl bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 ring-1 ring-blue-600/10">
-                        <Clock className="h-4 w-4" />
-                        24h response
+                <form onSubmit={submitLead} className="mt-6 space-y-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <label className="block">
+                      <span className="text-xs font-semibold text-white/70">Your name</span>
+                      <input
+                        value={form.name}
+                        onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))}
+                        className="mt-2 w-full rounded-xl bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500/60"
+                        placeholder="Diego"
+                        autoComplete="name"
+                      />
+                    </label>
+                    <label className="block">
+                      <span className="text-xs font-semibold text-white/70">Business name</span>
+                      <input
+                        value={form.business}
+                        onChange={(e) => setForm((s) => ({ ...s, business: e.target.value }))}
+                        className="mt-2 w-full rounded-xl bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500/60"
+                        placeholder="Adept Plumbing"
+                        autoComplete="organization"
+                      />
+                    </label>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <label className="block">
+                      <span className="text-xs font-semibold text-white/70">Phone</span>
+                      <input
+                        value={form.phone}
+                        onChange={(e) => setForm((s) => ({ ...s, phone: e.target.value }))}
+                        className="mt-2 w-full rounded-xl bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500/60"
+                        placeholder="(512) 555-0100"
+                        autoComplete="tel"
+                        inputMode="tel"
+                      />
+                    </label>
+                    <label className="block">
+                      <span className="text-xs font-semibold text-white/70">Email</span>
+                      <input
+                        value={form.email}
+                        onChange={(e) => setForm((s) => ({ ...s, email: e.target.value }))}
+                        className="mt-2 w-full rounded-xl bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500/60"
+                        placeholder="you@business.com"
+                        autoComplete="email"
+                        inputMode="email"
+                      />
+                    </label>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className={cx(
+                      "inline-flex w-full items-center justify-center rounded-xl px-6 py-3.5 text-base font-semibold text-white shadow-sm transition-all",
+                      submitting && "opacity-70"
+                    )}
+                    style={{ backgroundColor: COLORS.orange }}
+                  >
+                    {submitting ? "Sending…" : "Get My Free Audit"}
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </button>
+
+                  {submitted === "success" && (
+                    <div className="rounded-2xl bg-emerald-500/10 p-4 text-sm text-emerald-200 ring-1 ring-emerald-400/20">
+                      <div className="font-semibold text-white">Request received.</div>
+                      <div className="mt-1 text-emerald-100/90">
+                        We’ll send your audit within 1 business day.
                       </div>
                     </div>
+                  )}
 
-                    <AuditForm />
+                  {submitted === "error" && (
+                    <div className="rounded-2xl bg-rose-500/10 p-4 text-sm text-rose-200 ring-1 ring-rose-400/20">
+                      <div className="font-semibold text-white">Double-check the form.</div>
+                      <div className="mt-1 text-rose-100/90">
+                        Please enter your name, business name, phone, and email.
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="text-xs text-white/60">
+                    By requesting an audit, you agree to be contacted about your results.
+                    No spam.
                   </div>
-                </div>
-              </div>
-            </div>
-          </section>
-        </main>
-
-        {/* Footer */}
-        <footer className="border-t border-slate-200 bg-white">
-          <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-            <div className="flex flex-col gap-10 md:flex-row md:items-center md:justify-between">
-              <div className="flex items-center gap-3">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 ring-1 ring-slate-900/10">
-                  <Zap className="h-5 w-5 text-blue-500" />
-                </span>
-                <div>
-                  <div className="text-sm font-semibold text-slate-900">
-                    Booked Out
-                  </div>
-                  <div className="mt-1 text-sm text-slate-600">
-                    Websites + review automation for local services.
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm font-medium">
-                <a
-                  href="#services"
-                  className="text-slate-600 transition-colors hover:text-slate-900"
-                >
-                  Services
-                </a>
-                <a
-                  href="#process"
-                  className="text-slate-600 transition-colors hover:text-slate-900"
-                >
-                  How it works
-                </a>
-                <a
-                  href="#pricing"
-                  className="text-slate-600 transition-colors hover:text-slate-900"
-                >
-                  Pricing
-                </a>
-                <a
-                  href="#contact"
-                  className="text-slate-600 transition-colors hover:text-slate-900"
-                >
-                  Contact
-                </a>
-              </div>
-            </div>
-
-            <div className="mt-10 flex flex-col gap-4 border-t border-slate-200 pt-8 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm text-slate-500">
-                © {new Date().getFullYear()} Booked Out. All rights reserved.
-              </p>
-              <div className="flex items-center gap-3 text-sm text-slate-500">
-                <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 ring-1 ring-slate-200">
-                  <MapPin className="h-4 w-4" />
-                  Serving local service businesses
-                </span>
+                </form>
               </div>
             </div>
           </div>
+        </section>
+
+        {/* 10) Footer */}
+        <footer className="border-t border-white/10">
+          <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-10 text-sm text-white/70 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+            <div>
+              <div className="text-base font-semibold text-white">Booked Out</div>
+              <div className="mt-1 text-sm text-white/60">
+                Websites + review automation for contractors in Texas suburbs.
+              </div>
+              <div className="mt-3 flex flex-col gap-1 text-sm">
+                <a href="tel:+15125550100" className="inline-flex items-center gap-2 text-orange-200 hover:text-orange-100">
+                  <Phone className="h-4 w-4" />
+                  (512) 555-0100
+                </a>
+                <a
+                  href="mailto:diego@trybookedout.com"
+                  className="inline-flex items-center gap-2 hover:text-white"
+                >
+                  <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/5 ring-1 ring-white/10">
+                    <ArrowRight className="h-3.5 w-3.5 text-blue-300" />
+                  </span>
+                  diego@trybookedout.com
+                </a>
+              </div>
+            </div>
+
+            <div className="text-xs text-white/50">© 2026 Booked Out</div>
+          </div>
         </footer>
-      </div>
+      </main>
     </div>
   );
 }

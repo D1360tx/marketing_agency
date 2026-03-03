@@ -5,7 +5,8 @@ import { Resend } from "resend";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { business_name, website, email, phone } = body;
+    const { business_name: _bn, business, website, email, phone, name, source, city } = body;
+    const business_name = _bn || business || "Unknown";
 
     if (!business_name || !email) {
       return NextResponse.json({ error: "Name and email are required" }, { status: 400 });
@@ -30,7 +31,7 @@ export async function POST(request: Request) {
         website_url: website || null,
         status: "new",
         search_query: "Inbound — landing page",
-        notes: `Source: Landing page form\nWebsite: ${website || "none"}`,
+        notes: `Source: ${source || "landing page"}\nCity: ${city || "unknown"}\nName: ${name || "—"}\nWebsite: ${website || "none"}`,
       });
     }
 
