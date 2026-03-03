@@ -159,6 +159,8 @@ export default function ProspectorPage() {
     setAnalyzeAllProgress(null);
   }
 
+  const [websiteFilter, setWebsiteFilter] = useState<"all" | "no_website" | "has_website">("all");
+
   const analyzedCount = Object.keys(analyses).length;
   const noWebsiteCount = prospects.filter((p) => !p.website_url).length;
   const poorGradeCount = Object.values(analyses).filter(
@@ -166,13 +168,45 @@ export default function ProspectorPage() {
   ).length;
 
   // Sort prospects by lead_score descending
-  const sortedProspects = [...prospects].sort((a, b) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const scoreA = (a as any).lead_score ?? 0;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const scoreB = (b as any).lead_score ?? 0;
-    return scoreB - scoreA;
-  });
+  const sortedProspects = [...prospects]
+    .filter((p) => {
+      if (websiteFilter === "no_website") return !p.website_url;
+      if (websiteFilter === "has_website") return !!p.website_url;
+      return true;
+    })
+    .sort((a, b) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const scoreA = (a as any).lead_score ?? 0;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const scoreB = (b as any).lead_score ?? 0;
+      return scoreB - scoreA;
+    });
+
+  function exportCSV() {
+    const rows = [
+      ["Business Name", "Phone", "Email", "Website", "City", "State", "Google Maps", "Business Type", "Lead Score"],
+      ...sortedProspects.map((p) => [
+        p.business_name,
+        p.phone || "",
+        p.email || "",
+        p.website_url || "NO WEBSITE",
+        p.city || "",
+        p.state || "",
+        p.google_maps_url || "",
+        p.business_type || "",
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (p as any).lead_score ?? "",
+      ]),
+    ];
+    const csv = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `booked-out-leads-${new Date().toISOString().split("T")[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
   return (
     <div className="space-y-6">
@@ -272,14 +306,30 @@ export default function ProspectorPage() {
 
       {prospects.length > 0 && (
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-3">
             <div>
-              <CardTitle>Results ({prospects.length})</CardTitle>
+              <CardTitle>Results ({sortedProspects.length}{websiteFilter !== "all" ? ` of ${prospects.length}` : ""})</CardTitle>
               <CardDescription>
                 Businesses found for &quot;{query}&quot; in {location}
               </CardDescription>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              {/* Website filter */}
+              <div className="flex rounded-md border overflow-hidden text-xs">
+                {(["all", "no_website", "has_website"] as const).map((f) => (
+                  <button
+                    key={f}
+                    onClick={() => setWebsiteFilter(f)}
+                    className={`px-3 py-1.5 font-medium transition-colors ${websiteFilter === f ? "bg-primary text-primary-foreground" : "bg-background hover:bg-muted"}`}
+                  >
+                    {f === "all" ? "All" : f === "no_website" ? `🔥 No Website (${noWebsiteCount})` : "Has Website"}
+                  </button>
+                ))}
+              </div>
+              {/* Export CSV */}
+              <Button variant="outline" size="sm" onClick={exportCSV}>
+                ⬇ Export CSV
+              </Button>
               {analyzeAllProgress && (
                 <span className="text-sm text-muted-foreground">
                   {analyzeAllProgress.done}/{analyzeAllProgress.total}
@@ -320,8 +370,9 @@ export default function ProspectorPage() {
                     const emailSrc = emailSources[prospect.id];
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const leadScore = (prospect as any).lead_score ?? 0;
+                    const isHotLead = !prospect.website_url;
                     return (
-                      <TableRow key={prospect.id}>
+                      <TableRow key={prospect.id} className={isHotLead ? "bg-red-50 dark:bg-red-950/20" : ""}>
                         <TableCell>
                           <div>
                             <div className="font-medium">
