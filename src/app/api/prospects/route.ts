@@ -134,3 +134,49 @@ export async function DELETE(request: Request) {
     );
   }
 }
+
+export async function POST(request: Request) {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const body = await request.json();
+    const { business_name, phone, email, city, state, business_type, notes, source } = body;
+
+    if (!business_name) {
+      return NextResponse.json({ error: "Business name is required" }, { status: 400 });
+    }
+
+    const { data, error } = await supabase
+      .from("prospects")
+      .insert({
+        user_id: user.id,
+        business_name,
+        phone: phone || null,
+        email: email || null,
+        city: city || null,
+        state: state || null,
+        business_type: business_type || null,
+        notes: notes ? `Source: ${source || "Manual"}\n\n${notes}` : `Source: ${source || "Manual"}`,
+        status: "new",
+        search_query: source || "Manual entry",
+      })
+      .select()
+      .single();
+
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+    await logActivity(supabase, {
+      prospect_id: data.id,
+      user_id: user.id,
+      activity_type: "created",
+      description: `Manually added via ${source || "manual entry"}`,
+      metadata: { source },
+    });
+
+    return NextResponse.json({ prospect: data });
+  } catch {
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}

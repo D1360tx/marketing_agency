@@ -55,7 +55,18 @@ import {
   TrendingUp,
   ArrowUp,
   ArrowDown,
+  UserPlus,
 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 import type { ProspectStatus, ProspectWithAnalysis } from "@/types";
 
 const statusConfig: Record<ProspectStatus, { label: string; color: string }> = {
@@ -82,6 +93,28 @@ export default function LeadsPage() {
   const [updating, setUpdating] = useState<Record<string, boolean>>({});
   const [sortField, setSortField] = useState<SortField>("lead_score");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [addForm, setAddForm] = useState({ business_name: "", phone: "", email: "", city: "", state: "", business_type: "", notes: "", source: "Facebook Group" });
+  const [addLoading, setAddLoading] = useState(false);
+
+  async function handleQuickAdd(e: React.FormEvent) {
+    e.preventDefault();
+    setAddLoading(true);
+    try {
+      const res = await fetch("/api/prospects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(addForm),
+      });
+      const data = await res.json();
+      if (!res.ok) { toast.error(data.error || "Failed to add lead"); return; }
+      setProspects((prev) => [data.prospect, ...prev]);
+      setShowAddDialog(false);
+      setAddForm({ business_name: "", phone: "", email: "", city: "", state: "", business_type: "", notes: "", source: "Facebook Group" });
+      toast.success("Lead added!");
+    } catch { toast.error("Something went wrong"); }
+    finally { setAddLoading(false); }
+  }
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
@@ -282,6 +315,9 @@ export default function LeadsPage() {
           </p>
         </div>
         <div className="flex gap-2">
+          <Button size="sm" onClick={() => setShowAddDialog(true)}>
+            <UserPlus className="mr-2 h-4 w-4" /> Quick Add Lead
+          </Button>
           <Button
             variant={view === "kanban" ? "default" : "outline"}
             size="sm"
@@ -491,6 +527,64 @@ export default function LeadsPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* Quick Add Lead Dialog */}
+      <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Quick Add Lead</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleQuickAdd} className="space-y-3">
+            <div className="space-y-1">
+              <Label>Business Name *</Label>
+              <Input placeholder="Mike's Plumbing" value={addForm.business_name} onChange={(e) => setAddForm({...addForm, business_name: e.target.value})} required />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label>Phone</Label>
+                <Input placeholder="(512) 555-0100" value={addForm.phone} onChange={(e) => setAddForm({...addForm, phone: e.target.value})} />
+              </div>
+              <div className="space-y-1">
+                <Label>Email</Label>
+                <Input type="email" placeholder="mike@example.com" value={addForm.email} onChange={(e) => setAddForm({...addForm, email: e.target.value})} />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label>City</Label>
+                <Input placeholder="Dripping Springs" value={addForm.city} onChange={(e) => setAddForm({...addForm, city: e.target.value})} />
+              </div>
+              <div className="space-y-1">
+                <Label>Business Type</Label>
+                <Input placeholder="Plumber" value={addForm.business_type} onChange={(e) => setAddForm({...addForm, business_type: e.target.value})} />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <Label>Source</Label>
+              <Select value={addForm.source} onValueChange={(v) => setAddForm({...addForm, source: v})}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Facebook Group">Facebook Group</SelectItem>
+                  <SelectItem value="Cold Call">Cold Call</SelectItem>
+                  <SelectItem value="Cold Email">Cold Email</SelectItem>
+                  <SelectItem value="Referral">Referral</SelectItem>
+                  <SelectItem value="Manual">Manual</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <Label>Notes</Label>
+              <Textarea placeholder="Saw them in DS Neighbors group, does masonry work..." value={addForm.notes} onChange={(e) => setAddForm({...addForm, notes: e.target.value})} rows={3} />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setShowAddDialog(false)}>Cancel</Button>
+              <Button type="submit" disabled={addLoading}>
+                {addLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Adding...</> : "Add Lead"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
