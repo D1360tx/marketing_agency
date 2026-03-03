@@ -99,7 +99,7 @@ function SectionHeader({
 
 export default function LandingPage() {
   const [geoLoading, setGeoLoading] = useState(true);
-  const [city, setCity] = useState<string>("your area");
+  const [city, setCity] = useState<string>("");
   const [region, setRegion] = useState<string>("Texas");
 
   const [faqOpen, setFaqOpen] = useState<Record<string, boolean>>({
@@ -127,7 +127,7 @@ export default function LandingPage() {
         const data = (await res.json()) as GeoResponse;
         if (!alive) return;
 
-        const nextCity = data?.city && isNonEmpty(data.city) ? data.city : "your area";
+        const nextCity = data?.city && isNonEmpty(data.city) ? data.city : "";
         const nextRegion =
           data?.region && isNonEmpty(data.region) ? data.region : "Texas";
 
@@ -135,7 +135,7 @@ export default function LandingPage() {
         setRegion(nextRegion);
       } catch {
         if (!alive) return;
-        setCity("your area");
+        setCity("");
         setRegion("Texas");
       } finally {
         if (!alive) return;
@@ -150,6 +150,7 @@ export default function LandingPage() {
 
   const dynamic = useMemo(() => {
     const c = city || "your area";
+  const cityLabel = city || "your area";
     return {
       heroHeadline: geoLoading ? (
         <>
@@ -158,7 +159,7 @@ export default function LandingPage() {
         </>
       ) : (
         <>
-          Your <span className="text-blue-400">{c}</span> Neighbors Are Already
+          Your {city && <span className="text-blue-400">{city} </span>}Neighbors Are Already
           Searching for You. <span className="text-blue-400">Are They Finding You?</span>
         </>
       ),
