@@ -267,7 +267,7 @@ export default function LandingPage() {
           <div className="absolute inset-0">
             <img
               src={contractorImage}
-              alt="Contractor at work"
+              alt="Local business owner at work"
               className="h-full w-full object-cover opacity-25"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-[#0f172a]/60 via-[#0f172a]/85 to-[#0f172a]" />
@@ -295,10 +295,10 @@ export default function LandingPage() {
               </h1>
 
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-200">
-                If your website is slow, your reviews are stale, or Google can’t tell
-                who to rank… you’re bleeding calls.
+                If your website is slow, your reviews are stale, or Google can't tell
+                who to rank… you're bleeding calls.
                 <span className="text-white"> We fix it</span> with a professional
-                website + review automation built for contractors.
+                website + review automation built for local service businesses.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -345,7 +345,7 @@ export default function LandingPage() {
                       </div>
                       <div className="hidden flex-1 px-4 sm:block">
                         <div className="truncate rounded-lg bg-white/5 px-3 py-1 text-xs text-slate-200 ring-1 ring-white/10">
-                          google.com — “{geoLoading ? "plumber near me" : `plumber near me ${city.toLowerCase()}` }”
+                          google.com — "{geoLoading ? "best [service] near me" : `best [service] near me ${city.toLowerCase()}` }"
                         </div>
                       </div>
                       <div className="text-xs font-semibold text-slate-200">What customers see</div>
@@ -368,7 +368,7 @@ export default function LandingPage() {
                           <div className="h-2 w-3/5 rounded bg-white/10" />
                         </div>
                         <div className="mt-4 text-xs font-semibold text-white/70">
-                          Missed calls: “We’ll call someone else.”
+                          Missed calls: "We'll call someone else."
                         </div>
                       </div>
 
@@ -395,7 +395,7 @@ export default function LandingPage() {
                         </div>
 
                         <div className="mt-4 text-xs font-semibold text-white/70">
-                          More calls in 30 days — without chasing people.
+                          More calls in 30 days - without chasing people.
                         </div>
                       </div>
                     </div>
@@ -429,9 +429,9 @@ export default function LandingPage() {
         {/* 3) Problem */}
         <section id="problem" className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
           <SectionHeader
-            kicker="This is why you’re losing calls"
-            title="Google doesn’t reward ‘good enough’ anymore"
-            desc="Fear first: if you don’t look like the obvious choice online, customers in your city move on in seconds. Relief next: we make you the obvious choice."
+            kicker="This is why you're losing calls"
+            title="Google doesn't reward 'good enough' anymore"
+            desc="Fear first: if you don't look like the obvious choice online, customers in your city move on in seconds. Relief next: we make you the obvious choice."
           />
 
           <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -439,12 +439,12 @@ export default function LandingPage() {
               {
                 icon: Globe,
                 title: "No real website",
-                desc: "A Facebook page isn’t a website. When someone in your city searches, you look untrustworthy — and they click your competitor.",
+                desc: "A Facebook page isn't a website. When someone in your city searches, you look untrustworthy - and they click your competitor.",
               },
               {
                 icon: Star,
                 title: "Not enough reviews",
-                desc: "Customers filter by stars. If you have 0–10 reviews, you’re invisible next to the guy with 47.",
+                desc: "Customers filter by stars. If you have 0-10 reviews, you're invisible next to the guy with 47.",
               },
               {
                 icon: Search,
@@ -474,7 +474,7 @@ export default function LandingPage() {
                   Stop guessing. Get the exact fixes.
                 </div>
                 <div className="mt-1 text-sm text-slate-200">
-                  We’ll show you what’s blocking calls in <span className="text-white">{city}</span> and what to change first.
+                  We'll show you what's blocking calls in <span className="text-white">{city}</span> and what to change first.
                 </div>
               </div>
               <a
@@ -493,8 +493,8 @@ export default function LandingPage() {
         <section id="services" className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
           <SectionHeader
             kicker="Everything you need to win locally"
-            title="Websites + reviews + local SEO — packaged for contractors"
-            desc="You don’t need 12 vendors. You need one system that makes Google trust you and customers choose you."
+            title="Websites + reviews + local SEO - done for you"
+            desc="You don't need 12 vendors. You need one system that makes Google trust you and customers choose you."
           />
 
           <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-12">
@@ -516,7 +516,7 @@ export default function LandingPage() {
                   { icon: Smartphone, t: "Mobile-first layout", d: "Thumb-friendly, tap-to-call, clear CTAs." },
                   { icon: Shield, t: "Trust builders", d: "Licensing, badges, warranties, and proof." },
                   { icon: Clock, t: "Speed optimized", d: "Fast loads = higher rank + higher conversion." },
-                  { icon: Wrench, t: "Trade-specific copy", d: "HVAC, plumbing, landscaping, electrical." },
+                  { icon: Wrench, t: "Industry-specific copy", d: "Written for your business type and local market." },
                 ].map((x) => (
                   <div key={x.t} className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
                     <x.icon className="h-5 w-5 text-blue-400" />
@@ -528,10 +528,10 @@ export default function LandingPage() {
             </div>
 
             <div className="md:col-span-5 grid grid-cols-1 gap-5">
-              {[ 
+              {[
                 {
                   title: "Google Review Automation",
-                  desc: "Turn jobs into 5-star reviews automatically — no awkward asking.",
+                  desc: "Turn jobs into 5-star reviews automatically - no awkward asking.",
                   icon: Star,
                   accent: "text-amber-300",
                 },
@@ -576,7 +576,7 @@ export default function LandingPage() {
                 <div className="text-sm font-semibold text-white/80">What this solves</div>
                 <ul className="mt-4 space-y-3 text-sm text-slate-200">
                   {[
-                    "You stop losing the ‘near me’ searches.",
+                    "You stop losing the 'near me' searches.",
                     "You build trust fast with reviews and proof.",
                     "You become the obvious choice in your city.",
                   ].map((t) => (
@@ -606,11 +606,11 @@ export default function LandingPage() {
           <SectionHeader
             kicker="Proof beats promises"
             title="0 reviews → 47 reviews in 60 days"
-            desc="That’s what happens when review requests run automatically after every job — and your website actually converts the traffic Google sends you."
+            desc="That's what happens when review requests run automatically after every job - and your website actually converts the traffic Google sends you."
           />
 
           <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
-            {[ 
+            {[
               {
                 name: "Mark T.",
                 trade: "HVAC",
@@ -633,7 +633,7 @@ export default function LandingPage() {
                 city: "Leander",
                 stars: 5,
                 quote:
-                  "I don’t chase reviews anymore. It just happens. We hit 47 reviews fast and my phone didn’t stop.",
+                  "I don't chase reviews anymore. It just happens. We hit 47 reviews fast and my phone didn't stop.",
               },
             ].map((t) => (
               <div
@@ -641,12 +641,12 @@ export default function LandingPage() {
                 className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10"
               >
                 <Stars value={t.stars} />
-                <p className="mt-4 text-sm leading-relaxed text-slate-200">“{t.quote}”</p>
+                <p className="mt-4 text-sm leading-relaxed text-slate-200">"{t.quote}"</p>
                 <div className="mt-6 flex items-center justify-between gap-3">
                   <div>
                     <div className="text-sm font-semibold text-white">{t.name}</div>
                     <div className="text-xs text-white/70">
-                      {t.trade} — {t.city}, TX
+                      {t.trade} - {t.city}, TX
                     </div>
                   </div>
                   <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-200 ring-1 ring-emerald-400/20">
@@ -663,7 +663,7 @@ export default function LandingPage() {
         <section id="pricing" className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
           <SectionHeader
             kicker="Simple pricing"
-            title="$399/mo — built for local service businesses"
+            title="$399/mo - built for local service businesses"
             desc="No long contracts. No mystery retainers. Just a system designed to get you found and chosen."
           />
 
@@ -676,7 +676,7 @@ export default function LandingPage() {
                     $399<span className="text-base font-semibold text-white/70">/mo</span>
                   </div>
                   <div className="mt-2 text-sm text-slate-200">
-                    <span className="font-semibold text-white">First 30 days free if no results.</span> We don’t win unless you do.
+                    <span className="font-semibold text-white">First 30 days free if no results.</span> We don't win unless you do.
                   </div>
                 </div>
                 <div className="hidden sm:block rounded-2xl bg-orange-500/15 px-4 py-3 ring-1 ring-orange-400/20">
@@ -719,16 +719,16 @@ export default function LandingPage() {
 
             <div className="lg:col-span-5 rounded-3xl bg-white/5 p-7 ring-1 ring-white/10">
               <div className="text-sm font-semibold text-white/80">What you get first</div>
-              <div className="mt-3 text-lg font-semibold text-white">Free audit in 24–48 hours</div>
+              <div className="mt-3 text-lg font-semibold text-white">Free audit in 24-48 hours</div>
               <p className="mt-2 text-sm leading-relaxed text-slate-200">
-                We’ll review your online presence and send a quick, brutally clear
-                plan: what’s broken, what’s missing, and what to fix to win in {city}.
+                We'll review your online presence and send a quick, brutally clear
+                plan: what's broken, what's missing, and what to fix to win in {city}.
               </p>
 
               <div className="mt-6 space-y-3">
-                {[ 
+                {[
                   { icon: Search, t: "Ranking blockers", d: "Speed, content, local intent." },
-                  { icon: Star, t: "Review gap", d: "What competitors have that you don’t." },
+                  { icon: Star, t: "Review gap", d: "What competitors have that you don't." },
                   { icon: Phone, t: "Conversion leaks", d: "Where leads fall off." },
                 ].map((x) => (
                   <div key={x.t} className="flex items-start gap-3 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
@@ -773,7 +773,7 @@ export default function LandingPage() {
           <SectionHeader
             kicker="FAQ"
             title="Quick answers before you book an audit"
-            desc="If you’re serious about getting found locally, this is the fastest, lowest-risk way to start."
+            desc="If you're serious about getting found locally, this is the fastest, lowest-risk way to start."
           />
 
           <div className="mt-10 mx-auto max-w-3xl space-y-4">
@@ -781,22 +781,22 @@ export default function LandingPage() {
               {
                 key: "website",
                 q: "What if I already have a website?",
-                a: "Perfect. We’ll audit it. If it’s fast and converting, we keep what works. If it’s slow or outdated, we rebuild what’s needed so Google (and customers) trust it.",
+                a: "Perfect. We'll audit it. If it's fast and converting, we keep what works. If it's slow or outdated, we rebuild what's needed so Google (and customers) trust it.",
               },
               {
                 key: "doAnything",
                 q: "Do I need to do anything?",
-                a: "Not much. We’ll ask a few quick questions about your services and service area. After that, we build and run the system. You focus on jobs.",
+                a: "Not much. We'll ask a few quick questions about your services and service area. After that, we build and run the system. You focus on jobs.",
               },
               {
                 key: "cities",
                 q: "What cities do you serve?",
-                a: "Texas suburbs and surrounding areas. The important part: we only work with 1 business per trade per city — so you’re not funding your competitor.",
+                a: "Texas suburbs and surrounding areas. The important part: we only work with 1 business per trade per city - so you're not funding your competitor.",
               },
               {
                 key: "speed",
                 q: "How fast do I see results?",
-                a: "Most businesses see movement within 30 days: faster site, better conversion, more reviews, stronger local signals. Review growth can be very quick — we’ve seen 47 reviews in 60 days.",
+                a: "Most businesses see movement within 30 days: faster site, better conversion, more reviews, stronger local signals. Review growth can be very quick - we've seen 47 reviews in 60 days.",
               },
             ].map((item) => {
               const open = !!faqOpen[item.key];
@@ -849,14 +849,14 @@ export default function LandingPage() {
                 </h2>
 
                 <p className="mt-3 text-sm leading-relaxed text-slate-200">
-                  Get a free audit that shows exactly why you’re not ranking and what
-                  to fix first. If we can’t show results in the first 30 days, you don’t
+                  Get a free audit that shows exactly why you're not ranking and what
+                  to fix first. If we can't show results in the first 30 days, you don't
                   pay.
                 </p>
 
                 <div className="mt-6 space-y-3">
-                  {[ 
-                    { icon: Check, t: "Audit delivered in 24–48 hours" },
+                  {[
+                    { icon: Check, t: "Audit delivered in 24-48 hours" },
                     { icon: Check, t: "Review plan to reach 47 reviews" },
                     { icon: Check, t: "We only work with 1 business per trade in your city" },
                   ].map((x) => (
@@ -875,7 +875,7 @@ export default function LandingPage() {
                   <div>
                     <div className="text-sm font-semibold text-white">Request your free audit</div>
                     <div className="mt-1 text-xs text-white/60">
-                      You’ll get a response within 1 business day.
+                      You'll get a response within 1 business day.
                     </div>
                   </div>
                   <div className="hidden sm:flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 ring-1 ring-white/10">
@@ -952,7 +952,7 @@ export default function LandingPage() {
                     <div className="rounded-2xl bg-emerald-500/10 p-4 text-sm text-emerald-200 ring-1 ring-emerald-400/20">
                       <div className="font-semibold text-white">Request received.</div>
                       <div className="mt-1 text-emerald-100/90">
-                        We’ll send your audit within 1 business day.
+                        We'll send your audit within 1 business day.
                       </div>
                     </div>
                   )}
@@ -982,7 +982,7 @@ export default function LandingPage() {
             <div>
               <div className="text-base font-semibold text-white">Booked Out</div>
               <div className="mt-1 text-sm text-white/60">
-                Websites + review automation for contractors in Texas suburbs.
+                Websites + review automation for local service businesses in Texas.
               </div>
               <div className="mt-3 flex flex-col gap-1 text-sm">
                 <a href="tel:+15125550100" className="inline-flex items-center gap-2 text-orange-200 hover:text-orange-100">
