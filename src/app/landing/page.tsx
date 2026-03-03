@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { AuditForm } from "@/components/audit-form";
 import {
   ArrowRight,
   BarChart3,
@@ -848,76 +849,7 @@ export default function LandingPage() {
                       </div>
                     </div>
 
-                    <form
-                      action="https://formspree.io/f/placeholder"
-                      method="POST"
-                      className="mt-6 space-y-4"
-                    >
-                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <label className="space-y-1">
-                          <div className="text-xs font-semibold text-slate-700">
-                            Business name
-                          </div>
-                          <input
-                            type="text"
-                            name="business_name"
-                            required
-                            placeholder="Booked Out Plumbing"
-                            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none ring-blue-600/20 placeholder:text-slate-400 focus:border-blue-600 focus:ring-4"
-                          />
-                        </label>
-                        <label className="space-y-1">
-                          <div className="text-xs font-semibold text-slate-700">
-                            Phone
-                          </div>
-                          <input
-                            type="tel"
-                            name="phone"
-                            required
-                            placeholder="(555) 123-4567"
-                            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none ring-blue-600/20 placeholder:text-slate-400 focus:border-blue-600 focus:ring-4"
-                          />
-                        </label>
-                      </div>
-
-                      <label className="space-y-1">
-                        <div className="text-xs font-semibold text-slate-700">
-                          Email
-                        </div>
-                        <input
-                          type="email"
-                          name="email"
-                          required
-                          placeholder="you@business.com"
-                          className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none ring-blue-600/20 placeholder:text-slate-400 focus:border-blue-600 focus:ring-4"
-                        />
-                      </label>
-
-                      <label className="space-y-1">
-                        <div className="text-xs font-semibold text-slate-700">
-                          Current website (optional)
-                        </div>
-                        <input
-                          type="text"
-                          name="website"
-                          placeholder="https://yourbusiness.com"
-                          className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none ring-blue-600/20 placeholder:text-slate-400 focus:border-blue-600 focus:ring-4"
-                        />
-                      </label>
-
-                      <button
-                        type="submit"
-                        className="inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-6 py-3.5 text-base font-semibold text-white shadow-sm shadow-blue-600/25 transition-all hover:bg-blue-700 hover:shadow-md hover:shadow-blue-600/30"
-                      >
-                        Get my free audit
-                        <ArrowRight className="ml-2 h-5 w-5" />
-                      </button>
-
-                      <p className="text-center text-xs text-slate-500">
-                        By submitting, you agree to be contacted about your
-                        audit. No spam.
-                      </p>
-                    </form>
+                    <AuditForm />
                   </div>
                 </div>
               </div>
