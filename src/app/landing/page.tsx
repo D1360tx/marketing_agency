@@ -1,483 +1,990 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import {
+  ArrowRight,
+  BarChart3,
+  CheckCircle,
+  Clock,
+  Globe,
+  MapPin,
+  Phone,
+  Search,
+  Shield,
+  Smartphone,
+  Star,
+  TrendingUp,
+  Zap,
+} from "lucide-react";
+import { Inter } from "next/font/google";
 
-export const metadata = {
-  title: "Modern Websites for Local Businesses | Booked Out",
+const inter = Inter({ subsets: ["latin"], display: "swap" });
+
+export const metadata: Metadata = {
+  title: "Booked Out | Modern Websites + Review Automation for Local Services",
   description:
-    "Your website is losing you customers. We build fast, modern, mobile-friendly websites that turn visitors into calls. Free website audit included.",
+    "Booked Out helps local service businesses get more calls with modern, fast websites and automated Google review requests. Launch in as little as 48 hours.",
 };
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-white">
-      {/* Navigation */}
-      <nav className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center">
-                <svg
-                  className="h-4 w-4 text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                  />
-                </svg>
-              </div>
-              <span className="text-xl font-bold text-gray-900">
+    <div className={inter.className}>
+      <div className="min-h-screen bg-white text-slate-900">
+        {/* Top glow */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none fixed inset-x-0 top-0 z-0 h-72 bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.18),transparent_60%)]"
+        />
+
+        {/* Navigation */}
+        <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/80 backdrop-blur">
+          <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+            <a href="#top" className="flex items-center gap-3">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 shadow-sm ring-1 ring-slate-900/10">
+                <Zap className="h-5 w-5 text-blue-500" />
+              </span>
+              <span className="text-base font-semibold tracking-tight text-slate-900">
                 Booked Out
               </span>
-            </div>
-            <div className="hidden md:flex items-center gap-8">
-              <a href="#services" className="text-sm text-gray-600 hover:text-gray-900">
+            </a>
+
+            <div className="hidden items-center gap-8 md:flex">
+              <a
+                href="#services"
+                className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900"
+              >
                 Services
               </a>
-              <a href="#how-it-works" className="text-sm text-gray-600 hover:text-gray-900">
-                How It Works
+              <a
+                href="#process"
+                className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900"
+              >
+                How it works
               </a>
-              <a href="#results" className="text-sm text-gray-600 hover:text-gray-900">
+              <a
+                href="#results"
+                className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900"
+              >
                 Results
               </a>
-              <a href="#contact" className="text-sm text-gray-600 hover:text-gray-900">
+              <a
+                href="#pricing"
+                className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900"
+              >
+                Pricing
+              </a>
+              <a
+                href="#contact"
+                className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900"
+              >
                 Contact
               </a>
             </div>
+
             <div className="flex items-center gap-3">
               <Link
                 href="/login"
-                className="text-sm text-gray-600 hover:text-gray-900"
+                className="hidden rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 sm:inline-flex"
               >
-                Sign In
+                Sign in
               </Link>
               <a
                 href="#contact"
-                className="bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 ring-1 ring-blue-600/10 transition-all hover:bg-blue-700 hover:shadow-md hover:shadow-blue-600/30"
               >
-                Free Audit
+                Get a free audit
+                <ArrowRight className="ml-2 h-4 w-4" />
               </a>
             </div>
-          </div>
-        </div>
-      </nav>
+          </nav>
+        </header>
 
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-indigo-50" />
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24 sm:pt-28 sm:pb-32">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 text-xs font-medium px-3 py-1 rounded-full mb-6">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
-              </span>
-              Free Website Audit — Limited Spots
+        {/* Hero */}
+        <main id="top" className="relative z-10">
+          <section className="relative overflow-hidden bg-[#0F172A]">
+            <div className="absolute inset-0">
+              <img
+                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&q=80"
+                alt="Contractor reviewing work"
+                className="h-full w-full object-cover opacity-25"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-[#0F172A]/70 via-[#0F172A]/80 to-[#0F172A]" />
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-              Your website is{" "}
-              <span className="text-red-500">losing you</span>{" "}
-              customers
-            </h1>
-            <p className="mt-6 text-lg sm:text-xl text-gray-600 leading-relaxed max-w-2xl">
-              Most local business websites are slow, outdated, and impossible to
-              use on a phone. We build modern, lightning-fast websites that turn
-              visitors into paying customers.
-            </p>
-            <div className="mt-10 flex flex-col sm:flex-row gap-4">
-              <a
-                href="#contact"
-                className="bg-blue-600 text-white text-center font-semibold px-8 py-4 rounded-xl hover:bg-blue-700 transition-all hover:shadow-lg hover:shadow-blue-600/20 text-lg"
-              >
-                Get Your Free Website Audit →
-              </a>
-              <a
-                href="#how-it-works"
-                className="border-2 border-gray-200 text-gray-700 text-center font-semibold px-8 py-4 rounded-xl hover:border-gray-300 hover:bg-gray-50 transition-colors text-lg"
-              >
-                See How It Works
-              </a>
-            </div>
-            <div className="mt-8 flex items-center gap-6 text-sm text-gray-500">
-              <div className="flex items-center gap-2">
-                <svg className="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-                No setup fees
-              </div>
-              <div className="flex items-center gap-2">
-                <svg className="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-                Results in 48 hours
-              </div>
-              <div className="flex items-center gap-2">
-                <svg className="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-                Cancel anytime
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Problem / Pain Points */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
-              Is your website costing you money?
-            </h2>
-            <p className="mt-4 text-lg text-gray-600">
-              88% of customers won&apos;t return to a website after a bad experience.
-              Here&apos;s what a bad website looks like:
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                emoji: "🐌",
-                title: "Slow loading",
-                description:
-                  "Takes more than 3 seconds to load? 53% of visitors will leave before it even finishes.",
-                stat: "53%",
-                statLabel: "bounce rate",
-              },
-              {
-                emoji: "📱",
-                title: "Not mobile-friendly",
-                description:
-                  "Over 60% of searches are on phones. If your site doesn't work on mobile, you're invisible.",
-                stat: "60%",
-                statLabel: "mobile searches",
-              },
-              {
-                emoji: "😬",
-                title: "Looks outdated",
-                description:
-                  "First impressions take 0.05 seconds. An old-looking website tells customers you don't care.",
-                stat: "0.05s",
-                statLabel: "to judge",
-              },
-            ].map((pain) => (
-              <div
-                key={pain.title}
-                className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
-              >
-                <div className="text-4xl mb-4">{pain.emoji}</div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  {pain.title}
-                </h3>
-                <p className="text-gray-600 mb-4">{pain.description}</p>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold text-red-500">
-                    {pain.stat}
-                  </span>
-                  <span className="text-sm text-gray-500">
-                    {pain.statLabel}
-                  </span>
+            <div className="relative mx-auto grid max-w-6xl grid-cols-1 gap-12 px-4 pb-20 pt-16 sm:px-6 sm:pt-20 lg:grid-cols-12 lg:gap-10 lg:px-8 lg:pb-28">
+              <div className="lg:col-span-6">
+                <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white ring-1 ring-white/15">
+                  <Shield className="h-3.5 w-3.5 text-blue-400" />
+                  Built for local service businesses
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Services */}
-      <section id="services" className="py-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
-              Everything your business needs online
-            </h2>
-            <p className="mt-4 text-lg text-gray-600">
-              We handle everything — from design to deployment. You focus on
-              running your business.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                icon: "🎨",
-                title: "Custom Website Design",
-                description:
-                  "Modern, professional design tailored to your industry. Built to impress from the first click.",
-              },
-              {
-                icon: "📱",
-                title: "Mobile Optimized",
-                description:
-                  "Looks perfect on every device — phones, tablets, and desktops. No pinching or zooming required.",
-              },
-              {
-                icon: "⚡",
-                title: "Lightning Fast",
-                description:
-                  "Pages load in under 2 seconds. Fast sites rank higher on Google and keep visitors engaged.",
-              },
-              {
-                icon: "🔍",
-                title: "SEO Built-In",
-                description:
-                  "Optimized for Google from day one. Show up when customers search for your services.",
-              },
-              {
-                icon: "📞",
-                title: "Click-to-Call & Contact Forms",
-                description:
-                  "Make it dead simple for customers to reach you. One tap to call, one form to fill.",
-              },
-              {
-                icon: "📊",
-                title: "Google Reviews Integration",
-                description:
-                  "Showcase your best reviews right on your website. Social proof that converts visitors.",
-              },
-            ].map((service) => (
-              <div
-                key={service.title}
-                className="group bg-white rounded-2xl p-8 border border-gray-100 hover:border-blue-200 hover:shadow-lg transition-all"
-              >
-                <div className="text-3xl mb-4">{service.icon}</div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-                  {service.title}
-                </h3>
-                <p className="text-gray-600">{service.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+                <h1 className="mt-6 text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
+                  A modern website that turns searches into
+                  <span className="text-blue-400"> calls</span>.
+                </h1>
 
-      {/* How It Works */}
-      <section id="how-it-works" className="py-20 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
-              New website in 3 simple steps
-            </h2>
-            <p className="mt-4 text-lg text-gray-600">
-              No lengthy meetings, no complicated processes. We move fast.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                step: "01",
-                title: "Free Website Audit",
-                description:
-                  "We analyze your current website and show you exactly what's hurting your business. Scores, speed, mobile issues — everything.",
-                color: "bg-blue-600",
-              },
-              {
-                step: "02",
-                title: "See Your New Design",
-                description:
-                  "Within 48 hours, we build a custom preview of your new website. No commitment — just see what's possible.",
-                color: "bg-indigo-600",
-              },
-              {
-                step: "03",
-                title: "Go Live & Grow",
-                description:
-                  "Love it? We deploy your new site and handle everything — hosting, updates, support. You start getting more customers.",
-                color: "bg-violet-600",
-              },
-            ].map((step) => (
-              <div key={step.step} className="relative">
-                <div
-                  className={`${step.color} text-white text-sm font-bold w-10 h-10 rounded-full flex items-center justify-center mb-6`}
-                >
-                  {step.step}
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                  {step.title}
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {step.description}
+                <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-200">
+                  Booked Out helps HVAC, plumbing, landscaping, and other local
+                  service pros get more customers with lightning-fast websites
+                  and automated Google review requests.
                 </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Results / Social Proof */}
-      <section id="results" className="py-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
-              Real results for real businesses
-            </h2>
-          </div>
-          <div className="grid md:grid-cols-4 gap-8 mb-16">
-            {[
-              { value: "2x", label: "More phone calls" },
-              { value: "<2s", label: "Page load time" },
-              { value: "95+", label: "Google PageSpeed score" },
-              { value: "48hr", label: "Turnaround time" },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="text-4xl sm:text-5xl font-bold text-blue-600">
-                  {stat.value}
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+                  <a
+                    href="#contact"
+                    className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-6 py-3.5 text-base font-semibold text-white shadow-sm shadow-blue-600/25 transition-all hover:bg-blue-700 hover:shadow-md hover:shadow-blue-600/30"
+                  >
+                    Get my free audit
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </a>
+                  <a
+                    href="#pricing"
+                    className="inline-flex items-center justify-center rounded-xl bg-white/10 px-6 py-3.5 text-base font-semibold text-white ring-1 ring-white/20 transition-colors hover:bg-white/15"
+                  >
+                    View pricing
+                  </a>
                 </div>
-                <div className="mt-2 text-sm text-gray-600">{stat.label}</div>
-              </div>
-            ))}
-          </div>
 
-          {/* Testimonial placeholders */}
-          <div className="grid md:grid-cols-2 gap-8">
-            {[
-              {
-                quote:
-                  "Our old website was embarrassing. Within a week we had a modern site that actually gets us calls. Best investment we've made.",
-                name: "Local Plumbing Company",
-                role: "Austin, TX",
-              },
-              {
-                quote:
-                  "I didn't realize how much business our website was costing us until I saw the audit. The new site pays for itself every month.",
-                name: "HVAC Service Provider",
-                role: "Dallas, TX",
-              },
-            ].map((testimonial) => (
-              <div
-                key={testimonial.name}
-                className="bg-gray-50 rounded-2xl p-8 border border-gray-100"
-              >
-                <div className="flex gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <svg
-                      key={i}
-                      className="h-5 w-5 text-yellow-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
+                <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                  {[
+                    {
+                      icon: Clock,
+                      title: "Live in 48 hours",
+                      desc: "Fast turnaround, no bloated process.",
+                    },
+                    {
+                      icon: Smartphone,
+                      title: "Mobile-first",
+                      desc: "Designed for thumb-scrolling customers.",
+                    },
+                    {
+                      icon: TrendingUp,
+                      title: "Built to convert",
+                      desc: "More calls, more quote requests.",
+                    },
+                  ].map((item) => (
+                    <div
+                      key={item.title}
+                      className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10"
                     >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
+                      <item.icon className="h-5 w-5 text-blue-400" />
+                      <div className="mt-3 text-sm font-semibold text-white">
+                        {item.title}
+                      </div>
+                      <div className="mt-1 text-sm text-slate-200">
+                        {item.desc}
+                      </div>
+                    </div>
                   ))}
                 </div>
-                <p className="text-gray-700 italic mb-4">
-                  &ldquo;{testimonial.quote}&rdquo;
-                </p>
-                <div>
-                  <div className="font-semibold text-gray-900">
-                    {testimonial.name}
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    {testimonial.role}
+              </div>
+
+              {/* Hero: mock browser before/after */}
+              <div className="lg:col-span-6">
+                <div className="mx-auto max-w-xl">
+                  <div className="rounded-3xl bg-white/5 p-4 ring-1 ring-white/12 shadow-2xl shadow-black/30">
+                    <div className="rounded-2xl bg-slate-950/50 ring-1 ring-white/10">
+                      <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <span className="h-2.5 w-2.5 rounded-full bg-red-400/90" />
+                          <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/90" />
+                          <span className="h-2.5 w-2.5 rounded-full bg-green-400/90" />
+                        </div>
+                        <div className="hidden flex-1 px-4 sm:block">
+                          <div className="truncate rounded-lg bg-white/10 px-3 py-1 text-xs text-slate-200 ring-1 ring-white/10">
+                            yourbusiness.com
+                          </div>
+                        </div>
+                        <div className="text-xs font-semibold text-slate-200">
+                          Before / After
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2">
+                        {/* Before */}
+                        <div className="border-r border-white/10 p-4">
+                          <div className="text-[11px] font-semibold uppercase tracking-wide text-slate-300">
+                            Before
+                          </div>
+                          <div className="mt-3 rounded-xl bg-white/5 p-3 ring-1 ring-white/10">
+                            <div className="h-3 w-24 rounded bg-white/10" />
+                            <div className="mt-3 space-y-2">
+                              <div className="h-2 w-full rounded bg-white/10" />
+                              <div className="h-2 w-5/6 rounded bg-white/10" />
+                              <div className="h-2 w-4/6 rounded bg-white/10" />
+                            </div>
+                            <div className="mt-4 h-28 rounded-lg bg-white/10" />
+                            <div className="mt-4 grid grid-cols-2 gap-2">
+                              <div className="h-8 rounded-lg bg-white/10" />
+                              <div className="h-8 rounded-lg bg-white/10" />
+                            </div>
+                            <div className="mt-4 text-xs text-slate-300">
+                              Slow, outdated, hard to use on mobile.
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* After */}
+                        <div className="p-4">
+                          <div className="text-[11px] font-semibold uppercase tracking-wide text-slate-300">
+                            After
+                          </div>
+                          <div className="mt-3 overflow-hidden rounded-xl bg-white ring-1 ring-black/5">
+                            <div className="relative">
+                              <img
+                                src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80"
+                                alt="Tradesperson working"
+                                className="h-28 w-full object-cover"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/55 via-slate-900/10 to-transparent" />
+                              <div className="absolute bottom-3 left-3 right-3">
+                                <div className="text-sm font-semibold text-white">
+                                  Get service today
+                                </div>
+                                <div className="mt-1 flex items-center gap-2 text-xs text-slate-200">
+                                  <MapPin className="h-3.5 w-3.5" />
+                                  Local • Fast • Trusted
+                                </div>
+                              </div>
+                            </div>
+                            <div className="p-3">
+                              <div className="flex items-center justify-between">
+                                <div className="text-xs font-semibold text-slate-900">
+                                  Modern layout
+                                </div>
+                                <div className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-1 text-[11px] font-semibold text-blue-700">
+                                  <Zap className="h-3.5 w-3.5" />
+                                  Fast
+                                </div>
+                              </div>
+                              <div className="mt-2 text-xs text-slate-600">
+                                Clear calls-to-action and mobile-friendly
+                                sections.
+                              </div>
+                              <div className="mt-3 grid grid-cols-2 gap-2">
+                                <div className="flex items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-2 py-2 text-xs font-semibold text-white">
+                                  <Phone className="h-4 w-4" />
+                                  Call now
+                                </div>
+                                <div className="flex items-center justify-center gap-1.5 rounded-lg bg-slate-900 px-2 py-2 text-xs font-semibold text-white">
+                                  <Star className="h-4 w-4" />
+                                  Reviews
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Mini phone mockup (CSS) */}
+                          <div className="mt-4 rounded-2xl bg-white/5 p-3 ring-1 ring-white/10">
+                            <div className="flex items-center justify-between">
+                              <div className="text-xs font-semibold text-slate-200">
+                                Mobile preview
+                              </div>
+                              <div className="text-[11px] text-slate-300">
+                                Thumb-first
+                              </div>
+                            </div>
+                            <div className="mt-3 flex justify-center">
+                              <div className="relative h-40 w-28 rounded-[24px] bg-slate-950 ring-1 ring-white/15 shadow-lg shadow-black/30">
+                                <div className="absolute left-1/2 top-2 h-1.5 w-10 -translate-x-1/2 rounded-full bg-white/10" />
+                                <div className="absolute inset-2 overflow-hidden rounded-[18px] bg-white">
+                                  <div className="h-14 bg-gradient-to-br from-blue-600 to-slate-900" />
+                                  <div className="space-y-2 p-2">
+                                    <div className="h-2 w-4/5 rounded bg-slate-200" />
+                                    <div className="h-2 w-full rounded bg-slate-200" />
+                                    <div className="h-7 rounded-lg bg-blue-600" />
+                                    <div className="h-7 rounded-lg bg-slate-900" />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                      {[
+                        { icon: Globe, label: "Modern website" },
+                        { icon: Star, label: "Review automation" },
+                        { icon: Search, label: "Local SEO" },
+                      ].map((b) => (
+                        <div
+                          key={b.label}
+                          className="flex items-center gap-2 rounded-2xl bg-white/5 px-3 py-3 ring-1 ring-white/10"
+                        >
+                          <b.icon className="h-4 w-4 text-blue-400" />
+                          <span className="text-sm font-semibold text-white">
+                            {b.label}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </div>
+          </section>
 
-      {/* CTA / Contact */}
-      <section id="contact" className="py-20 bg-blue-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white">
-            Ready to stop losing customers?
-          </h2>
-          <p className="mt-4 text-lg text-blue-100 max-w-2xl mx-auto">
-            Get a free audit of your current website. We&apos;ll show you exactly
-            what&apos;s wrong and how to fix it. No strings attached.
-          </p>
-          <div className="mt-10 max-w-md mx-auto">
-            <form
-              action="https://formspree.io/f/placeholder"
-              method="POST"
-              className="space-y-4"
-            >
-              <input
-                type="text"
-                name="business_name"
-                placeholder="Business Name"
-                required
-                className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-white/50"
-              />
-              <input
-                type="text"
-                name="website"
-                placeholder="Current Website URL (if you have one)"
-                className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-white/50"
-              />
-              <input
-                type="email"
-                name="email"
-                placeholder="Your Email"
-                required
-                className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-white/50"
-              />
-              <input
-                type="tel"
-                name="phone"
-                placeholder="Phone Number"
-                className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-white/50"
-              />
-              <button
-                type="submit"
-                className="w-full bg-white text-blue-600 font-semibold px-8 py-4 rounded-xl hover:bg-blue-50 transition-colors text-lg"
-              >
-                Get My Free Website Audit →
-              </button>
-            </form>
-            <p className="mt-4 text-sm text-blue-200">
-              We&apos;ll review your site and get back to you within 24 hours.
-              100% free, no obligation.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="py-12 bg-gray-900">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center">
-                <svg
-                  className="h-4 w-4 text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                  />
-                </svg>
+          {/* Pain Points */}
+          <section className="bg-white py-20">
+            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+              <div className="mx-auto max-w-3xl text-center">
+                <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 ring-1 ring-slate-200">
+                  <Clock className="h-3.5 w-3.5 text-blue-600" />
+                  The problem we fix
+                </div>
+                <h2 className="mt-5 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+                  Your website shouldn&apos;t leak leads.
+                </h2>
+                <p className="mt-4 text-lg leading-relaxed text-slate-600">
+                  Most local service sites are slow, hard to navigate, and don&apos;t
+                  make it obvious how to call. We redesign the entire experience
+                  to drive calls, quote requests, and reviews.
+                </p>
               </div>
-              <span className="text-lg font-bold text-white">Booked Out</span>
+
+              <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3">
+                {[
+                  {
+                    icon: Zap,
+                    title: "Slow pages",
+                    desc: "If your site takes more than a few seconds to load, visitors bounce before they ever call.",
+                    stat: "< 2s",
+                    statLabel: "target load time",
+                  },
+                  {
+                    icon: Smartphone,
+                    title: "Bad mobile UX",
+                    desc: "Most searches happen on phones. If the site is a chore, customers pick the next business.",
+                    stat: "Mobile",
+                    statLabel: "first design",
+                  },
+                  {
+                    icon: Phone,
+                    title: "No clear CTA",
+                    desc: "You need click-to-call, sticky CTAs, and conversion-focused layouts — not paragraphs.",
+                    stat: "+ Calls",
+                    statLabel: "built in",
+                  },
+                ].map((p) => (
+                  <div
+                    key={p.title}
+                    className="group rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+                  >
+                    <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-900 ring-1 ring-slate-900/10">
+                      <p.icon className="h-5 w-5 text-blue-500" />
+                    </div>
+                    <h3 className="mt-5 text-lg font-semibold text-slate-900">
+                      {p.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                      {p.desc}
+                    </p>
+                    <div className="mt-5 flex items-baseline gap-2">
+                      <div className="text-2xl font-semibold text-blue-600">
+                        {p.stat}
+                      </div>
+                      <div className="text-sm text-slate-500">{p.statLabel}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="flex gap-6 text-sm text-gray-400">
-              <a href="#services" className="hover:text-white transition-colors">
-                Services
-              </a>
-              <a href="#how-it-works" className="hover:text-white transition-colors">
-                Process
-              </a>
-              <a href="#results" className="hover:text-white transition-colors">
-                Results
-              </a>
-              <a href="#contact" className="hover:text-white transition-colors">
-                Contact
-              </a>
+          </section>
+
+          {/* Services */}
+          <section id="services" className="bg-slate-50 py-20">
+            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+              <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-12">
+                <div className="lg:col-span-5">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700 ring-1 ring-slate-200">
+                    <Globe className="h-3.5 w-3.5 text-blue-600" />
+                    What you get
+                  </div>
+                  <h2 className="mt-5 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+                    Everything your business needs to get booked out.
+                  </h2>
+                  <p className="mt-4 text-lg leading-relaxed text-slate-600">
+                    A premium web presence + the systems that build trust and
+                    keep your phone ringing.
+                  </p>
+
+                  <div className="mt-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+                    <img
+                      src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80"
+                      alt="Plumber working"
+                      className="h-56 w-full object-cover"
+                    />
+                    <div className="p-6">
+                      <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                        <Shield className="h-4 w-4 text-blue-600" />
+                        Built for trades & local services
+                      </div>
+                      <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                        Clear service pages, strong calls-to-action, and
+                        trust-first design that looks premium on every device.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-7">
+                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    {[
+                      {
+                        icon: Globe,
+                        title: "Conversion-focused website",
+                        desc: "Modern design, fast load times, service pages that rank and convert.",
+                      },
+                      {
+                        icon: Smartphone,
+                        title: "Mobile-first experience",
+                        desc: "Tap-to-call, streamlined forms, and layouts that work on small screens.",
+                      },
+                      {
+                        icon: Search,
+                        title: "Local SEO foundation",
+                        desc: "On-page SEO, schema, and location signals designed to win local searches.",
+                      },
+                      {
+                        icon: Star,
+                        title: "Review automation",
+                        desc: "Automated Google review requests to build trust and improve ranking.",
+                      },
+                      {
+                        icon: Phone,
+                        title: "Click-to-call everywhere",
+                        desc: "Calls are the lifeblood. We make contacting you frictionless.",
+                      },
+                      {
+                        icon: BarChart3,
+                        title: "Analytics & reporting",
+                        desc: "Know what&apos;s working: calls, forms, traffic, and performance.",
+                      },
+                    ].map((s) => (
+                      <div
+                        key={s.title}
+                        className="group rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+                      >
+                        <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 ring-1 ring-blue-600/10">
+                          <s.icon className="h-5 w-5 text-blue-600" />
+                        </div>
+                        <h3 className="mt-5 text-base font-semibold text-slate-900">
+                          {s.title}
+                        </h3>
+                        <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                          {s.desc}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-8 rounded-3xl bg-slate-900 p-8 text-white shadow-sm">
+                    <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <div className="text-sm font-semibold text-blue-300">
+                          Typical outcome
+                        </div>
+                        <div className="mt-1 text-2xl font-semibold tracking-tight">
+                          More calls. Better reviews. Stronger Google presence.
+                        </div>
+                      </div>
+                      <a
+                        href="#contact"
+                        className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm shadow-blue-600/25 transition-colors hover:bg-blue-700"
+                      >
+                        Request an audit
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p className="text-sm text-gray-500">
-              © {new Date().getFullYear()} Booked Out. All rights reserved.
-            </p>
+          </section>
+
+          {/* How it works */}
+          <section id="process" className="bg-white py-20">
+            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+              <div className="mx-auto max-w-3xl text-center">
+                <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 ring-1 ring-slate-200">
+                  <CheckCircle className="h-3.5 w-3.5 text-blue-600" />
+                  Simple, fast, predictable
+                </div>
+                <h2 className="mt-5 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+                  Launch in 3 steps.
+                </h2>
+                <p className="mt-4 text-lg leading-relaxed text-slate-600">
+                  No drawn-out agency timelines. We move quickly and keep you in
+                  the loop.
+                </p>
+              </div>
+
+              <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3">
+                {[
+                  {
+                    step: "01",
+                    title: "Audit",
+                    desc: "We review your current site (or your competitors) and identify the fastest wins to get more calls.",
+                    icon: Search,
+                  },
+                  {
+                    step: "02",
+                    title: "Build",
+                    desc: "You get a clean, premium design with clear CTAs, service pages, and mobile-first layouts.",
+                    icon: Globe,
+                  },
+                  {
+                    step: "03",
+                    title: "Grow",
+                    desc: "We launch, optimize, and (on Growth/Pro) automate review requests to boost trust and ranking.",
+                    icon: TrendingUp,
+                  },
+                ].map((st) => (
+                  <div
+                    key={st.step}
+                    className="relative rounded-3xl border border-slate-200 bg-white p-7 shadow-sm"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm font-semibold text-slate-500">
+                        {st.step}
+                      </div>
+                      <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900 ring-1 ring-slate-900/10">
+                        <st.icon className="h-5 w-5 text-blue-500" />
+                      </div>
+                    </div>
+                    <h3 className="mt-5 text-lg font-semibold text-slate-900">
+                      {st.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                      {st.desc}
+                    </p>
+                    <div className="mt-6 h-px w-full bg-slate-200" />
+                    <ul className="mt-5 space-y-3">
+                      {["Clear timeline", "No fluff", "Built for calls"].map(
+                        (x) => (
+                          <li key={x} className="flex items-start gap-2">
+                            <CheckCircle className="mt-0.5 h-4 w-4 text-blue-600" />
+                            <span className="text-sm text-slate-600">{x}</span>
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Social proof / Stats */}
+          <section id="results" className="bg-slate-50 py-20">
+            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+              <div className="mx-auto max-w-3xl text-center">
+                <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700 ring-1 ring-slate-200">
+                  <Star className="h-3.5 w-3.5 text-blue-600" />
+                  Social proof
+                </div>
+                <h2 className="mt-5 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+                  Built to look premium — and perform.
+                </h2>
+                <p className="mt-4 text-lg leading-relaxed text-slate-600">
+                  Your website is often the first impression. We make sure it
+                  feels trustworthy and makes it effortless to contact you.
+                </p>
+              </div>
+
+              <div className="mt-14 grid grid-cols-2 gap-6 md:grid-cols-4">
+                {[
+                  { value: "48h", label: "Typical launch window" },
+                  { value: "95+", label: "Target PageSpeed score" },
+                  { value: "2x", label: "More inbound calls" },
+                  { value: "5★", label: "Review-first design" },
+                ].map((s) => (
+                  <div
+                    key={s.label}
+                    className="rounded-3xl border border-slate-200 bg-white p-6 text-center shadow-sm"
+                  >
+                    <div className="text-3xl font-semibold tracking-tight text-slate-900">
+                      {s.value}
+                    </div>
+                    <div className="mt-2 text-sm text-slate-600">{s.label}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2">
+                {[
+                  {
+                    quote:
+                      "Our new site looks premium and loads instantly. Customers mention it on the phone — and we&apos;re booking more jobs.",
+                    name: "Plumbing & Drain Service",
+                    location: "Austin, TX",
+                  },
+                  {
+                    quote:
+                      "The review automation alone was worth it. We&apos;re getting more Google reviews each week and ranking better locally.",
+                    name: "HVAC Company",
+                    location: "Dallas, TX",
+                  },
+                ].map((t) => (
+                  <div
+                    key={t.name}
+                    className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm"
+                  >
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star key={i} className="h-4 w-4 text-yellow-500" />
+                      ))}
+                    </div>
+                    <p className="mt-4 text-sm leading-relaxed text-slate-700">
+                      &ldquo;{t.quote}&rdquo;
+                    </p>
+                    <div className="mt-6 flex items-center justify-between gap-3">
+                      <div>
+                        <div className="text-sm font-semibold text-slate-900">
+                          {t.name}
+                        </div>
+                        <div className="mt-1 flex items-center gap-1 text-sm text-slate-500">
+                          <MapPin className="h-4 w-4" />
+                          {t.location}
+                        </div>
+                      </div>
+                      <div className="inline-flex items-center gap-2 rounded-2xl bg-slate-900 px-3 py-2 text-xs font-semibold text-white">
+                        <Shield className="h-4 w-4 text-blue-400" />
+                        Verified
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Pricing */}
+          <section id="pricing" className="bg-white py-20">
+            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+              <div className="mx-auto max-w-3xl text-center">
+                <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 ring-1 ring-slate-200">
+                  <BarChart3 className="h-3.5 w-3.5 text-blue-600" />
+                  Pricing
+                </div>
+                <h2 className="mt-5 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+                  Simple monthly plans. Built for local growth.
+                </h2>
+                <p className="mt-4 text-lg leading-relaxed text-slate-600">
+                  Start with a modern website, then add review automation and
+                  growth systems when you&apos;re ready.
+                </p>
+              </div>
+
+              <div className="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-3">
+                {[
+                  {
+                    name: "Starter",
+                    price: "$299",
+                    badge: null as string | null,
+                    desc: "Website only — live in 48hrs.",
+                    features: [
+                      "Modern website",
+                      "Mobile optimized",
+                      "Hosting included",
+                      "Fast turnaround",
+                    ],
+                  },
+                  {
+                    name: "Growth",
+                    price: "$399",
+                    badge: "Most popular",
+                    desc: "Everything in Starter + reviews + GBP optimization.",
+                    features: [
+                      "Everything in Starter",
+                      "Automated Google review requests",
+                      "Google Business Profile optimization",
+                      "Conversion improvements",
+                    ],
+                  },
+                  {
+                    name: "Pro",
+                    price: "$599",
+                    badge: null as string | null,
+                    desc: "Everything in Growth + ads + reporting.",
+                    features: [
+                      "Everything in Growth",
+                      "Google Ads management",
+                      "Monthly reporting",
+                      "Ongoing optimizations",
+                    ],
+                  },
+                ].map((plan) => (
+                  <div
+                    key={plan.name}
+                    className={`relative rounded-3xl border bg-white p-8 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${
+                      plan.badge
+                        ? "border-blue-600 ring-1 ring-blue-600/15"
+                        : "border-slate-200"
+                    }`}
+                  >
+                    {plan.badge ? (
+                      <div className="absolute -top-3 left-6 rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white shadow-sm">
+                        {plan.badge}
+                      </div>
+                    ) : null}
+
+                    <div className="flex items-start justify-between gap-6">
+                      <div>
+                        <h3 className="text-lg font-semibold text-slate-900">
+                          {plan.name}
+                        </h3>
+                        <p className="mt-2 text-sm text-slate-600">
+                          {plan.desc}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-3xl font-semibold tracking-tight text-slate-900">
+                          {plan.price}
+                        </div>
+                        <div className="mt-1 text-sm text-slate-500">/mo</div>
+                      </div>
+                    </div>
+
+                    <div className="mt-6 h-px w-full bg-slate-200" />
+
+                    <ul className="mt-6 space-y-3">
+                      {plan.features.map((f) => (
+                        <li key={f} className="flex items-start gap-2">
+                          <CheckCircle className="mt-0.5 h-4 w-4 text-blue-600" />
+                          <span className="text-sm text-slate-700">{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <a
+                      href="#contact"
+                      className={`mt-8 inline-flex w-full items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold transition-all ${
+                        plan.badge
+                          ? "bg-blue-600 text-white shadow-sm shadow-blue-600/25 hover:bg-blue-700"
+                          : "bg-slate-900 text-white hover:bg-slate-800"
+                      }`}
+                    >
+                      Choose {plan.name}
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </a>
+
+                    <p className="mt-3 text-center text-xs text-slate-500">
+                      Cancel anytime.
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* CTA / Contact */}
+          <section id="contact" className="bg-[#0F172A] py-20">
+            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+              <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12">
+                <div className="lg:col-span-6">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white ring-1 ring-white/15">
+                    <Zap className="h-3.5 w-3.5 text-blue-400" />
+                    Free website audit
+                  </div>
+                  <h2 className="mt-5 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+                    Want more calls this month?
+                  </h2>
+                  <p className="mt-4 text-lg leading-relaxed text-slate-200">
+                    Send your details and we&apos;ll review your current site (or
+                    your online presence) and reply with a clear plan.
+                  </p>
+
+                  <div className="mt-8 space-y-4">
+                    {[
+                      {
+                        icon: CheckCircle,
+                        title: "Clear recommendations",
+                        desc: "What to fix, what to build, and what to prioritize first.",
+                      },
+                      {
+                        icon: Smartphone,
+                        title: "Mobile & speed review",
+                        desc: "We check load time, mobile usability, and your call-to-action flow.",
+                      },
+                      {
+                        icon: Star,
+                        title: "Review & Google profile audit",
+                        desc: "See what&apos;s holding your local ranking back.",
+                      },
+                    ].map((x) => (
+                      <div key={x.title} className="flex gap-3">
+                        <div className="mt-0.5 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/15">
+                          <x.icon className="h-5 w-5 text-blue-400" />
+                        </div>
+                        <div>
+                          <div className="text-sm font-semibold text-white">
+                            {x.title}
+                          </div>
+                          <div className="mt-1 text-sm text-slate-200">
+                            {x.desc}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="lg:col-span-6">
+                  <div className="rounded-3xl bg-white p-8 shadow-2xl shadow-black/30 ring-1 ring-black/5">
+                    <div className="flex items-start justify-between gap-6">
+                      <div>
+                        <div className="text-sm font-semibold text-slate-900">
+                          Request your audit
+                        </div>
+                        <div className="mt-1 text-sm text-slate-600">
+                          We reply within 24 hours.
+                        </div>
+                      </div>
+                      <div className="inline-flex items-center gap-2 rounded-2xl bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 ring-1 ring-blue-600/10">
+                        <Clock className="h-4 w-4" />
+                        24h response
+                      </div>
+                    </div>
+
+                    <form
+                      action="https://formspree.io/f/placeholder"
+                      method="POST"
+                      className="mt-6 space-y-4"
+                    >
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <label className="space-y-1">
+                          <div className="text-xs font-semibold text-slate-700">
+                            Business name
+                          </div>
+                          <input
+                            type="text"
+                            name="business_name"
+                            required
+                            placeholder="Booked Out Plumbing"
+                            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none ring-blue-600/20 placeholder:text-slate-400 focus:border-blue-600 focus:ring-4"
+                          />
+                        </label>
+                        <label className="space-y-1">
+                          <div className="text-xs font-semibold text-slate-700">
+                            Phone
+                          </div>
+                          <input
+                            type="tel"
+                            name="phone"
+                            required
+                            placeholder="(555) 123-4567"
+                            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none ring-blue-600/20 placeholder:text-slate-400 focus:border-blue-600 focus:ring-4"
+                          />
+                        </label>
+                      </div>
+
+                      <label className="space-y-1">
+                        <div className="text-xs font-semibold text-slate-700">
+                          Email
+                        </div>
+                        <input
+                          type="email"
+                          name="email"
+                          required
+                          placeholder="you@business.com"
+                          className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none ring-blue-600/20 placeholder:text-slate-400 focus:border-blue-600 focus:ring-4"
+                        />
+                      </label>
+
+                      <label className="space-y-1">
+                        <div className="text-xs font-semibold text-slate-700">
+                          Current website (optional)
+                        </div>
+                        <input
+                          type="text"
+                          name="website"
+                          placeholder="https://yourbusiness.com"
+                          className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none ring-blue-600/20 placeholder:text-slate-400 focus:border-blue-600 focus:ring-4"
+                        />
+                      </label>
+
+                      <button
+                        type="submit"
+                        className="inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-6 py-3.5 text-base font-semibold text-white shadow-sm shadow-blue-600/25 transition-all hover:bg-blue-700 hover:shadow-md hover:shadow-blue-600/30"
+                      >
+                        Get my free audit
+                        <ArrowRight className="ml-2 h-5 w-5" />
+                      </button>
+
+                      <p className="text-center text-xs text-slate-500">
+                        By submitting, you agree to be contacted about your
+                        audit. No spam.
+                      </p>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        {/* Footer */}
+        <footer className="border-t border-slate-200 bg-white">
+          <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+            <div className="flex flex-col gap-10 md:flex-row md:items-center md:justify-between">
+              <div className="flex items-center gap-3">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 ring-1 ring-slate-900/10">
+                  <Zap className="h-5 w-5 text-blue-500" />
+                </span>
+                <div>
+                  <div className="text-sm font-semibold text-slate-900">
+                    Booked Out
+                  </div>
+                  <div className="mt-1 text-sm text-slate-600">
+                    Websites + review automation for local services.
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm font-medium">
+                <a
+                  href="#services"
+                  className="text-slate-600 transition-colors hover:text-slate-900"
+                >
+                  Services
+                </a>
+                <a
+                  href="#process"
+                  className="text-slate-600 transition-colors hover:text-slate-900"
+                >
+                  How it works
+                </a>
+                <a
+                  href="#pricing"
+                  className="text-slate-600 transition-colors hover:text-slate-900"
+                >
+                  Pricing
+                </a>
+                <a
+                  href="#contact"
+                  className="text-slate-600 transition-colors hover:text-slate-900"
+                >
+                  Contact
+                </a>
+              </div>
+            </div>
+
+            <div className="mt-10 flex flex-col gap-4 border-t border-slate-200 pt-8 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-sm text-slate-500">
+                © {new Date().getFullYear()} Booked Out. All rights reserved.
+              </p>
+              <div className="flex items-center gap-3 text-sm text-slate-500">
+                <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 ring-1 ring-slate-200">
+                  <MapPin className="h-4 w-4" />
+                  Serving local service businesses
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
-      </footer>
+        </footer>
+      </div>
     </div>
   );
 }
