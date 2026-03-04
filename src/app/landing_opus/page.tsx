@@ -329,15 +329,16 @@ export default function LandingOpusPage() {
             </div>
 
             <h1 className="mt-6 max-w-3xl text-4xl font-extrabold leading-[1.1] tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
-              Your competitor with{" "}
-              <span className="text-orange-600">worse work</span> is getting
-              all the calls {areaIn}.
+              You do great work{" "}
+              {city && <>{areaIn}</>}.{" "}
+              <span className="text-orange-600">So why does your competitor get the call?</span>
             </h1>
 
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-gray-600 sm:text-xl">
-              Because they show up first on Google, have 50+ reviews, and a
-              website that doesn't look like it was built in 2009. We fix that.
-              Fast website, automated reviews, more calls. No contracts.
+              They're not better than you. They just look better online. We fix
+              that — professional website + automated review system that turns
+              every finished job into a 5-star review. 47 new reviews in 60
+              days. No contracts. Results in 30 days or your first month is free.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -439,12 +440,10 @@ export default function LandingOpusPage() {
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="mx-auto max-w-3xl text-center">
               <p className="text-sm font-bold uppercase tracking-widest text-gray-500">
-                Why you&apos;re losing to worse competitors
+                This is happening right now
               </p>
               <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                Someone {areaIn} needs your service right now.
-                <br className="hidden sm:block" />
-                They&apos;re going to call whoever Google shows first.
+                While you&apos;re reading this, you&apos;re losing a $2,500 job.
               </h2>
             </div>
 
@@ -452,18 +451,18 @@ export default function LandingOpusPage() {
               {[
                 {
                   icon: TrendingUp,
-                  title: "Your website is costing you jobs",
-                  body: `A slow, outdated, or non-existent website tells Google (and customers) you're not serious. When someone ${areaIn} searches "plumber near me" or "best HVAC," they skip past anyone who doesn't look professional.`,
+                  title: "You don't have a real website",
+                  body: `A Facebook page isn't a website. A site from 2019 isn't a website. When someone ${areaIn} searches for your service, you either look like the obvious choice — or you don't show up at all. There's no in-between anymore.`,
                 },
                 {
                   icon: Star,
                   title: "You don't have enough reviews",
-                  body: "Customers filter by stars before they filter by price. If you've got 4 reviews and your competitor has 50, you don't exist. And asking every customer face-to-face is awkward and inconsistent.",
+                  body: "93% of customers read reviews before calling. Your competitor has dozens of stars glowing on Google. The math makes the decision for them — before they ever see your work.",
                 },
                 {
                   icon: PhoneCall,
-                  title: "The calls are going somewhere else",
-                  body: `Every day without a strong online presence ${areaIn} is money you're leaving for competitors. Not because their work is better. Because their Google presence is.`,
+                  title: "Google can't tell who you are",
+                  body: `You might be the best in a 50-mile radius. Doesn't matter. Google ranks what it can understand: fast sites, clear service pages, consistent activity, and real reviews. Everything else gets buried on page 2. And nobody goes to page 2.`,
                 },
               ].map((card, i) => (
                 <div

@@ -163,12 +163,12 @@ export default function LandingPage() {
                 Exclusive to one business per trade in {city}
               </div>
               <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight tracking-tight mb-6">
-                Get More Calls in {city}. <br/>
-                <span className="text-amber-400">Without the Marketing BS.</span>
+                You Do Great Work in {city}. <br/>
+                <span className="text-amber-400">So Why Does Your Competitor Get the Call?</span>
               </h1>
               <p className="text-lg md:text-xl text-slate-300 mb-8 leading-relaxed">
-                We build high-converting websites and automate Google reviews for local service businesses. 
-                <strong className="text-white"> $99/month. No contracts.</strong> First 30 days are free if your phone doesn't ring.
+                They're not better than you. They just look better online. We fix that — professional website + automated review system that turns every finished job into a 5-star review.
+                <strong className="text-white"> 47 new reviews in 60 days. No contracts.</strong> Results in 30 days or your first month is free.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4">
@@ -256,8 +256,8 @@ export default function LandingPage() {
       <section className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Why your competitors are getting the calls you deserve.</h2>
-            <p className="text-lg text-slate-600">Right now, locals in {city} are searching for your services. Here is why they are calling the other guy.</p>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">While You're Reading This, You're Losing a $2,500 Job</h2>
+            <p className="text-lg text-slate-600">Every day your online presence stays "good enough," you're handing calls to the contractor who took theirs seriously.</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -265,22 +265,22 @@ export default function LandingPage() {
               <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-6">
                 <Target className="w-6 h-6 text-red-600" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">Your website looks like 2005</h3>
-              <p className="text-slate-600">If your site isn't mobile-friendly and fast, 68% of customers will hit the back button and call the next business on the list.</p>
+              <h3 className="text-xl font-bold text-slate-900 mb-3">You Don't Have a Real Website</h3>
+              <p className="text-slate-600">A Facebook page isn't a website. A site from 2019 isn't a website. You either look like the obvious choice — or you don't show up at all. There's no in-between anymore.</p>
             </div>
             <div className="bg-white p-8 rounded-xl border border-slate-200 shadow-sm">
               <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-6">
                 <Star className="w-6 h-6 text-red-600" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">You lack Google Reviews</h3>
-              <p className="text-slate-600">The competitor with 114 reviews at 4.8 stars will always beat the guy with 3 reviews at 5.0 stars. People trust volume.</p>
+              <h3 className="text-xl font-bold text-slate-900 mb-3">You Don't Have Enough Reviews</h3>
+              <p className="text-slate-600">93% of customers read reviews before calling. Your competitor has dozens of stars glowing on Google. The math makes the decision for them — before they ever see your work.</p>
             </div>
             <div className="bg-white p-8 rounded-xl border border-slate-200 shadow-sm">
               <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-6">
                 <MapPin className="w-6 h-6 text-red-600" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">You aren't ranking locally</h3>
-              <p className="text-slate-600">If you aren't showing up in the "Google Map Pack" for "{city} + your trade", you are invisible to high-intent buyers.</p>
+              <h3 className="text-xl font-bold text-slate-900 mb-3">Google Can't Tell Who You Are</h3>
+              <p className="text-slate-600">You might be the best in a 50-mile radius. Doesn't matter. Google ranks what it can understand: fast sites, clear service pages, and real reviews. Everything else gets buried on page 2.</p>
             </div>
           </div>
         </div>
@@ -425,7 +425,7 @@ lg text-sm">
       <section className="py-24 bg-blue-600">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">
-            Stop losing jobs to the guy with more reviews.
+            You Do Great Work. It's Time Your Online Presence Showed It.
           </h2>
           <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
             Get a high-converting website, automated review generation, and missed-call text back. All for one flat monthly rate.

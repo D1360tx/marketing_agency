@@ -154,13 +154,13 @@ export default function LandingPage() {
     return {
       heroHeadline: geoLoading ? (
         <>
-          Your <SkeletonText w="w-32" /> Neighbors Are Already Searching for You.
-          <span className="text-blue-400"> Are They Finding You?</span>
+          You Do Great Work.
+          <span className="text-blue-400"> So Why Does Your Competitor Get the Call?</span>
         </>
       ) : (
         <>
-          Your {city && <span className="text-blue-400">{city} </span>}Neighbors Are Already
-          Searching for You. <span className="text-blue-400">Are They Finding You?</span>
+          You Do Great Work{city && <> in <span className="text-blue-400">{city}</span></>}.{" "}
+          <span className="text-blue-400">So Why Does Your Competitor Get the Call?</span>
         </>
       ),
       problemLead: `Right now, someone in ${c} is searching for your service...` ,
@@ -295,10 +295,10 @@ export default function LandingPage() {
               </h1>
 
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-200">
-                If your website is slow, your reviews are stale, or Google can't tell
-                who to rank… you're bleeding calls.
-                <span className="text-white"> We fix it</span> with a professional
-                website + review automation built for local service businesses.
+                They're not better than you. They just look better online.
+                <span className="text-white"> We fix that</span> — professional
+                website + automated review system that turns every finished job into a 5-star review.
+                47 new reviews in 60 days. No contracts. Results in 30 days or your first month is free.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -429,27 +429,27 @@ export default function LandingPage() {
         {/* 3) Problem */}
         <section id="problem" className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
           <SectionHeader
-            kicker="This is why you're losing calls"
-            title="Google doesn't reward 'good enough' anymore"
-            desc="Fear first: if you don't look like the obvious choice online, customers in your city move on in seconds. Relief next: we make you the obvious choice."
+            kicker="This is happening right now"
+            title="While You're Reading This, You're Losing a $2,500 Job"
+            desc="Every day your online presence stays 'good enough,' you're handing calls to the contractor who took theirs seriously."
           />
 
           <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
             {[
               {
                 icon: Globe,
-                title: "No real website",
-                desc: "A Facebook page isn't a website. When someone in your city searches, you look untrustworthy - and they click your competitor.",
+                title: "You Don't Have a Real Website",
+                desc: "A Facebook page isn't a website. A site from 2019 isn't a website. You either look like the obvious choice — or you don't show up at all. There's no in-between anymore.",
               },
               {
                 icon: Star,
-                title: "Not enough reviews",
-                desc: "Customers filter by stars. If you have 0-10 reviews, you're invisible next to the guy with 47.",
+                title: "You Don't Have Enough Reviews",
+                desc: "93% of customers read reviews before calling. Your competitor has dozens of stars glowing on Google. The math makes the decision for them — before they ever see your work.",
               },
               {
                 icon: Search,
-                title: "Competitors outrank you",
-                desc: "Even if you do great work, Google ranks what it can understand: fast site, clear services, consistent activity.",
+                title: "Google Can't Tell Who You Are",
+                desc: "You might be the best in a 50-mile radius. Doesn't matter. Google ranks what it can understand: fast sites, clear service pages, and real reviews. Everything else gets buried on page 2.",
               },
             ].map((p) => (
               <div
@@ -471,10 +471,10 @@ export default function LandingPage() {
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
                 <div className="text-sm font-semibold text-white">
-                  Stop guessing. Get the exact fixes.
+                  Stop Guessing What's Broken. We'll Show You.
                 </div>
                 <div className="mt-1 text-sm text-slate-200">
-                  We'll show you what's blocking calls in <span className="text-white">{city}</span> and what to change first.
+                  Free audit. 24-48 hours. We'll tell you exactly what's blocking your calls in <span className="text-white">{city}</span> and what to fix first.
                 </div>
               </div>
               <a
@@ -662,9 +662,9 @@ export default function LandingPage() {
         {/* 6) Pricing */}
         <section id="pricing" className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
           <SectionHeader
-            kicker="Simple pricing"
-            title="$399/mo - built for local service businesses"
-            desc="No long contracts. No mystery retainers. Just a system designed to get you found and chosen."
+            kicker="Simple pricing. No surprises."
+            title="$399/mo — Built for Businesses That Do the Work. We Handle the Rest."
+            desc="No long contracts. No mystery retainers. No setup fees. If we don't deliver results in 30 days, your first month is free. We don't eat unless you eat."
           />
 
           <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-12">
