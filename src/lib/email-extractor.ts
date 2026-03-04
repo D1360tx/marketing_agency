@@ -20,22 +20,43 @@ const BLACKLIST_PATTERNS = [
   /\.webp$/,
 ];
 
+// Free email providers to deprioritize
+const FREE_PROVIDERS = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "aol.com", "icloud.com"];
+
+// Business email prefixes to prioritize
+const BUSINESS_PREFIXES = ["info", "contact", "hello", "office", "service"];
+
 // Common generic email prefixes for local businesses
 const COMMON_PREFIXES = [
+  "admin",
+  "team",
+  "hello",
+  "hi",
+  "mail",
+  "office",
+  "service",
+  "support",
   "info",
   "contact",
-  "hello",
-  "office",
-  "support",
-  "admin",
   "sales",
-  "service",
   "help",
-  "team",
-  "mail",
   "enquiries",
   "inquiries",
 ];
+
+// Realistic browser headers to avoid bot detection
+const BROWSER_HEADERS = {
+  "User-Agent":
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+  Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+  "Accept-Language": "en-US,en;q=0.9",
+  "Accept-Encoding": "gzip, deflate, br",
+  "Cache-Control": "no-cache",
+  Pragma: "no-cache",
+  "Sec-Fetch-Dest": "document",
+  "Sec-Fetch-Mode": "navigate",
+  "Sec-Fetch-Site": "none",
+};
 
 /**
  * Extracts email addresses from a website by fetching the homepage
@@ -43,7 +64,7 @@ const COMMON_PREFIXES = [
  * If no emails are found via scraping, tries common email patterns.
  */
 export async function extractEmails(websiteUrl: string): Promise<string[]> {
-  const emails = new Set<string>();
+  const emailsBySource: { email: string; source: "mailto" | "content" }[] = [];
 
   // Normalize URL
   let baseUrl = websiteUrl;
@@ -60,30 +81,79 @@ export async function extractEmails(websiteUrl: string): Promise<string[]> {
     `${baseUrl}/contact-us`,
     `${baseUrl}/about`,
     `${baseUrl}/about-us`,
+    `${baseUrl}/get-in-touch`,
+    `${baseUrl}/reach-us`,
   ];
 
   for (const pageUrl of pagesToCheck) {
     try {
       const pageEmails = await extractEmailsFromPage(pageUrl);
-      pageEmails.forEach((e) => emails.add(e));
+      for (const item of pageEmails) {
+        if (!emailsBySource.some((e) => e.email === item.email)) {
+          emailsBySource.push(item);
+        }
+      }
     } catch {
       // Page doesn't exist or failed to load - skip
     }
 
     // Stop once we have some emails (no need to hit every page)
-    if (emails.size >= 3) break;
+    if (emailsBySource.length >= 3) break;
   }
 
   // If no emails found via scraping, try common patterns
-  if (emails.size === 0) {
+  if (emailsBySource.length === 0) {
     const domain = extractDomain(baseUrl);
     if (domain) {
       const guessedEmails = await guessCommonEmails(domain);
-      guessedEmails.forEach((e) => emails.add(e));
+      guessedEmails.forEach((e) =>
+        emailsBySource.push({ email: e, source: "content" })
+      );
     }
   }
 
-  return Array.from(emails);
+  // Rank and return
+  const ranked = rankEmails(emailsBySource);
+  return ranked;
+}
+
+/**
+ * Rank emails by priority:
+ * 1. mailto: links (highest confidence)
+ * 2. Business prefixes (info@, contact@, etc.)
+ * 3. Short emails (< 30 chars)
+ * 4. Avoid free providers unless only option
+ */
+function rankEmails(
+  emails: { email: string; source: "mailto" | "content" }[]
+): string[] {
+  if (emails.length === 0) return [];
+
+  const scored = emails.map(({ email, source }) => {
+    let score = 0;
+
+    // Mailto links are highest confidence
+    if (source === "mailto") score += 100;
+
+    // Business prefix match
+    const local = email.split("@")[0].toLowerCase();
+    if (BUSINESS_PREFIXES.some((p) => local === p)) score += 50;
+
+    // Short email
+    if (email.length < 30) score += 20;
+
+    // Penalize free providers
+    const domain = email.split("@")[1]?.toLowerCase();
+    if (FREE_PROVIDERS.includes(domain)) score -= 40;
+
+    // Penalize numeric-only local part
+    if (/^\d+$/.test(local)) score -= 50;
+
+    return { email, score };
+  });
+
+  scored.sort((a, b) => b.score - a.score);
+  return scored.map((s) => s.email);
 }
 
 /**
@@ -97,12 +167,10 @@ async function guessCommonEmails(domain: string): Promise<string[]> {
 
   // Return the most common patterns — we can't truly verify without sending,
   // but these are high-probability for local businesses
-  const candidates = COMMON_PREFIXES.slice(0, 5).map(
-    (prefix) => `${prefix}@${domain}`
-  );
+  const candidates = COMMON_PREFIXES.map((prefix) => `${prefix}@${domain}`);
 
-  // Return first 2 most likely candidates
-  return candidates.slice(0, 2);
+  // Return top 3 most likely candidates
+  return candidates.slice(0, 3);
 }
 
 /**
@@ -140,46 +208,108 @@ function extractDomain(url: string): string | null {
   }
 }
 
-async function extractEmailsFromPage(url: string): Promise<string[]> {
-  const response = await fetch(url, {
-    headers: {
-      "User-Agent":
-        "Mozilla/5.0 (compatible; Booked Out/1.0; +https://bookedout.app)",
-    },
-    redirect: "follow",
-    signal: AbortSignal.timeout(10000), // 10s timeout
-  });
+/**
+ * Decode HTML-obfuscated email text (spammer tricks).
+ */
+function decodeObfuscation(html: string): string {
+  return html
+    .replace(/&#64;/g, "@")
+    .replace(/&#46;/g, ".")
+    .replace(/\[at\]/gi, "@")
+    .replace(/\[dot\]/gi, ".");
+}
 
-  if (!response.ok) return [];
+async function extractEmailsFromPage(
+  url: string
+): Promise<{ email: string; source: "mailto" | "content" }[]> {
+  // Try HTTPS first, fall back to HTTP if it fails
+  let html: string | null = null;
 
-  const html = await response.text();
-  const emails = new Set<string>();
+  const tryFetch = async (fetchUrl: string): Promise<string | null> => {
+    try {
+      const response = await fetch(fetchUrl, {
+        headers: BROWSER_HEADERS,
+        redirect: "follow",
+        signal: AbortSignal.timeout(10000), // 10s timeout
+      });
 
-  // Extract from mailto: links (highest confidence)
-  const mailtoMatches = html.match(
+      if (!response.ok) return null;
+      return await response.text();
+    } catch {
+      return null;
+    }
+  };
+
+  html = await tryFetch(url);
+
+  // HTTP fallback if HTTPS failed
+  if (html === null && url.startsWith("https://")) {
+    const httpUrl = url.replace(/^https:\/\//, "http://");
+    html = await tryFetch(httpUrl);
+  }
+
+  if (html === null) return [];
+
+  const emails: { email: string; source: "mailto" | "content" }[] = [];
+  const seen = new Set<string>();
+
+  const addEmail = (
+    raw: string,
+    source: "mailto" | "content"
+  ) => {
+    const email = raw.toLowerCase().trim();
+    if (!seen.has(email) && isValidEmail(email)) {
+      seen.add(email);
+      emails.push({ email, source });
+    }
+  };
+
+  // Decode obfuscated content before processing
+  const decoded = decodeObfuscation(html);
+
+  // 1. Extract from mailto: links (highest confidence)
+  const mailtoMatches = decoded.match(
     /mailto:([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/gi
   );
   if (mailtoMatches) {
     for (const match of mailtoMatches) {
-      const email = match.replace(/^mailto:/i, "").toLowerCase();
-      if (isValidEmail(email)) {
-        emails.add(email);
-      }
+      addEmail(match.replace(/^mailto:/i, ""), "mailto");
     }
   }
 
-  // Extract from page content via regex
-  const contentMatches = html.match(EMAIL_REGEX);
+  // 2. Look for data-email attributes
+  const dataEmailMatches = decoded.match(
+    /data-email=["']([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})["']/gi
+  );
+  if (dataEmailMatches) {
+    for (const match of dataEmailMatches) {
+      const emailMatch = match.match(
+        /data-email=["']([^"']+)["']/i
+      );
+      if (emailMatch?.[1]) addEmail(emailMatch[1], "content");
+    }
+  }
+
+  // 3. Look for schema.org / JSON-LD email fields
+  const jsonLdMatches = decoded.match(
+    /"email"\s*:\s*"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})"/gi
+  );
+  if (jsonLdMatches) {
+    for (const match of jsonLdMatches) {
+      const emailMatch = match.match(/"email"\s*:\s*"([^"]+)"/i);
+      if (emailMatch?.[1]) addEmail(emailMatch[1], "content");
+    }
+  }
+
+  // 4. Extract from page content via regex (general)
+  const contentMatches = decoded.match(EMAIL_REGEX);
   if (contentMatches) {
     for (const match of contentMatches) {
-      const email = match.toLowerCase();
-      if (isValidEmail(email)) {
-        emails.add(email);
-      }
+      addEmail(match, "content");
     }
   }
 
-  return Array.from(emails);
+  return emails;
 }
 
 function isValidEmail(email: string): boolean {
