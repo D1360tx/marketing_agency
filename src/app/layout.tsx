@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Booked Out - Marketing Agency Automation",
+  title: "Booked Out — Get More Customers With a Website That Works",
   description:
-    "Find businesses with poor websites, analyze their online presence, and win them as clients.",
+    "We build websites for local service businesses in Texas. HVAC, plumbing, roofing, landscaping — if you do great work, we'll make sure customers find you.",
 };
 
 export default function RootLayout({
