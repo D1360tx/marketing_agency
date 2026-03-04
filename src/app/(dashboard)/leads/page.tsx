@@ -42,7 +42,6 @@ import { WebsiteScoreBadge, NoWebsiteBadge } from "@/components/website-score-ba
 import {
   Phone,
   Mail,
-  Globe,
   Loader2,
   Users,
   LayoutGrid,
@@ -56,7 +55,16 @@ import {
   ArrowUp,
   ArrowDown,
   UserPlus,
+  ChevronDown,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -96,6 +104,7 @@ export default function LeadsPage() {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [addForm, setAddForm] = useState({ business_name: "", phone: "", email: "", city: "", state: "", business_type: "", notes: "", source: "Facebook Group" });
   const [addLoading, setAddLoading] = useState(false);
+  const [exportLoading, setExportLoading] = useState(false);
 
   async function handleQuickAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -201,6 +210,30 @@ export default function LeadsPage() {
     a.download = "leads-export.csv";
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  async function handleInstantlyExport(params?: string) {
+    setExportLoading(true);
+    try {
+      const url = `/api/prospects/export${params ? `?${params}` : ""}`;
+      const res = await fetch(url);
+      if (!res.ok) { toast.error("Export failed"); return; }
+      const blob = await res.blob();
+      const disposition = res.headers.get("Content-Disposition") || "";
+      const filenameMatch = disposition.match(/filename="([^"]+)"/);
+      const filename = filenameMatch ? filenameMatch[1] : "instantly-leads.csv";
+      const objectUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = objectUrl;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(objectUrl);
+      toast.success("Instantly CSV downloaded!");
+    } catch {
+      toast.error("Export failed");
+    } finally {
+      setExportLoading(false);
+    }
   }
 
   function handleDragStart(event: DragStartEvent) {
@@ -318,6 +351,35 @@ export default function LeadsPage() {
           <Button size="sm" onClick={() => setShowAddDialog(true)}>
             <UserPlus className="mr-2 h-4 w-4" /> Quick Add Lead
           </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" disabled={exportLoading}>
+                {exportLoading ? (
+                  <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                ) : (
+                  <Download className="mr-1 h-4 w-4" />
+                )}
+                Export to Instantly
+                <ChevronDown className="ml-1 h-3 w-3" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Instantly.ai Export</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => handleInstantlyExport()}>
+                <Download className="mr-2 h-4 w-4" />
+                All leads with email
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleInstantlyExport("sequence=A")}>
+                <Download className="mr-2 h-4 w-4" />
+                Sequence A — Review Gap
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleInstantlyExport("sequence=B")}>
+                <Download className="mr-2 h-4 w-4" />
+                Sequence B — No Website (Hot)
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Button
             variant={view === "kanban" ? "default" : "outline"}
             size="sm"
