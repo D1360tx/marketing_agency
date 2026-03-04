@@ -1,1007 +1,1137 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   ArrowRight,
-  BadgeCheck,
   Check,
   ChevronDown,
   Clock,
-  Globe,
   MapPin,
   Phone,
-  Search,
+  PhoneCall,
   Shield,
-  Smartphone,
-  Sparkles,
   Star,
-  TrendingDown,
   TrendingUp,
-  Wrench,
+  Users,
+  X,
+  Zap,
 } from "lucide-react";
 
-type GeoResponse = { city?: string; region?: string };
+/* ------------------------------------------------------------------ */
+/*  Types                                                              */
+/* ------------------------------------------------------------------ */
 
-type LeadPayload = {
+type Geo = { city?: string; region?: string };
+
+type FormData = {
   name: string;
   business: string;
   phone: string;
   email: string;
-  source: "landing_v3";
-  city: string;
 };
 
-const COLORS = {
-  navy: "#0f172a",
-  blue: "#3b82f6",
-  orange: "#f97316",
-};
+type FormStatus = "idle" | "submitting" | "success" | "error";
 
-function cx(...classes: Array<string | false | null | undefined>) {
-  return classes.filter(Boolean).join(" ");
+/* ------------------------------------------------------------------ */
+/*  Helpers                                                            */
+/* ------------------------------------------------------------------ */
+
+function cl(...args: (string | false | null | undefined)[]) {
+  return args.filter(Boolean).join(" ");
 }
 
-function isNonEmpty(v: string) {
-  return v.trim().length > 0;
-}
+/* ------------------------------------------------------------------ */
+/*  Micro-components                                                   */
+/* ------------------------------------------------------------------ */
 
-function SkeletonText({ w = "w-44" }: { w?: string }) {
+function StarRating({ count = 5 }: { count?: number }) {
   return (
-    <span
-      aria-hidden="true"
-      className={cx(
-        "inline-block h-7 rounded-md bg-white/10 align-middle",
-        "animate-pulse",
-        w
-      )}
-    />
-  );
-}
-
-function Stars({ value = 5 }: { value?: number }) {
-  return (
-    <div className="flex items-center gap-0.5" aria-label={`${value} out of 5 stars`}>
-      {Array.from({ length: 5 }).map((_, i) => (
+    <span className="inline-flex gap-0.5" aria-label={`${count} stars`}>
+      {Array.from({ length: 5 }, (_, i) => (
         <Star
           key={i}
-          className={cx(
+          className={cl(
             "h-4 w-4",
-            i < value ? "text-amber-400 fill-amber-400" : "text-white/20"
+            i < count ? "fill-amber-400 text-amber-400" : "text-gray-300"
           )}
         />
       ))}
-    </div>
+    </span>
   );
 }
 
-function SectionHeader({
-  kicker,
-  title,
-  desc,
+function Badge({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200">
+      <Check className="h-3 w-3" />
+      {children}
+    </span>
+  );
+}
+
+function StatCard({
+  value,
+  label,
+  accent = false,
 }: {
-  kicker: string;
-  title: string;
-  desc: string;
+  value: string;
+  label: string;
+  accent?: boolean;
 }) {
   return (
-    <div className="mx-auto max-w-3xl text-center">
-      <div className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 ring-1 ring-white/10">
-        <Sparkles className="h-3.5 w-3.5 text-blue-400" />
-        {kicker}
+    <div
+      className={cl(
+        "rounded-2xl border px-6 py-5 text-center",
+        accent
+          ? "border-orange-200 bg-orange-50"
+          : "border-gray-200 bg-white"
+      )}
+    >
+      <div
+        className={cl(
+          "text-3xl font-bold tracking-tight sm:text-4xl",
+          accent ? "text-orange-600" : "text-gray-900"
+        )}
+      >
+        {value}
       </div>
-      <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-        {title}
-      </h2>
-      <p className="mt-3 text-base leading-relaxed text-slate-200">{desc}</p>
+      <div className="mt-1 text-sm text-gray-600">{label}</div>
     </div>
   );
 }
 
-export default function LandingPage() {
-  const [geoLoading, setGeoLoading] = useState(true);
-  const [city, setCity] = useState<string>("");
-  const [region, setRegion] = useState<string>("");
+/* ------------------------------------------------------------------ */
+/*  FAQ Item                                                           */
+/* ------------------------------------------------------------------ */
 
-  const [faqOpen, setFaqOpen] = useState<Record<string, boolean>>({
-    website: false,
-    doAnything: false,
-    cities: false,
-    speed: false,
-  });
+function FaqItem({
+  q,
+  a,
+  open,
+  toggle,
+}: {
+  q: string;
+  a: string;
+  open: boolean;
+  toggle: () => void;
+}) {
+  return (
+    <div className="border-b border-gray-200 last:border-b-0">
+      <button
+        type="button"
+        onClick={toggle}
+        className="flex w-full items-center justify-between gap-4 py-5 text-left"
+        aria-expanded={open}
+      >
+        <span className="text-base font-semibold text-gray-900">{q}</span>
+        <ChevronDown
+          className={cl(
+            "h-5 w-5 shrink-0 text-gray-400 transition-transform duration-200",
+            open && "rotate-180"
+          )}
+        />
+      </button>
+      <div
+        className={cl(
+          "grid transition-[grid-template-rows] duration-300",
+          open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+        )}
+      >
+        <div className="overflow-hidden">
+          <p className="pb-5 text-sm leading-relaxed text-gray-600">{a}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-  const [form, setForm] = useState({
+/* ------------------------------------------------------------------ */
+/*  Main Page                                                          */
+/* ------------------------------------------------------------------ */
+
+export default function LandingOpusPage() {
+  /* -- Geo --------------------------------------------------------- */
+  const [city, setCity] = useState("");
+  const [geoReady, setGeoReady] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    fetch("/api/geo")
+      .then((r) => r.json())
+      .then((d: Geo) => {
+        if (!alive) return;
+        if (d?.city?.trim()) setCity(d.city.trim());
+      })
+      .catch(() => {})
+      .finally(() => alive && setGeoReady(true));
+    return () => { alive = false; };
+  }, []);
+
+  const area = city || "your area";
+  const areaIn = city ? `in ${city}` : "in your area";
+
+  /* -- Form -------------------------------------------------------- */
+  const [form, setForm] = useState<FormData>({
     name: "",
     business: "",
     phone: "",
     email: "",
   });
-  const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState<null | "success" | "error">(null);
+  const [status, setStatus] = useState<FormStatus>("idle");
 
-  useEffect(() => {
-    let alive = true;
+  const set = useCallback(
+    (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement>) =>
+      setForm((prev) => ({ ...prev, [field]: e.target.value })),
+    []
+  );
 
-    (async () => {
-      try {
-        const res = await fetch("/api/geo", { method: "GET" });
-        const data = (await res.json()) as GeoResponse;
-        if (!alive) return;
-
-        const nextCity = data?.city && isNonEmpty(data.city) ? data.city : "";
-        const nextRegion =
-          data?.region && isNonEmpty(data.region) ? data.region : "";
-
-        setCity(nextCity);
-        setRegion(nextRegion);
-      } catch {
-        if (!alive) return;
-        setCity("");
-        setRegion("");
-      } finally {
-        if (!alive) return;
-        setGeoLoading(false);
-      }
-    })();
-
-    return () => {
-      alive = false;
-    };
-  }, []);
-
-  const dynamic = useMemo(() => {
-    const c = city || "your area";
-  const cityLabel = city || "your area";
-    return {
-      heroHeadline: geoLoading ? (
-        <>
-          You Do Great Work.
-          <span className="text-blue-400"> So Why Does Your Competitor Get the Call?</span>
-        </>
-      ) : (
-        <>
-          You Do Great Work{city && <> in <span className="text-blue-400">{city}</span></>}.{" "}
-          <span className="text-blue-400">So Why Does Your Competitor Get the Call?</span>
-        </>
-      ),
-      problemLead: `Right now, someone in ${c} is searching for your service...` ,
-      scarcity: `We only work with 1 business per trade in ${c}.`,
-      activity: `3 businesses from ${c} requested a free audit this week`,
-      finalCta: `Ready to Get Found in ${c}?`,
-    };
-  }, [city, geoLoading]);
-
-  async function submitLead(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSubmitted(null);
-
-    const payload: LeadPayload = {
-      name: form.name.trim(),
-      business: form.business.trim(),
-      phone: form.phone.trim(),
-      email: form.email.trim(),
-      source: "landing_v3",
-      city: (city || "your area").trim() || "your area",
-    };
-
-    if (!payload.name || !payload.business || !payload.phone || !payload.email) {
-      setSubmitted("error");
+    if (!form.name.trim() || !form.business.trim() || !form.phone.trim() || !form.email.trim()) {
+      setStatus("error");
       return;
     }
-
-    setSubmitting(true);
+    setStatus("submitting");
     try {
       const res = await fetch("/api/leads/inbound", {
         method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(payload),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name.trim(),
+          business: form.business.trim(),
+          phone: form.phone.trim(),
+          email: form.email.trim(),
+          source: "landing_opus",
+          city: area,
+        }),
       });
-
-      if (!res.ok) {
-        setSubmitted("error");
-        return;
-      }
-
-      setSubmitted("success");
+      if (!res.ok) throw new Error();
+      setStatus("success");
       setForm({ name: "", business: "", phone: "", email: "" });
     } catch {
-      setSubmitted("error");
-    } finally {
-      setSubmitting(false);
+      setStatus("error");
     }
   }
 
-  const contractorImage =
-    "https://images.unsplash.com/photo-1581579188871-c4b6f0634f5e?q=plumber+working&w=1200&auto=format&fit=crop";
-  const workImage =
-    "https://images.unsplash.com/photo-1541976590-713941681591?q=hvac+technician&w=1200&auto=format&fit=crop";
+  /* -- FAQ --------------------------------------------------------- */
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
+  const faqs = [
+    {
+      q: "I already have a website. Do I need a new one?",
+      a: "Maybe not. We audit what you have first. If it loads fast, ranks well, and converts visitors into calls, we'll focus on reviews and SEO instead. If it's hurting you, we'll rebuild only what's needed. No unnecessary work.",
+    },
+    {
+      q: "How is this different from the last agency that burned me?",
+      a: "Most agencies sell you a retainer and a dashboard. We sell you a system with measurable outcomes: more reviews, better rankings, more calls. No long contracts. If we're not delivering, you leave. That's the deal.",
+    },
+    {
+      q: "What do I actually have to do?",
+      a: "Answer a few questions about your business and service area. That's about 15 minutes of your time. We handle everything else: the build, the launch, the review automation setup, the ongoing optimization.",
+    },
+    {
+      q: "How fast will I see results?",
+      a: "Review growth starts within the first week of automation going live. Website and SEO improvements typically show measurable ranking changes within 30 days. Most clients report noticeably more calls within the first 6 weeks.",
+    },
+    {
+      q: "Why do you only take one business per trade per city?",
+      a: "Because we'd be working against ourselves. If we build two plumbers in the same city to rank #1, one of them loses. We'd rather go all-in for you and actually deliver.",
+    },
+    {
+      q: "What happens if I want to cancel?",
+      a: "You cancel. No penalties, no fees, no guilt trip. Your website stays live through the end of your billing period. We keep things simple because we'd rather earn your business every month than trap you in a contract.",
+    },
+  ];
+
+  /* -- Testimonials ------------------------------------------------ */
+  const testimonials = [
+    {
+      name: "Mike Hernandez",
+      trade: "Plumbing",
+      location: "Cedar Park, TX",
+      quote: "Went from 6 reviews to 53 in two months. I stopped running ads because the phone was already ringing enough. Best money I spend every month.",
+      metric: "53 reviews in 60 days",
+    },
+    {
+      name: "Sarah Chen",
+      trade: "Salon Owner",
+      location: "Gilbert, AZ",
+      quote: "My old website looked like it was from 2012. Within a week of launching the new one, I had three new clients mention they found me on Google. That never happened before.",
+      metric: "3x more Google traffic",
+    },
+    {
+      name: "James Washington",
+      trade: "HVAC",
+      location: "Murfreesboro, TN",
+      quote: "I've wasted thousands on marketing companies. These guys actually showed me what was broken and fixed it. No fluff, no jargon. My wife noticed the difference in the books within a month.",
+      metric: "40% more booked jobs",
+    },
+  ];
+
+  /* -- Render ------------------------------------------------------ */
   return (
-    <div
-      className="min-h-screen text-slate-50"
-      style={{ backgroundColor: COLORS.navy }}
-    >
-      {/* Background glow */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none fixed inset-0 -z-10"
-      >
-        <div className="absolute -left-40 -top-40 h-[520px] w-[520px] rounded-full bg-blue-600/20 blur-3xl" />
-        <div className="absolute -right-40 top-40 h-[520px] w-[520px] rounded-full bg-orange-500/15 blur-3xl" />
-      </div>
-
-      {/* 1) Nav */}
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0f172a]/85 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <a href="#top" className="flex items-center gap-3">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 ring-1 ring-white/10">
-              <Shield className="h-5 w-5 text-blue-400" />
-            </span>
-            <span className="text-base font-semibold tracking-tight text-white">
-              Booked Out
-            </span>
+    <div className="min-h-screen bg-white text-gray-900 antialiased">
+      {/* ============================================================ */}
+      {/*  NAV                                                          */}
+      {/* ============================================================ */}
+      <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur-sm">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
+          <a href="#top" className="flex items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-900">
+              <Zap className="h-4 w-4 text-white" />
+            </div>
+            <span className="text-lg font-bold tracking-tight">Booked Out</span>
           </a>
 
           <div className="flex items-center gap-3">
             <a
+              href="/es"
+              className="hidden items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-700 sm:inline-flex"
+              title="Ver en Español"
+            >
+              🇲🇽 Español
+            </a>
+            <a
               href="tel:+15125550100"
-              className="hidden items-center gap-2 rounded-xl bg-white/5 px-4 py-2 text-sm font-semibold text-orange-300 ring-1 ring-white/10 transition-colors hover:bg-white/10 sm:inline-flex"
+              className="hidden items-center gap-2 text-sm font-semibold text-gray-700 hover:text-gray-900 sm:inline-flex"
             >
               <Phone className="h-4 w-4" />
               (512) 555-0100
             </a>
             <a
-              href="#audit"
-              className="inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:brightness-95"
-              style={{ backgroundColor: COLORS.orange }}
+              href="#get-started"
+              className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-700"
             >
-              Get Free Audit
-              <ArrowRight className="ml-2 h-4 w-4" />
+              Free Audit
+              <ArrowRight className="h-4 w-4" />
             </a>
           </div>
         </div>
       </header>
 
       <main id="top">
-        {/* 2) Hero */}
-        <section className="relative overflow-hidden">
-          <div className="absolute inset-0">
-            <img
-              src={contractorImage}
-              alt="Local business owner at work"
-              className="h-full w-full object-cover opacity-25"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#0f172a]/60 via-[#0f172a]/85 to-[#0f172a]" />
-          </div>
-
-          <div className="relative mx-auto grid max-w-6xl grid-cols-1 gap-12 px-4 pb-16 pt-14 sm:px-6 sm:pt-16 lg:grid-cols-12 lg:gap-10 lg:px-8 lg:pb-24">
-            <div className="lg:col-span-6">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 ring-1 ring-white/10">
-                <MapPin className="h-3.5 w-3.5 text-blue-400" />
-                {geoLoading ? (
-                  <span className="opacity-80">Local visibility audit</span>
-                ) : (
-                  <span className="opacity-90">Local visibility audit for {city}, {region}</span>
-                )}
-              </div>
-
-              <h1
-                className={cx(
-                  "mt-6 text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl",
-                  geoLoading ? "opacity-95" : "opacity-100",
-                  "transition-opacity duration-500"
-                )}
-              >
-                {dynamic.heroHeadline}
-              </h1>
-
-              <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-200">
-                They're not better than you. They just look better online.
-                <span className="text-white"> We fix that</span> — professional
-                website + automated review system that turns every finished job into a 5-star review.
-                47 new reviews in 60 days. No contracts. Results in 30 days or your first month is free.
-              </p>
-
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <a
-                  href="#audit"
-                  className="inline-flex items-center justify-center rounded-xl px-6 py-3.5 text-base font-semibold text-white shadow-sm transition-all hover:brightness-95"
-                  style={{ backgroundColor: COLORS.orange }}
-                >
-                  Get My Free Audit
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </a>
-                <a
-                  href="#pricing"
-                  className="inline-flex items-center justify-center rounded-xl bg-white/5 px-6 py-3.5 text-base font-semibold text-white ring-1 ring-white/15 transition-colors hover:bg-white/10"
-                >
-                  See Pricing
-                </a>
-              </div>
-
-              <div className="mt-10 flex flex-wrap items-center gap-3">
-                {["No contracts", "Results in 30 days", "1 business per city"].map(
-                  (t) => (
-                    <div
-                      key={t}
-                      className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 ring-1 ring-white/10"
-                    >
-                      <Check className="h-3.5 w-3.5 text-blue-400" />
-                      {t}
-                    </div>
-                  )
-                )}
-              </div>
-            </div>
-
-            <div className="lg:col-span-6">
-              <div className="mx-auto max-w-xl">
-                <div className="rounded-3xl bg-white/5 p-4 ring-1 ring-white/10 shadow-2xl shadow-black/30">
-                  <div className="overflow-hidden rounded-2xl bg-slate-950/30 ring-1 ring-white/10">
-                    <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <span className="h-2.5 w-2.5 rounded-full bg-red-400/90" />
-                        <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/90" />
-                        <span className="h-2.5 w-2.5 rounded-full bg-green-400/90" />
-                      </div>
-                      <div className="hidden flex-1 px-4 sm:block">
-                        <div className="truncate rounded-lg bg-white/5 px-3 py-1 text-xs text-slate-200 ring-1 ring-white/10">
-                          google.com — "{geoLoading ? "best [service] near me" : `best [service] near me ${city.toLowerCase()}` }"
-                        </div>
-                      </div>
-                      <div className="text-xs font-semibold text-slate-200">What customers see</div>
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2">
-                      <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-                        <div className="flex items-start justify-between gap-3">
-                          <div>
-                            <div className="text-sm font-semibold text-white">Before</div>
-                            <div className="mt-1 text-sm text-slate-200">
-                              Slow website. Few reviews. Google shrugs.
-                            </div>
-                          </div>
-                          <TrendingDown className="h-5 w-5 text-rose-400" />
-                        </div>
-                        <div className="mt-4 space-y-2">
-                          <div className="h-2 rounded bg-white/10" />
-                          <div className="h-2 w-4/5 rounded bg-white/10" />
-                          <div className="h-2 w-3/5 rounded bg-white/10" />
-                        </div>
-                        <div className="mt-4 text-xs font-semibold text-white/70">
-                          Missed calls: "We'll call someone else."
-                        </div>
-                      </div>
-
-                      <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-                        <div className="flex items-start justify-between gap-3">
-                          <div>
-                            <div className="text-sm font-semibold text-white">After</div>
-                            <div className="mt-1 text-sm text-slate-200">
-                              Fast site + automated review requests.
-                            </div>
-                          </div>
-                          <TrendingUp className="h-5 w-5 text-emerald-400" />
-                        </div>
-
-                        <div className="mt-4 rounded-xl bg-slate-950/30 p-3 ring-1 ring-white/10">
-                          <div className="flex items-center justify-between gap-3">
-                            <div className="text-xs font-semibold text-white">Google Reviews</div>
-                            <div className="text-xs font-semibold text-emerald-300">+47 reviews</div>
-                          </div>
-                          <div className="mt-2 flex items-center gap-2">
-                            <Stars value={5} />
-                            <span className="text-xs text-white/70">4.9 avg</span>
-                          </div>
-                        </div>
-
-                        <div className="mt-4 text-xs font-semibold text-white/70">
-                          More calls in 30 days - without chasing people.
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="border-t border-white/10 p-4">
-                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                        {[
-                          { icon: Clock, title: "Results in 30 days", desc: "Rank + reviews + calls" },
-                          { icon: Smartphone, title: "Mobile-first", desc: "Built for thumb scroll" },
-                          { icon: BadgeCheck, title: "Done-for-you", desc: "We build. We launch." },
-                        ].map((b) => (
-                          <div key={b.title} className="rounded-2xl bg-white/5 p-3 ring-1 ring-white/10">
-                            <b.icon className="h-4 w-4 text-blue-400" />
-                            <div className="mt-2 text-sm font-semibold text-white">{b.title}</div>
-                            <div className="mt-1 text-xs text-slate-200">{b.desc}</div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-4 text-center text-xs text-white/60">
-                  No contracts. Cancel anytime. We win by getting you found.
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* 3) Problem */}
-        <section id="problem" className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-          <SectionHeader
-            kicker="This is happening right now"
-            title="While You're Reading This, You're Losing a $2,500 Job"
-            desc="Every day your online presence stays 'good enough,' you're handing calls to the contractor who took theirs seriously."
+        {/* ============================================================ */}
+        {/*  HERO                                                        */}
+        {/* ============================================================ */}
+        <section className="relative overflow-hidden bg-gray-50">
+          {/* Subtle texture */}
+          <div
+            className="pointer-events-none absolute inset-0 opacity-[0.03]"
+            style={{
+              backgroundImage:
+                "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+            }}
+            aria-hidden
           />
 
-          <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
-            {[
-              {
-                icon: Globe,
-                title: "You Don't Have a Real Website",
-                desc: "A Facebook page isn't a website. A site from 2019 isn't a website. You either look like the obvious choice — or you don't show up at all. There's no in-between anymore.",
-              },
-              {
-                icon: Star,
-                title: "You Don't Have Enough Reviews",
-                desc: "93% of customers read reviews before calling. Your competitor has dozens of stars glowing on Google. The math makes the decision for them — before they ever see your work.",
-              },
-              {
-                icon: Search,
-                title: "Google Can't Tell Who You Are",
-                desc: "You might be the best in a 50-mile radius. Doesn't matter. Google ranks what it can understand: fast sites, clear service pages, and real reviews. Everything else gets buried on page 2.",
-              },
-            ].map((p) => (
-              <div
-                key={p.title}
-                className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10"
-              >
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-500/15 ring-1 ring-blue-400/20">
-                  <p.icon className="h-6 w-6 text-blue-400" />
-                </div>
-                <h3 className="mt-4 text-lg font-semibold text-white">{p.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-200">
-                  <span className="font-semibold text-white">{dynamic.problemLead}</span> {p.desc}
-                </p>
-              </div>
-            ))}
-          </div>
+          <div className="relative mx-auto max-w-6xl px-4 pb-16 pt-12 sm:px-6 sm:pb-24 sm:pt-20">
+            {/* Geo badge */}
+            <div className="flex items-center gap-2">
+              {geoReady && city && (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-xs font-semibold text-gray-700 shadow-sm ring-1 ring-gray-200">
+                  <MapPin className="h-3 w-3 text-orange-500" />
+                  Serving {city}
+                </span>
+              )}
+            </div>
 
-          <div className="mt-10 rounded-3xl bg-gradient-to-r from-orange-500/15 via-white/5 to-blue-600/15 p-6 ring-1 ring-white/10">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div>
-                <div className="text-sm font-semibold text-white">
-                  Stop Guessing What's Broken. We'll Show You.
-                </div>
-                <div className="mt-1 text-sm text-slate-200">
-                  Free audit. 24-48 hours. We'll tell you exactly what's blocking your calls in <span className="text-white">{city}</span> and what to fix first.
-                </div>
-              </div>
+            <h1 className="mt-6 max-w-3xl text-4xl font-extrabold leading-[1.1] tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
+              You do great work{" "}
+              {city && <>{areaIn}</>}.{" "}
+              <span className="text-orange-600">So why does your competitor get the call?</span>
+            </h1>
+
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-gray-600 sm:text-xl">
+              They're not better than you. They just look better online. We fix
+              that — professional website + automated review system that turns
+              every finished job into a 5-star review. 47 new reviews in 60
+              days. No contracts. Results in 30 days or your first month is free.
+            </p>
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
               <a
-                href="#audit"
-                className="inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:brightness-95"
-                style={{ backgroundColor: COLORS.orange }}
+                href="#get-started"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-orange-600 px-7 py-4 text-base font-bold text-white shadow-md transition hover:bg-orange-700 hover:shadow-lg"
               >
-                Get My Free Audit
-                <ArrowRight className="ml-2 h-4 w-4" />
+                Get Your Free Audit
+                <ArrowRight className="h-5 w-5" />
+              </a>
+              <a
+                href="tel:+15125550100"
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-7 py-4 text-base font-semibold text-gray-800 shadow-sm transition hover:border-gray-400 hover:bg-gray-50"
+              >
+                <Phone className="h-4 w-4" />
+                Call (512) 555-0100
               </a>
             </div>
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Badge>No contracts</Badge>
+              <Badge>Results in 30 days</Badge>
+              <Badge>1 per trade per city</Badge>
+            </div>
+
+            {/* Stats strip */}
+            <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4">
+              <StatCard value="340%" label="avg. increase in calls" accent />
+              <StatCard value="53" label="avg. reviews in 60 days" />
+              <StatCard value="30" label="days to see results" />
+              <StatCard value="0" label="long-term contracts" />
+            </div>
           </div>
         </section>
 
-        {/* 4) Services Bento Grid */}
-        <section id="services" className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
-          <SectionHeader
-            kicker="Everything you need to win locally"
-            title="Websites + reviews + local SEO - done for you"
-            desc="You don't need 12 vendors. You need one system that makes Google trust you and customers choose you."
-          />
-
-          <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-12">
-            <div className="md:col-span-7 rounded-3xl bg-white/5 p-7 ring-1 ring-white/10">
-              <div className="flex items-center gap-3">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-500/15 ring-1 ring-orange-400/20">
-                  <Globe className="h-6 w-6 text-orange-300" />
-                </div>
-                <div>
-                  <div className="text-lg font-semibold text-white">Professional Website</div>
-                  <div className="text-sm text-slate-200">
-                    Fast, modern, built to convert calls and quote requests.
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {[
-                  { icon: Smartphone, t: "Mobile-first layout", d: "Thumb-friendly, tap-to-call, clear CTAs." },
-                  { icon: Shield, t: "Trust builders", d: "Licensing, badges, warranties, and proof." },
-                  { icon: Clock, t: "Speed optimized", d: "Fast loads = higher rank + higher conversion." },
-                  { icon: Wrench, t: "Industry-specific copy", d: "Written for your business type and local market." },
-                ].map((x) => (
-                  <div key={x.t} className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-                    <x.icon className="h-5 w-5 text-blue-400" />
-                    <div className="mt-3 text-sm font-semibold text-white">{x.t}</div>
-                    <div className="mt-1 text-sm text-slate-200">{x.d}</div>
-                  </div>
-                ))}
-              </div>
+        {/* ============================================================ */}
+        {/*  TRUST BREAK - "We know you've been burned"                  */}
+        {/* ============================================================ */}
+        <section className="border-y border-gray-200 bg-white">
+          <div className="mx-auto max-w-4xl px-4 py-14 sm:px-6 sm:py-20">
+            <div className="text-center">
+              <p className="text-sm font-bold uppercase tracking-widest text-orange-600">
+                Let&apos;s address the elephant in the room
+              </p>
+              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                You&apos;ve been burned by a marketing company before.
+              </h2>
+              <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-gray-600">
+                They promised you the world. They showed you a pretty dashboard.
+                And your phone still didn&apos;t ring. We get it. That&apos;s
+                why we do things differently.
+              </p>
             </div>
 
-            <div className="md:col-span-5 grid grid-cols-1 gap-5">
+            <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
               {[
                 {
-                  title: "Google Review Automation",
-                  desc: "Turn jobs into 5-star reviews automatically - no awkward asking.",
-                  icon: Star,
-                  accent: "text-amber-300",
+                  bad: "Locked into a 12-month contract",
+                  good: "Cancel anytime. Month-to-month.",
+                  icon: X,
                 },
                 {
-                  title: "Local SEO",
-                  desc: "City + service pages that Google understands and ranks.",
-                  icon: MapPin,
-                  accent: "text-blue-300",
+                  bad: "Paid for 'SEO' you couldn't measure",
+                  good: "You'll see reviews, rankings, and calls.",
+                  icon: X,
                 },
                 {
-                  title: "Mobile Optimized",
-                  desc: "Tap-to-call, fast loads, clean layout. No friction.",
-                  icon: Smartphone,
-                  accent: "text-emerald-300",
+                  bad: "Never talked to a real person",
+                  good: "Direct line. Real humans. Same team.",
+                  icon: X,
                 },
-                {
-                  title: "Done For You",
-                  desc: "We build, launch, and keep it running. You stay focused on jobs.",
-                  icon: Shield,
-                  accent: "text-orange-300",
-                },
-              ].map((s) => (
+              ].map((item, i) => (
                 <div
-                  key={s.title}
-                  className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10"
+                  key={i}
+                  className="rounded-2xl border border-gray-200 bg-gray-50 p-6"
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <div className="text-base font-semibold text-white">{s.title}</div>
-                      <div className="mt-1 text-sm text-slate-200">{s.desc}</div>
-                    </div>
-                    <s.icon className={cx("h-6 w-6", s.accent)} />
+                  <div className="flex items-start gap-2">
+                    <item.icon className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
+                    <p className="text-sm text-gray-500 line-through">
+                      {item.bad}
+                    </p>
+                  </div>
+                  <div className="mt-3 flex items-start gap-2">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                    <p className="text-sm font-semibold text-gray-900">
+                      {item.good}
+                    </p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
+        </section>
 
-          <div className="mt-10 overflow-hidden rounded-3xl bg-white/5 ring-1 ring-white/10">
-            <div className="grid grid-cols-1 md:grid-cols-2">
-              <div className="p-7">
-                <div className="text-sm font-semibold text-white/80">What this solves</div>
-                <ul className="mt-4 space-y-3 text-sm text-slate-200">
-                  {[
-                    "You stop losing the 'near me' searches.",
-                    "You build trust fast with reviews and proof.",
-                    "You become the obvious choice in your city.",
-                  ].map((t) => (
-                    <li key={t} className="flex items-start gap-3">
-                      <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-blue-500/15 ring-1 ring-blue-400/20">
-                        <Check className="h-3.5 w-3.5 text-blue-300" />
+        {/* ============================================================ */}
+        {/*  THE PROBLEM                                                 */}
+        {/* ============================================================ */}
+        <section className="bg-gray-50 py-16 sm:py-24">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <div className="mx-auto max-w-3xl text-center">
+              <p className="text-sm font-bold uppercase tracking-widest text-gray-500">
+                This is happening right now
+              </p>
+              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                While you&apos;re reading this, you&apos;re losing a $2,500 job.
+              </h2>
+            </div>
+
+            <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
+              {[
+                {
+                  icon: TrendingUp,
+                  title: "You don't have a real website",
+                  body: `A Facebook page isn't a website. A site from 2019 isn't a website. When someone ${areaIn} searches for your service, you either look like the obvious choice — or you don't show up at all. There's no in-between anymore.`,
+                },
+                {
+                  icon: Star,
+                  title: "You don't have enough reviews",
+                  body: "93% of customers read reviews before calling. Your competitor has dozens of stars glowing on Google. The math makes the decision for them — before they ever see your work.",
+                },
+                {
+                  icon: PhoneCall,
+                  title: "Google can't tell who you are",
+                  body: `You might be the best in a 50-mile radius. Doesn't matter. Google ranks what it can understand: fast sites, clear service pages, consistent activity, and real reviews. Everything else gets buried on page 2. And nobody goes to page 2.`,
+                },
+              ].map((card, i) => (
+                <div
+                  key={i}
+                  className="rounded-2xl border border-gray-200 bg-white p-7"
+                >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-100">
+                    <card.icon className="h-6 w-6 text-orange-600" />
+                  </div>
+                  <h3 className="mt-5 text-lg font-bold text-gray-900">
+                    {card.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                    {card.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ============================================================ */}
+        {/*  WHAT WE DO                                                  */}
+        {/* ============================================================ */}
+        <section className="bg-white py-16 sm:py-24">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <div className="mx-auto max-w-3xl text-center">
+              <p className="text-sm font-bold uppercase tracking-widest text-orange-600">
+                The system
+              </p>
+              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                Two things that actually move the needle
+              </h2>
+              <p className="mt-4 text-lg text-gray-600">
+                Not 15 services. Not a mystery retainer. Two things, done right,
+                that make your phone ring more.
+              </p>
+            </div>
+
+            <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-2">
+              {/* Service 1 */}
+              <div className="overflow-hidden rounded-2xl border border-gray-200">
+                <div className="relative h-52 sm:h-64">
+                  <img
+                    src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=website+design+modern&w=800&auto=format&fit=crop"
+                    alt="Professional website on laptop"
+                    className="h-full w-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-4 left-5 right-5">
+                    <span className="rounded-full bg-orange-600 px-3 py-1 text-xs font-bold text-white">
+                      Included
+                    </span>
+                    <h3 className="mt-2 text-xl font-bold text-white">
+                      Professional Website That Converts
+                    </h3>
+                  </div>
+                </div>
+                <div className="p-6">
+                  <p className="text-sm leading-relaxed text-gray-600">
+                    Not a template. A fast, mobile-first website built
+                    specifically for your trade and your city. Clear calls to
+                    action, trust signals, service pages that rank. The kind of
+                    site that makes customers pick up the phone instead of
+                    hitting the back button.
+                  </p>
+                  <ul className="mt-5 space-y-3">
+                    {[
+                      "Loads in under 2 seconds on any phone",
+                      "Tap-to-call on every page",
+                      "Service + city pages for local SEO",
+                      "Trust builders: licenses, reviews, warranties",
+                      "Written by people who understand your industry",
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-2.5">
+                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                        <span className="text-sm text-gray-700">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              {/* Service 2 */}
+              <div className="overflow-hidden rounded-2xl border border-gray-200">
+                <div className="relative h-52 sm:h-64">
+                  <img
+                    src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=phone+reviews+business&w=800&auto=format&fit=crop"
+                    alt="Customer leaving a review on phone"
+                    className="h-full w-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-4 left-5 right-5">
+                    <span className="rounded-full bg-orange-600 px-3 py-1 text-xs font-bold text-white">
+                      Included
+                    </span>
+                    <h3 className="mt-2 text-xl font-bold text-white">
+                      Google Review Automation
+                    </h3>
+                  </div>
+                </div>
+                <div className="p-6">
+                  <p className="text-sm leading-relaxed text-gray-600">
+                    After every job, your customer gets a simple text or email
+                    asking for a review. No awkward conversations. No
+                    remembering to ask. It happens automatically, and it works.
+                    Our clients average 53 new reviews in the first 60 days.
+                  </p>
+                  <ul className="mt-5 space-y-3">
+                    {[
+                      "Automated text/email after every job",
+                      "One-tap link straight to your Google page",
+                      "Negative feedback caught privately first",
+                      "Dashboard to track growth",
+                      "Average: 53 new reviews in 60 days",
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-2.5">
+                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                        <span className="text-sm text-gray-700">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ============================================================ */}
+        {/*  RESULTS / SOCIAL PROOF                                      */}
+        {/* ============================================================ */}
+        <section className="bg-gray-900 py-16 sm:py-24">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <div className="mx-auto max-w-3xl text-center">
+              <p className="text-sm font-bold uppercase tracking-widest text-orange-400">
+                Real numbers from real businesses
+              </p>
+              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+                They were skeptical too. Then the phone started ringing.
+              </h2>
+            </div>
+
+            <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
+              {testimonials.map((t, i) => (
+                <div
+                  key={i}
+                  className="flex flex-col rounded-2xl border border-gray-700 bg-gray-800/50 p-6"
+                >
+                  <StarRating count={5} />
+                  <p className="mt-4 flex-1 text-sm leading-relaxed text-gray-300">
+                    &ldquo;{t.quote}&rdquo;
+                  </p>
+                  <div className="mt-6 border-t border-gray-700 pt-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-sm font-semibold text-white">
+                          {t.name}
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          {t.trade} -- {t.location}
+                        </div>
+                      </div>
+                      <span className="rounded-full bg-emerald-900/50 px-3 py-1 text-xs font-semibold text-emerald-300 ring-1 ring-emerald-700">
+                        {t.metric}
                       </span>
-                      <span>{t}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ============================================================ */}
+        {/*  HOW IT WORKS                                                */}
+        {/* ============================================================ */}
+        <section className="bg-white py-16 sm:py-24">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <div className="mx-auto max-w-3xl text-center">
+              <p className="text-sm font-bold uppercase tracking-widest text-gray-500">
+                Simple process
+              </p>
+              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                We do the work. You do your job.
+              </h2>
+            </div>
+
+            <div className="mt-12 grid grid-cols-1 gap-0 md:grid-cols-4">
+              {[
+                {
+                  step: "01",
+                  title: "Free Audit",
+                  desc: `We analyze your current online presence ${areaIn}: website speed, Google ranking, review count vs. competitors, conversion leaks. You get a clear report within 48 hours.`,
+                  icon: Shield,
+                },
+                {
+                  step: "02",
+                  title: "We Build It",
+                  desc: "Your professional website and review automation system get built and launched. Takes about a week. You answer a few questions. We handle the rest.",
+                  icon: Zap,
+                },
+                {
+                  step: "03",
+                  title: "Reviews Stack Up",
+                  desc: "The automation kicks in. After every job, your customers get prompted to leave a review. No effort from you. Reviews start compounding.",
+                  icon: Star,
+                },
+                {
+                  step: "04",
+                  title: "Phone Rings More",
+                  desc: `Better website + more reviews + local SEO = you show up first when someone ${areaIn} searches for your service. The calls come to you.`,
+                  icon: PhoneCall,
+                },
+              ].map((s, i) => (
+                <div
+                  key={i}
+                  className={cl(
+                    "relative p-6 sm:p-8",
+                    i < 3 &&
+                      "after:absolute after:bottom-0 after:left-1/2 after:h-px after:w-10 after:-translate-x-1/2 after:bg-gray-200 md:after:bottom-auto md:after:left-auto md:after:right-0 md:after:top-1/2 md:after:h-10 md:after:w-px md:after:-translate-y-1/2 md:after:translate-x-0"
+                  )}
+                >
+                  <div className="text-xs font-bold text-orange-500">
+                    STEP {s.step}
+                  </div>
+                  <div className="mt-2 flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
+                    <s.icon className="h-5 w-5 text-gray-700" />
+                  </div>
+                  <h3 className="mt-4 text-base font-bold text-gray-900">
+                    {s.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                    {s.desc}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ============================================================ */}
+        {/*  PRICING                                                     */}
+        {/* ============================================================ */}
+        <section className="border-y border-gray-200 bg-gray-50 py-16 sm:py-24">
+          <div className="mx-auto max-w-3xl px-4 sm:px-6">
+            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg">
+              <div className="border-b border-gray-200 bg-gray-900 px-6 py-8 text-center sm:px-10">
+                <p className="text-sm font-semibold text-orange-400">
+                  One plan. Everything included.
+                </p>
+                <div className="mt-4 flex items-baseline justify-center gap-1">
+                  <span className="text-5xl font-extrabold text-white">
+                    $399
+                  </span>
+                  <span className="text-lg font-semibold text-gray-400">
+                    /mo
+                  </span>
+                </div>
+                <p className="mt-3 text-sm text-gray-400">
+                  Month-to-month. Cancel anytime. No setup fees.
+                </p>
+              </div>
+
+              <div className="p-6 sm:p-10">
+                <ul className="space-y-4">
+                  {[
+                    {
+                      title: "Professional website",
+                      desc: "Custom-built for your trade, your city, your customers",
+                    },
+                    {
+                      title: "Google review automation",
+                      desc: "Automated requests after every job, 53+ reviews in 60 days avg",
+                    },
+                    {
+                      title: "Local SEO optimization",
+                      desc: "City + service pages, Google Business Profile tuning",
+                    },
+                    {
+                      title: "Ongoing updates",
+                      desc: "Content updates, speed monitoring, ranking tracking",
+                    },
+                    {
+                      title: "Direct support from real people",
+                      desc: "No ticket queues. Call or text your account manager.",
+                    },
+                    {
+                      title: "Exclusive territory",
+                      desc: `Only 1 business per trade ${areaIn}. Your spot is protected.`,
+                    },
+                  ].map((item, i) => (
+                    <li key={i} className="flex gap-3">
+                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100">
+                        <Check className="h-3.5 w-3.5 text-emerald-700" />
+                      </div>
+                      <div>
+                        <span className="text-sm font-semibold text-gray-900">
+                          {item.title}
+                        </span>
+                        <span className="text-sm text-gray-500">
+                          {" -- "}
+                          {item.desc}
+                        </span>
+                      </div>
                     </li>
                   ))}
                 </ul>
-              </div>
-              <div className="relative">
-                <img
-                  src={workImage}
-                  alt="Technician working"
-                  className="h-full w-full object-cover opacity-90"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a] via-[#0f172a]/40 to-transparent" />
+
+                <div className="mt-8 rounded-xl bg-orange-50 p-4 text-center">
+                  <p className="text-sm font-semibold text-orange-800">
+                    Our guarantee: measurable results in 30 days or your first
+                    month is free.
+                  </p>
+                  <p className="mt-1 text-xs text-orange-600">
+                    We don&apos;t win unless you do. That&apos;s the only way
+                    this works.
+                  </p>
+                </div>
+
+                <a
+                  href="#get-started"
+                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-orange-600 py-4 text-base font-bold text-white shadow-sm transition hover:bg-orange-700"
+                >
+                  Get Your Free Audit
+                  <ArrowRight className="h-5 w-5" />
+                </a>
               </div>
             </div>
           </div>
         </section>
 
-        {/* 5) Social proof */}
-        <section id="proof" className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-          <SectionHeader
-            kicker="Proof beats promises"
-            title="0 reviews → 47 reviews in 60 days"
-            desc="That's what happens when review requests run automatically after every job - and your website actually converts the traffic Google sends you."
-          />
-
-          <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
-            {[
-              {
-                name: "Mark T.",
-                trade: "HVAC",
-                city: "Round Rock",
-                stars: 5,
-                quote:
-                  "We went from basically invisible to booked. The review automation alone paid for this in the first month.",
-              },
-              {
-                name: "Javier R.",
-                trade: "Plumbing",
-                city: "Cedar Park",
-                stars: 5,
-                quote:
-                  "The site looks legit and the calls feel higher quality. People mention they saw our reviews before calling.",
-              },
-              {
-                name: "Chris D.",
-                trade: "Landscaping",
-                city: "Leander",
-                stars: 5,
-                quote:
-                  "I don't chase reviews anymore. It just happens. We hit 47 reviews fast and my phone didn't stop.",
-              },
-            ].map((t) => (
-              <div
-                key={t.name}
-                className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10"
-              >
-                <Stars value={t.stars} />
-                <p className="mt-4 text-sm leading-relaxed text-slate-200">"{t.quote}"</p>
-                <div className="mt-6 flex items-center justify-between gap-3">
-                  <div>
-                    <div className="text-sm font-semibold text-white">{t.name}</div>
-                    <div className="text-xs text-white/70">
-                      {t.trade} - {t.city}, TX
-                    </div>
-                  </div>
-                  <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-200 ring-1 ring-emerald-400/20">
-                    <Check className="h-3.5 w-3.5" />
-                    Verified
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* 6) Pricing */}
-        <section id="pricing" className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
-          <SectionHeader
-            kicker="Simple pricing. No surprises."
-            title="$399/mo — Built for Businesses That Do the Work. We Handle the Rest."
-            desc="No long contracts. No mystery retainers. No setup fees. If we don't deliver results in 30 days, your first month is free. We don't eat unless you eat."
-          />
-
-          <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-12">
-            <div className="lg:col-span-7 rounded-3xl bg-white/5 p-7 ring-1 ring-white/10">
-              <div className="flex items-start justify-between gap-6">
-                <div>
-                  <div className="text-sm font-semibold text-white/80">Booked Out Growth</div>
-                  <div className="mt-2 text-4xl font-semibold tracking-tight text-white">
-                    $399<span className="text-base font-semibold text-white/70">/mo</span>
-                  </div>
-                  <div className="mt-2 text-sm text-slate-200">
-                    <span className="font-semibold text-white">First 30 days free if no results.</span> We don't win unless you do.
-                  </div>
-                </div>
-                <div className="hidden sm:block rounded-2xl bg-orange-500/15 px-4 py-3 ring-1 ring-orange-400/20">
-                  <div className="text-xs font-semibold text-orange-200">Scarcity</div>
-                  <div className="mt-1 text-sm font-semibold text-white">{dynamic.scarcity}</div>
-                </div>
-              </div>
-
-              <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {[
-                  "Professional website built to convert",
-                  "Google review automation (47+ in 60 days)",
-                  "Local SEO pages for your service area",
-                  "Ongoing updates + monitoring",
-                  "Support by real humans",
-                  "Cancel anytime",
-                ].map((t) => (
-                  <div key={t} className="flex items-start gap-3 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-                    <span className="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full bg-blue-500/15 ring-1 ring-blue-400/20">
-                      <Check className="h-4 w-4 text-blue-300" />
-                    </span>
-                    <span className="text-sm text-slate-200">{t}</span>
-                  </div>
-                ))}
-              </div>
-
-              <a
-                href="#audit"
-                className="mt-7 inline-flex w-full items-center justify-center rounded-xl px-6 py-3.5 text-base font-semibold text-white shadow-sm transition-all hover:brightness-95"
-                style={{ backgroundColor: COLORS.orange }}
-              >
-                Get My Free Audit
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </a>
-
-              <div className="mt-3 text-center text-xs text-white/60">
-                {dynamic.scarcity}
-              </div>
-            </div>
-
-            <div className="lg:col-span-5 rounded-3xl bg-white/5 p-7 ring-1 ring-white/10">
-              <div className="text-sm font-semibold text-white/80">What you get first</div>
-              <div className="mt-3 text-lg font-semibold text-white">Free audit in 24-48 hours</div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-200">
-                We'll review your online presence and send a quick, brutally clear
-                plan: what's broken, what's missing, and what to fix to win in {city}.
+        {/* ============================================================ */}
+        {/*  INDUSTRIES                                                  */}
+        {/* ============================================================ */}
+        <section className="bg-white py-16 sm:py-24">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <div className="mx-auto max-w-3xl text-center">
+              <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                Built for businesses that do real work
+              </h2>
+              <p className="mt-4 text-lg text-gray-600">
+                We specialize in local service businesses. If your customers find
+                you on Google and call you for a job, we can help.
               </p>
-
-              <div className="mt-6 space-y-3">
-                {[
-                  { icon: Search, t: "Ranking blockers", d: "Speed, content, local intent." },
-                  { icon: Star, t: "Review gap", d: "What competitors have that you don't." },
-                  { icon: Phone, t: "Conversion leaks", d: "Where leads fall off." },
-                ].map((x) => (
-                  <div key={x.t} className="flex items-start gap-3 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-                    <div className="mt-0.5 inline-flex h-9 w-9 items-center justify-center rounded-xl bg-blue-500/15 ring-1 ring-blue-400/20">
-                      <x.icon className="h-5 w-5 text-blue-300" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-semibold text-white">{x.t}</div>
-                      <div className="mt-1 text-sm text-slate-200">{x.d}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
-          </div>
-        </section>
 
-        {/* 7) Activity counter */}
-        <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
-          <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-3">
-                <span className="relative inline-flex h-3 w-3">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/60" />
-                  <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-400" />
+            <div className="mt-10 flex flex-wrap justify-center gap-3">
+              {[
+                "HVAC",
+                "Plumbing",
+                "Electrical",
+                "Landscaping",
+                "Roofing",
+                "Painting",
+                "Pest Control",
+                "Cleaning Services",
+                "Auto Repair",
+                "Salons & Barbershops",
+                "Restaurants",
+                "Dentists",
+                "Chiropractors",
+                "Handyman Services",
+                "Pool Services",
+                "Moving Companies",
+              ].map((trade) => (
+                <span
+                  key={trade}
+                  className="rounded-full border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700"
+                >
+                  {trade}
                 </span>
-                <div className="text-sm font-semibold text-white">{dynamic.activity}</div>
-              </div>
-              <a
-                href="#audit"
-                className="inline-flex items-center justify-center rounded-xl bg-white/5 px-5 py-3 text-sm font-semibold text-white ring-1 ring-white/15 transition-colors hover:bg-white/10"
-              >
-                Claim My Spot
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </a>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* 8) FAQ */}
-        <section id="faq" className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-          <SectionHeader
-            kicker="FAQ"
-            title="Quick answers before you book an audit"
-            desc="If you're serious about getting found locally, this is the fastest, lowest-risk way to start."
-          />
+        {/* ============================================================ */}
+        {/*  FAQ                                                         */}
+        {/* ============================================================ */}
+        <section className="border-t border-gray-200 bg-gray-50 py-16 sm:py-24">
+          <div className="mx-auto max-w-3xl px-4 sm:px-6">
+            <h2 className="text-center text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+              Common questions
+            </h2>
 
-          <div className="mt-10 mx-auto max-w-3xl space-y-4">
-            {[
-              {
-                key: "website",
-                q: "What if I already have a website?",
-                a: "Perfect. We'll audit it. If it's fast and converting, we keep what works. If it's slow or outdated, we rebuild what's needed so Google (and customers) trust it.",
-              },
-              {
-                key: "doAnything",
-                q: "Do I need to do anything?",
-                a: "Not much. We'll ask a few quick questions about your services and service area. After that, we build and run the system. You focus on jobs.",
-              },
-              {
-                key: "cities",
-                q: "What cities do you serve?",
-                a: "Cities across the US. The important part: we only work with 1 business per trade per city - so you're not funding your competitor.",
-              },
-              {
-                key: "speed",
-                q: "How fast do I see results?",
-                a: "Most businesses see movement within 30 days: faster site, better conversion, more reviews, stronger local signals. Review growth can be very quick - we've seen 47 reviews in 60 days.",
-              },
-            ].map((item) => {
-              const open = !!faqOpen[item.key];
-              return (
-                <div key={item.key} className="rounded-3xl bg-white/5 ring-1 ring-white/10">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setFaqOpen((s) => ({ ...s, [item.key]: !s[item.key] }))
-                    }
-                    className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
-                    aria-expanded={open}
-                  >
-                    <span className="text-base font-semibold text-white">{item.q}</span>
-                    <ChevronDown
-                      className={cx(
-                        "h-5 w-5 text-white/70 transition-transform",
-                        open && "rotate-180"
-                      )}
-                    />
-                  </button>
-                  <div
-                    className={cx(
-                      "grid transition-[grid-template-rows] duration-300 ease-out",
-                      open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-                    )}
-                  >
-                    <div className="overflow-hidden px-6 pb-5">
-                      <p className="text-sm leading-relaxed text-slate-200">{item.a}</p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+            <div className="mt-10 rounded-2xl border border-gray-200 bg-white px-6">
+              {faqs.map((faq, i) => (
+                <FaqItem
+                  key={i}
+                  q={faq.q}
+                  a={faq.a}
+                  open={openFaq === i}
+                  toggle={() => setOpenFaq(openFaq === i ? null : i)}
+                />
+              ))}
+            </div>
           </div>
         </section>
 
-        {/* 9) Final CTA + Form */}
-        <section id="audit" className="mx-auto max-w-6xl px-4 pb-20 sm:px-6 lg:px-8">
-          <div className="overflow-hidden rounded-3xl bg-gradient-to-r from-orange-500/15 via-white/5 to-blue-600/15 ring-1 ring-white/10">
-            <div className="grid grid-cols-1 gap-0 lg:grid-cols-12">
-              <div className="lg:col-span-6 p-8">
-                <div className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 ring-1 ring-white/10">
-                  <Shield className="h-3.5 w-3.5 text-blue-400" />
-                  No contracts · Results in 30 days
-                </div>
+        {/* ============================================================ */}
+        {/*  SCARCITY BANNER                                             */}
+        {/* ============================================================ */}
+        <section className="bg-gray-900">
+          <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 py-10 sm:flex-row sm:justify-between sm:px-6">
+            <div className="flex items-center gap-3">
+              <span className="relative flex h-3 w-3">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-orange-400 opacity-75" />
+                <span className="relative inline-flex h-3 w-3 rounded-full bg-orange-500" />
+              </span>
+              <p className="text-sm font-semibold text-white">
+                We only take <span className="text-orange-400">1 business per trade</span> {areaIn}.
+                Once your spot is claimed, it&apos;s gone.
+              </p>
+            </div>
+            <a
+              href="#get-started"
+              className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-orange-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-orange-700"
+            >
+              Check Availability
+              <ArrowRight className="h-4 w-4" />
+            </a>
+          </div>
+        </section>
 
-                <h2 className="mt-5 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                  {dynamic.finalCta}
+        {/* ============================================================ */}
+        {/*  LEAD FORM                                                   */}
+        {/* ============================================================ */}
+        <section id="get-started" className="bg-white py-16 sm:py-24">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <div className="overflow-hidden rounded-2xl border border-gray-200 shadow-xl lg:grid lg:grid-cols-2">
+              {/* Left */}
+              <div className="bg-gray-900 p-8 sm:p-12">
+                <p className="text-sm font-bold uppercase tracking-widest text-orange-400">
+                  Free audit
+                </p>
+                <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+                  Find out exactly why you&apos;re not ranking {areaIn}.
                 </h2>
-
-                <p className="mt-3 text-sm leading-relaxed text-slate-200">
-                  Get a free audit that shows exactly why you're not ranking and what
-                  to fix first. If we can't show results in the first 30 days, you don't
-                  pay.
+                <p className="mt-4 text-base leading-relaxed text-gray-400">
+                  Fill out the form. Within 48 hours, you&apos;ll get a clear
+                  breakdown of what&apos;s holding you back online -- your
+                  website speed, review count vs. competitors, ranking gaps, and
+                  the specific fixes that will make the biggest difference.
                 </p>
 
-                <div className="mt-6 space-y-3">
+                <div className="mt-8 space-y-5">
                   {[
-                    { icon: Check, t: "Audit delivered in 24-48 hours" },
-                    { icon: Check, t: "Review plan to reach 47 reviews" },
-                    { icon: Check, t: "We only work with 1 business per trade in your city" },
-                  ].map((x) => (
-                    <div key={x.t} className="flex items-start gap-3">
-                      <span className="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/10 ring-1 ring-emerald-400/20">
-                        <x.icon className="h-4 w-4 text-emerald-200" />
-                      </span>
-                      <span className="text-sm text-slate-200">{x.t}</span>
+                    {
+                      icon: Clock,
+                      title: "48-hour turnaround",
+                      desc: "Not a generic report. A real audit of your specific business.",
+                    },
+                    {
+                      icon: Users,
+                      title: "No obligation",
+                      desc: "If we're not a fit, you still keep the audit. It's yours.",
+                    },
+                    {
+                      icon: Shield,
+                      title: "Your information stays private",
+                      desc: "We don't sell data. We don't spam. One follow-up call, that's it.",
+                    },
+                  ].map((item, i) => (
+                    <div key={i} className="flex gap-4">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-800">
+                        <item.icon className="h-5 w-5 text-orange-400" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-semibold text-white">
+                          {item.title}
+                        </div>
+                        <div className="mt-0.5 text-sm text-gray-400">
+                          {item.desc}
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
-              </div>
 
-              <div className="lg:col-span-6 bg-[#0b1224]/70 p-8 ring-1 ring-white/10">
-                <div className="flex items-center justify-between gap-4">
+                <div className="mt-10 flex items-center gap-3 border-t border-gray-700 pt-6">
+                  <Phone className="h-5 w-5 text-gray-500" />
                   <div>
-                    <div className="text-sm font-semibold text-white">Request your free audit</div>
-                    <div className="mt-1 text-xs text-white/60">
-                      You'll get a response within 1 business day.
+                    <div className="text-xs text-gray-500">
+                      Rather talk to someone?
                     </div>
-                  </div>
-                  <div className="hidden sm:flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 ring-1 ring-white/10">
-                    <Phone className="h-3.5 w-3.5 text-orange-300" />
-                    <a href="tel:+15125550100" className="text-orange-200 hover:text-orange-100">
+                    <a
+                      href="tel:+15125550100"
+                      className="text-sm font-semibold text-orange-400 hover:text-orange-300"
+                    >
                       (512) 555-0100
                     </a>
                   </div>
                 </div>
+              </div>
 
-                <form onSubmit={submitLead} className="mt-6 space-y-4">
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <label className="block">
-                      <span className="text-xs font-semibold text-white/70">Your name</span>
-                      <input
-                        value={form.name}
-                        onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))}
-                        className="mt-2 w-full rounded-xl bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500/60"
-                        placeholder="Diego"
-                        autoComplete="name"
-                      />
-                    </label>
-                    <label className="block">
-                      <span className="text-xs font-semibold text-white/70">Business name</span>
-                      <input
-                        value={form.business}
-                        onChange={(e) => setForm((s) => ({ ...s, business: e.target.value }))}
-                        className="mt-2 w-full rounded-xl bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500/60"
-                        placeholder="Adept Plumbing"
-                        autoComplete="organization"
-                      />
-                    </label>
-                  </div>
-
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <label className="block">
-                      <span className="text-xs font-semibold text-white/70">Phone</span>
-                      <input
-                        value={form.phone}
-                        onChange={(e) => setForm((s) => ({ ...s, phone: e.target.value }))}
-                        className="mt-2 w-full rounded-xl bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500/60"
-                        placeholder="(512) 555-0100"
-                        autoComplete="tel"
-                        inputMode="tel"
-                      />
-                    </label>
-                    <label className="block">
-                      <span className="text-xs font-semibold text-white/70">Email</span>
-                      <input
-                        value={form.email}
-                        onChange={(e) => setForm((s) => ({ ...s, email: e.target.value }))}
-                        className="mt-2 w-full rounded-xl bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500/60"
-                        placeholder="you@business.com"
-                        autoComplete="email"
-                        inputMode="email"
-                      />
-                    </label>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className={cx(
-                      "inline-flex w-full items-center justify-center rounded-xl px-6 py-3.5 text-base font-semibold text-white shadow-sm transition-all",
-                      submitting && "opacity-70"
-                    )}
-                    style={{ backgroundColor: COLORS.orange }}
-                  >
-                    {submitting ? "Sending…" : "Get My Free Audit"}
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </button>
-
-                  {submitted === "success" && (
-                    <div className="rounded-2xl bg-emerald-500/10 p-4 text-sm text-emerald-200 ring-1 ring-emerald-400/20">
-                      <div className="font-semibold text-white">Request received.</div>
-                      <div className="mt-1 text-emerald-100/90">
-                        We'll send your audit within 1 business day.
-                      </div>
+              {/* Right - Form */}
+              <div className="p-8 sm:p-12">
+                {status === "success" ? (
+                  <div className="flex h-full flex-col items-center justify-center text-center">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
+                      <Check className="h-8 w-8 text-emerald-600" />
                     </div>
-                  )}
-
-                  {submitted === "error" && (
-                    <div className="rounded-2xl bg-rose-500/10 p-4 text-sm text-rose-200 ring-1 ring-rose-400/20">
-                      <div className="font-semibold text-white">Double-check the form.</div>
-                      <div className="mt-1 text-rose-100/90">
-                        Please enter your name, business name, phone, and email.
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="text-xs text-white/60">
-                    By requesting an audit, you agree to be contacted about your results.
-                    No spam.
+                    <h3 className="mt-6 text-2xl font-bold text-gray-900">
+                      We got your request.
+                    </h3>
+                    <p className="mt-2 text-base text-gray-600">
+                      Your audit is being prepared. Expect it in your inbox
+                      within 48 hours. If you need anything sooner, call us at{" "}
+                      <a
+                        href="tel:+15125550100"
+                        className="font-semibold text-orange-600"
+                      >
+                        (512) 555-0100
+                      </a>
+                      .
+                    </p>
                   </div>
-                </form>
+                ) : (
+                  <>
+                    <h3 className="text-xl font-bold text-gray-900">
+                      Request your free audit
+                    </h3>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Takes 30 seconds. No commitment.
+                    </p>
+
+                    <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+                      <div>
+                        <label
+                          htmlFor="opus-name"
+                          className="block text-sm font-semibold text-gray-700"
+                        >
+                          Your name
+                        </label>
+                        <input
+                          id="opus-name"
+                          type="text"
+                          value={form.name}
+                          onChange={set("name")}
+                          placeholder="John Smith"
+                          autoComplete="name"
+                          className="mt-1.5 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="opus-business"
+                          className="block text-sm font-semibold text-gray-700"
+                        >
+                          Business name
+                        </label>
+                        <input
+                          id="opus-business"
+                          type="text"
+                          value={form.business}
+                          onChange={set("business")}
+                          placeholder="Smith's Plumbing"
+                          autoComplete="organization"
+                          className="mt-1.5 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                        <div>
+                          <label
+                            htmlFor="opus-phone"
+                            className="block text-sm font-semibold text-gray-700"
+                          >
+                            Phone
+                          </label>
+                          <input
+                            id="opus-phone"
+                            type="tel"
+                            value={form.phone}
+                            onChange={set("phone")}
+                            placeholder="(555) 123-4567"
+                            autoComplete="tel"
+                            inputMode="tel"
+                            className="mt-1.5 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                          />
+                        </div>
+                        <div>
+                          <label
+                            htmlFor="opus-email"
+                            className="block text-sm font-semibold text-gray-700"
+                          >
+                            Email
+                          </label>
+                          <input
+                            id="opus-email"
+                            type="email"
+                            value={form.email}
+                            onChange={set("email")}
+                            placeholder="john@smithplumbing.com"
+                            autoComplete="email"
+                            inputMode="email"
+                            className="mt-1.5 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                          />
+                        </div>
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={status === "submitting"}
+                        className={cl(
+                          "flex w-full items-center justify-center gap-2 rounded-lg bg-orange-600 py-4 text-base font-bold text-white shadow-sm transition hover:bg-orange-700",
+                          status === "submitting" && "opacity-60 cursor-not-allowed"
+                        )}
+                      >
+                        {status === "submitting"
+                          ? "Sending..."
+                          : "Get My Free Audit"}
+                        {status !== "submitting" && (
+                          <ArrowRight className="h-5 w-5" />
+                        )}
+                      </button>
+
+                      {status === "error" && (
+                        <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                          Please fill out all fields and try again.
+                        </div>
+                      )}
+
+                      <p className="text-xs text-gray-400">
+                        By submitting, you agree to a follow-up about your
+                        audit results. No spam. Unsubscribe anytime.
+                      </p>
+                    </form>
+                  </>
+                )}
               </div>
             </div>
           </div>
         </section>
 
-        {/* 10) Footer */}
-        <footer className="border-t border-white/10">
-          <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-10 text-sm text-white/70 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+        {/* ============================================================ */}
+        {/*  FOOTER                                                      */}
+        {/* ============================================================ */}
+        <footer className="border-t border-gray-200 bg-gray-50">
+          <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 sm:flex-row sm:items-center sm:justify-between sm:px-6">
             <div>
-              <div className="text-base font-semibold text-white">Booked Out</div>
-              <div className="mt-1 text-sm text-white/60">
-                Websites + review automation for local service businesses nationwide.
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-900">
+                  <Zap className="h-3.5 w-3.5 text-white" />
+                </div>
+                <span className="text-sm font-bold">Booked Out</span>
               </div>
-              <div className="mt-3 flex flex-col gap-1 text-sm">
-                <a href="tel:+15125550100" className="inline-flex items-center gap-2 text-orange-200 hover:text-orange-100">
-                  <Phone className="h-4 w-4" />
-                  (512) 555-0100
-                </a>
-                <a
-                  href="mailto:diego@trybookedout.com"
-                  className="inline-flex items-center gap-2 hover:text-white"
-                >
-                  <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/5 ring-1 ring-white/10">
-                    <ArrowRight className="h-3.5 w-3.5 text-blue-300" />
-                  </span>
-                  diego@trybookedout.com
-                </a>
-              </div>
+              <p className="mt-2 text-sm text-gray-500">
+                Websites + review automation for local service businesses.
+              </p>
+              <a
+                href="tel:+15125550100"
+                className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-gray-700 hover:text-gray-900"
+              >
+                <Phone className="h-3.5 w-3.5" />
+                (512) 555-0100
+              </a>
             </div>
-
-            <div className="text-xs text-white/50">© 2026 Booked Out</div>
+            <p className="text-xs text-gray-400">
+              &copy; {new Date().getFullYear()} Booked Out. All rights reserved.
+            </p>
           </div>
         </footer>
       </main>
