@@ -31,6 +31,7 @@ export async function updateSession(request: NextRequest) {
     "/signup",
     "/auth",
     "/landing",
+    "/es",
     "/api/track",
     "/api/unsubscribe",
     "/unsubscribe",
