@@ -34,50 +34,36 @@ interface StepForm {
 const DEFAULT_STEPS: StepForm[] = [
   {
     delay_days: 0,
-    subject_template:
-      "{{business_name}} — Your website could be costing you customers",
-    body_template: `Hi there,
+    subject_template: "{{business_name}} — your audit is ready",
+    body_template: `Hi {{first_name}},
 
-I came across {{business_name}} while researching {{business_type}} businesses in {{city}} and noticed your website might be holding you back.
+Just wanted to let you know we received your request and are working on your audit now.
 
-Your current site scored a {{website_grade}} — which means potential customers may be leaving before they ever contact you.
+You'll hear from us within 48 hours with a full breakdown of your online presence in {{city}}.
 
-I help local businesses like yours get a modern, fast, mobile-friendly website that actually converts visitors into calls and bookings.
-
-Would you be open to a quick 5-minute chat about how we could improve your online presence?
-
-Best regards`,
+— The Booked Out Team`,
   },
   {
-    delay_days: 3,
-    subject_template: "Quick follow-up — {{business_name}}",
-    body_template: `Hi again,
+    delay_days: 2,
+    subject_template: "Your results for {{business_name}}",
+    body_template: `Hi {{first_name}},
 
-Just following up on my note from a few days ago about {{business_name}}'s website.
+Your audit is complete. Here's what we found...
 
-I've actually put together a preview of what a refreshed site could look like for you — modern design, fast loading, and optimized for mobile.
+[Add your findings here]
 
-If you'd like to see it, just reply and I'll send over the link. No obligation at all.
+Ready to talk? Reply to this email or call (737) 260-5332.
 
-Best regards`,
+— The Booked Out Team`,
   },
   {
-    delay_days: 7,
-    subject_template: "Last note — free website preview for {{business_name}}",
-    body_template: `Hi,
+    delay_days: 5,
+    subject_template: "Following up — {{business_name}}",
+    body_template: `Hi {{first_name}},
 
-I wanted to reach out one last time. I built a free preview of what a new website could look like for {{business_name}} — no strings attached.
+Just checking in. We still have availability in {{city}} if you'd like to move forward.
 
-Here are a few things it includes:
-• Mobile-optimized design that loads in under 2 seconds
-• Clear calls-to-action so customers can reach you easily
-• Professional look that builds trust with new visitors
-
-If you'd like to see it, just reply with "Send it over" and I'll share the link.
-
-Either way, I wish you all the best with {{business_name}}!
-
-Best regards`,
+— The Booked Out Team`,
   },
 ];
 
