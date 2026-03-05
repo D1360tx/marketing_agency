@@ -292,11 +292,11 @@ export default function LandingOpusPage() {
               🇲🇽 Español
             </a>
             <a
-              href="tel:+15125550100"
+              href="tel:+17372605332"
               className="hidden items-center gap-2 text-sm font-semibold text-gray-700 hover:text-gray-900 sm:inline-flex"
             >
               <Phone className="h-4 w-4" />
-              (512) 555-0100
+              (737) 260-5332
             </a>
             <a
               href="#get-started"
@@ -357,11 +357,11 @@ export default function LandingOpusPage() {
                 <ArrowRight className="h-5 w-5" />
               </a>
               <a
-                href="tel:+15125550100"
+                href="tel:+17372605332"
                 className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-7 py-4 text-base font-semibold text-gray-800 shadow-sm transition hover:border-gray-400 hover:bg-gray-50"
               >
                 <Phone className="h-4 w-4" />
-                Call (512) 555-0100
+                Call (737) 260-5332
               </a>
             </div>
 
@@ -956,10 +956,10 @@ export default function LandingOpusPage() {
                       Rather talk to someone?
                     </div>
                     <a
-                      href="tel:+15125550100"
+                      href="tel:+17372605332"
                       className="text-sm font-semibold text-orange-400 hover:text-orange-300"
                     >
-                      (512) 555-0100
+                      (737) 260-5332
                     </a>
                   </div>
                 </div>
@@ -979,10 +979,10 @@ export default function LandingOpusPage() {
                       Your audit is being prepared. Expect it in your inbox
                       within 48 hours. If you need anything sooner, call us at{" "}
                       <a
-                        href="tel:+15125550100"
+                        href="tel:+17372605332"
                         className="font-semibold text-orange-600"
                       >
-                        (512) 555-0100
+                        (737) 260-5332
                       </a>
                       .
                     </p>
@@ -1122,11 +1122,11 @@ export default function LandingOpusPage() {
                 Websites + review automation for local service businesses.
               </p>
               <a
-                href="tel:+15125550100"
+                href="tel:+17372605332"
                 className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-gray-700 hover:text-gray-900"
               >
                 <Phone className="h-3.5 w-3.5" />
-                (512) 555-0100
+                (737) 260-5332
               </a>
             </div>
             <p className="text-xs text-gray-400">
