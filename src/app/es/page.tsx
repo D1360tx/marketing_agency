@@ -287,7 +287,7 @@ export default function EsPage() {
           <div className="flex items-center gap-3">
             <a
               href="/"
-              className="hidden items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-700 sm:inline-flex"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-700"
               title="View in English"
             >
               🇺🇸 English
