@@ -84,12 +84,13 @@ const statusConfig: Record<ProspectStatus, { label: string; color: string }> = {
   contacted: { label: "Contacted", color: "bg-purple-100 text-purple-800 border-purple-200" },
   interested: { label: "Interested", color: "bg-amber-100 text-amber-800 border-amber-200" },
   follow_up: { label: "Follow Up", color: "bg-orange-100 text-orange-800 border-orange-200" },
+  call_scheduled: { label: "Call Scheduled", color: "bg-indigo-100 text-indigo-800 border-indigo-200" },
   client: { label: "Client", color: "bg-emerald-100 text-emerald-800 border-emerald-200" },
   not_interested: { label: "Not Interested", color: "bg-gray-100 text-gray-800 border-gray-200" },
   lost: { label: "Lost", color: "bg-red-100 text-red-800 border-red-200" },
 };
 
-const pipelineStatuses: ProspectStatus[] = ["new", "contacted", "interested", "follow_up", "client"];
+const pipelineStatuses: ProspectStatus[] = ["new", "contacted", "interested", "follow_up", "call_scheduled", "client"];
 
 const activeStatuses: ProspectStatus[] = ["new", "contacted", "interested", "follow_up"];
 
@@ -241,6 +242,15 @@ export default function LeadsPage() {
 
     let imported = 0;
     let skipped = 0;
+    let duplicates = 0;
+
+    // Build sets of existing phones and emails for dupe detection
+    const existingPhones = new Set(
+      prospects.map(p => p.phone?.replace(/\D/g, "")).filter(Boolean) as string[]
+    );
+    const existingEmails = new Set(
+      prospects.map(p => p.email?.toLowerCase()).filter(Boolean) as string[]
+    );
 
     for (let i = 0; i < rows.length; i++) {
       setCsvProgress(`Importing ${i + 1}/${rows.length}...`);
@@ -252,6 +262,15 @@ export default function LeadsPage() {
 
       const businessName = get("business name") || get("name") || get("business_name");
       if (!businessName) { skipped++; continue; }
+
+      // Check for duplicates
+      const rowPhone = get("phone")?.replace(/\D/g, "");
+      const rowEmail = get("email")?.toLowerCase();
+      if ((rowPhone && existingPhones.has(rowPhone)) || (rowEmail && existingEmails.has(rowEmail))) {
+        duplicates++;
+        skipped++;
+        continue;
+      }
 
       try {
         const res = await fetch("/api/prospects", {
@@ -270,6 +289,9 @@ export default function LeadsPage() {
           const data = await res.json();
           setProspects((prev) => [data.prospect, ...prev]);
           imported++;
+          // Add to sets to catch intra-CSV dupes
+          if (data.prospect?.phone) existingPhones.add(data.prospect.phone.replace(/\D/g, ""));
+          if (data.prospect?.email) existingEmails.add(data.prospect.email.toLowerCase());
         } else {
           skipped++;
         }
@@ -279,7 +301,7 @@ export default function LeadsPage() {
     }
 
     setCsvProgress(null);
-    setCsvResult(`✅ ${imported} imported${skipped > 0 ? `, ⚠️ ${skipped} skipped (missing name or error)` : ""}`);
+    setCsvResult(`✅ ${imported} imported${duplicates > 0 ? `, ⏭️ ${duplicates} duplicates skipped` : ""}${(skipped - duplicates) > 0 ? `, ⚠️ ${skipped - duplicates} skipped (missing name or error)` : ""}`);
     setCsvImporting(false);
   }
 
@@ -712,7 +734,7 @@ export default function LeadsPage() {
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
-          <div className="grid gap-4 lg:grid-cols-5">
+          <div className="grid gap-4 lg:grid-cols-6">
             {pipelineStatuses.map((status) => (
               <DroppableColumn
                 key={status}
@@ -1149,6 +1171,15 @@ function useDraggable(id: string) {
   return { attributes, listeners, setNodeRef, transform, isDragging };
 }
 
+function getLastNotePreview(notes: string | null | undefined): string | null {
+  if (!notes) return null;
+  const lastSep = notes.lastIndexOf("\n---\n");
+  const lastEntry = lastSep >= 0 ? notes.slice(lastSep + 5).trim() : notes.trim();
+  const lines = lastEntry.split("\n");
+  const text = lines[0]?.match(/^\[.+\]$/) ? lines.slice(1).join(" ").trim() : lastEntry;
+  return text.slice(0, 70) + (text.length > 70 ? "…" : "");
+}
+
 function ProspectMiniCard({
   prospect,
   onLogCall,
@@ -1256,6 +1287,14 @@ function ProspectMiniCard({
                 ))}
               </div>
             )}
+            {(() => {
+              const preview = getLastNotePreview(prospect.notes);
+              return preview ? (
+                <p className="text-[10px] text-muted-foreground leading-relaxed italic line-clamp-2 mt-0.5">
+                  {preview}
+                </p>
+              ) : null;
+            })()}
           </div>
         </CardContent>
       </Card>

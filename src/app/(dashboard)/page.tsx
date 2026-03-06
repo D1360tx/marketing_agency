@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Search, Mail, Users, Phone, TrendingUp, CalendarClock, ChevronRight } from "lucide-react";
+import { Search, Mail, Users, Phone, TrendingUp, CalendarClock, ChevronRight, DollarSign } from "lucide-react";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -23,7 +23,7 @@ export default async function DashboardPage() {
   const weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 7);
 
-  const [prospectsResult, campaignsResult, weekActivitiesResult, followUpsTodayResult, sourceDataResult] =
+  const [prospectsResult, campaignsResult, weekActivitiesResult, followUpsTodayResult, sourceDataResult, clientDataResult] =
     await Promise.all([
       supabase.from("prospects").select("status", { count: "exact", head: false }),
       supabase.from("campaigns").select("sent_count", { count: "exact", head: false }),
@@ -38,6 +38,7 @@ export default async function DashboardPage() {
         .eq("status", "follow_up")
         .lte("follow_up_date", new Date().toISOString().split("T")[0]),
       supabase.from("prospects").select("source, status"),
+      supabase.from("prospects").select("deal_value").eq("status", "client"),
     ]);
 
   const prospects = prospectsResult.data || [];
@@ -60,6 +61,14 @@ export default async function DashboardPage() {
   ).length;
 
   const followUpsToday = followUpsTodayResult.count ?? 0;
+
+  // Revenue stats
+  const clientData = clientDataResult.data || [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const totalMRR = clientData.reduce((sum, c) => sum + ((c as any).deal_value || 0), 0);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const clientsWithValue = clientData.filter(c => (c as any).deal_value > 0).length;
+  const avgDealValue = clientsWithValue > 0 ? Math.round(totalMRR / clientsWithValue) : 0;
 
   const sourceData = sourceDataResult.data || [];
   const sourceStats = Object.entries(
@@ -150,6 +159,19 @@ export default async function DashboardPage() {
 
         <WeeklyGoal contacted={contactedThisWeek} />
       </div>
+
+      {/* Revenue Card */}
+      <Card className="border-emerald-200 bg-emerald-50/50">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm text-emerald-700 flex items-center gap-2">
+            <DollarSign className="h-4 w-4" /> Monthly Recurring Revenue
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-3xl font-bold text-emerald-700">${totalMRR.toLocaleString()}</div>
+          <p className="text-xs text-muted-foreground mt-1">{clientsWithValue} clients · avg ${avgDealValue}/mo</p>
+        </CardContent>
+      </Card>
 
       {/* Pipeline Funnel */}
       <Card>

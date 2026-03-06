@@ -6,6 +6,7 @@ export const prospectStatusValues = [
   "contacted",
   "interested",
   "follow_up",
+  "call_scheduled",
   "client",
   "not_interested",
   "lost",
@@ -37,6 +38,10 @@ export const prospectSchema = z.object({
   tags: z.array(z.string()).nullable().default([]),
   created_at: z.string(),
   updated_at: z.string(),
+  loss_reason: z.string().nullable(),
+  loss_reason_detail: z.string().nullable(),
+  deal_value: z.number().nullable(),
+  call_scheduled_at: z.string().nullable(),
 });
 
 export type Prospect = z.infer<typeof prospectSchema>;
@@ -164,6 +169,10 @@ export const prospectUpdateSchema = z.object({
   last_contacted_at: z.string().nullable().optional(),
   business_name: z.string().min(1).optional(),
   tags: z.array(z.string()).nullable().optional(),
+  loss_reason: z.string().nullable().optional(),
+  loss_reason_detail: z.string().nullable().optional(),
+  deal_value: z.number().nullable().optional(),
+  call_scheduled_at: z.string().nullable().optional(),
 });
 
 export const campaignUpdateSchema = z.object({

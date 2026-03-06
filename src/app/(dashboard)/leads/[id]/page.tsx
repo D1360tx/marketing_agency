@@ -59,6 +59,11 @@ import {
   ChevronRight,
   Copy,
   Lightbulb,
+  DollarSign,
+  UserPlus,
+  RefreshCw,
+  FileText,
+  Send,
 } from "lucide-react";
 import {
   Tooltip,
@@ -74,6 +79,7 @@ const statusConfig: Record<ProspectStatus, { label: string; color: string }> = {
   contacted: { label: "Contacted", color: "bg-purple-100 text-purple-800 border-purple-200" },
   interested: { label: "Interested", color: "bg-amber-100 text-amber-800 border-amber-200" },
   follow_up: { label: "Follow Up", color: "bg-orange-100 text-orange-800 border-orange-200" },
+  call_scheduled: { label: "Call Scheduled", color: "bg-indigo-100 text-indigo-800 border-indigo-200" },
   client: { label: "Client", color: "bg-emerald-100 text-emerald-800 border-emerald-200" },
   not_interested: { label: "Not Interested", color: "bg-gray-100 text-gray-800 border-gray-200" },
   lost: { label: "Lost", color: "bg-red-100 text-red-800 border-red-200" },
@@ -206,14 +212,33 @@ function getTalkingPoints(prospect: ProspectWithAnalysis, analysis?: WebsiteAnal
   return points;
 }
 
-function addBusinessDays(date: Date, days: number): string {
+function addBusinessDays(date: Date, days: number): Date {
   const result = new Date(date);
   let count = 0;
   while (count < days) {
     result.setDate(result.getDate() + 1);
     if (result.getDay() !== 0 && result.getDay() !== 6) count++;
   }
-  return result.toISOString().split("T")[0];
+  return result;
+}
+
+function addBusinessDaysStr(date: Date, days: number): string {
+  return addBusinessDays(date, days).toISOString().split("T")[0];
+}
+
+function ActivityIcon({ type }: { type: string }) {
+  const cls = "h-4 w-4";
+  switch (type) {
+    case "created": return <UserPlus className={cls} />;
+    case "status_changed": return <RefreshCw className={cls} />;
+    case "notes_updated": return <FileText className={cls} />;
+    case "call_logged": return <Phone className={cls} />;
+    case "email_sent": return <Mail className={cls} />;
+    case "email_found": return <Mail className={cls} />;
+    case "analyzed": return <TrendingUp className={cls} />;
+    case "drip_enrolled": return <Send className={cls} />;
+    default: return <Activity className={cls} />;
+  }
 }
 
 function relativeTime(dateStr: string): string {
@@ -245,6 +270,23 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
   const [listIds, setListIds] = useState<string[]>([]);
   const [listIndex, setListIndex] = useState(-1);
 
+  // Win/Loss dialog state
+  const [showLossDialog, setShowLossDialog] = useState(false);
+  const [lossReason, setLossReason] = useState("");
+  const [lossDetail, setLossDetail] = useState("");
+  const [pendingStatus, setPendingStatus] = useState<string | null>(null);
+
+  // Deal value state
+  const [dealValue, setDealValue] = useState<string>("");
+  const [showDealDialog, setShowDealDialog] = useState(false);
+  const [pendingDealValue, setPendingDealValue] = useState("");
+
+  // Call scheduled state
+  const [callScheduledAt, setCallScheduledAt] = useState<string>("");
+
+  // Find email state
+  const [findingEmail, setFindingEmail] = useState(false);
+
   // Inline edit state
   const [editing, setEditing] = useState<"phone" | "email" | "business_name" | null>(null);
   const [editValue, setEditValue] = useState("");
@@ -273,6 +315,10 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
           setProspect(data.prospect);
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           setFollowUpDate((data.prospect as any).follow_up_date || "");
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          setDealValue(String((data.prospect as any).deal_value || ""));
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          setCallScheduledAt((data.prospect as any).call_scheduled_at?.slice(0, 16) || "");
         }
 
         const msgRes = await fetch(`/api/prospects/${id}/messages`);
@@ -302,11 +348,19 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
 
   async function handleStatusChange(status: string) {
     if (!prospect) return;
+
+    // Win/loss dialog intercept
+    if (status === "not_interested" || status === "lost") {
+      setPendingStatus(status);
+      setShowLossDialog(true);
+      return;
+    }
+
     setSavingStatus(true);
     try {
       const body: Record<string, unknown> = { id: prospect.id, status };
       if (status === "follow_up" && !followUpDate) {
-        const suggested = addBusinessDays(new Date(), 3);
+        const suggested = addBusinessDaysStr(new Date(), 3);
         setFollowUpDate(suggested);
         body.follow_up_date = suggested;
       } else if (status === "follow_up" && followUpDate) {
@@ -314,6 +368,16 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
       } else if (status !== "follow_up") {
         body.follow_up_date = null;
       }
+
+      // Auto-set call_scheduled_at if not already set
+      if (status === "call_scheduled" && !callScheduledAt) {
+        const next = addBusinessDays(new Date(), 1);
+        next.setHours(10, 0, 0, 0);
+        const nextStr = next.toISOString().slice(0, 16);
+        setCallScheduledAt(nextStr);
+        body.call_scheduled_at = next.toISOString();
+      }
+
       await fetch("/api/prospects", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -321,10 +385,42 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
       });
       setProspect({ ...prospect, status: status as ProspectStatus });
       setTimeout(fetchActivities, 500);
+
+      // Show deal dialog when converting to client
+      if (status === "client") {
+        setShowDealDialog(true);
+      }
     } catch {
       console.error("Failed to update status");
     } finally {
       setSavingStatus(false);
+    }
+  }
+
+  async function handleLossConfirm() {
+    if (!prospect || !pendingStatus) return;
+    setSavingStatus(true);
+    try {
+      await fetch("/api/prospects", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: prospect.id,
+          status: pendingStatus,
+          loss_reason: lossReason,
+          loss_reason_detail: lossDetail,
+        }),
+      });
+      setProspect({ ...prospect, status: pendingStatus as ProspectStatus } as ProspectWithAnalysis);
+      setTimeout(fetchActivities, 500);
+    } catch {
+      console.error("Failed to update status");
+    } finally {
+      setSavingStatus(false);
+      setShowLossDialog(false);
+      setPendingStatus(null);
+      setLossReason("");
+      setLossDetail("");
     }
   }
 
@@ -672,6 +768,32 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                 </Button>
               </div>
             )}
+            {prospect.status === "call_scheduled" && (
+              <div className="flex items-center gap-1">
+                <Input
+                  type="datetime-local"
+                  value={callScheduledAt}
+                  onChange={(e) => setCallScheduledAt(e.target.value)}
+                  className="h-8 w-[200px] text-xs"
+                />
+                <Button size="sm" variant="outline" className="h-8 px-2" onClick={async () => {
+                  await fetch("/api/prospects", {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id: prospect.id, call_scheduled_at: callScheduledAt || null }),
+                  });
+                }}>
+                  <Save className="h-3 w-3" />
+                </Button>
+              </div>
+            )}
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            {(prospect as any).loss_reason && (
+              <p className="text-xs text-muted-foreground">
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                Lost reason: {(prospect as any).loss_reason}{(prospect as any).loss_reason_detail ? ` — ${(prospect as any).loss_reason_detail}` : ""}
+              </p>
+            )}
           </div>
           <Button variant="outline" size="sm" onClick={() => {
             const pitch = generatePitch(prospect, analysis);
@@ -838,6 +960,53 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                     </div>
                   </a>
                 )}
+
+                {/* Facebook search */}
+                <a
+                  href={`https://www.facebook.com/search/top?q=${encodeURIComponent(`${prospect.business_name} ${prospect.city || ""}`.trim())}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 rounded-lg border p-3 hover:bg-muted/50"
+                >
+                  <svg className="h-5 w-5 text-[#1877F2]" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  </svg>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Facebook</p>
+                    <p className="font-medium flex items-center gap-1">Find on Facebook <ExternalLink className="h-3 w-3" /></p>
+                  </div>
+                </a>
+
+                {/* Find Email button (only when no email set and has website) */}
+                {!prospect.email && prospect.website_url && (
+                  <button
+                    onClick={async () => {
+                      setFindingEmail(true);
+                      try {
+                        const res = await fetch(`/api/prospects/${prospect.id}/find-email`, { method: "POST" });
+                        const data = await res.json();
+                        if (data.found) {
+                          setProspect(p => p ? { ...p, email: data.email } : p);
+                          toast.success(`Email found: ${data.email}`);
+                        } else {
+                          toast.error("No email found on their website");
+                        }
+                      } catch { toast.error("Search failed"); }
+                      finally { setFindingEmail(false); }
+                    }}
+                    disabled={findingEmail}
+                    className="flex items-center gap-3 rounded-lg border border-dashed p-3 hover:bg-muted/50 w-full text-left"
+                  >
+                    {findingEmail
+                      ? <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                      : <Mail className="h-5 w-5 text-muted-foreground" />
+                    }
+                    <div>
+                      <p className="text-xs text-muted-foreground">Email</p>
+                      <p className="text-sm font-medium text-muted-foreground">{findingEmail ? "Searching..." : "Find Email"}</p>
+                    </div>
+                  </button>
+                )}
               </div>
               {!prospect.phone && !prospect.email && !prospect.website_url && editing !== "phone" && editing !== "email" && (
                 <p className="text-muted-foreground">No contact information available.</p>
@@ -989,7 +1158,9 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                   {activities.map((act, i) => (
                     <div key={act.id} className="flex gap-3 pb-4">
                       <div className="flex flex-col items-center">
-                        <div className="h-2 w-2 rounded-full bg-primary mt-2" />
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border bg-background text-muted-foreground mt-0.5">
+                          <ActivityIcon type={act.activity_type} />
+                        </div>
                         {i < activities.length - 1 && (
                           <div className="w-px flex-1 bg-border mt-1" />
                         )}
@@ -1074,6 +1245,18 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
             </CardContent>
           </Card>
 
+          {/* Deal Value */}
+          {prospect.status === "client" && (prospect as any).deal_value && (
+            <div className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 p-3">
+              <DollarSign className="h-5 w-5 text-emerald-600" />
+              <div>
+                <p className="text-xs text-muted-foreground">Monthly Value</p>
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                <p className="font-semibold text-emerald-700">${(prospect as any).deal_value}/mo</p>
+              </div>
+            </div>
+          )}
+
           {/* Tags */}
           <Card>
             <CardHeader>
@@ -1149,6 +1332,61 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
           </Card>
         </div>
       </div>
+
+      {/* Win/Loss Dialog */}
+      <Dialog open={showLossDialog} onOpenChange={(open) => { if (!open) { setShowLossDialog(false); setPendingStatus(null); } }}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Why did this lead go cold?</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <Select value={lossReason} onValueChange={setLossReason}>
+              <SelectTrigger><SelectValue placeholder="Select a reason..." /></SelectTrigger>
+              <SelectContent>
+                {["Price", "Bad timing", "Already has someone", "No budget", "Not interested in website", "Happy with current situation", "Other"].map(r => (
+                  <SelectItem key={r} value={r}>{r}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {lossReason === "Other" && (
+              <Textarea placeholder="What happened?" value={lossDetail} onChange={e => setLossDetail(e.target.value)} rows={2} />
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setShowLossDialog(false); setPendingStatus(null); }}>Cancel</Button>
+            <Button onClick={handleLossConfirm} disabled={!lossReason}>Confirm</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Deal Value Dialog */}
+      <Dialog open={showDealDialog} onOpenChange={setShowDealDialog}>
+        <DialogContent className="max-w-xs">
+          <DialogHeader><DialogTitle>🎉 New Client!</DialogTitle></DialogHeader>
+          <p className="text-sm text-muted-foreground">What&apos;s the monthly value of this contract?</p>
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground">$</span>
+            <Input type="number" placeholder="500" value={pendingDealValue}
+              onChange={e => setPendingDealValue(e.target.value)} className="h-9" />
+            <span className="text-muted-foreground text-sm">/mo</span>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowDealDialog(false)}>Skip</Button>
+            <Button onClick={async () => {
+              if (pendingDealValue) {
+                await fetch("/api/prospects", {
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ id: prospect!.id, deal_value: parseFloat(pendingDealValue) }),
+                });
+                setProspect(p => p ? { ...p, deal_value: parseFloat(pendingDealValue) } as ProspectWithAnalysis : p);
+                setDealValue(pendingDealValue);
+              }
+              setShowDealDialog(false);
+            }}>Save</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Call Log Dialog */}
       <Dialog open={showCallDialog} onOpenChange={setShowCallDialog}>

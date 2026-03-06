@@ -39,6 +39,10 @@ export const mockProspects: Prospect[] = [
     source: null,
     last_contacted_at: null,
     tags: [],
+    loss_reason: null,
+    loss_reason_detail: null,
+    deal_value: null,
+    call_scheduled_at: null,
   },
   {
     id: randomId(),
@@ -64,6 +68,10 @@ export const mockProspects: Prospect[] = [
     source: null,
     last_contacted_at: null,
     tags: [],
+    loss_reason: null,
+    loss_reason_detail: null,
+    deal_value: null,
+    call_scheduled_at: null,
   },
   {
     id: randomId(),
@@ -89,6 +97,10 @@ export const mockProspects: Prospect[] = [
     source: null,
     last_contacted_at: null,
     tags: [],
+    loss_reason: null,
+    loss_reason_detail: null,
+    deal_value: null,
+    call_scheduled_at: null,
   },
   {
     id: randomId(),
@@ -114,6 +126,10 @@ export const mockProspects: Prospect[] = [
     source: null,
     last_contacted_at: null,
     tags: [],
+    loss_reason: null,
+    loss_reason_detail: null,
+    deal_value: null,
+    call_scheduled_at: null,
   },
   {
     id: randomId(),
@@ -139,6 +155,10 @@ export const mockProspects: Prospect[] = [
     source: null,
     last_contacted_at: null,
     tags: [],
+    loss_reason: null,
+    loss_reason_detail: null,
+    deal_value: null,
+    call_scheduled_at: null,
   },
   {
     id: randomId(),
@@ -164,6 +184,10 @@ export const mockProspects: Prospect[] = [
     source: null,
     last_contacted_at: null,
     tags: [],
+    loss_reason: null,
+    loss_reason_detail: null,
+    deal_value: null,
+    call_scheduled_at: null,
   },
   {
     id: randomId(),
@@ -189,6 +213,10 @@ export const mockProspects: Prospect[] = [
     source: null,
     last_contacted_at: null,
     tags: [],
+    loss_reason: null,
+    loss_reason_detail: null,
+    deal_value: null,
+    call_scheduled_at: null,
   },
   {
     id: randomId(),
@@ -214,6 +242,10 @@ export const mockProspects: Prospect[] = [
     source: null,
     last_contacted_at: null,
     tags: [],
+    loss_reason: null,
+    loss_reason_detail: null,
+    deal_value: null,
+    call_scheduled_at: null,
   },
 ];
 
