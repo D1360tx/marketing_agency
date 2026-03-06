@@ -21,7 +21,7 @@ export default function QuickAddPage() {
   const [form, setForm] = useState({
     business_name: "",
     phone: "",
-    source: "Cold Call",
+    source: "Door Knock",
     notes: "",
   });
   const [loading, setLoading] = useState(false);
@@ -140,6 +140,7 @@ export default function QuickAddPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Cold Call">Cold Call</SelectItem>
+                  <SelectItem value="Door Knock">Door Knock</SelectItem>
                   <SelectItem value="Facebook Group">Facebook Group</SelectItem>
                   <SelectItem value="Referral">Referral</SelectItem>
                   <SelectItem value="Walk-in">Walk-in</SelectItem>

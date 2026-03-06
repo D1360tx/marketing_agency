@@ -165,7 +165,7 @@ export async function POST(request: Request) {
         city: city || null,
         state: state || null,
         business_type: business_type || null,
-        notes: notes ? `Source: ${source || "Manual"}\n\n${notes}` : `Source: ${source || "Manual"}`,
+        notes: notes ? `[${new Date().toLocaleString("en-US", { year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}]\n${notes}` : null,
         status: "new",
         search_query: source || "Manual entry",
         source: source || null,

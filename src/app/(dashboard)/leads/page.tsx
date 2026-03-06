@@ -125,6 +125,7 @@ export default function LeadsPage() {
   const [updating, setUpdating] = useState<Record<string, boolean>>({});
   const [sortField, setSortField] = useState<SortField>("lead_score");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const [sourceFilter, setSourceFilter] = useState<string>("all");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [addForm, setAddForm] = useState({ business_name: "", phone: "", email: "", city: "", state: "", business_type: "", notes: "", source: "Facebook Group" });
   const [addLoading, setAddLoading] = useState(false);
@@ -401,7 +402,9 @@ export default function LeadsPage() {
       p.city?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.business_type?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || p.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const matchesSource = sourceFilter === "all" || (p as any).source === sourceFilter;
+    return matchesSearch && matchesStatus && matchesSource;
   });
 
   // Apply sorting
@@ -531,6 +534,21 @@ export default function LeadsPage() {
             {Object.entries(statusConfig).map(([key, { label }]) => (
               <SelectItem key={key} value={key}>{label}</SelectItem>
             ))}
+          </SelectContent>
+        </Select>
+        <Select value={sourceFilter} onValueChange={setSourceFilter}>
+          <SelectTrigger className="w-[160px]">
+            <SelectValue placeholder="All Sources" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Sources</SelectItem>
+            <SelectItem value="Cold Call">Cold Call</SelectItem>
+            <SelectItem value="Door Knock">Door Knock</SelectItem>
+            <SelectItem value="Facebook Group">Facebook Group</SelectItem>
+            <SelectItem value="Referral">Referral</SelectItem>
+            <SelectItem value="Cold Email">Cold Email</SelectItem>
+            <SelectItem value="CSV Import">CSV Import</SelectItem>
+            <SelectItem value="Manual">Manual</SelectItem>
           </SelectContent>
         </Select>
         <Button variant="outline" size="sm" onClick={handleExportCSV}>
@@ -769,8 +787,9 @@ export default function LeadsPage() {
               <Select value={addForm.source} onValueChange={(v) => setAddForm({...addForm, source: v})}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Facebook Group">Facebook Group</SelectItem>
                   <SelectItem value="Cold Call">Cold Call</SelectItem>
+                  <SelectItem value="Door Knock">Door Knock</SelectItem>
+                  <SelectItem value="Facebook Group">Facebook Group</SelectItem>
                   <SelectItem value="Cold Email">Cold Email</SelectItem>
                   <SelectItem value="Referral">Referral</SelectItem>
                   <SelectItem value="Manual">Manual</SelectItem>

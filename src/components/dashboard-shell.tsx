@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
@@ -42,8 +43,34 @@ const navigation = [
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
+function useTasksCount() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    async function fetchCount() {
+      try {
+        const res = await fetch("/api/prospects");
+        if (!res.ok) return;
+        const data = await res.json();
+        const today = new Date().toISOString().split("T")[0];
+        const due = (data.prospects || []).filter(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (p: any) => p.status === "follow_up" && p.follow_up_date && p.follow_up_date <= today
+        ).length;
+        setCount(due);
+      } catch {
+        // fail silently
+      }
+    }
+    fetchCount();
+  }, []);
+
+  return count;
+}
+
 function SidebarContent({ pathname }: { pathname: string }) {
   const router = useRouter();
+  const tasksCount = useTasksCount();
 
   async function handleSignOut() {
     const supabase = createClient();
@@ -79,7 +106,12 @@ function SidebarContent({ pathname }: { pathname: string }) {
               )}
             >
               <item.icon className="h-4 w-4" />
-              {item.name}
+              <span className="flex-1">{item.name}</span>
+              {item.name === "Tasks" && tasksCount > 0 && (
+                <Badge className="h-5 min-w-5 rounded-full bg-red-500 px-1.5 text-[10px] font-bold text-white hover:bg-red-500">
+                  {tasksCount}
+                </Badge>
+              )}
             </Link>
           );
         })}

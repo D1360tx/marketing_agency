@@ -53,7 +53,10 @@ import {
   MessageSquare,
   Activity,
   Plus,
+  Pencil,
+  X,
 } from "lucide-react";
+import { toast } from "sonner";
 import type { ProspectStatus, ProspectWithAnalysis, WebsiteAnalysis } from "@/types";
 
 const statusConfig: Record<ProspectStatus, { label: string; color: string }> = {
@@ -110,6 +113,13 @@ function formatNoteTimestamp(): string {
   });
 }
 
+function relativeTime(dateStr: string): string {
+  const days = Math.floor((Date.now() - new Date(dateStr).getTime()) / 86400000);
+  if (days === 0) return "Today";
+  if (days === 1) return "Yesterday";
+  return `${days} days ago`;
+}
+
 export default function LeadDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
@@ -127,18 +137,20 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
   const [callNote, setCallNote] = useState("");
   const [loggingCall, setLoggingCall] = useState(false);
 
+  // Inline edit state
+  const [editing, setEditing] = useState<"phone" | "email" | "business_name" | null>(null);
+  const [editValue, setEditValue] = useState("");
+  const [savingEdit, setSavingEdit] = useState(false);
+
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch("/api/prospects");
+        const res = await fetch(`/api/prospects/${id}`);
         const data = await res.json();
-        const found = (data.prospects || []).find(
-          (p: ProspectWithAnalysis) => p.id === id
-        );
-        if (found) {
-          setProspect(found);
+        if (data.prospect) {
+          setProspect(data.prospect);
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          setFollowUpDate((found as any).follow_up_date || "");
+          setFollowUpDate((data.prospect as any).follow_up_date || "");
         }
 
         const msgRes = await fetch(`/api/prospects/${id}/messages`);
@@ -257,6 +269,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
       setProspect({
         ...prospect,
         notes: updatedNotes,
+        last_contacted_at: new Date().toISOString(),
         status: prospect.status === "new" ? "contacted" : prospect.status,
       });
       setCallNote("");
@@ -268,6 +281,40 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
     } finally {
       setLoggingCall(false);
     }
+  }
+
+  async function handleInlineEditSave() {
+    if (!prospect || !editing) return;
+    setSavingEdit(true);
+    try {
+      const res = await fetch("/api/prospects", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: prospect.id, [editing]: editValue || null }),
+      });
+      if (res.ok) {
+        setProspect({ ...prospect, [editing]: editValue || null } as ProspectWithAnalysis);
+        toast.success("Updated");
+        setEditing(null);
+        setEditValue("");
+      } else {
+        toast.error("Failed to update");
+      }
+    } catch {
+      toast.error("Failed to update");
+    } finally {
+      setSavingEdit(false);
+    }
+  }
+
+  function startEdit(field: "phone" | "email" | "business_name") {
+    setEditing(field);
+    setEditValue((prospect as Record<string, unknown>)?.[field] as string || "");
+  }
+
+  function cancelEdit() {
+    setEditing(null);
+    setEditValue("");
   }
 
   async function handleDelete() {
@@ -324,7 +371,34 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
           </Link>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold">{prospect.business_name}</h1>
+              {editing === "business_name" ? (
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    className="h-9 text-xl font-bold w-64"
+                    autoFocus
+                    onKeyDown={(e) => { if (e.key === "Enter") handleInlineEditSave(); if (e.key === "Escape") cancelEdit(); }}
+                  />
+                  <Button size="sm" onClick={handleInlineEditSave} disabled={savingEdit}>
+                    {savingEdit ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={cancelEdit}>
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="group flex items-center gap-2">
+                  <h1 className="text-2xl font-bold">{prospect.business_name}</h1>
+                  <button
+                    onClick={() => startEdit("business_name")}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
+                    title="Edit business name"
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              )}
               {leadScore > 0 && (
                 <div className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${
                   leadScore >= 70
@@ -397,37 +471,94 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
             <CardHeader>
               <CardTitle>Contact Information</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
-                {prospect.phone && (
+                {/* Phone */}
+                {editing === "phone" ? (
+                  <div className="flex items-center gap-2 rounded-lg border p-3">
+                    <Phone className="h-5 w-5 text-muted-foreground shrink-0" />
+                    <Input
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      className="h-8 flex-1"
+                      autoFocus
+                      placeholder="(512) 555-0100"
+                      onKeyDown={(e) => { if (e.key === "Enter") handleInlineEditSave(); if (e.key === "Escape") cancelEdit(); }}
+                    />
+                    <Button size="sm" onClick={handleInlineEditSave} disabled={savingEdit}>
+                      {savingEdit ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={cancelEdit}><X className="h-3 w-3" /></Button>
+                  </div>
+                ) : (
                   <div className="flex items-center gap-2">
-                    <a href={`tel:${prospect.phone}`} className="flex flex-1 items-center gap-3 rounded-lg border p-3 hover:bg-muted/50">
+                    <a href={prospect.phone ? `tel:${prospect.phone}` : undefined} className="flex flex-1 items-center gap-3 rounded-lg border p-3 hover:bg-muted/50">
                       <Phone className="h-5 w-5 text-muted-foreground" />
                       <div>
                         <p className="text-xs text-muted-foreground">Phone</p>
-                        <p className="font-medium">{prospect.phone}</p>
+                        <p className="font-medium">{prospect.phone || <span className="text-muted-foreground italic text-sm">Not set</span>}</p>
                       </div>
                     </a>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setShowCallDialog(true)}
-                      title="Log Call"
-                    >
-                      <Phone className="h-3.5 w-3.5 mr-1" />
-                      Log Call
-                    </Button>
+                    <div className="flex flex-col gap-1">
+                      <button
+                        onClick={() => startEdit("phone")}
+                        className="text-muted-foreground hover:text-foreground transition-colors"
+                        title="Edit phone"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </button>
+                      {prospect.phone && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowCallDialog(true)}
+                          title="Log Call"
+                          className="h-7 px-2 text-xs"
+                        >
+                          Log Call
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 )}
-                {prospect.email && (
-                  <a href={`mailto:${prospect.email}`} className="flex items-center gap-3 rounded-lg border p-3 hover:bg-muted/50">
-                    <Mail className="h-5 w-5 text-muted-foreground" />
-                    <div>
-                      <p className="text-xs text-muted-foreground">Email</p>
-                      <p className="font-medium">{prospect.email}</p>
-                    </div>
-                  </a>
+
+                {/* Email */}
+                {editing === "email" ? (
+                  <div className="flex items-center gap-2 rounded-lg border p-3">
+                    <Mail className="h-5 w-5 text-muted-foreground shrink-0" />
+                    <Input
+                      type="email"
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      className="h-8 flex-1"
+                      autoFocus
+                      placeholder="email@example.com"
+                      onKeyDown={(e) => { if (e.key === "Enter") handleInlineEditSave(); if (e.key === "Escape") cancelEdit(); }}
+                    />
+                    <Button size="sm" onClick={handleInlineEditSave} disabled={savingEdit}>
+                      {savingEdit ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={cancelEdit}><X className="h-3 w-3" /></Button>
+                  </div>
+                ) : (
+                  <div className="group flex items-center gap-2">
+                    <a href={prospect.email ? `mailto:${prospect.email}` : undefined} className="flex flex-1 items-center gap-3 rounded-lg border p-3 hover:bg-muted/50">
+                      <Mail className="h-5 w-5 text-muted-foreground" />
+                      <div>
+                        <p className="text-xs text-muted-foreground">Email</p>
+                        <p className="font-medium">{prospect.email || <span className="text-muted-foreground italic text-sm">Not set</span>}</p>
+                      </div>
+                    </a>
+                    <button
+                      onClick={() => startEdit("email")}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
+                      title="Edit email"
+                    >
+                      <Pencil className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 )}
+
                 {prospect.website_url && (
                   <a href={prospect.website_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-lg border p-3 hover:bg-muted/50">
                     <Globe className="h-5 w-5 text-muted-foreground" />
@@ -454,8 +585,15 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                   </div>
                 )}
               </div>
-              {!prospect.phone && !prospect.email && !prospect.website_url && (
+              {!prospect.phone && !prospect.email && !prospect.website_url && editing !== "phone" && editing !== "email" && (
                 <p className="text-muted-foreground">No contact information available.</p>
+              )}
+              {/* Last contacted */}
+              {prospect.last_contacted_at && (
+                <div className="flex items-center gap-1.5 text-sm text-muted-foreground pt-1">
+                  <Clock className="h-3.5 w-3.5" />
+                  <span>Last contacted: {relativeTime(prospect.last_contacted_at)}</span>
+                </div>
               )}
             </CardContent>
           </Card>

@@ -161,6 +161,7 @@ export const prospectUpdateSchema = z.object({
   follow_up_date: z.string().nullable().optional(),
   source: z.string().nullable().optional(),
   last_contacted_at: z.string().nullable().optional(),
+  business_name: z.string().min(1).optional(),
 });
 
 export const campaignUpdateSchema = z.object({
