@@ -1,5 +1,7 @@
+import React from "react";
 import { createClient } from "@/lib/supabase/server";
 import { StatsCards } from "@/components/stats-cards";
+import { WeeklyGoal } from "@/components/weekly-goal";
 import {
   Card,
   CardContent,
@@ -9,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Search, Mail, Users, Phone, TrendingUp, CalendarClock } from "lucide-react";
+import { Search, Mail, Users, Phone, TrendingUp, CalendarClock, ChevronRight } from "lucide-react";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -58,6 +60,19 @@ export default async function DashboardPage() {
 
   const followUpsToday = followUpsTodayResult.count ?? 0;
 
+  // Pipeline funnel
+  const funnel = [
+    { label: "New", status: "new" },
+    { label: "Contacted", status: "contacted" },
+    { label: "Interested", status: "interested" },
+    { label: "Client", status: "client" },
+  ].map((stage) => ({
+    ...stage,
+    count: prospects.filter((p) => p.status === stage.status).length,
+  }));
+
+  const funnelColors = ["bg-blue-500", "bg-purple-500", "bg-amber-500", "bg-emerald-500"];
+
   return (
     <div className="space-y-6">
       <div>
@@ -76,8 +91,8 @@ export default async function DashboardPage() {
         }}
       />
 
-      {/* Outreach Stats */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Outreach Stats + Weekly Goal */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -118,7 +133,58 @@ export default async function DashboardPage() {
             <p className="text-xs text-muted-foreground">Status moved to contacted</p>
           </CardContent>
         </Card>
+
+        <WeeklyGoal contacted={contactedThisWeek} />
       </div>
+
+      {/* Pipeline Funnel */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Pipeline Funnel</CardTitle>
+          <CardDescription>Conversion rates across pipeline stages</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-2">
+            {funnel.map((stage, i) => (
+              <React.Fragment key={stage.status}>
+                <div className="flex-1 text-center">
+                  <div className="text-2xl font-bold">{stage.count}</div>
+                  <div className="text-sm text-muted-foreground">{stage.label}</div>
+                  {i > 0 && funnel[i - 1].count > 0 && (
+                    <div className="text-xs text-muted-foreground mt-0.5">
+                      {Math.round((stage.count / funnel[i - 1].count) * 100)}% conversion
+                    </div>
+                  )}
+                </div>
+                {i < funnel.length - 1 && (
+                  <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+          {/* Progress bars */}
+          <div className="mt-4 space-y-2">
+            {funnel.map((stage, i) => {
+              const max = funnel[0].count || 1;
+              const pct = Math.round((stage.count / max) * 100);
+              return (
+                <div key={stage.status} className="flex items-center gap-3">
+                  <span className="w-20 text-xs text-right text-muted-foreground">
+                    {stage.label}
+                  </span>
+                  <div className="flex-1 h-2 rounded-full bg-muted">
+                    <div
+                      className={`h-full rounded-full ${funnelColors[i]}`}
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                  <span className="w-8 text-xs text-muted-foreground">{stage.count}</span>
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card>

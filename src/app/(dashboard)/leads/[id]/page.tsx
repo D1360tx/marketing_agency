@@ -55,6 +55,8 @@ import {
   Plus,
   Pencil,
   X,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import type { ProspectStatus, ProspectWithAnalysis, WebsiteAnalysis } from "@/types";
@@ -68,6 +70,26 @@ const statusConfig: Record<ProspectStatus, { label: string; color: string }> = {
   not_interested: { label: "Not Interested", color: "bg-gray-100 text-gray-800 border-gray-200" },
   lost: { label: "Lost", color: "bg-red-100 text-red-800 border-red-200" },
 };
+
+const NOTE_TEMPLATES = [
+  "Left voicemail",
+  "No answer",
+  "Interested — will call back",
+  "Sent Facebook DM",
+  "Not a good fit",
+  "Bad reviews / not a target",
+];
+
+const PRESET_TAGS = [
+  "No website 🔥",
+  "Hot lead 🔥",
+  "Left VM",
+  "Price objection",
+  "Bad reviews",
+  "Call back",
+  "Needs review mgmt",
+  "Seasonal",
+];
 
 interface ProspectActivity {
   id: string;
@@ -136,11 +158,30 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
   const [callOutcome, setCallOutcome] = useState("Answered");
   const [callNote, setCallNote] = useState("");
   const [loggingCall, setLoggingCall] = useState(false);
+  const [newTag, setNewTag] = useState("");
+
+  // Prev/Next nav
+  const [listIds, setListIds] = useState<string[]>([]);
+  const [listIndex, setListIndex] = useState(-1);
 
   // Inline edit state
   const [editing, setEditing] = useState<"phone" | "email" | "business_name" | null>(null);
   const [editValue, setEditValue] = useState("");
   const [savingEdit, setSavingEdit] = useState(false);
+
+  useEffect(() => {
+    // Read prev/next list from sessionStorage
+    try {
+      const stored = sessionStorage.getItem("leadListIds");
+      if (stored) {
+        const ids: string[] = JSON.parse(stored);
+        setListIds(ids);
+        setListIndex(ids.indexOf(id));
+      }
+    } catch {
+      // fail silently
+    }
+  }, [id]);
 
   useEffect(() => {
     async function fetchData() {
@@ -283,6 +324,41 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
     }
   }
 
+  async function handleAddTag(tag: string) {
+    if (!prospect) return;
+    const trimmed = tag.trim();
+    if (!trimmed) return;
+    const currentTags = prospect.tags || [];
+    if (currentTags.includes(trimmed)) { setNewTag(""); return; }
+    const newTags = [...currentTags, trimmed];
+    try {
+      await fetch("/api/prospects", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: prospect.id, tags: newTags }),
+      });
+      setProspect({ ...prospect, tags: newTags });
+      setNewTag("");
+    } catch {
+      toast.error("Failed to add tag");
+    }
+  }
+
+  async function handleRemoveTag(tag: string) {
+    if (!prospect) return;
+    const newTags = (prospect.tags || []).filter((t) => t !== tag);
+    try {
+      await fetch("/api/prospects", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: prospect.id, tags: newTags }),
+      });
+      setProspect({ ...prospect, tags: newTags });
+    } catch {
+      toast.error("Failed to remove tag");
+    }
+  }
+
   async function handleInlineEditSave() {
     if (!prospect || !editing) return;
     setSavingEdit(true);
@@ -369,6 +445,32 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
+
+          {/* Prev/Next navigation */}
+          {listIds.length > 0 && (
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                disabled={listIndex <= 0}
+                onClick={() => router.push(`/leads/${listIds[listIndex - 1]}`)}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <span className="text-xs text-muted-foreground">
+                {listIndex + 1}/{listIds.length}
+              </span>
+              <Button
+                variant="ghost"
+                size="icon"
+                disabled={listIndex >= listIds.length - 1}
+                onClick={() => router.push(`/leads/${listIds[listIndex + 1]}`)}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+
           <div>
             <div className="flex items-center gap-3">
               {editing === "business_name" ? (
@@ -584,6 +686,31 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                     </div>
                   </div>
                 )}
+
+                {/* Navigate button */}
+                {(prospect.google_maps_url || prospect.address) && (
+                  <a
+                    href={
+                      prospect.google_maps_url ||
+                      `https://maps.google.com/?q=${encodeURIComponent(
+                        [prospect.address, prospect.city, prospect.state]
+                          .filter(Boolean)
+                          .join(", ")
+                      )}`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 rounded-lg border p-3 hover:bg-muted/50 col-span-full sm:col-span-1"
+                  >
+                    <MapPin className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Navigate</p>
+                      <p className="font-medium flex items-center gap-1">
+                        Open in Maps <ExternalLink className="h-3 w-3" />
+                      </p>
+                    </div>
+                  </a>
+                )}
               </div>
               {!prospect.phone && !prospect.email && !prospect.website_url && editing !== "phone" && editing !== "email" && (
                 <p className="text-muted-foreground">No contact information available.</p>
@@ -619,6 +746,21 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                   ))}
                 </div>
               )}
+
+              {/* Quick insert templates */}
+              <div className="flex flex-wrap gap-1.5">
+                <p className="text-xs text-muted-foreground w-full mb-0.5">Quick insert:</p>
+                {NOTE_TEMPLATES.map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setNewNote((prev) => (prev ? `${prev} — ${t}` : t))}
+                    className="text-xs rounded-full border px-2.5 py-0.5 hover:bg-muted transition-colors"
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
 
               {/* Add new note */}
               <div className="space-y-2">
@@ -739,7 +881,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
           )}
         </div>
 
-        {/* Right: Website Analysis */}
+        {/* Right column: Website Analysis + Tags */}
         <div className="space-y-6">
           <Card>
             <CardHeader>
@@ -802,6 +944,64 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                   Not yet analyzed. Go to Prospector to analyze.
                 </p>
               )}
+            </CardContent>
+          </Card>
+
+          {/* Tags */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm">Tags</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {/* Current tags */}
+              <div className="flex flex-wrap gap-1.5">
+                {(prospect.tags || []).map((tag) => (
+                  <Badge key={tag} variant="secondary" className="gap-1 pr-1">
+                    {tag}
+                    <button
+                      onClick={() => handleRemoveTag(tag)}
+                      className="ml-0.5 hover:text-destructive"
+                    >
+                      ×
+                    </button>
+                  </Badge>
+                ))}
+                {(prospect.tags || []).length === 0 && (
+                  <p className="text-xs text-muted-foreground">No tags yet</p>
+                )}
+              </div>
+
+              {/* Preset suggestions */}
+              <div className="flex flex-wrap gap-1">
+                {PRESET_TAGS.filter((t) => !(prospect.tags || []).includes(t)).map((tag) => (
+                  <button
+                    key={tag}
+                    onClick={() => handleAddTag(tag)}
+                    className="text-xs border rounded-full px-2 py-0.5 hover:bg-muted text-muted-foreground"
+                  >
+                    + {tag}
+                  </button>
+                ))}
+              </div>
+
+              {/* Custom tag input */}
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Add custom tag..."
+                  value={newTag}
+                  onChange={(e) => setNewTag(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleAddTag(newTag)}
+                  className="h-8 text-sm"
+                />
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleAddTag(newTag)}
+                  className="h-8"
+                >
+                  Add
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>

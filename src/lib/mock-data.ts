@@ -38,6 +38,7 @@ export const mockProspects: Prospect[] = [
     follow_up_date: null,
     source: null,
     last_contacted_at: null,
+    tags: [],
   },
   {
     id: randomId(),
@@ -62,6 +63,7 @@ export const mockProspects: Prospect[] = [
     follow_up_date: null,
     source: null,
     last_contacted_at: null,
+    tags: [],
   },
   {
     id: randomId(),
@@ -86,6 +88,7 @@ export const mockProspects: Prospect[] = [
     follow_up_date: null,
     source: null,
     last_contacted_at: null,
+    tags: [],
   },
   {
     id: randomId(),
@@ -110,6 +113,7 @@ export const mockProspects: Prospect[] = [
     follow_up_date: null,
     source: null,
     last_contacted_at: null,
+    tags: [],
   },
   {
     id: randomId(),
@@ -134,6 +138,7 @@ export const mockProspects: Prospect[] = [
     follow_up_date: null,
     source: null,
     last_contacted_at: null,
+    tags: [],
   },
   {
     id: randomId(),
@@ -158,6 +163,7 @@ export const mockProspects: Prospect[] = [
     follow_up_date: null,
     source: null,
     last_contacted_at: null,
+    tags: [],
   },
   {
     id: randomId(),
@@ -182,6 +188,7 @@ export const mockProspects: Prospect[] = [
     follow_up_date: null,
     source: null,
     last_contacted_at: null,
+    tags: [],
   },
   {
     id: randomId(),
@@ -206,6 +213,7 @@ export const mockProspects: Prospect[] = [
     follow_up_date: null,
     source: null,
     last_contacted_at: null,
+    tags: [],
   },
 ];
 

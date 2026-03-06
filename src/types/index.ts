@@ -34,6 +34,7 @@ export const prospectSchema = z.object({
   follow_up_date: z.string().nullable(),
   source: z.string().nullable(),
   last_contacted_at: z.string().nullable(),
+  tags: z.array(z.string()).nullable().default([]),
   created_at: z.string(),
   updated_at: z.string(),
 });
@@ -162,6 +163,7 @@ export const prospectUpdateSchema = z.object({
   source: z.string().nullable().optional(),
   last_contacted_at: z.string().nullable().optional(),
   business_name: z.string().min(1).optional(),
+  tags: z.array(z.string()).nullable().optional(),
 });
 
 export const campaignUpdateSchema = z.object({

@@ -38,6 +38,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { WebsiteScoreBadge, NoWebsiteBadge } from "@/components/website-score-badge";
 import {
   Phone,
@@ -56,6 +58,7 @@ import {
   ArrowDown,
   UserPlus,
   ChevronDown,
+  MapPin,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -72,8 +75,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import type { ProspectStatus, ProspectWithAnalysis } from "@/types";
 
@@ -120,6 +121,7 @@ export default function LeadsPage() {
   const [view, setView] = useState<"kanban" | "table">("kanban");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [tagFilter, setTagFilter] = useState<string>("all");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [activeId, setActiveId] = useState<string | null>(null);
   const [updating, setUpdating] = useState<Record<string, boolean>>({});
@@ -137,6 +139,64 @@ export default function LeadsPage() {
   const [csvResult, setCsvResult] = useState<string | null>(null);
   const [phoneDuplicate, setPhoneDuplicate] = useState<ProspectWithAnalysis | null>(null);
   const [updatingStatus, setUpdatingStatus] = useState<Record<string, boolean>>({});
+
+  // Quick Call state
+  const [quickCallProspect, setQuickCallProspect] = useState<ProspectWithAnalysis | null>(null);
+  const [quickCallOutcome, setQuickCallOutcome] = useState("Answered");
+  const [quickCallNote, setQuickCallNote] = useState("");
+  const [quickCallLoading, setQuickCallLoading] = useState(false);
+
+  async function handleQuickCall() {
+    if (!quickCallProspect) return;
+    setQuickCallLoading(true);
+    try {
+      const timestamp = new Date().toLocaleString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      });
+      const callEntry = `[${timestamp}]\nCall — ${quickCallOutcome}${quickCallNote.trim() ? `: ${quickCallNote.trim()}` : ""}`;
+      const existing = quickCallProspect.notes?.trim() || "";
+      const appendedNote = existing ? `${existing}\n---\n${callEntry}` : callEntry;
+      const autoPromote = quickCallProspect.status === "new" ? "contacted" : quickCallProspect.status;
+
+      const res = await fetch("/api/prospects", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: quickCallProspect.id,
+          last_contacted_at: new Date().toISOString(),
+          notes: appendedNote,
+          status: autoPromote,
+        }),
+      });
+
+      if (!res.ok) { toast.error("Failed to log call"); return; }
+
+      setProspects((prev) =>
+        prev.map((p) =>
+          p.id === quickCallProspect.id
+            ? {
+                ...p,
+                last_contacted_at: new Date().toISOString(),
+                notes: appendedNote,
+                status: autoPromote as ProspectStatus,
+              }
+            : p
+        )
+      );
+      setQuickCallProspect(null);
+      setQuickCallOutcome("Answered");
+      setQuickCallNote("");
+      toast.success("Call logged!");
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setQuickCallLoading(false);
+    }
+  }
 
   async function handleQuickAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -395,16 +455,26 @@ export default function LeadsPage() {
     }
   }
 
+  // Unique tags across all prospects for the tag filter
+  const allTags = Array.from(
+    new Set(prospects.flatMap((p) => p.tags || []))
+  ).sort();
+
   const filtered = prospects.filter((p) => {
+    const term = searchTerm.toLowerCase();
     const matchesSearch =
       !searchTerm ||
-      p.business_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.city?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.business_type?.toLowerCase().includes(searchTerm.toLowerCase());
+      p.business_name.toLowerCase().includes(term) ||
+      p.city?.toLowerCase().includes(term) ||
+      p.business_type?.toLowerCase().includes(term) ||
+      p.phone?.replace(/\D/g, "").includes(term.replace(/\D/g, "")) ||
+      p.email?.toLowerCase().includes(term) ||
+      p.notes?.toLowerCase().includes(term);
     const matchesStatus = statusFilter === "all" || p.status === statusFilter;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const matchesSource = sourceFilter === "all" || (p as any).source === sourceFilter;
-    return matchesSearch && matchesStatus && matchesSource;
+    const matchesTag = tagFilter === "all" || p.tags?.includes(tagFilter);
+    return matchesSearch && matchesStatus && matchesSource && matchesTag;
   });
 
   // Apply sorting
@@ -432,6 +502,8 @@ export default function LeadsPage() {
         return 0;
     }
   });
+
+  const sortedIds = sorted.map((p) => p.id);
 
   const grouped = pipelineStatuses.reduce(
     (acc, status) => {
@@ -515,11 +587,11 @@ export default function LeadsPage() {
       </div>
 
       {/* Filters + Bulk actions */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="relative flex-1">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:flex-wrap">
+        <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search by name, city, type..."
+            placeholder="Search name, city, phone, notes..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-9"
@@ -551,6 +623,19 @@ export default function LeadsPage() {
             <SelectItem value="Manual">Manual</SelectItem>
           </SelectContent>
         </Select>
+        {allTags.length > 0 && (
+          <Select value={tagFilter} onValueChange={setTagFilter}>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="All Tags" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Tags</SelectItem>
+              {allTags.map((tag) => (
+                <SelectItem key={tag} value={tag}>{tag}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
         <Button variant="outline" size="sm" onClick={handleExportCSV}>
           <Download className="mr-1 h-4 w-4" /> Export
         </Button>
@@ -598,7 +683,12 @@ export default function LeadsPage() {
                 count={grouped[status]?.length || 0}
               >
                 {(grouped[status] || []).map((prospect) => (
-                  <DraggableCard key={prospect.id} prospect={prospect} />
+                  <DraggableCard
+                    key={prospect.id}
+                    prospect={prospect}
+                    onLogCall={setQuickCallProspect}
+                    listIds={sortedIds}
+                  />
                 ))}
               </DroppableColumn>
             ))}
@@ -653,7 +743,11 @@ export default function LeadsPage() {
                         />
                       </TableCell>
                       <TableCell>
-                        <Link href={`/leads/${prospect.id}`} className="hover:underline">
+                        <Link
+                          href={`/leads/${prospect.id}`}
+                          className="hover:underline"
+                          onClick={() => sessionStorage.setItem("leadListIds", JSON.stringify(sortedIds))}
+                        >
                           <div className="font-medium">{prospect.business_name}</div>
                         </Link>
                         {prospect.business_type && (
@@ -717,7 +811,10 @@ export default function LeadsPage() {
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
-                        <Link href={`/leads/${prospect.id}`}>
+                        <Link
+                          href={`/leads/${prospect.id}`}
+                          onClick={() => sessionStorage.setItem("leadListIds", JSON.stringify(sortedIds))}
+                        >
                           <Button variant="ghost" size="sm">
                             <ExternalLink className="h-3 w-3" />
                           </Button>
@@ -809,6 +906,7 @@ export default function LeadsPage() {
           </form>
         </DialogContent>
       </Dialog>
+
       {/* CSV Import Dialog */}
       <Dialog open={showCsvDialog} onOpenChange={setShowCsvDialog}>
         <DialogContent className="max-w-md">
@@ -834,6 +932,49 @@ export default function LeadsPage() {
             <Button variant="outline" onClick={() => setShowCsvDialog(false)}>Close</Button>
             <Button onClick={handleCsvImport} disabled={!csvFile || csvImporting}>
               {csvImporting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Importing...</> : "Import"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Quick Call Dialog */}
+      <Dialog open={!!quickCallProspect} onOpenChange={(open) => !open && setQuickCallProspect(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Log Call — {quickCallProspect?.business_name}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="space-y-1">
+              <Label>Outcome</Label>
+              <Select value={quickCallOutcome} onValueChange={setQuickCallOutcome}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Answered">Answered</SelectItem>
+                  <SelectItem value="Voicemail">Voicemail</SelectItem>
+                  <SelectItem value="No Answer">No Answer</SelectItem>
+                  <SelectItem value="Callback Requested">Callback Requested</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <Label>Note (optional)</Label>
+              <Textarea
+                placeholder="What was said..."
+                value={quickCallNote}
+                onChange={(e) => setQuickCallNote(e.target.value)}
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setQuickCallProspect(null)}>Cancel</Button>
+            <Button onClick={handleQuickCall} disabled={quickCallLoading}>
+              {quickCallLoading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Phone className="mr-2 h-4 w-4" />
+              )}
+              Log Call
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -934,7 +1075,15 @@ function DroppableColumn({
   );
 }
 
-function DraggableCard({ prospect }: { prospect: ProspectWithAnalysis }) {
+function DraggableCard({
+  prospect,
+  onLogCall,
+  listIds,
+}: {
+  prospect: ProspectWithAnalysis;
+  onLogCall?: (p: ProspectWithAnalysis) => void;
+  listIds?: string[];
+}) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable(prospect.id);
 
   const style = transform
@@ -949,7 +1098,7 @@ function DraggableCard({ prospect }: { prospect: ProspectWithAnalysis }) {
       {...attributes}
       {...listeners}
     >
-      <ProspectMiniCard prospect={prospect} />
+      <ProspectMiniCard prospect={prospect} onLogCall={onLogCall} listIds={listIds} />
     </div>
   );
 }
@@ -961,28 +1110,74 @@ function useDraggable(id: string) {
   return { attributes, listeners, setNodeRef, transform, isDragging };
 }
 
-function ProspectMiniCard({ prospect }: { prospect: ProspectWithAnalysis }) {
+function ProspectMiniCard({
+  prospect,
+  onLogCall,
+  listIds,
+}: {
+  prospect: ProspectWithAnalysis;
+  onLogCall?: (p: ProspectWithAnalysis) => void;
+  listIds?: string[];
+}) {
   const analysis = prospect.website_analyses?.[0];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const leadScore = (prospect as any).lead_score ?? 0;
 
+  const mapsHref =
+    prospect.google_maps_url ||
+    `https://maps.google.com/?q=${encodeURIComponent(
+      [prospect.address, prospect.city, prospect.state].filter(Boolean).join(", ")
+    )}`;
+
   return (
-    <Link href={`/leads/${prospect.id}`}>
+    <Link
+      href={`/leads/${prospect.id}`}
+      onClick={() => {
+        if (listIds) sessionStorage.setItem("leadListIds", JSON.stringify(listIds));
+      }}
+    >
       <Card className="cursor-pointer transition-shadow hover:shadow-md">
         <CardContent className="p-3">
           <div className="space-y-1.5">
             <div className="flex items-start justify-between gap-2">
-              <div className="flex items-center gap-1.5">
-                <GripVertical className="h-3.5 w-3.5 text-muted-foreground/50" />
-                <span className="text-sm font-medium leading-tight">
+              <div className="flex items-center gap-1.5 min-w-0">
+                <GripVertical className="h-3.5 w-3.5 shrink-0 text-muted-foreground/50" />
+                <span className="text-sm font-medium leading-tight truncate">
                   {prospect.business_name}
                 </span>
               </div>
-              {analysis ? (
-                <WebsiteScoreBadge grade={analysis.overall_grade} />
-              ) : !prospect.website_url ? (
-                <NoWebsiteBadge />
-              ) : null}
+              <div className="flex items-center gap-1 shrink-0">
+                {analysis ? (
+                  <WebsiteScoreBadge grade={analysis.overall_grade} />
+                ) : !prospect.website_url ? (
+                  <NoWebsiteBadge />
+                ) : null}
+                {onLogCall && prospect.phone && (
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onLogCall(prospect);
+                    }}
+                    className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground"
+                    title="Log Call"
+                  >
+                    <Phone className="h-3.5 w-3.5" />
+                  </button>
+                )}
+                {(prospect.google_maps_url || prospect.address) && (
+                  <a
+                    href={mapsHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground"
+                    title="Open in Maps"
+                  >
+                    <MapPin className="h-3.5 w-3.5" />
+                  </a>
+                )}
+              </div>
             </div>
             <div className="flex items-center justify-between">
               <p className="text-xs text-muted-foreground">
@@ -1010,6 +1205,18 @@ function ProspectMiniCard({ prospect }: { prospect: ProspectWithAnalysis }) {
                 </span>
               )}
             </div>
+            {prospect.tags && prospect.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1 mt-0.5">
+                {prospect.tags.slice(0, 2).map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center rounded-full bg-secondary px-1.5 py-0.5 text-[10px] font-medium"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
