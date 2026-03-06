@@ -57,7 +57,15 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  Copy,
+  Lightbulb,
 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { toast } from "sonner";
 import type { ProspectStatus, ProspectWithAnalysis, WebsiteAnalysis } from "@/types";
 
@@ -133,6 +141,79 @@ function formatNoteTimestamp(): string {
     hour: "numeric",
     minute: "2-digit",
   });
+}
+
+function generatePitch(prospect: ProspectWithAnalysis, analysis?: WebsiteAnalysis): string {
+  const name = prospect.business_name;
+  const city = prospect.city || "your area";
+  const type = prospect.business_type || "business";
+
+  let hook = "";
+  if (!prospect.website_url) {
+    hook = `I noticed ${name} doesn't have a website yet`;
+  } else if (analysis?.overall_grade === "F" || analysis?.overall_grade === "D") {
+    hook = `I noticed ${name}'s website could use some work`;
+  } else {
+    hook = `I came across ${name} while looking for ${type} businesses in ${city}`;
+  }
+
+  const reviewNote = (prospect.review_count ?? 0) < 10
+    ? ` and only has ${prospect.review_count ?? 0} Google reviews`
+    : "";
+
+  return `Hey ${name}! ${hook}${reviewNote}. I help local ${type} businesses in ${city} get more customers through professional websites and better Google reviews. Would you be open to a quick 5-minute chat? — Maria`;
+}
+
+function getTalkingPoints(prospect: ProspectWithAnalysis, analysis?: WebsiteAnalysis): string[] {
+  const points: string[] = [];
+  const reviews = prospect.review_count ?? 0;
+  const rating = prospect.rating ?? 0;
+
+  if (!prospect.website_url) {
+    points.push("🔥 No website — they're invisible online. Lead with this.");
+  } else if (analysis?.overall_grade === "F") {
+    points.push("🔥 Grade F website — actively hurting their business.");
+  } else if (analysis?.overall_grade === "D") {
+    points.push("⚠️ Grade D website — customers are bouncing.");
+  } else if (analysis?.overall_grade === "C") {
+    points.push("📉 Grade C website — room for major improvement.");
+  }
+
+  if (reviews < 5) {
+    points.push(`📊 Only ${reviews} Google reviews — competitors have way more.`);
+  } else if (reviews < 20) {
+    points.push(`📊 ${reviews} reviews is below average for their industry.`);
+  } else if (reviews >= 50 && rating >= 4.3) {
+    points.push(`⭐ ${reviews} reviews at ${rating}★ — great reputation to leverage.`);
+  }
+
+  if (!analysis?.has_ssl && prospect.website_url) {
+    points.push("🔒 No SSL certificate — site shows as 'Not Secure'.");
+  }
+
+  if (analysis?.is_mobile_friendly === false) {
+    points.push("📱 Website not mobile-friendly — most customers search on phones.");
+  }
+
+  if (rating > 0 && rating < 3.5) {
+    points.push(`⚠️ ${rating}★ rating — reputation is hurting them.`);
+  }
+
+  if (points.length === 0) {
+    points.push("✅ Strong online presence — pitch the growth angle.");
+  }
+
+  return points;
+}
+
+function addBusinessDays(date: Date, days: number): string {
+  const result = new Date(date);
+  let count = 0;
+  while (count < days) {
+    result.setDate(result.getDate() + 1);
+    if (result.getDay() !== 0 && result.getDay() !== 6) count++;
+  }
+  return result.toISOString().split("T")[0];
 }
 
 function relativeTime(dateStr: string): string {
@@ -224,7 +305,11 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
     setSavingStatus(true);
     try {
       const body: Record<string, unknown> = { id: prospect.id, status };
-      if (status === "follow_up" && followUpDate) {
+      if (status === "follow_up" && !followUpDate) {
+        const suggested = addBusinessDays(new Date(), 3);
+        setFollowUpDate(suggested);
+        body.follow_up_date = suggested;
+      } else if (status === "follow_up" && followUpDate) {
         body.follow_up_date = followUpDate;
       } else if (status !== "follow_up") {
         body.follow_up_date = null;
@@ -433,6 +518,13 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
   const analysis = prospect.website_analyses?.[0] as WebsiteAnalysis | undefined;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const leadScore = (prospect as any).lead_score ?? 0;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const breakdown = (prospect as any).lead_score_breakdown;
+  const colorClass = leadScore >= 70
+    ? "bg-emerald-100 text-emerald-800 border-emerald-200"
+    : leadScore >= 40
+      ? "bg-amber-100 text-amber-800 border-amber-200"
+      : "bg-gray-100 text-gray-600 border-gray-200";
   const noteLog = parseNoteLog(prospect.notes);
 
   return (
@@ -502,22 +594,50 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                 </div>
               )}
               {leadScore > 0 && (
-                <div className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${
-                  leadScore >= 70
-                    ? "bg-emerald-100 text-emerald-800 border-emerald-200"
-                    : leadScore >= 40
-                      ? "bg-amber-100 text-amber-800 border-amber-200"
-                      : "bg-gray-100 text-gray-600 border-gray-200"
-                }`}>
-                  <TrendingUp className="h-3 w-3" />
-                  Score: {leadScore}
-                </div>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold cursor-help ${colorClass}`}>
+                        <TrendingUp className="h-3 w-3" />
+                        Score: {leadScore}
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent className="w-56">
+                      <div className="space-y-1.5 text-xs">
+                        <p className="font-semibold mb-2">Score Breakdown</p>
+                        {breakdown && Object.entries({
+                          website_quality: "Website Opportunity",
+                          contactability: "Contactability",
+                          business_activity: "Business Activity",
+                          quality_signal: "Quality Signal",
+                          hot_lead_bonus: "Hot Lead Bonus 🔥",
+                        }).map(([key, label]) => (
+                          <div key={key} className="flex justify-between">
+                            <span className="text-muted-foreground">{label}</span>
+                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                            <span className="font-medium">+{(breakdown as any)[key] ?? 0}</span>
+                          </div>
+                        ))}
+                        <div className="border-t pt-1.5 flex justify-between font-semibold">
+                          <span>Total</span>
+                          <span>{leadScore}</span>
+                        </div>
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               )}
             </div>
             <div className="flex items-center gap-2 mt-1">
               {prospect.business_type && (
                 <Badge variant="secondary">{prospect.business_type}</Badge>
               )}
+              {prospect.business_type && <span className="text-xs text-muted-foreground">·</span>}
+              {(() => {
+                const days = Math.floor((Date.now() - new Date(prospect.created_at).getTime()) / 86400000);
+                const label = days === 0 ? "Added today" : days === 1 ? "Added yesterday" : `Added ${days} days ago`;
+                return <span className="text-xs text-muted-foreground">{label}</span>;
+              })()}
               {prospect.rating != null && (
                 <span className="flex items-center gap-1 text-sm text-muted-foreground">
                   <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
@@ -553,6 +673,13 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
               </div>
             )}
           </div>
+          <Button variant="outline" size="sm" onClick={() => {
+            const pitch = generatePitch(prospect, analysis);
+            navigator.clipboard.writeText(pitch);
+            toast.success("Pitch copied to clipboard!");
+          }}>
+            <Copy className="mr-2 h-4 w-4" /> Copy Pitch
+          </Button>
           <Link href={`/generator?prospect=${prospect.id}`}>
             <Button variant="outline" size="sm">
               <Palette className="mr-2 h-4 w-4" />
@@ -1002,6 +1129,22 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                   Add
                 </Button>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Talking Points */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Lightbulb className="h-4 w-4" /> Talking Points
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2">
+                {getTalkingPoints(prospect, analysis).map((point, i) => (
+                  <li key={i} className="text-sm">{point}</li>
+                ))}
+              </ul>
             </CardContent>
           </Card>
         </div>

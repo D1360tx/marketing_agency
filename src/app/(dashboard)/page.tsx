@@ -23,7 +23,7 @@ export default async function DashboardPage() {
   const weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 7);
 
-  const [prospectsResult, campaignsResult, weekActivitiesResult, followUpsTodayResult] =
+  const [prospectsResult, campaignsResult, weekActivitiesResult, followUpsTodayResult, sourceDataResult] =
     await Promise.all([
       supabase.from("prospects").select("status", { count: "exact", head: false }),
       supabase.from("campaigns").select("sent_count", { count: "exact", head: false }),
@@ -37,6 +37,7 @@ export default async function DashboardPage() {
         .select("id", { count: "exact", head: false })
         .eq("status", "follow_up")
         .lte("follow_up_date", new Date().toISOString().split("T")[0]),
+      supabase.from("prospects").select("source, status"),
     ]);
 
   const prospects = prospectsResult.data || [];
@@ -59,6 +60,19 @@ export default async function DashboardPage() {
   ).length;
 
   const followUpsToday = followUpsTodayResult.count ?? 0;
+
+  const sourceData = sourceDataResult.data || [];
+  const sourceStats = Object.entries(
+    sourceData.reduce((acc, p) => {
+      const src = p.source || "Unknown";
+      if (!acc[src]) acc[src] = { leads: 0, contacted: 0, interested: 0, clients: 0 };
+      acc[src].leads++;
+      if (["contacted", "interested", "follow_up", "client"].includes(p.status)) acc[src].contacted++;
+      if (["interested", "follow_up"].includes(p.status)) acc[src].interested++;
+      if (p.status === "client") acc[src].clients++;
+      return acc;
+    }, {} as Record<string, { leads: number; contacted: number; interested: number; clients: number }>)
+  ).sort((a, b) => b[1].leads - a[1].leads);
 
   // Pipeline funnel
   const funnel = [
@@ -185,6 +199,47 @@ export default async function DashboardPage() {
           </div>
         </CardContent>
       </Card>
+
+      {sourceStats.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Source Performance</CardTitle>
+            <CardDescription>Which channels are converting</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-muted-foreground text-xs border-b">
+                    <th className="text-left pb-2">Source</th>
+                    <th className="text-center pb-2">Leads</th>
+                    <th className="text-center pb-2">Contacted</th>
+                    <th className="text-center pb-2">Warm</th>
+                    <th className="text-center pb-2">Clients</th>
+                    <th className="text-center pb-2">Conv%</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sourceStats.map(([source, s]) => (
+                    <tr key={source} className="border-b last:border-0">
+                      <td className="py-2 font-medium">{source}</td>
+                      <td className="py-2 text-center">{s.leads}</td>
+                      <td className="py-2 text-center">{s.contacted}</td>
+                      <td className="py-2 text-center">{s.interested}</td>
+                      <td className="py-2 text-center text-emerald-600 font-semibold">{s.clients}</td>
+                      <td className="py-2 text-center">
+                        <span className={s.clients > 0 ? "text-emerald-600 font-semibold" : "text-muted-foreground"}>
+                          {s.leads > 0 ? `${Math.round((s.clients / s.leads) * 100)}%` : "—"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card>

@@ -10,6 +10,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckSquare, Phone, Calendar, ArrowRight } from "lucide-react";
+import { TaskCardActions } from "@/components/task-card-actions";
 
 function parseNotesPreview(raw: string | null): string {
   if (!raw) return "";
@@ -31,7 +32,7 @@ export default async function TasksPage() {
 
   const { data: prospects } = await supabase
     .from("prospects")
-    .select("id, business_name, phone, follow_up_date, notes, city, state, business_type")
+    .select("id, business_name, phone, follow_up_date, notes, city, state, business_type, status")
     .eq("status", "follow_up")
     .lte("follow_up_date", today)
     .order("follow_up_date", { ascending: true });
@@ -118,6 +119,7 @@ export default async function TasksPage() {
                       View Lead <ArrowRight className="ml-2 h-3.5 w-3.5" />
                     </Button>
                   </Link>
+                  <TaskCardActions prospectId={prospect.id} currentStatus={prospect.status} />
                 </CardContent>
               </Card>
             );

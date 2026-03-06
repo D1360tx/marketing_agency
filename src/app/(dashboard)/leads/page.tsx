@@ -59,6 +59,7 @@ import {
   UserPlus,
   ChevronDown,
   MapPin,
+  Archive,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -139,6 +140,7 @@ export default function LeadsPage() {
   const [csvResult, setCsvResult] = useState<string | null>(null);
   const [phoneDuplicate, setPhoneDuplicate] = useState<ProspectWithAnalysis | null>(null);
   const [updatingStatus, setUpdatingStatus] = useState<Record<string, boolean>>({});
+  const [showArchived, setShowArchived] = useState(false);
 
   // Quick Call state
   const [quickCallProspect, setQuickCallProspect] = useState<ProspectWithAnalysis | null>(null);
@@ -354,17 +356,28 @@ export default function LeadsPage() {
 
   function handleExportCSV() {
     const rows = filtered.map((p) => ({
-      Name: p.business_name,
+      "Business Name": p.business_name,
       Phone: p.phone || "",
       Email: p.email || "",
       Website: p.website_url || "",
       City: p.city || "",
       State: p.state || "",
-      Rating: p.rating || "",
+      Rating: p.rating ?? "",
+      Reviews: p.review_count ?? "",
       Status: p.status,
-      Grade: p.website_analyses?.[0]?.overall_grade || "",
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      Score: (p as any).lead_score ?? "",
+      Source: (p as any).source || "",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      Tags: ((p as any).tags || []).join("; "),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      "Follow Up Date": (p as any).follow_up_date || "",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      "Last Contacted": (p as any).last_contacted_at ? new Date((p as any).last_contacted_at).toLocaleDateString() : "",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      "Lead Score": (p as any).lead_score ?? "",
+      Grade: p.website_analyses?.[0]?.overall_grade || "",
+      Notes: (p.notes || "").replace(/\n/g, " | ").slice(0, 500),
+      "Added": new Date(p.created_at).toLocaleDateString(),
     }));
 
     const headers = Object.keys(rows[0] || {});
@@ -379,7 +392,7 @@ export default function LeadsPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "leads-export.csv";
+    a.download = `booked-out-leads-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -474,7 +487,8 @@ export default function LeadsPage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const matchesSource = sourceFilter === "all" || (p as any).source === sourceFilter;
     const matchesTag = tagFilter === "all" || p.tags?.includes(tagFilter);
-    return matchesSearch && matchesStatus && matchesSource && matchesTag;
+    const matchesArchived = showArchived || !["not_interested", "lost"].includes(p.status);
+    return matchesSearch && matchesStatus && matchesSource && matchesTag && matchesArchived;
   });
 
   // Apply sorting
@@ -507,7 +521,10 @@ export default function LeadsPage() {
 
   const grouped = pipelineStatuses.reduce(
     (acc, status) => {
-      acc[status] = filtered.filter((p) => p.status === status);
+      acc[status] = filtered
+        .filter((p) => p.status === status)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .sort((a, b) => ((b as any).lead_score ?? 0) - ((a as any).lead_score ?? 0));
       return acc;
     },
     {} as Record<ProspectStatus, ProspectWithAnalysis[]>
@@ -639,31 +656,53 @@ export default function LeadsPage() {
         <Button variant="outline" size="sm" onClick={handleExportCSV}>
           <Download className="mr-1 h-4 w-4" /> Export
         </Button>
+        <Button
+          variant={showArchived ? "default" : "outline"}
+          size="sm"
+          onClick={() => setShowArchived(prev => !prev)}
+        >
+          <Archive className="mr-1 h-4 w-4" />
+          {showArchived ? "Hide Archived" : "Show Archived"}
+        </Button>
       </div>
 
       {/* Bulk action bar */}
-      {selected.size > 0 && (
-        <div className="flex items-center gap-3 rounded-lg border bg-muted/50 p-3">
-          <span className="text-sm font-medium">{selected.size} selected</span>
-          <Select onValueChange={(v) => handleBulkMove(v as ProspectStatus)}>
-            <SelectTrigger className="w-[160px] h-8">
-              <SelectValue placeholder="Move to..." />
-            </SelectTrigger>
-            <SelectContent>
-              {pipelineStatuses.map((s) => (
-                <SelectItem key={s} value={s}>{statusConfig[s].label}</SelectItem>
-              ))}
-              <SelectItem value="not_interested">Not Interested</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button variant="destructive" size="sm" onClick={handleBulkDelete}>
-            <Trash2 className="mr-1 h-3 w-3" /> Delete
-          </Button>
-          <Button variant="ghost" size="sm" onClick={() => setSelected(new Set())}>
-            Clear
-          </Button>
-        </div>
-      )}
+      {selected.size > 0 && (() => {
+        const selectedProspects = filtered.filter(p => selected.has(p.id));
+        const hasArchived = selectedProspects.some(p => ["not_interested", "lost"].includes(p.status));
+        return (
+          <div className="flex items-center gap-3 rounded-lg border bg-muted/50 p-3">
+            <span className="text-sm font-medium">{selected.size} selected</span>
+            <Select onValueChange={(v) => handleBulkMove(v as ProspectStatus)}>
+              <SelectTrigger className="w-[160px] h-8">
+                <SelectValue placeholder="Move to..." />
+              </SelectTrigger>
+              <SelectContent>
+                {pipelineStatuses.map((s) => (
+                  <SelectItem key={s} value={s}>{statusConfig[s].label}</SelectItem>
+                ))}
+                <SelectItem value="not_interested">Not Interested</SelectItem>
+              </SelectContent>
+            </Select>
+            {hasArchived && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleBulkMove("new" as ProspectStatus)}
+                className="border-blue-200 text-blue-700 hover:bg-blue-50"
+              >
+                ↩ Re-activate as New
+              </Button>
+            )}
+            <Button variant="destructive" size="sm" onClick={handleBulkDelete}>
+              <Trash2 className="mr-1 h-3 w-3" /> Delete
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setSelected(new Set())}>
+              Clear
+            </Button>
+          </div>
+        );
+      })()}
 
       {/* Kanban view */}
       {view === "kanban" && (
