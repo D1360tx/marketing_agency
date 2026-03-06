@@ -60,6 +60,7 @@ import {
   ChevronDown,
   MapPin,
   Archive,
+  Filter,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -142,6 +143,7 @@ export default function LeadsPage() {
   const [phoneDuplicate, setPhoneDuplicate] = useState<ProspectWithAnalysis | null>(null);
   const [updatingStatus, setUpdatingStatus] = useState<Record<string, boolean>>({});
   const [showArchived, setShowArchived] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
 
   // Quick Call state
   const [quickCallProspect, setQuickCallProspect] = useState<ProspectWithAnalysis | null>(null);
@@ -311,6 +313,12 @@ export default function LeadsPage() {
 
   useEffect(() => {
     fetchProspects();
+  }, []);
+
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      setView("table");
+    }
   }, []);
 
   async function fetchProspects() {
@@ -627,21 +635,35 @@ export default function LeadsPage() {
       </div>
 
       {/* Filters + Bulk actions */}
-      <div className="flex flex-wrap gap-2 items-center">
-        <div className="relative w-full sm:flex-1 sm:min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search name, city, phone, notes..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9"
-          />
+      <div className="space-y-2">
+        {/* Search always visible */}
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search name, city, phone, notes..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9 text-base sm:text-sm"
+            />
+          </div>
+          {/* Filter toggle — only on mobile */}
+          <Button
+            variant="outline"
+            size="sm"
+            className="md:hidden shrink-0"
+            onClick={() => setShowFilters(f => !f)}
+          >
+            <Filter className="h-4 w-4" />
+            {(statusFilter !== "all" || sourceFilter !== "all" || tagFilter !== "all" || showArchived) && (
+              <span className="ml-1 h-2 w-2 rounded-full bg-primary" />
+            )}
+          </Button>
         </div>
-        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+        {/* Filters — always visible on md+, collapsible on mobile */}
+        <div className={`flex flex-wrap gap-2 ${showFilters ? "flex" : "hidden"} md:flex`}>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="h-9 flex-1 sm:flex-none sm:w-[140px]">
-              <SelectValue placeholder="All Statuses" />
-            </SelectTrigger>
+            <SelectTrigger className="h-9 flex-1 sm:flex-none sm:w-[140px]"><SelectValue placeholder="All Statuses" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Statuses</SelectItem>
               {Object.entries(statusConfig).map(([key, { label }]) => (
@@ -650,9 +672,7 @@ export default function LeadsPage() {
             </SelectContent>
           </Select>
           <Select value={sourceFilter} onValueChange={setSourceFilter}>
-            <SelectTrigger className="h-9 flex-1 sm:flex-none sm:w-[140px]">
-              <SelectValue placeholder="All Sources" />
-            </SelectTrigger>
+            <SelectTrigger className="h-9 flex-1 sm:flex-none sm:w-[140px]"><SelectValue placeholder="All Sources" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Sources</SelectItem>
               <SelectItem value="Cold Call">Cold Call</SelectItem>
@@ -666,28 +686,25 @@ export default function LeadsPage() {
           </Select>
           {allTags.length > 0 && (
             <Select value={tagFilter} onValueChange={setTagFilter}>
-              <SelectTrigger className="h-9 flex-1 sm:flex-none sm:w-[140px]">
-                <SelectValue placeholder="All Tags" />
-              </SelectTrigger>
+              <SelectTrigger className="h-9 flex-1 sm:flex-none sm:w-[130px]"><SelectValue placeholder="All Tags" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Tags</SelectItem>
-                {allTags.map((tag) => (
-                  <SelectItem key={tag} value={tag}>{tag}</SelectItem>
-                ))}
+                {allTags.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
               </SelectContent>
             </Select>
           )}
           <Button variant="outline" size="sm" onClick={handleExportCSV} className="flex-1 sm:flex-none">
-            <Download className="mr-1 h-4 w-4" /> Export
+            <Download className="mr-1 h-4 w-4" /><span className="hidden sm:inline">Export</span><span className="sm:hidden">CSV</span>
           </Button>
           <Button
             variant={showArchived ? "default" : "outline"}
             size="sm"
-            onClick={() => setShowArchived(prev => !prev)}
+            onClick={() => setShowArchived(p => !p)}
             className="flex-1 sm:flex-none"
           >
             <Archive className="mr-1 h-4 w-4" />
-            {showArchived ? "Hide Archived" : "Show Archived"}
+            <span className="hidden sm:inline">{showArchived ? "Hide Archived" : "Show Archived"}</span>
+            <span className="sm:hidden">Archived</span>
           </Button>
         </div>
       </div>
@@ -769,142 +786,196 @@ export default function LeadsPage() {
 
       {/* Table view */}
       {view === "table" && (
-        <div className="overflow-x-auto">
-        <Card>
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-10">
-                    <Checkbox
-                      checked={selected.size === filtered.length && filtered.length > 0}
-                      onCheckedChange={toggleSelectAll}
-                    />
-                  </TableHead>
-                  <SortableHead field="business_name" current={sortField} direction={sortDirection} onSort={handleSort}>
-                    Business
-                  </SortableHead>
-                  <SortableHead field="lead_score" current={sortField} direction={sortDirection} onSort={handleSort} className="hidden sm:table-cell">
-                    Score
-                  </SortableHead>
-                  <TableHead>Contact</TableHead>
-                  <SortableHead field="rating" current={sortField} direction={sortDirection} onSort={handleSort} className="hidden md:table-cell">
-                    Rating
-                  </SortableHead>
-                  <TableHead className="text-center hidden md:table-cell">Grade</TableHead>
-                  <SortableHead field="status" current={sortField} direction={sortDirection} onSort={handleSort}>
-                    Status
-                  </SortableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {sorted.map((prospect) => {
-                  const analysis = prospect.website_analyses?.[0];
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  const leadScore = (prospect as any).lead_score ?? 0;
-                  return (
-                    <TableRow key={prospect.id}>
-                      <TableCell>
+        <>
+          {/* Mobile card list — xs only */}
+          <div className="sm:hidden space-y-2">
+            {sorted.map((prospect) => {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const leadScore = (prospect as any).lead_score ?? 0;
+              return (
+                <div key={prospect.id} className="flex items-center gap-3 rounded-lg border bg-card p-3">
+                  <Checkbox checked={selected.has(prospect.id)} onCheckedChange={() => toggleSelect(prospect.id)} />
+                  <Link
+                    href={`/leads/${prospect.id}`}
+                    onClick={() => sessionStorage.setItem("leadListIds", JSON.stringify(sortedIds))}
+                    className="flex-1 min-w-0"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="font-medium text-sm truncate">{prospect.business_name}</p>
+                      <Badge variant="outline" className={`${statusConfig[prospect.status].color} text-[10px] shrink-0`}>
+                        {statusConfig[prospect.status].label}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
+                      {prospect.phone && (
+                        <span className="flex items-center gap-1"><Phone className="h-3 w-3" />{prospect.phone}</span>
+                      )}
+                      {prospect.city && <span>{prospect.city}</span>}
+                      {leadScore > 0 && (
+                        <span className="flex items-center gap-1"><TrendingUp className="h-3 w-3" />{leadScore}</span>
+                      )}
+                    </div>
+                  </Link>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="shrink-0 h-8 w-8"
+                    onClick={async () => {
+                      const res = await fetch(`/api/prospects/${prospect.id}`);
+                      const data = await res.json();
+                      if (data.prospect) setQuickCallProspect(data.prospect);
+                    }}
+                  >
+                    <Phone className="h-4 w-4" />
+                  </Button>
+                </div>
+              );
+            })}
+            {sorted.length === 0 && (
+              <div className="py-8 text-center text-muted-foreground">
+                <Users className="mx-auto mb-2 h-8 w-8" />No leads found
+              </div>
+            )}
+          </div>
+
+          {/* Desktop/tablet table — sm+ only */}
+          <div className="hidden sm:block overflow-x-auto">
+            <Card>
+              <CardContent className="p-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-10">
                         <Checkbox
-                          checked={selected.has(prospect.id)}
-                          onCheckedChange={() => toggleSelect(prospect.id)}
+                          checked={selected.size === filtered.length && filtered.length > 0}
+                          onCheckedChange={toggleSelectAll}
                         />
-                      </TableCell>
-                      <TableCell>
-                        <Link
-                          href={`/leads/${prospect.id}`}
-                          className="hover:underline"
-                          onClick={() => sessionStorage.setItem("leadListIds", JSON.stringify(sortedIds))}
-                        >
-                          <div className="font-medium">{prospect.business_name}</div>
-                        </Link>
-                        {prospect.business_type && (
-                          <Badge variant="secondary" className="mt-1 text-xs">
-                            {prospect.business_type}
-                          </Badge>
-                        )}
-                      </TableCell>
-                      <TableCell className="hidden sm:table-cell">
-                        <LeadScoreBadge score={leadScore} />
-                      </TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
-                          {prospect.phone && (
-                            <div className="flex items-center gap-1 text-sm">
-                              <Phone className="h-3 w-3 text-muted-foreground" />
-                              {prospect.phone}
-                            </div>
-                          )}
-                          {prospect.email && (
-                            <div className="flex items-center gap-1 text-sm">
-                              <Mail className="h-3 w-3 text-muted-foreground" />
-                              {prospect.email}
-                            </div>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-center hidden md:table-cell">
-                        {prospect.rating != null && (
-                          <span className="text-sm">{prospect.rating}</span>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-center hidden md:table-cell">
-                        {analysis ? (
-                          <WebsiteScoreBadge grade={analysis.overall_grade} />
-                        ) : !prospect.website_url ? (
-                          <NoWebsiteBadge />
-                        ) : null}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1.5">
-                          {updatingStatus[prospect.id] ? (
-                            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                          ) : (
-                            <Select
-                              value={prospect.status}
-                              onValueChange={(v) => handleInlineStatusChange(prospect.id, v as ProspectStatus)}
-                              disabled={updatingStatus[prospect.id]}
-                            >
-                              <SelectTrigger className={`h-7 w-auto min-w-[120px] border text-xs font-medium ${statusConfig[prospect.status].color}`}>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {Object.entries(statusConfig).map(([key, { label }]) => (
-                                  <SelectItem key={key} value={key} className="text-xs">{label}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          )}
-                          <StalenessBadge prospect={prospect} />
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Link
-                          href={`/leads/${prospect.id}`}
-                          onClick={() => sessionStorage.setItem("leadListIds", JSON.stringify(sortedIds))}
-                        >
-                          <Button variant="ghost" size="sm">
-                            <ExternalLink className="h-3 w-3" />
-                          </Button>
-                        </Link>
-                      </TableCell>
+                      </TableHead>
+                      <SortableHead field="business_name" current={sortField} direction={sortDirection} onSort={handleSort}>
+                        Business
+                      </SortableHead>
+                      <SortableHead field="lead_score" current={sortField} direction={sortDirection} onSort={handleSort} className="hidden sm:table-cell">
+                        Score
+                      </SortableHead>
+                      <TableHead>Contact</TableHead>
+                      <SortableHead field="rating" current={sortField} direction={sortDirection} onSort={handleSort} className="hidden md:table-cell">
+                        Rating
+                      </SortableHead>
+                      <TableHead className="text-center hidden md:table-cell">Grade</TableHead>
+                      <SortableHead field="status" current={sortField} direction={sortDirection} onSort={handleSort}>
+                        Status
+                      </SortableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
-                  );
-                })}
-                {filtered.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={8} className="py-8 text-center text-muted-foreground">
-                      <Users className="mx-auto mb-2 h-8 w-8" />
-                      No leads found
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-        </div>
+                  </TableHeader>
+                  <TableBody>
+                    {sorted.map((prospect) => {
+                      const analysis = prospect.website_analyses?.[0];
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      const leadScore = (prospect as any).lead_score ?? 0;
+                      return (
+                        <TableRow key={prospect.id}>
+                          <TableCell>
+                            <Checkbox
+                              checked={selected.has(prospect.id)}
+                              onCheckedChange={() => toggleSelect(prospect.id)}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Link
+                              href={`/leads/${prospect.id}`}
+                              className="hover:underline"
+                              onClick={() => sessionStorage.setItem("leadListIds", JSON.stringify(sortedIds))}
+                            >
+                              <div className="font-medium max-w-[140px] truncate">{prospect.business_name}</div>
+                            </Link>
+                            {prospect.business_type && (
+                              <Badge variant="secondary" className="mt-1 text-xs">
+                                {prospect.business_type}
+                              </Badge>
+                            )}
+                          </TableCell>
+                          <TableCell className="hidden sm:table-cell">
+                            <LeadScoreBadge score={leadScore} />
+                          </TableCell>
+                          <TableCell>
+                            <div className="space-y-1">
+                              {prospect.phone && (
+                                <div className="flex items-center gap-1 text-sm">
+                                  <Phone className="h-3 w-3 text-muted-foreground shrink-0" />
+                                  <span className="truncate max-w-[120px]">{prospect.phone}</span>
+                                </div>
+                              )}
+                              {prospect.email && (
+                                <div className="hidden sm:flex items-center gap-1 text-sm">
+                                  <Mail className="h-3 w-3 text-muted-foreground shrink-0" />
+                                  <span className="truncate max-w-[120px]">{prospect.email}</span>
+                                </div>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-center hidden md:table-cell">
+                            {prospect.rating != null && (
+                              <span className="text-sm">{prospect.rating}</span>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-center hidden md:table-cell">
+                            {analysis ? (
+                              <WebsiteScoreBadge grade={analysis.overall_grade} />
+                            ) : !prospect.website_url ? (
+                              <NoWebsiteBadge />
+                            ) : null}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1.5">
+                              {updatingStatus[prospect.id] ? (
+                                <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                              ) : (
+                                <Select
+                                  value={prospect.status}
+                                  onValueChange={(v) => handleInlineStatusChange(prospect.id, v as ProspectStatus)}
+                                  disabled={updatingStatus[prospect.id]}
+                                >
+                                  <SelectTrigger className={`h-7 w-auto min-w-[120px] border text-xs font-medium ${statusConfig[prospect.status].color}`}>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {Object.entries(statusConfig).map(([key, { label }]) => (
+                                      <SelectItem key={key} value={key} className="text-xs">{label}</SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              )}
+                              <StalenessBadge prospect={prospect} />
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Link
+                              href={`/leads/${prospect.id}`}
+                              onClick={() => sessionStorage.setItem("leadListIds", JSON.stringify(sortedIds))}
+                            >
+                              <Button variant="ghost" size="sm">
+                                <ExternalLink className="h-3 w-3" />
+                              </Button>
+                            </Link>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                    {filtered.length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={8} className="py-8 text-center text-muted-foreground">
+                          <Users className="mx-auto mb-2 h-8 w-8" />
+                          No leads found
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </div>
+        </>
       )}
 
       {/* Quick Add Lead Dialog */}

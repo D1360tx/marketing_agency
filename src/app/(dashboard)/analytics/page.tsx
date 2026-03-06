@@ -131,6 +131,13 @@ export default function AnalyticsPage() {
     1
   );
 
+  const funnelStages = [
+    { label: "Prospects", value: funnel.prospects, icon: Users, color: "bg-blue-100 text-blue-700" },
+    { label: "Contacted", value: funnel.contacted, icon: Mail, color: "bg-yellow-100 text-yellow-700" },
+    { label: "Interested", value: funnel.interested, icon: TrendingUp, color: "bg-orange-100 text-orange-700" },
+    { label: "Clients", value: funnel.clients, icon: UserCheck, color: "bg-green-100 text-green-700" },
+  ];
+
   return (
     <div className="space-y-6">
       <div>
@@ -152,37 +159,31 @@ export default function AnalyticsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between gap-2">
-            {[
-              {
-                label: "Prospects",
-                value: funnel.prospects,
-                icon: Users,
-                color: "bg-blue-100 text-blue-700",
-              },
-              {
-                label: "Contacted",
-                value: funnel.contacted,
-                icon: Mail,
-                color: "bg-yellow-100 text-yellow-700",
-              },
-              {
-                label: "Interested",
-                value: funnel.interested,
-                icon: TrendingUp,
-                color: "bg-orange-100 text-orange-700",
-              },
-              {
-                label: "Clients",
-                value: funnel.clients,
-                icon: UserCheck,
-                color: "bg-green-100 text-green-700",
-              },
-            ].map((stage, i) => (
+          {/* Mobile: vertical stack */}
+          <div className="flex flex-col gap-2 sm:hidden">
+            {funnelStages.map((stage, i) => (
+              <div key={stage.label}>
+                <div className={`flex items-center justify-between rounded-lg p-4 ${stage.color}`}>
+                  <div className="flex items-center gap-3">
+                    <stage.icon className="h-5 w-5" />
+                    <span className="font-medium">{stage.label}</span>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold">{stage.value}</div>
+                    {i > 0 && funnel.prospects > 0 && (
+                      <div className="text-xs opacity-70">{Math.round((stage.value / funnel.prospects) * 100)}% of total</div>
+                    )}
+                  </div>
+                </div>
+                {i < 3 && <div className="flex justify-center py-0.5 text-muted-foreground text-lg">↓</div>}
+              </div>
+            ))}
+          </div>
+          {/* Desktop: horizontal row */}
+          <div className="hidden sm:flex items-center justify-between gap-2">
+            {funnelStages.map((stage, i) => (
               <div key={stage.label} className="flex items-center gap-2 flex-1">
-                <div
-                  className={`flex flex-col items-center justify-center rounded-lg p-4 flex-1 ${stage.color}`}
-                >
+                <div className={`flex flex-col items-center justify-center rounded-lg p-4 flex-1 ${stage.color}`}>
                   <stage.icon className="h-6 w-6 mb-1" />
                   <div className="text-2xl font-bold">{stage.value}</div>
                   <div className="text-xs font-medium">{stage.label}</div>
@@ -192,9 +193,7 @@ export default function AnalyticsPage() {
                     </div>
                   )}
                 </div>
-                {i < 3 && (
-                  <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
-                )}
+                {i < 3 && <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />}
               </div>
             ))}
           </div>
@@ -202,7 +201,7 @@ export default function AnalyticsPage() {
       </Card>
 
       {/* Email Performance */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Emails Sent</CardTitle>
@@ -335,58 +334,68 @@ export default function AnalyticsPage() {
             <CardTitle>Campaign Performance</CardTitle>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Campaign</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Sent</TableHead>
-                  <TableHead>Opened</TableHead>
-                  <TableHead>Open Rate</TableHead>
-                  <TableHead>Replied</TableHead>
-                  <TableHead>Reply Rate</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {campaignStats.map((c) => (
-                  <TableRow key={c.id}>
-                    <TableCell className="font-medium">{c.name}</TableCell>
-                    <TableCell>{c.type}</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">{c.status}</Badge>
-                    </TableCell>
-                    <TableCell>{c.stats.sent}</TableCell>
-                    <TableCell>{c.stats.opened}</TableCell>
-                    <TableCell>
-                      <span
-                        className={
-                          c.stats.open_rate >= 30
-                            ? "text-green-600 font-medium"
-                            : c.stats.open_rate >= 15
-                              ? "text-yellow-600"
-                              : "text-red-500"
-                        }
-                      >
-                        {c.stats.open_rate}%
-                      </span>
-                    </TableCell>
-                    <TableCell>{c.stats.replied}</TableCell>
-                    <TableCell>
-                      <span
-                        className={
-                          c.stats.reply_rate >= 5
-                            ? "text-green-600 font-medium"
-                            : "text-muted-foreground"
-                        }
-                      >
-                        {c.stats.reply_rate}%
-                      </span>
-                    </TableCell>
+            {/* Mobile: cards */}
+            <div className="sm:hidden space-y-3">
+              {campaignStats.map((c) => (
+                <div key={c.id} className="rounded-lg border p-3 space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="font-medium text-sm">{c.name}</p>
+                    <Badge variant="secondary" className="text-xs shrink-0">{c.status}</Badge>
+                  </div>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                    <span className="text-muted-foreground">Type</span><span>{c.type}</span>
+                    <span className="text-muted-foreground">Sent</span><span>{c.stats.sent}</span>
+                    <span className="text-muted-foreground">Open Rate</span>
+                    <span className={c.stats.open_rate >= 30 ? "text-green-600 font-medium" : c.stats.open_rate >= 15 ? "text-yellow-600" : "text-red-500"}>
+                      {c.stats.open_rate}% ({c.stats.opened} opened)
+                    </span>
+                    <span className="text-muted-foreground">Reply Rate</span>
+                    <span className={c.stats.reply_rate >= 5 ? "text-green-600 font-medium" : "text-muted-foreground"}>
+                      {c.stats.reply_rate}% ({c.stats.replied} replies)
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* Desktop: table */}
+            <div className="hidden sm:block overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Campaign</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Sent</TableHead>
+                    <TableHead>Opened</TableHead>
+                    <TableHead>Open Rate</TableHead>
+                    <TableHead>Replied</TableHead>
+                    <TableHead>Reply Rate</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {campaignStats.map((c) => (
+                    <TableRow key={c.id}>
+                      <TableCell className="font-medium">{c.name}</TableCell>
+                      <TableCell>{c.type}</TableCell>
+                      <TableCell><Badge variant="secondary">{c.status}</Badge></TableCell>
+                      <TableCell>{c.stats.sent}</TableCell>
+                      <TableCell>{c.stats.opened}</TableCell>
+                      <TableCell>
+                        <span className={c.stats.open_rate >= 30 ? "text-green-600 font-medium" : c.stats.open_rate >= 15 ? "text-yellow-600" : "text-red-500"}>
+                          {c.stats.open_rate}%
+                        </span>
+                      </TableCell>
+                      <TableCell>{c.stats.replied}</TableCell>
+                      <TableCell>
+                        <span className={c.stats.reply_rate >= 5 ? "text-green-600 font-medium" : "text-muted-foreground"}>
+                          {c.stats.reply_rate}%
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       )}
@@ -398,41 +407,64 @@ export default function AnalyticsPage() {
             <CardTitle>Drip Sequence Performance</CardTitle>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Sequence</TableHead>
-                  <TableHead>Channel</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Enrolled</TableHead>
-                  <TableHead>Active</TableHead>
-                  <TableHead>Completed</TableHead>
-                  <TableHead>Completion Rate</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {sequenceStats.map((s) => (
-                  <TableRow key={s.id}>
-                    <TableCell className="font-medium">{s.name}</TableCell>
-                    <TableCell>{s.channel}</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">{s.status}</Badge>
-                    </TableCell>
-                    <TableCell>{s.stats.total_enrolled}</TableCell>
-                    <TableCell>{s.stats.active}</TableCell>
-                    <TableCell>{s.stats.completed}</TableCell>
-                    <TableCell>
-                      {s.stats.total_enrolled > 0
-                        ? Math.round(
-                            (s.stats.completed / s.stats.total_enrolled) * 100
-                          )
-                        : 0}
-                      %
-                    </TableCell>
+            {/* Mobile: cards */}
+            <div className="sm:hidden space-y-3">
+              {sequenceStats.map((s) => {
+                const completionRate = s.stats.total_enrolled > 0
+                  ? Math.round((s.stats.completed / s.stats.total_enrolled) * 100) : 0;
+                return (
+                  <div key={s.id} className="rounded-lg border p-3 space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="font-medium text-sm">{s.name}</p>
+                      <Badge variant="secondary" className="text-xs shrink-0">{s.status}</Badge>
+                    </div>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                      <span className="text-muted-foreground">Channel</span><span>{s.channel}</span>
+                      <span className="text-muted-foreground">Enrolled</span><span>{s.stats.total_enrolled}</span>
+                      <span className="text-muted-foreground">Active</span><span>{s.stats.active}</span>
+                      <span className="text-muted-foreground">Completed</span><span>{s.stats.completed}</span>
+                      <span className="text-muted-foreground">Completion</span>
+                      <span className={completionRate >= 50 ? "text-green-600 font-medium" : "text-muted-foreground"}>
+                        {completionRate}%
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            {/* Desktop: table */}
+            <div className="hidden sm:block overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Sequence</TableHead>
+                    <TableHead>Channel</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Enrolled</TableHead>
+                    <TableHead>Active</TableHead>
+                    <TableHead>Completed</TableHead>
+                    <TableHead>Completion Rate</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {sequenceStats.map((s) => (
+                    <TableRow key={s.id}>
+                      <TableCell className="font-medium">{s.name}</TableCell>
+                      <TableCell>{s.channel}</TableCell>
+                      <TableCell><Badge variant="secondary">{s.status}</Badge></TableCell>
+                      <TableCell>{s.stats.total_enrolled}</TableCell>
+                      <TableCell>{s.stats.active}</TableCell>
+                      <TableCell>{s.stats.completed}</TableCell>
+                      <TableCell>
+                        {s.stats.total_enrolled > 0
+                          ? Math.round((s.stats.completed / s.stats.total_enrolled) * 100)
+                          : 0}%
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       )}
