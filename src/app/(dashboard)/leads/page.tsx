@@ -316,7 +316,7 @@ export default function LeadsPage() {
   }, []);
 
   useEffect(() => {
-    if (window.innerWidth < 768) {
+    if (window.innerWidth < 1024) {
       setView("table");
     }
   }, []);
@@ -788,7 +788,7 @@ export default function LeadsPage() {
       {view === "table" && (
         <>
           {/* Mobile card list — xs only */}
-          <div className="sm:hidden space-y-2">
+          <div className="md:hidden space-y-2">
             {sorted.map((prospect) => {
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               const leadScore = (prospect as any).lead_score ?? 0;
@@ -806,13 +806,13 @@ export default function LeadsPage() {
                         {statusConfig[prospect.status].label}
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-1 text-xs text-muted-foreground">
                       {prospect.phone && (
-                        <span className="flex items-center gap-1"><Phone className="h-3 w-3" />{prospect.phone}</span>
+                        <span className="flex items-center gap-1 shrink-0"><Phone className="h-3 w-3" />{prospect.phone}</span>
                       )}
-                      {prospect.city && <span>{prospect.city}</span>}
+                      {prospect.city && <span className="truncate max-w-[120px]">{prospect.city}</span>}
                       {leadScore > 0 && (
-                        <span className="flex items-center gap-1"><TrendingUp className="h-3 w-3" />{leadScore}</span>
+                        <span className="flex items-center gap-1 shrink-0"><TrendingUp className="h-3 w-3" />{leadScore}</span>
                       )}
                     </div>
                   </Link>
@@ -839,7 +839,7 @@ export default function LeadsPage() {
           </div>
 
           {/* Desktop/tablet table — sm+ only */}
-          <div className="hidden sm:block overflow-x-auto">
+          <div className="hidden md:block overflow-x-auto">
             <Card>
               <CardContent className="p-0">
                 <Table>
