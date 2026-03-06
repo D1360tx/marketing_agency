@@ -680,7 +680,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                 </div>
               ) : (
                 <div className="group flex items-center gap-2 min-w-0">
-                  <h1 className="text-xl sm:text-2xl font-bold truncate">{prospect.business_name}</h1>
+                  <h1 className="text-xl sm:text-2xl font-bold break-words">{prospect.business_name}</h1>
                   <button
                     onClick={() => startEdit("business_name")}
                     className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground shrink-0"
@@ -744,9 +744,9 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
           </div>
         </div>
 
-        {/* Action row: wraps on mobile */}
-        <div className="flex flex-wrap items-start gap-2">
-          <div className="flex flex-col gap-1 flex-1 min-w-[160px]">
+        {/* Action row: status full-width on mobile, buttons below */}
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-start">
+          <div className="flex flex-col gap-1 w-full sm:flex-1 sm:min-w-[160px]">
             <Select value={prospect.status} onValueChange={handleStatusChange} disabled={savingStatus}>
               <SelectTrigger className="w-full">
                 <SelectValue />
@@ -797,25 +797,25 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
               </p>
             )}
           </div>
-          <Button variant="outline" size="sm" onClick={() => {
-            const pitch = generatePitch(prospect, analysis);
-            navigator.clipboard.writeText(pitch);
-            toast.success("Pitch copied to clipboard!");
-          }} className="flex-1 sm:flex-none">
-            <Copy className="mr-2 h-4 w-4" />
-            <span className="hidden sm:inline">Copy Pitch</span>
-            <span className="sm:hidden">Pitch</span>
-          </Button>
-          <Link href={`/generator?prospect=${prospect.id}`} className="flex-1 sm:flex-none">
-            <Button variant="outline" size="sm" className="w-full sm:w-auto">
-              <Palette className="mr-2 h-4 w-4" />
-              <span className="hidden sm:inline">Generate Website</span>
-              <span className="sm:hidden">Generate</span>
+          <div className="flex gap-2 w-full sm:w-auto sm:contents">
+            <Button variant="outline" size="sm" onClick={() => {
+              const pitch = generatePitch(prospect, analysis);
+              navigator.clipboard.writeText(pitch);
+              toast.success("Pitch copied to clipboard!");
+            }} className="flex-1 sm:flex-none">
+              <Copy className="mr-1 h-4 w-4" />
+              Pitch
             </Button>
-          </Link>
-          <Button variant="destructive" size="icon" onClick={handleDelete} disabled={deleting} className="shrink-0">
-            {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-          </Button>
+            <Link href={`/generator?prospect=${prospect.id}`} className="flex-1 sm:flex-none">
+              <Button variant="outline" size="sm" className="w-full">
+                <Palette className="mr-1 h-4 w-4" />
+                Generate
+              </Button>
+            </Link>
+            <Button variant="destructive" size="sm" onClick={handleDelete} disabled={deleting} className="shrink-0 px-3">
+              {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -847,35 +847,34 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                     <Button size="sm" variant="ghost" onClick={cancelEdit}><X className="h-3 w-3" /></Button>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 col-span-full sm:col-span-1">
-                    <a href={prospect.phone ? `tel:${prospect.phone}` : undefined} className="flex flex-1 items-center gap-3 rounded-lg border p-3 hover:bg-muted/50 min-w-0">
-                      <Phone className="h-5 w-5 shrink-0 text-muted-foreground" />
-                      <div className="min-w-0">
-                        <p className="text-xs text-muted-foreground">Phone</p>
-                        <p className="font-medium truncate">{prospect.phone || <span className="text-muted-foreground italic text-sm">Not set</span>}</p>
-                      </div>
-                    </a>
-                    <div className="flex flex-col gap-1 shrink-0">
+                  <div className="col-span-full sm:col-span-1 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <a href={prospect.phone ? `tel:${prospect.phone}` : undefined} className="flex flex-1 items-center gap-3 rounded-lg border p-3 hover:bg-muted/50 min-w-0">
+                        <Phone className="h-5 w-5 shrink-0 text-muted-foreground" />
+                        <div className="min-w-0">
+                          <p className="text-xs text-muted-foreground">Phone</p>
+                          <p className="font-medium truncate">{prospect.phone || <span className="text-muted-foreground italic text-sm">Not set</span>}</p>
+                        </div>
+                      </a>
                       <button
                         onClick={() => startEdit("phone")}
-                        className="text-muted-foreground hover:text-foreground transition-colors p-1"
+                        className="text-muted-foreground hover:text-foreground transition-colors p-2 shrink-0"
                         title="Edit phone"
                       >
                         <Pencil className="h-3.5 w-3.5" />
                       </button>
-                      {prospect.phone && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setShowCallDialog(true)}
-                          title="Log Call"
-                          className="h-8 px-2 text-xs"
-                        >
-                          <Phone className="h-3.5 w-3.5 sm:mr-1" />
-                          <span className="hidden sm:inline">Log Call</span>
-                        </Button>
-                      )}
                     </div>
+                    {prospect.phone && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowCallDialog(true)}
+                        className="w-full h-9"
+                      >
+                        <Phone className="h-3.5 w-3.5 mr-2" />
+                        Log Call
+                      </Button>
+                    )}
                   </div>
                 )}
 
@@ -929,15 +928,11 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                   </a>
                 )}
                 {prospect.address && (
-                  <div className="flex items-center gap-3 rounded-lg border p-3">
-                    <MapPin className="h-5 w-5 text-muted-foreground" />
-                    <div>
+                  <div className="flex items-center gap-3 rounded-lg border p-3 col-span-full">
+                    <MapPin className="h-5 w-5 shrink-0 text-muted-foreground" />
+                    <div className="min-w-0">
                       <p className="text-xs text-muted-foreground">Address</p>
-                      <p className="font-medium">
-                        {[prospect.address, prospect.city, prospect.state, prospect.zip]
-                          .filter(Boolean)
-                          .join(", ")}
-                      </p>
+                      <p className="font-medium break-words">{prospect.address}</p>
                     </div>
                   </div>
                 )}
