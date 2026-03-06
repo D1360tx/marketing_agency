@@ -68,9 +68,9 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -87,7 +87,30 @@ const statusConfig: Record<ProspectStatus, { label: string; color: string }> = {
   lost: { label: "Lost", color: "bg-red-100 text-red-800 border-red-200" },
 };
 
-const pipelineStatuses: ProspectStatus[] = ["new", "contacted", "interested", "client"];
+const pipelineStatuses: ProspectStatus[] = ["new", "contacted", "interested", "follow_up", "client"];
+
+const activeStatuses: ProspectStatus[] = ["new", "contacted", "interested", "follow_up"];
+
+function getDaysSince(dateStr: string | null | undefined, fallback: string): number {
+  const ref = dateStr || fallback;
+  const ms = Date.now() - new Date(ref).getTime();
+  return Math.floor(ms / (1000 * 60 * 60 * 24));
+}
+
+function StalenessBadge({ prospect }: { prospect: ProspectWithAnalysis }) {
+  if (!activeStatuses.includes(prospect.status as ProspectStatus)) return null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const days = getDaysSince((prospect as any).last_contacted_at, prospect.created_at);
+  if (days < 5) return null;
+  const color = days >= 10
+    ? "bg-red-100 text-red-700 border-red-200"
+    : "bg-amber-100 text-amber-700 border-amber-200";
+  return (
+    <span className={`inline-flex items-center rounded-full border px-1.5 py-0.5 text-[10px] font-medium ${color}`}>
+      {days}d ago
+    </span>
+  );
+}
 
 type SortField = "business_name" | "rating" | "lead_score" | "status" | "created_at";
 
@@ -106,6 +129,13 @@ export default function LeadsPage() {
   const [addForm, setAddForm] = useState({ business_name: "", phone: "", email: "", city: "", state: "", business_type: "", notes: "", source: "Facebook Group" });
   const [addLoading, setAddLoading] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
+  const [showCsvDialog, setShowCsvDialog] = useState(false);
+  const [csvFile, setCsvFile] = useState<File | null>(null);
+  const [csvImporting, setCsvImporting] = useState(false);
+  const [csvProgress, setCsvProgress] = useState<string | null>(null);
+  const [csvResult, setCsvResult] = useState<string | null>(null);
+  const [phoneDuplicate, setPhoneDuplicate] = useState<ProspectWithAnalysis | null>(null);
+  const [updatingStatus, setUpdatingStatus] = useState<Record<string, boolean>>({});
 
   async function handleQuickAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -124,6 +154,70 @@ export default function LeadsPage() {
       toast.success("Lead added!");
     } catch { toast.error("Something went wrong"); }
     finally { setAddLoading(false); }
+  }
+
+  function handlePhoneBlur(phone: string) {
+    const normalized = phone.replace(/\D/g, "");
+    if (!normalized) { setPhoneDuplicate(null); return; }
+    const dup = prospects.find((p) => p.phone && p.phone.replace(/\D/g, "") === normalized);
+    setPhoneDuplicate(dup || null);
+  }
+
+  async function handleCsvImport() {
+    if (!csvFile) return;
+    setCsvImporting(true);
+    setCsvProgress(null);
+    setCsvResult(null);
+
+    const text = await csvFile.text();
+    const lines = text.split(/\r?\n/).filter(Boolean);
+    if (lines.length < 2) { setCsvResult("⚠️ File is empty or has no data rows."); setCsvImporting(false); return; }
+
+    const headers = lines[0].split(",").map((h) => h.replace(/^"|"$/g, "").trim().toLowerCase());
+    const rows = lines.slice(1);
+
+    let imported = 0;
+    let skipped = 0;
+
+    for (let i = 0; i < rows.length; i++) {
+      setCsvProgress(`Importing ${i + 1}/${rows.length}...`);
+      const cols = rows[i].split(",").map((c) => c.replace(/^"|"$/g, "").trim());
+      const get = (key: string) => {
+        const idx = headers.indexOf(key);
+        return idx >= 0 ? cols[idx] || "" : "";
+      };
+
+      const businessName = get("business name") || get("name") || get("business_name");
+      if (!businessName) { skipped++; continue; }
+
+      try {
+        const res = await fetch("/api/prospects", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            business_name: businessName,
+            phone: get("phone") || null,
+            email: get("email") || null,
+            city: get("city") || null,
+            business_type: get("business type") || get("business_type") || null,
+            source: "CSV Import",
+          }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setProspects((prev) => [data.prospect, ...prev]);
+          imported++;
+        } else {
+          skipped++;
+        }
+      } catch {
+        skipped++;
+      }
+    }
+
+    setCsvProgress(null);
+    setCsvResult(`✅ ${imported} imported${skipped > 0 ? `, ⚠️ ${skipped} skipped (missing name or error)` : ""}`);
+    setCsvImporting(false);
   }
 
   const sensors = useSensors(
@@ -161,6 +255,22 @@ export default function LeadsPage() {
       setUpdating((prev) => ({ ...prev, [id]: false }));
     }
   }, []);
+
+  async function handleInlineStatusChange(id: string, status: ProspectStatus) {
+    setUpdatingStatus((prev) => ({ ...prev, [id]: true }));
+    try {
+      await fetch("/api/prospects", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status }),
+      });
+      setProspects((prev) => prev.map((p) => (p.id === id ? { ...p, status } : p)));
+    } catch {
+      console.error("Failed to update status");
+    } finally {
+      setUpdatingStatus((prev) => ({ ...prev, [id]: false }));
+    }
+  }
 
   async function handleBulkMove(status: ProspectStatus) {
     for (const id of selected) {
@@ -352,6 +462,9 @@ export default function LeadsPage() {
           <Button size="sm" onClick={() => setShowAddDialog(true)}>
             <UserPlus className="mr-2 h-4 w-4" /> Quick Add Lead
           </Button>
+          <Button size="sm" variant="outline" onClick={() => { setCsvFile(null); setCsvProgress(null); setCsvResult(null); setShowCsvDialog(true); }}>
+            <Download className="mr-2 h-4 w-4" /> Import CSV
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" disabled={exportLoading}>
@@ -457,7 +570,7 @@ export default function LeadsPage() {
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
-          <div className="grid gap-4 lg:grid-cols-4">
+          <div className="grid gap-4 lg:grid-cols-5">
             {pipelineStatuses.map((status) => (
               <DroppableColumn
                 key={status}
@@ -563,9 +676,27 @@ export default function LeadsPage() {
                         ) : null}
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className={statusConfig[prospect.status].color}>
-                          {statusConfig[prospect.status].label}
-                        </Badge>
+                        <div className="flex items-center gap-1.5">
+                          {updatingStatus[prospect.id] ? (
+                            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                          ) : (
+                            <Select
+                              value={prospect.status}
+                              onValueChange={(v) => handleInlineStatusChange(prospect.id, v as ProspectStatus)}
+                              disabled={updatingStatus[prospect.id]}
+                            >
+                              <SelectTrigger className={`h-7 w-auto min-w-[120px] border text-xs font-medium ${statusConfig[prospect.status].color}`}>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {Object.entries(statusConfig).map(([key, { label }]) => (
+                                  <SelectItem key={key} value={key} className="text-xs">{label}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          )}
+                          <StalenessBadge prospect={prospect} />
+                        </div>
                       </TableCell>
                       <TableCell className="text-right">
                         <Link href={`/leads/${prospect.id}`}>
@@ -605,7 +736,18 @@ export default function LeadsPage() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
                 <Label>Phone</Label>
-                <Input placeholder="(512) 555-0100" value={addForm.phone} onChange={(e) => setAddForm({...addForm, phone: e.target.value})} />
+                <Input
+                  placeholder="(512) 555-0100"
+                  value={addForm.phone}
+                  onChange={(e) => { setAddForm({...addForm, phone: e.target.value}); setPhoneDuplicate(null); }}
+                  onBlur={(e) => handlePhoneBlur(e.target.value)}
+                />
+                {phoneDuplicate && (
+                  <p className="text-xs text-amber-600">
+                    ⚠️ This phone number already exists —{" "}
+                    <Link href={`/leads/${phoneDuplicate.id}`} className="underline font-medium">{phoneDuplicate.business_name}</Link>
+                  </p>
+                )}
               </div>
               <div className="space-y-1">
                 <Label>Email</Label>
@@ -646,6 +788,35 @@ export default function LeadsPage() {
               </Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+      {/* CSV Import Dialog */}
+      <Dialog open={showCsvDialog} onOpenChange={setShowCsvDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Import CSV</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              CSV must have columns: <strong>Business Name</strong>, Phone (optional), Email (optional), City (optional), Business Type (optional)
+            </p>
+            <div className="space-y-1">
+              <Label>CSV File</Label>
+              <Input
+                type="file"
+                accept=".csv"
+                onChange={(e) => { setCsvFile(e.target.files?.[0] || null); setCsvResult(null); setCsvProgress(null); }}
+              />
+            </div>
+            {csvProgress && <p className="text-sm text-muted-foreground">{csvProgress}</p>}
+            {csvResult && <p className="text-sm font-medium">{csvResult}</p>}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowCsvDialog(false)}>Close</Button>
+            <Button onClick={handleCsvImport} disabled={!csvFile || csvImporting}>
+              {csvImporting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Importing...</> : "Import"}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
@@ -798,8 +969,16 @@ function ProspectMiniCard({ prospect }: { prospect: ProspectWithAnalysis }) {
               <p className="text-xs text-muted-foreground">
                 {[prospect.city, prospect.state].filter(Boolean).join(", ")}
               </p>
-              {leadScore > 0 && <LeadScoreBadge score={leadScore} />}
+              <div className="flex items-center gap-1">
+                <StalenessBadge prospect={prospect} />
+                {leadScore > 0 && <LeadScoreBadge score={leadScore} />}
+              </div>
             </div>
+            {prospect.follow_up_date && (
+              <p className="text-xs font-medium text-orange-500">
+                📅 {new Date(prospect.follow_up_date + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+              </p>
+            )}
             <div className="flex gap-3 text-xs text-muted-foreground">
               {prospect.phone && (
                 <span className="flex items-center gap-1">

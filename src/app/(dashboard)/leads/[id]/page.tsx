@@ -28,6 +28,13 @@ import {
   NoWebsiteBadge,
 } from "@/components/website-score-badge";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
   ArrowLeft,
   Phone,
   Mail,
@@ -115,6 +122,10 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
   const [messages, setMessages] = useState<ProspectMessage[]>([]);
   const [followUpDate, setFollowUpDate] = useState<string>("");
   const [savingStatus, setSavingStatus] = useState(false);
+  const [showCallDialog, setShowCallDialog] = useState(false);
+  const [callOutcome, setCallOutcome] = useState("Answered");
+  const [callNote, setCallNote] = useState("");
+  const [loggingCall, setLoggingCall] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -216,6 +227,46 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
       console.error("Failed to save note");
     } finally {
       setSavingNotes(false);
+    }
+  }
+
+  async function handleLogCall() {
+    if (!prospect) return;
+    setLoggingCall(true);
+    try {
+      const timestamp = formatNoteTimestamp();
+      const callEntry = `[${timestamp}]\nCall — ${callOutcome}${callNote.trim() ? `: ${callNote.trim()}` : ""}`;
+      const existing = prospect.notes?.trim() || "";
+      const updatedNotes = existing ? `${existing}\n---\n${callEntry}` : callEntry;
+
+      const patchBody: Record<string, unknown> = {
+        id: prospect.id,
+        notes: updatedNotes,
+        last_contacted_at: new Date().toISOString(),
+      };
+      if (prospect.status === "new") {
+        patchBody.status = "contacted";
+      }
+
+      await fetch("/api/prospects", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(patchBody),
+      });
+
+      setProspect({
+        ...prospect,
+        notes: updatedNotes,
+        status: prospect.status === "new" ? "contacted" : prospect.status,
+      });
+      setCallNote("");
+      setCallOutcome("Answered");
+      setShowCallDialog(false);
+      setTimeout(fetchActivities, 500);
+    } catch {
+      console.error("Failed to log call");
+    } finally {
+      setLoggingCall(false);
     }
   }
 
@@ -349,13 +400,24 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
             <CardContent>
               <div className="grid gap-4 sm:grid-cols-2">
                 {prospect.phone && (
-                  <a href={`tel:${prospect.phone}`} className="flex items-center gap-3 rounded-lg border p-3 hover:bg-muted/50">
-                    <Phone className="h-5 w-5 text-muted-foreground" />
-                    <div>
-                      <p className="text-xs text-muted-foreground">Phone</p>
-                      <p className="font-medium">{prospect.phone}</p>
-                    </div>
-                  </a>
+                  <div className="flex items-center gap-2">
+                    <a href={`tel:${prospect.phone}`} className="flex flex-1 items-center gap-3 rounded-lg border p-3 hover:bg-muted/50">
+                      <Phone className="h-5 w-5 text-muted-foreground" />
+                      <div>
+                        <p className="text-xs text-muted-foreground">Phone</p>
+                        <p className="font-medium">{prospect.phone}</p>
+                      </div>
+                    </a>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowCallDialog(true)}
+                      title="Log Call"
+                    >
+                      <Phone className="h-3.5 w-3.5 mr-1" />
+                      Log Call
+                    </Button>
+                  </div>
                 )}
                 {prospect.email && (
                   <a href={`mailto:${prospect.email}`} className="flex items-center gap-3 rounded-lg border p-3 hover:bg-muted/50">
@@ -606,6 +668,49 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
           </Card>
         </div>
       </div>
+
+      {/* Call Log Dialog */}
+      <Dialog open={showCallDialog} onOpenChange={setShowCallDialog}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Phone className="h-4 w-4" /> Log Call
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="space-y-1">
+              <Label>Outcome</Label>
+              <Select value={callOutcome} onValueChange={setCallOutcome}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Answered">Answered</SelectItem>
+                  <SelectItem value="Voicemail">Voicemail</SelectItem>
+                  <SelectItem value="No Answer">No Answer</SelectItem>
+                  <SelectItem value="Callback Requested">Callback Requested</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <Label>Note (optional)</Label>
+              <Textarea
+                placeholder="What was said..."
+                value={callNote}
+                onChange={(e) => setCallNote(e.target.value)}
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowCallDialog(false)}>Cancel</Button>
+            <Button onClick={handleLogCall} disabled={loggingCall}>
+              {loggingCall ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Phone className="mr-2 h-4 w-4" />}
+              Log Call
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

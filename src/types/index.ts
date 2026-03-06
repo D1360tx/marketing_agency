@@ -32,6 +32,8 @@ export const prospectSchema = z.object({
   status: z.enum(prospectStatusValues),
   notes: z.string().nullable(),
   follow_up_date: z.string().nullable(),
+  source: z.string().nullable(),
+  last_contacted_at: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
 });
@@ -157,6 +159,8 @@ export const prospectUpdateSchema = z.object({
   email: z.string().email().nullable().optional(),
   phone: z.string().nullable().optional(),
   follow_up_date: z.string().nullable().optional(),
+  source: z.string().nullable().optional(),
+  last_contacted_at: z.string().nullable().optional(),
 });
 
 export const campaignUpdateSchema = z.object({
