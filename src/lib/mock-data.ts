@@ -35,6 +35,7 @@ export const mockProspects: Prospect[] = [
     notes: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
+    follow_up_date: null,
   },
   {
     id: randomId(),
@@ -56,6 +57,7 @@ export const mockProspects: Prospect[] = [
     notes: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
+    follow_up_date: null,
   },
   {
     id: randomId(),
@@ -77,6 +79,7 @@ export const mockProspects: Prospect[] = [
     notes: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
+    follow_up_date: null,
   },
   {
     id: randomId(),
@@ -98,6 +101,7 @@ export const mockProspects: Prospect[] = [
     notes: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
+    follow_up_date: null,
   },
   {
     id: randomId(),
@@ -119,6 +123,7 @@ export const mockProspects: Prospect[] = [
     notes: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
+    follow_up_date: null,
   },
   {
     id: randomId(),
@@ -140,6 +145,7 @@ export const mockProspects: Prospect[] = [
     notes: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
+    follow_up_date: null,
   },
   {
     id: randomId(),
@@ -161,6 +167,7 @@ export const mockProspects: Prospect[] = [
     notes: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
+    follow_up_date: null,
   },
   {
     id: randomId(),
@@ -182,6 +189,7 @@ export const mockProspects: Prospect[] = [
     notes: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
+    follow_up_date: null,
   },
 ];
 

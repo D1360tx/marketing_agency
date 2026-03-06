@@ -5,6 +5,7 @@ export const prospectStatusValues = [
   "new",
   "contacted",
   "interested",
+  "follow_up",
   "client",
   "not_interested",
   "lost",
@@ -30,6 +31,7 @@ export const prospectSchema = z.object({
   search_query: z.string().nullable(),
   status: z.enum(prospectStatusValues),
   notes: z.string().nullable(),
+  follow_up_date: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
 });
@@ -154,6 +156,7 @@ export const prospectUpdateSchema = z.object({
   notes: z.string().optional(),
   email: z.string().email().nullable().optional(),
   phone: z.string().nullable().optional(),
+  follow_up_date: z.string().nullable().optional(),
 });
 
 export const campaignUpdateSchema = z.object({

@@ -101,7 +101,15 @@ export async function extractEmails(websiteUrl: string): Promise<string[]> {
     if (emailsBySource.length >= 3) break;
   }
 
-  // If no emails found via scraping, try common patterns
+  // If no emails found via scraping, try Scrapling service (local ThinkPad, better JS rendering)
+  if (emailsBySource.length === 0) {
+    const scraplingEmail = await tryScraplingService(baseUrl);
+    if (scraplingEmail) {
+      emailsBySource.push({ email: scraplingEmail, source: "content" });
+    }
+  }
+
+  // If still nothing, try common patterns
   if (emailsBySource.length === 0) {
     const domain = extractDomain(baseUrl);
     if (domain) {
@@ -115,6 +123,34 @@ export async function extractEmails(websiteUrl: string): Promise<string[]> {
   // Rank and return
   const ranked = rankEmails(emailsBySource);
   return ranked;
+}
+
+/**
+ * Fallback: call local Scrapling microservice on ThinkPad via Tailscale.
+ * Uses Scrapling's stealth fetcher for JS-heavy / bot-protected sites.
+ * Requires SCRAPLING_SERVICE_URL and SCRAPLING_SECRET env vars.
+ */
+async function tryScraplingService(url: string): Promise<string | null> {
+  const serviceUrl = process.env.SCRAPLING_SERVICE_URL;
+  const secret = process.env.SCRAPLING_SECRET;
+  if (!serviceUrl || !secret) return null;
+
+  try {
+    const res = await fetch(`${serviceUrl}/extract`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${secret}`,
+      },
+      body: JSON.stringify({ url }),
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.email || null;
+  } catch {
+    return null;
+  }
 }
 
 /**

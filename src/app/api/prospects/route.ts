@@ -86,11 +86,18 @@ export async function PATCH(request: Request) {
 
     // Log activity for notes updates
     if (updates.notes !== undefined && current && updates.notes !== current.notes) {
+      // Extract the newly appended note text (last entry after the separator)
+      const noteText = updates.notes.trim();
+      const lastSepIdx = noteText.lastIndexOf("\n---\n");
+      const newEntry = lastSepIdx >= 0 ? noteText.slice(lastSepIdx + 5).trim() : noteText;
+      // Strip the timestamp header line to get just the note body
+      const lines = newEntry.split("\n");
+      const noteBody = lines.length > 1 ? lines.slice(1).join("\n").trim() : newEntry;
       await logActivity(supabase, {
         prospect_id: id,
         user_id: user.id,
         activity_type: "notes_updated",
-        description: "Notes updated",
+        description: `Note added: ${noteBody.slice(0, 200)}${noteBody.length > 200 ? "…" : ""}`,
       });
     }
 

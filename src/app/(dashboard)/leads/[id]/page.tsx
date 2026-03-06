@@ -13,6 +13,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import {
   Select,
@@ -43,6 +45,7 @@ import {
   TrendingUp,
   MessageSquare,
   Activity,
+  Plus,
 } from "lucide-react";
 import type { ProspectStatus, ProspectWithAnalysis, WebsiteAnalysis } from "@/types";
 
@@ -50,6 +53,7 @@ const statusConfig: Record<ProspectStatus, { label: string; color: string }> = {
   new: { label: "New", color: "bg-blue-100 text-blue-800 border-blue-200" },
   contacted: { label: "Contacted", color: "bg-purple-100 text-purple-800 border-purple-200" },
   interested: { label: "Interested", color: "bg-amber-100 text-amber-800 border-amber-200" },
+  follow_up: { label: "Follow Up", color: "bg-orange-100 text-orange-800 border-orange-200" },
   client: { label: "Client", color: "bg-emerald-100 text-emerald-800 border-emerald-200" },
   not_interested: { label: "Not Interested", color: "bg-gray-100 text-gray-800 border-gray-200" },
   lost: { label: "Lost", color: "bg-red-100 text-red-800 border-red-200" },
@@ -74,21 +78,47 @@ interface ProspectMessage {
   campaigns: { name: string; type: string } | null;
 }
 
+// Parse note log from plain text (entries separated by \n---\n)
+function parseNoteLog(raw: string | null): Array<{ timestamp: string; text: string }> {
+  if (!raw) return [];
+  const entries = raw.split("\n---\n").filter(Boolean);
+  return entries.map((entry) => {
+    const lines = entry.trim().split("\n");
+    // First line may be a timestamp header like "[2024-01-15 10:30 AM]"
+    const headerMatch = lines[0]?.match(/^\[(.+)\]$/);
+    if (headerMatch) {
+      return { timestamp: headerMatch[1], text: lines.slice(1).join("\n").trim() };
+    }
+    return { timestamp: "", text: entry.trim() };
+  });
+}
+
+function formatNoteTimestamp(): string {
+  return new Date().toLocaleString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
 export default function LeadDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
   const [prospect, setProspect] = useState<ProspectWithAnalysis | null>(null);
   const [loading, setLoading] = useState(true);
-  const [notes, setNotes] = useState("");
+  const [newNote, setNewNote] = useState("");
   const [savingNotes, setSavingNotes] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [activities, setActivities] = useState<ProspectActivity[]>([]);
   const [messages, setMessages] = useState<ProspectMessage[]>([]);
+  const [followUpDate, setFollowUpDate] = useState<string>("");
+  const [savingStatus, setSavingStatus] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        // Fetch prospect
         const res = await fetch("/api/prospects");
         const data = await res.json();
         const found = (data.prospects || []).find(
@@ -96,10 +126,10 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
         );
         if (found) {
           setProspect(found);
-          setNotes(found.notes || "");
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          setFollowUpDate((found as any).follow_up_date || "");
         }
 
-        // Fetch messages for this prospect
         const msgRes = await fetch(`/api/prospects/${id}/messages`);
         const msgData = await msgRes.json();
         setMessages(msgData.messages || []);
@@ -114,8 +144,6 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
   }, [id]);
 
   async function fetchActivities() {
-    // Activities are fetched client-side via a direct query approach
-    // Since we don't have a dedicated endpoint, we'll use the existing patterns
     try {
       const res = await fetch(`/api/prospects/${id}/activities`);
       if (res.ok) {
@@ -123,39 +151,69 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
         setActivities(data.activities || []);
       }
     } catch {
-      // Activity log endpoint may not exist yet, fail silently
+      // fail silently
     }
   }
 
   async function handleStatusChange(status: string) {
     if (!prospect) return;
+    setSavingStatus(true);
     try {
+      const body: Record<string, unknown> = { id: prospect.id, status };
+      if (status === "follow_up" && followUpDate) {
+        body.follow_up_date = followUpDate;
+      } else if (status !== "follow_up") {
+        body.follow_up_date = null;
+      }
       await fetch("/api/prospects", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: prospect.id, status }),
+        body: JSON.stringify(body),
       });
       setProspect({ ...prospect, status: status as ProspectStatus });
-      // Refresh activities after status change
       setTimeout(fetchActivities, 500);
     } catch {
       console.error("Failed to update status");
+    } finally {
+      setSavingStatus(false);
     }
   }
 
-  async function handleSaveNotes() {
+  async function handleFollowUpDateSave() {
     if (!prospect) return;
-    setSavingNotes(true);
+    setSavingStatus(true);
     try {
       await fetch("/api/prospects", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: prospect.id, notes }),
+        body: JSON.stringify({ id: prospect.id, follow_up_date: followUpDate || null }),
       });
-      setProspect({ ...prospect, notes });
+    } catch {
+      console.error("Failed to save follow-up date");
+    } finally {
+      setSavingStatus(false);
+    }
+  }
+
+  async function handleAddNote() {
+    if (!prospect || !newNote.trim()) return;
+    setSavingNotes(true);
+    try {
+      const timestamp = formatNoteTimestamp();
+      const entry = `[${timestamp}]\n${newNote.trim()}`;
+      const existing = prospect.notes?.trim() || "";
+      const updated = existing ? `${existing}\n---\n${entry}` : entry;
+
+      await fetch("/api/prospects", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: prospect.id, notes: updated }),
+      });
+      setProspect({ ...prospect, notes: updated });
+      setNewNote("");
       setTimeout(fetchActivities, 500);
     } catch {
-      console.error("Failed to save notes");
+      console.error("Failed to save note");
     } finally {
       setSavingNotes(false);
     }
@@ -201,6 +259,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
   const analysis = prospect.website_analyses?.[0] as WebsiteAnalysis | undefined;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const leadScore = (prospect as any).lead_score ?? 0;
+  const noteLog = parseNoteLog(prospect.notes);
 
   return (
     <div className="space-y-6">
@@ -242,16 +301,31 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Select value={prospect.status} onValueChange={handleStatusChange}>
-            <SelectTrigger className="w-[170px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.entries(statusConfig).map(([key, { label }]) => (
-                <SelectItem key={key} value={key}>{label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex flex-col gap-1">
+            <Select value={prospect.status} onValueChange={handleStatusChange} disabled={savingStatus}>
+              <SelectTrigger className="w-[170px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.entries(statusConfig).map(([key, { label }]) => (
+                  <SelectItem key={key} value={key}>{label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {prospect.status === "follow_up" && (
+              <div className="flex items-center gap-1">
+                <Input
+                  type="date"
+                  value={followUpDate}
+                  onChange={(e) => setFollowUpDate(e.target.value)}
+                  className="h-8 w-[140px] text-xs"
+                />
+                <Button size="sm" variant="outline" className="h-8 px-2 text-xs" onClick={handleFollowUpDateSave} disabled={savingStatus}>
+                  {savingStatus ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                </Button>
+              </div>
+            )}
+          </div>
           <Link href={`/generator?prospect=${prospect.id}`}>
             <Button variant="outline" size="sm">
               <Palette className="mr-2 h-4 w-4" />
@@ -330,25 +404,44 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
               <CardTitle>Notes</CardTitle>
               <CardDescription>Keep track of your interactions</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <Textarea
-                placeholder="Add notes about this prospect..."
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                rows={5}
-              />
-              <Button
-                onClick={handleSaveNotes}
-                disabled={savingNotes || notes === (prospect.notes || "")}
-                size="sm"
-              >
-                {savingNotes ? (
-                  <Loader2 className="mr-2 h-3 w-3 animate-spin" />
-                ) : (
-                  <Save className="mr-2 h-3 w-3" />
-                )}
-                Save Notes
-              </Button>
+            <CardContent className="space-y-4">
+              {/* Existing note log (read-only) */}
+              {noteLog.length > 0 && (
+                <div className="space-y-3 max-h-72 overflow-y-auto rounded-lg border bg-muted/30 p-3">
+                  {noteLog.map((entry, i) => (
+                    <div key={i} className="text-sm">
+                      {entry.timestamp && (
+                        <p className="text-xs font-medium text-muted-foreground mb-0.5">{entry.timestamp}</p>
+                      )}
+                      <p className="whitespace-pre-wrap">{entry.text}</p>
+                      {i < noteLog.length - 1 && <Separator className="mt-3" />}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Add new note */}
+              <div className="space-y-2">
+                <Label className="text-xs text-muted-foreground">Add a note</Label>
+                <Textarea
+                  placeholder="Add a new note about this prospect..."
+                  value={newNote}
+                  onChange={(e) => setNewNote(e.target.value)}
+                  rows={3}
+                />
+                <Button
+                  onClick={handleAddNote}
+                  disabled={savingNotes || !newNote.trim()}
+                  size="sm"
+                >
+                  {savingNotes ? (
+                    <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                  ) : (
+                    <Plus className="mr-2 h-3 w-3" />
+                  )}
+                  Add Note
+                </Button>
+              </div>
             </CardContent>
           </Card>
 

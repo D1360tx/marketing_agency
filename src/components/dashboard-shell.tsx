@@ -25,6 +25,7 @@ import {
   Zap,
   BarChart3,
   Star,
+  CheckSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -32,6 +33,7 @@ const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
   { name: "Prospector", href: "/prospector", icon: Search },
   { name: "Leads", href: "/leads", icon: Users },
+  { name: "Tasks", href: "/tasks", icon: CheckSquare },
   { name: "Campaigns", href: "/campaigns", icon: Mail },
   { name: "Sequences", href: "/sequences", icon: Zap },
   { name: "Generator", href: "/generator", icon: Globe },
