@@ -125,18 +125,18 @@ export default function AnalyticsPage() {
   const { funnel, emailStats, campaignStats, sequenceStats, activityTimeline } =
     data;
 
-  // Find max value for the activity chart bars
-  const maxActivity = Math.max(
-    ...activityTimeline.map((d) => d.sent + d.opened + d.clicked),
-    1
-  );
-
   const funnelStages = [
     { label: "Prospects", value: funnel.prospects, icon: Users, color: "bg-blue-100 text-blue-700" },
     { label: "Contacted", value: funnel.contacted, icon: Mail, color: "bg-yellow-100 text-yellow-700" },
     { label: "Interested", value: funnel.interested, icon: TrendingUp, color: "bg-orange-100 text-orange-700" },
     { label: "Clients", value: funnel.clients, icon: UserCheck, color: "bg-green-100 text-green-700" },
-  ];
+  ] as const;
+
+  // Find max value for the activity chart bars
+  const maxActivity = Math.max(
+    ...activityTimeline.map((d) => d.sent + d.opened + d.clicked),
+    1
+  );
 
   return (
     <div className="space-y-6">
