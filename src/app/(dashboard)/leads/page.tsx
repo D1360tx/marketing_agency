@@ -787,53 +787,75 @@ export default function LeadsPage() {
       {/* Table view */}
       {view === "table" && (
         <>
-          {/* Mobile card list — xs only */}
+          {/* Mobile card list */}
           <div className="md:hidden space-y-2">
             {sorted.map((prospect) => {
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               const leadScore = (prospect as any).lead_score ?? 0;
+              const cfg = statusConfig[prospect.status];
               return (
-                <div key={prospect.id} className="flex items-center gap-3 rounded-lg border bg-card p-3">
-                  <Checkbox checked={selected.has(prospect.id)} onCheckedChange={() => toggleSelect(prospect.id)} />
+                <div key={prospect.id} className="rounded-lg border bg-white p-3 shadow-sm">
                   <Link
                     href={`/leads/${prospect.id}`}
                     onClick={() => sessionStorage.setItem("leadListIds", JSON.stringify(sortedIds))}
-                    className="flex-1 min-w-0"
+                    className="block"
                   >
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="font-medium text-sm truncate">{prospect.business_name}</p>
-                      <Badge variant="outline" className={`${statusConfig[prospect.status].color} text-[10px] shrink-0`}>
-                        {statusConfig[prospect.status].label}
-                      </Badge>
+                    {/* Row 1: name + status */}
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <p className="font-semibold text-sm text-gray-900 leading-snug flex-1 min-w-0 break-words">
+                        {prospect.business_name}
+                      </p>
+                      <span className={`inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[10px] font-medium ${cfg.color}`}>
+                        {cfg.label}
+                      </span>
                     </div>
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-1 text-xs text-muted-foreground">
+                    {/* Row 2: phone + city + score */}
+                    <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-gray-500">
                       {prospect.phone && (
-                        <span className="flex items-center gap-1 shrink-0"><Phone className="h-3 w-3" />{prospect.phone}</span>
+                        <span className="flex items-center gap-1">
+                          <Phone className="h-3 w-3" />{prospect.phone}
+                        </span>
                       )}
-                      {prospect.city && <span className="truncate max-w-[120px]">{prospect.city}</span>}
+                      {prospect.city && <span>{prospect.city}{prospect.state ? `, ${prospect.state}` : ""}</span>}
+                      {prospect.business_type && <span>{prospect.business_type}</span>}
                       {leadScore > 0 && (
-                        <span className="flex items-center gap-1 shrink-0"><TrendingUp className="h-3 w-3" />{leadScore}</span>
+                        <span className="flex items-center gap-1 text-amber-600 font-medium">
+                          <TrendingUp className="h-3 w-3" />{leadScore}
+                        </span>
                       )}
                     </div>
                   </Link>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="shrink-0 h-8 w-8"
-                    onClick={async () => {
-                      const res = await fetch(`/api/prospects/${prospect.id}`);
-                      const data = await res.json();
-                      if (data.prospect) setQuickCallProspect(data.prospect);
-                    }}
-                  >
-                    <Phone className="h-4 w-4" />
-                  </Button>
+                  {/* Row 3: actions */}
+                  <div className="flex items-center gap-2 mt-2 pt-2 border-t border-gray-100">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 flex-1 text-xs"
+                      onClick={() => {
+                        fetch(`/api/prospects/${prospect.id}`)
+                          .then(r => r.json())
+                          .then(d => { if (d.prospect) setQuickCallProspect(d.prospect); });
+                      }}
+                    >
+                      <Phone className="h-3 w-3 mr-1" /> Log Call
+                    </Button>
+                    <Link
+                      href={`/leads/${prospect.id}`}
+                      onClick={() => sessionStorage.setItem("leadListIds", JSON.stringify(sortedIds))}
+                      className="flex-1"
+                    >
+                      <Button variant="ghost" size="sm" className="h-8 w-full text-xs">
+                        View →
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               );
             })}
             {sorted.length === 0 && (
-              <div className="py-8 text-center text-muted-foreground">
-                <Users className="mx-auto mb-2 h-8 w-8" />No leads found
+              <div className="py-12 text-center text-muted-foreground">
+                <Users className="mx-auto mb-2 h-8 w-8 opacity-40" />
+                <p className="text-sm">No leads found</p>
               </div>
             )}
           </div>
