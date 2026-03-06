@@ -229,8 +229,8 @@ export default async function DashboardPage() {
             <CardDescription>Which channels are converting</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto -mx-6 px-6">
+              <table className="w-full min-w-[500px] text-sm">
                 <thead>
                   <tr className="text-muted-foreground text-xs border-b">
                     <th className="text-left pb-2">Source</th>

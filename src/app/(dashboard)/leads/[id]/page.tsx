@@ -626,17 +626,18 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col gap-4">
+        {/* Top row: back + prev/next + title */}
+        <div className="flex items-start gap-3">
           <Link href="/leads">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="shrink-0">
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
 
           {/* Prev/Next navigation */}
           {listIds.length > 0 && (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 shrink-0 mt-1">
               <Button
                 variant="ghost"
                 size="icon"
@@ -659,14 +660,14 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
             </div>
           )}
 
-          <div>
-            <div className="flex items-center gap-3">
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
               {editing === "business_name" ? (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-1">
                   <Input
                     value={editValue}
                     onChange={(e) => setEditValue(e.target.value)}
-                    className="h-9 text-xl font-bold w-64"
+                    className="h-9 text-xl font-bold flex-1 text-base sm:text-sm"
                     autoFocus
                     onKeyDown={(e) => { if (e.key === "Enter") handleInlineEditSave(); if (e.key === "Escape") cancelEdit(); }}
                   />
@@ -678,11 +679,11 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                   </Button>
                 </div>
               ) : (
-                <div className="group flex items-center gap-2">
-                  <h1 className="text-2xl font-bold">{prospect.business_name}</h1>
+                <div className="group flex items-center gap-2 min-w-0">
+                  <h1 className="text-xl sm:text-2xl font-bold truncate">{prospect.business_name}</h1>
                   <button
                     onClick={() => startEdit("business_name")}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
+                    className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground shrink-0"
                     title="Edit business name"
                   >
                     <Pencil className="h-3.5 w-3.5" />
@@ -724,11 +725,10 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                 </TooltipProvider>
               )}
             </div>
-            <div className="flex items-center gap-2 mt-1">
+            <div className="flex flex-wrap items-center gap-2 mt-1">
               {prospect.business_type && (
                 <Badge variant="secondary">{prospect.business_type}</Badge>
               )}
-              {prospect.business_type && <span className="text-xs text-muted-foreground">·</span>}
               {(() => {
                 const days = Math.floor((Date.now() - new Date(prospect.created_at).getTime()) / 86400000);
                 const label = days === 0 ? "Added today" : days === 1 ? "Added yesterday" : `Added ${days} days ago`;
@@ -743,10 +743,12 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="flex flex-col gap-1">
+
+        {/* Action row: wraps on mobile */}
+        <div className="flex flex-wrap items-start gap-2">
+          <div className="flex flex-col gap-1 flex-1 min-w-[160px]">
             <Select value={prospect.status} onValueChange={handleStatusChange} disabled={savingStatus}>
-              <SelectTrigger className="w-[170px]">
+              <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -761,9 +763,9 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                   type="date"
                   value={followUpDate}
                   onChange={(e) => setFollowUpDate(e.target.value)}
-                  className="h-8 w-[140px] text-xs"
+                  className="h-8 flex-1 text-xs"
                 />
-                <Button size="sm" variant="outline" className="h-8 px-2 text-xs" onClick={handleFollowUpDateSave} disabled={savingStatus}>
+                <Button size="sm" variant="outline" className="h-8 px-2 text-xs shrink-0" onClick={handleFollowUpDateSave} disabled={savingStatus}>
                   {savingStatus ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
                 </Button>
               </div>
@@ -774,9 +776,9 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                   type="datetime-local"
                   value={callScheduledAt}
                   onChange={(e) => setCallScheduledAt(e.target.value)}
-                  className="h-8 w-[200px] text-xs"
+                  className="h-8 flex-1 text-xs"
                 />
-                <Button size="sm" variant="outline" className="h-8 px-2" onClick={async () => {
+                <Button size="sm" variant="outline" className="h-8 px-2 shrink-0" onClick={async () => {
                   await fetch("/api/prospects", {
                     method: "PATCH",
                     headers: { "Content-Type": "application/json" },
@@ -799,16 +801,19 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
             const pitch = generatePitch(prospect, analysis);
             navigator.clipboard.writeText(pitch);
             toast.success("Pitch copied to clipboard!");
-          }}>
-            <Copy className="mr-2 h-4 w-4" /> Copy Pitch
+          }} className="flex-1 sm:flex-none">
+            <Copy className="mr-2 h-4 w-4" />
+            <span className="hidden sm:inline">Copy Pitch</span>
+            <span className="sm:hidden">Pitch</span>
           </Button>
-          <Link href={`/generator?prospect=${prospect.id}`}>
-            <Button variant="outline" size="sm">
+          <Link href={`/generator?prospect=${prospect.id}`} className="flex-1 sm:flex-none">
+            <Button variant="outline" size="sm" className="w-full sm:w-auto">
               <Palette className="mr-2 h-4 w-4" />
-              Generate Website
+              <span className="hidden sm:inline">Generate Website</span>
+              <span className="sm:hidden">Generate</span>
             </Button>
           </Link>
-          <Button variant="destructive" size="icon" onClick={handleDelete} disabled={deleting}>
+          <Button variant="destructive" size="icon" onClick={handleDelete} disabled={deleting} className="shrink-0">
             {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
           </Button>
         </div>
@@ -842,18 +847,18 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                     <Button size="sm" variant="ghost" onClick={cancelEdit}><X className="h-3 w-3" /></Button>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2">
-                    <a href={prospect.phone ? `tel:${prospect.phone}` : undefined} className="flex flex-1 items-center gap-3 rounded-lg border p-3 hover:bg-muted/50">
-                      <Phone className="h-5 w-5 text-muted-foreground" />
-                      <div>
+                  <div className="flex items-center gap-2 col-span-full sm:col-span-1">
+                    <a href={prospect.phone ? `tel:${prospect.phone}` : undefined} className="flex flex-1 items-center gap-3 rounded-lg border p-3 hover:bg-muted/50 min-w-0">
+                      <Phone className="h-5 w-5 shrink-0 text-muted-foreground" />
+                      <div className="min-w-0">
                         <p className="text-xs text-muted-foreground">Phone</p>
-                        <p className="font-medium">{prospect.phone || <span className="text-muted-foreground italic text-sm">Not set</span>}</p>
+                        <p className="font-medium truncate">{prospect.phone || <span className="text-muted-foreground italic text-sm">Not set</span>}</p>
                       </div>
                     </a>
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-1 shrink-0">
                       <button
                         onClick={() => startEdit("phone")}
-                        className="text-muted-foreground hover:text-foreground transition-colors"
+                        className="text-muted-foreground hover:text-foreground transition-colors p-1"
                         title="Edit phone"
                       >
                         <Pencil className="h-3.5 w-3.5" />
@@ -864,9 +869,10 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                           size="sm"
                           onClick={() => setShowCallDialog(true)}
                           title="Log Call"
-                          className="h-7 px-2 text-xs"
+                          className="h-8 px-2 text-xs"
                         >
-                          Log Call
+                          <Phone className="h-3.5 w-3.5 sm:mr-1" />
+                          <span className="hidden sm:inline">Log Call</span>
                         </Button>
                       )}
                     </div>
@@ -1051,7 +1057,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                     key={t}
                     type="button"
                     onClick={() => setNewNote((prev) => (prev ? `${prev} — ${t}` : t))}
-                    className="text-xs rounded-full border px-2.5 py-0.5 hover:bg-muted transition-colors"
+                    className="text-xs rounded-full border px-2.5 py-1.5 hover:bg-muted transition-colors"
                   >
                     {t}
                   </button>
@@ -1066,6 +1072,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                   value={newNote}
                   onChange={(e) => setNewNote(e.target.value)}
                   rows={3}
+                  className="text-base sm:text-sm"
                 />
                 <Button
                   onClick={handleAddNote}
@@ -1335,7 +1342,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
 
       {/* Win/Loss Dialog */}
       <Dialog open={showLossDialog} onOpenChange={(open) => { if (!open) { setShowLossDialog(false); setPendingStatus(null); } }}>
-        <DialogContent className="max-w-sm">
+        <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-sm">
           <DialogHeader>
             <DialogTitle>Why did this lead go cold?</DialogTitle>
           </DialogHeader>
@@ -1361,7 +1368,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
 
       {/* Deal Value Dialog */}
       <Dialog open={showDealDialog} onOpenChange={setShowDealDialog}>
-        <DialogContent className="max-w-xs">
+        <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-xs">
           <DialogHeader><DialogTitle>🎉 New Client!</DialogTitle></DialogHeader>
           <p className="text-sm text-muted-foreground">What&apos;s the monthly value of this contract?</p>
           <div className="flex items-center gap-2">
@@ -1390,7 +1397,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
 
       {/* Call Log Dialog */}
       <Dialog open={showCallDialog} onOpenChange={setShowCallDialog}>
-        <DialogContent className="max-w-sm">
+        <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-sm">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Phone className="h-4 w-4" /> Log Call
@@ -1418,6 +1425,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                 value={callNote}
                 onChange={(e) => setCallNote(e.target.value)}
                 rows={3}
+                className="text-base sm:text-sm"
               />
             </div>
           </div>

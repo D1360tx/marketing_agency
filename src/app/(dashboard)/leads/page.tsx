@@ -565,14 +565,14 @@ export default function LeadsPage() {
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Leads</h1>
           <p className="text-muted-foreground">
             {prospects.length} prospect{prospects.length !== 1 ? "s" : ""} in your pipeline
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button size="sm" onClick={() => setShowAddDialog(true)}>
             <UserPlus className="mr-2 h-4 w-4" /> Quick Add Lead
           </Button>
@@ -587,7 +587,8 @@ export default function LeadsPage() {
                 ) : (
                   <Download className="mr-1 h-4 w-4" />
                 )}
-                Export to Instantly
+                <span className="hidden sm:inline">Export to Instantly</span>
+                <span className="sm:hidden">Export</span>
                 <ChevronDown className="ml-1 h-3 w-3" />
               </Button>
             </DropdownMenuTrigger>
@@ -613,21 +614,21 @@ export default function LeadsPage() {
             size="sm"
             onClick={() => setView("kanban")}
           >
-            <LayoutGrid className="mr-1 h-4 w-4" /> Board
+            <LayoutGrid className="h-4 w-4" /><span className="hidden sm:inline ml-1">Board</span>
           </Button>
           <Button
             variant={view === "table" ? "default" : "outline"}
             size="sm"
             onClick={() => setView("table")}
           >
-            <List className="mr-1 h-4 w-4" /> Table
+            <List className="h-4 w-4" /><span className="hidden sm:inline ml-1">Table</span>
           </Button>
         </div>
       </div>
 
       {/* Filters + Bulk actions */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:flex-wrap">
-        <div className="relative flex-1 min-w-[200px]">
+      <div className="flex flex-wrap gap-2 items-center">
+        <div className="relative w-full sm:flex-1 sm:min-w-[200px]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Search name, city, phone, notes..."
@@ -636,56 +637,59 @@ export default function LeadsPage() {
             className="pl-9"
           />
         </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="All Statuses" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Statuses</SelectItem>
-            {Object.entries(statusConfig).map(([key, { label }]) => (
-              <SelectItem key={key} value={key}>{label}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select value={sourceFilter} onValueChange={setSourceFilter}>
-          <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="All Sources" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Sources</SelectItem>
-            <SelectItem value="Cold Call">Cold Call</SelectItem>
-            <SelectItem value="Door Knock">Door Knock</SelectItem>
-            <SelectItem value="Facebook Group">Facebook Group</SelectItem>
-            <SelectItem value="Referral">Referral</SelectItem>
-            <SelectItem value="Cold Email">Cold Email</SelectItem>
-            <SelectItem value="CSV Import">CSV Import</SelectItem>
-            <SelectItem value="Manual">Manual</SelectItem>
-          </SelectContent>
-        </Select>
-        {allTags.length > 0 && (
-          <Select value={tagFilter} onValueChange={setTagFilter}>
-            <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="All Tags" />
+        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="h-9 flex-1 sm:flex-none sm:w-[140px]">
+              <SelectValue placeholder="All Statuses" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Tags</SelectItem>
-              {allTags.map((tag) => (
-                <SelectItem key={tag} value={tag}>{tag}</SelectItem>
+              <SelectItem value="all">All Statuses</SelectItem>
+              {Object.entries(statusConfig).map(([key, { label }]) => (
+                <SelectItem key={key} value={key}>{label}</SelectItem>
               ))}
             </SelectContent>
           </Select>
-        )}
-        <Button variant="outline" size="sm" onClick={handleExportCSV}>
-          <Download className="mr-1 h-4 w-4" /> Export
-        </Button>
-        <Button
-          variant={showArchived ? "default" : "outline"}
-          size="sm"
-          onClick={() => setShowArchived(prev => !prev)}
-        >
-          <Archive className="mr-1 h-4 w-4" />
-          {showArchived ? "Hide Archived" : "Show Archived"}
-        </Button>
+          <Select value={sourceFilter} onValueChange={setSourceFilter}>
+            <SelectTrigger className="h-9 flex-1 sm:flex-none sm:w-[140px]">
+              <SelectValue placeholder="All Sources" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Sources</SelectItem>
+              <SelectItem value="Cold Call">Cold Call</SelectItem>
+              <SelectItem value="Door Knock">Door Knock</SelectItem>
+              <SelectItem value="Facebook Group">Facebook Group</SelectItem>
+              <SelectItem value="Referral">Referral</SelectItem>
+              <SelectItem value="Cold Email">Cold Email</SelectItem>
+              <SelectItem value="CSV Import">CSV Import</SelectItem>
+              <SelectItem value="Manual">Manual</SelectItem>
+            </SelectContent>
+          </Select>
+          {allTags.length > 0 && (
+            <Select value={tagFilter} onValueChange={setTagFilter}>
+              <SelectTrigger className="h-9 flex-1 sm:flex-none sm:w-[140px]">
+                <SelectValue placeholder="All Tags" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Tags</SelectItem>
+                {allTags.map((tag) => (
+                  <SelectItem key={tag} value={tag}>{tag}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          <Button variant="outline" size="sm" onClick={handleExportCSV} className="flex-1 sm:flex-none">
+            <Download className="mr-1 h-4 w-4" /> Export
+          </Button>
+          <Button
+            variant={showArchived ? "default" : "outline"}
+            size="sm"
+            onClick={() => setShowArchived(prev => !prev)}
+            className="flex-1 sm:flex-none"
+          >
+            <Archive className="mr-1 h-4 w-4" />
+            {showArchived ? "Hide Archived" : "Show Archived"}
+          </Button>
+        </div>
       </div>
 
       {/* Bulk action bar */}
@@ -693,10 +697,10 @@ export default function LeadsPage() {
         const selectedProspects = filtered.filter(p => selected.has(p.id));
         const hasArchived = selectedProspects.some(p => ["not_interested", "lost"].includes(p.status));
         return (
-          <div className="flex items-center gap-3 rounded-lg border bg-muted/50 p-3">
-            <span className="text-sm font-medium">{selected.size} selected</span>
+          <div className="flex flex-wrap items-center gap-2 rounded-lg border bg-muted/50 p-3">
+            <span className="text-sm font-medium whitespace-nowrap">{selected.size} selected</span>
             <Select onValueChange={(v) => handleBulkMove(v as ProspectStatus)}>
-              <SelectTrigger className="w-[160px] h-8">
+              <SelectTrigger className="h-8 w-[140px] flex-1 sm:flex-none">
                 <SelectValue placeholder="Move to..." />
               </SelectTrigger>
               <SelectContent>
@@ -711,15 +715,15 @@ export default function LeadsPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => handleBulkMove("new" as ProspectStatus)}
-                className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                className="border-blue-200 text-blue-700 hover:bg-blue-50 flex-1 sm:flex-none"
               >
                 ↩ Re-activate as New
               </Button>
             )}
-            <Button variant="destructive" size="sm" onClick={handleBulkDelete}>
+            <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="flex-1 sm:flex-none">
               <Trash2 className="mr-1 h-3 w-3" /> Delete
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => setSelected(new Set())}>
+            <Button variant="ghost" size="sm" onClick={() => setSelected(new Set())} className="flex-1 sm:flex-none">
               Clear
             </Button>
           </div>
@@ -734,25 +738,28 @@ export default function LeadsPage() {
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
-          <div className="grid gap-4 lg:grid-cols-6">
-            {pipelineStatuses.map((status) => (
-              <DroppableColumn
-                key={status}
-                id={status}
-                label={statusConfig[status].label}
-                color={statusConfig[status].color}
-                count={grouped[status]?.length || 0}
-              >
-                {(grouped[status] || []).map((prospect) => (
-                  <DraggableCard
-                    key={prospect.id}
-                    prospect={prospect}
-                    onLogCall={setQuickCallProspect}
-                    listIds={sortedIds}
-                  />
-                ))}
-              </DroppableColumn>
-            ))}
+          <div className="overflow-x-auto pb-4 -mx-4 px-4 md:mx-0 md:px-0">
+            <div className="flex gap-4 md:grid md:grid-cols-3 lg:grid-cols-6" style={{ minWidth: "min(100%, 1200px)" }}>
+              {pipelineStatuses.map((status) => (
+                <div key={status} className="w-72 shrink-0 md:w-auto">
+                  <DroppableColumn
+                    id={status}
+                    label={statusConfig[status].label}
+                    color={statusConfig[status].color}
+                    count={grouped[status]?.length || 0}
+                  >
+                    {(grouped[status] || []).map((prospect) => (
+                      <DraggableCard
+                        key={prospect.id}
+                        prospect={prospect}
+                        onLogCall={setQuickCallProspect}
+                        listIds={sortedIds}
+                      />
+                    ))}
+                  </DroppableColumn>
+                </div>
+              ))}
+            </div>
           </div>
           <DragOverlay>
             {activeProspect && <ProspectMiniCard prospect={activeProspect} />}
@@ -762,6 +769,7 @@ export default function LeadsPage() {
 
       {/* Table view */}
       {view === "table" && (
+        <div className="overflow-x-auto">
         <Card>
           <CardContent className="p-0">
             <Table>
@@ -776,14 +784,14 @@ export default function LeadsPage() {
                   <SortableHead field="business_name" current={sortField} direction={sortDirection} onSort={handleSort}>
                     Business
                   </SortableHead>
-                  <SortableHead field="lead_score" current={sortField} direction={sortDirection} onSort={handleSort}>
+                  <SortableHead field="lead_score" current={sortField} direction={sortDirection} onSort={handleSort} className="hidden sm:table-cell">
                     Score
                   </SortableHead>
                   <TableHead>Contact</TableHead>
-                  <SortableHead field="rating" current={sortField} direction={sortDirection} onSort={handleSort}>
+                  <SortableHead field="rating" current={sortField} direction={sortDirection} onSort={handleSort} className="hidden md:table-cell">
                     Rating
                   </SortableHead>
-                  <TableHead className="text-center">Grade</TableHead>
+                  <TableHead className="text-center hidden md:table-cell">Grade</TableHead>
                   <SortableHead field="status" current={sortField} direction={sortDirection} onSort={handleSort}>
                     Status
                   </SortableHead>
@@ -817,7 +825,7 @@ export default function LeadsPage() {
                           </Badge>
                         )}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="hidden sm:table-cell">
                         <LeadScoreBadge score={leadScore} />
                       </TableCell>
                       <TableCell>
@@ -836,12 +844,12 @@ export default function LeadsPage() {
                           )}
                         </div>
                       </TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className="text-center hidden md:table-cell">
                         {prospect.rating != null && (
                           <span className="text-sm">{prospect.rating}</span>
                         )}
                       </TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className="text-center hidden md:table-cell">
                         {analysis ? (
                           <WebsiteScoreBadge grade={analysis.overall_grade} />
                         ) : !prospect.website_url ? (
@@ -896,18 +904,19 @@ export default function LeadsPage() {
             </Table>
           </CardContent>
         </Card>
+        </div>
       )}
 
       {/* Quick Add Lead Dialog */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Quick Add Lead</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleQuickAdd} className="space-y-3">
             <div className="space-y-1">
               <Label>Business Name *</Label>
-              <Input placeholder="Mike's Plumbing" value={addForm.business_name} onChange={(e) => setAddForm({...addForm, business_name: e.target.value})} required />
+              <Input placeholder="Mike's Plumbing" value={addForm.business_name} onChange={(e) => setAddForm({...addForm, business_name: e.target.value})} required className="text-base sm:text-sm" />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
@@ -917,6 +926,7 @@ export default function LeadsPage() {
                   value={addForm.phone}
                   onChange={(e) => { setAddForm({...addForm, phone: e.target.value}); setPhoneDuplicate(null); }}
                   onBlur={(e) => handlePhoneBlur(e.target.value)}
+                  className="text-base sm:text-sm"
                 />
                 {phoneDuplicate && (
                   <p className="text-xs text-amber-600">
@@ -927,17 +937,17 @@ export default function LeadsPage() {
               </div>
               <div className="space-y-1">
                 <Label>Email</Label>
-                <Input type="email" placeholder="mike@example.com" value={addForm.email} onChange={(e) => setAddForm({...addForm, email: e.target.value})} />
+                <Input type="email" placeholder="mike@example.com" value={addForm.email} onChange={(e) => setAddForm({...addForm, email: e.target.value})} className="text-base sm:text-sm" />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
                 <Label>City</Label>
-                <Input placeholder="Dripping Springs" value={addForm.city} onChange={(e) => setAddForm({...addForm, city: e.target.value})} />
+                <Input placeholder="Dripping Springs" value={addForm.city} onChange={(e) => setAddForm({...addForm, city: e.target.value})} className="text-base sm:text-sm" />
               </div>
               <div className="space-y-1">
                 <Label>Business Type</Label>
-                <Input placeholder="Plumber" value={addForm.business_type} onChange={(e) => setAddForm({...addForm, business_type: e.target.value})} />
+                <Input placeholder="Plumber" value={addForm.business_type} onChange={(e) => setAddForm({...addForm, business_type: e.target.value})} className="text-base sm:text-sm" />
               </div>
             </div>
             <div className="space-y-1">
@@ -956,7 +966,7 @@ export default function LeadsPage() {
             </div>
             <div className="space-y-1">
               <Label>Notes</Label>
-              <Textarea placeholder="Saw them in DS Neighbors group, does masonry work..." value={addForm.notes} onChange={(e) => setAddForm({...addForm, notes: e.target.value})} rows={3} />
+              <Textarea placeholder="Saw them in DS Neighbors group, does masonry work..." value={addForm.notes} onChange={(e) => setAddForm({...addForm, notes: e.target.value})} rows={3} className="text-base sm:text-sm" />
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setShowAddDialog(false)}>Cancel</Button>
@@ -970,7 +980,7 @@ export default function LeadsPage() {
 
       {/* CSV Import Dialog */}
       <Dialog open={showCsvDialog} onOpenChange={setShowCsvDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Import CSV</DialogTitle>
           </DialogHeader>
@@ -1000,7 +1010,7 @@ export default function LeadsPage() {
 
       {/* Quick Call Dialog */}
       <Dialog open={!!quickCallProspect} onOpenChange={(open) => !open && setQuickCallProspect(null)}>
-        <DialogContent className="max-w-sm">
+        <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-sm">
           <DialogHeader>
             <DialogTitle>Log Call — {quickCallProspect?.business_name}</DialogTitle>
           </DialogHeader>
@@ -1024,6 +1034,7 @@ export default function LeadsPage() {
                 value={quickCallNote}
                 onChange={(e) => setQuickCallNote(e.target.value)}
                 rows={3}
+                className="text-base sm:text-sm"
               />
             </div>
           </div>
@@ -1052,16 +1063,18 @@ function SortableHead({
   direction,
   onSort,
   children,
+  className,
 }: {
   field: SortField;
   current: SortField;
   direction: "asc" | "desc";
   onSort: (field: SortField) => void;
   children: React.ReactNode;
+  className?: string;
 }) {
   const active = field === current;
   return (
-    <TableHead>
+    <TableHead className={className}>
       <button
         onClick={() => onSort(field)}
         className="flex items-center gap-1 hover:text-foreground transition-colors"
@@ -1229,7 +1242,7 @@ function ProspectMiniCard({
                       e.stopPropagation();
                       onLogCall(prospect);
                     }}
-                    className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground"
+                    className="p-2 rounded hover:bg-muted text-muted-foreground hover:text-foreground min-h-[36px] min-w-[36px] flex items-center justify-center"
                     title="Log Call"
                   >
                     <Phone className="h-3.5 w-3.5" />
@@ -1241,7 +1254,7 @@ function ProspectMiniCard({
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground"
+                    className="p-2 rounded hover:bg-muted text-muted-foreground hover:text-foreground min-h-[36px] min-w-[36px] flex items-center justify-center"
                     title="Open in Maps"
                   >
                     <MapPin className="h-3.5 w-3.5" />

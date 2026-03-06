@@ -67,36 +67,36 @@ export function TaskCardActions({ prospectId, currentStatus }: { prospectId: str
     <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t">
       {loading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
       <Select onValueChange={updateStatus} disabled={loading}>
-        <SelectTrigger className="h-8 w-[150px] text-xs">
+        <SelectTrigger className="h-10 flex-1 text-sm">
           <SelectValue placeholder="Change status..." />
         </SelectTrigger>
         <SelectContent>
           {STATUS_OPTIONS.map(o => (
-            <SelectItem key={o.value} value={o.value} className="text-xs">{o.label}</SelectItem>
+            <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
           ))}
         </SelectContent>
       </Select>
-      <Button size="sm" variant="outline" className="h-8 text-xs gap-1" onClick={() => setShowCallLog(!showCallLog)}>
-        <Phone className="h-3 w-3" /> Log Call
+      <Button size="sm" variant="outline" className="h-10 text-sm gap-1 flex-1 sm:flex-none" onClick={() => setShowCallLog(!showCallLog)}>
+        <Phone className="h-4 w-4" /> Log Call
       </Button>
       {showCallLog && (
         <div className="w-full space-y-2 p-3 bg-muted/40 rounded-lg">
           <Select value={callOutcome} onValueChange={setCallOutcome}>
-            <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="h-10 text-sm"><SelectValue /></SelectTrigger>
             <SelectContent>
               {["Answered", "Voicemail", "No Answer", "Callback Requested"].map(o => (
-                <SelectItem key={o} value={o} className="text-xs">{o}</SelectItem>
+                <SelectItem key={o} value={o}>{o}</SelectItem>
               ))}
             </SelectContent>
           </Select>
           <input
-            className="w-full rounded border bg-background px-3 py-1.5 text-xs"
+            className="w-full rounded border bg-background px-3 py-2 text-base sm:text-sm"
             placeholder="Optional note..."
             value={callNote}
             onChange={e => setCallNote(e.target.value)}
           />
-          <Button size="sm" className="h-7 text-xs" onClick={logCall} disabled={loading}>
-            <CheckCircle className="mr-1 h-3 w-3" /> Save
+          <Button size="sm" className="h-10 text-sm" onClick={logCall} disabled={loading}>
+            <CheckCircle className="mr-1 h-4 w-4" /> Save
           </Button>
         </div>
       )}
