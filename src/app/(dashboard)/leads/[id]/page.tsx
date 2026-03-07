@@ -125,17 +125,25 @@ interface ProspectMessage {
 }
 
 // Parse note log from plain text (entries separated by \n---\n)
-function parseNoteLog(raw: string | null): Array<{ timestamp: string; text: string }> {
+function parseNoteLog(raw: string | null): Array<{ timestamp: string; text: string; images?: string[] }> {
   if (!raw) return [];
   const entries = raw.split("\n---\n").filter(Boolean);
   return entries.map((entry) => {
     const lines = entry.trim().split("\n");
     // First line may be a timestamp header like "[2024-01-15 10:30 AM]"
     const headerMatch = lines[0]?.match(/^\[(.+)\]$/);
-    if (headerMatch) {
-      return { timestamp: headerMatch[1], text: lines.slice(1).join("\n").trim() };
-    }
-    return { timestamp: "", text: entry.trim() };
+    const body = headerMatch ? lines.slice(1).join("\n").trim() : entry.trim();
+    // Extract [img:URL] tags
+    const imgRegex = /\[img:(https?:\/\/[^\]]+)\]/g;
+    const images: string[] = [];
+    let match;
+    while ((match = imgRegex.exec(body)) !== null) images.push(match[1]);
+    const text = body.replace(/\[img:https?:\/\/[^\]]+\]/g, "").trim();
+    return {
+      timestamp: headerMatch ? headerMatch[1] : "",
+      text,
+      ...(images.length > 0 ? { images } : {}),
+    };
   });
 }
 
@@ -290,6 +298,10 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
   // Note editing state
   const [editingNoteIndex, setEditingNoteIndex] = useState<number | null>(null);
   const [editingNoteText, setEditingNoteText] = useState("");
+
+  // Image attachment state
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [pendingImages, setPendingImages] = useState<string[]>([]); // URLs staged before adding note
 
   // Inline edit state
   const [editing, setEditing] = useState<"phone" | "email" | "business_name" | null>(null);
@@ -491,12 +503,34 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
     }
   }
 
+  async function handleImageUpload(file: File) {
+    if (!prospect) return;
+    setUploadingImage(true);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch(`/api/prospects/${prospect.id}/upload`, { method: "POST", body: form });
+      const data = await res.json();
+      if (data.url) {
+        setPendingImages((prev) => [...prev, data.url]);
+      } else {
+        toast.error(data.error || "Upload failed");
+      }
+    } catch {
+      toast.error("Upload failed");
+    } finally {
+      setUploadingImage(false);
+    }
+  }
+
   async function handleAddNote() {
-    if (!prospect || !newNote.trim()) return;
+    if (!prospect || (!newNote.trim() && pendingImages.length === 0)) return;
     setSavingNotes(true);
     try {
       const timestamp = formatNoteTimestamp();
-      const entry = `[${timestamp}]\n${newNote.trim()}`;
+      const imgTags = pendingImages.map((url) => `[img:${url}]`).join("\n");
+      const noteText = [newNote.trim(), imgTags].filter(Boolean).join("\n");
+      const entry = `[${timestamp}]\n${noteText}`;
       const existing = prospect.notes?.trim() || "";
       const updated = existing ? `${existing}\n---\n${entry}` : entry;
 
@@ -507,6 +541,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
       });
       setProspect({ ...prospect, notes: updated });
       setNewNote("");
+      setPendingImages([]);
       setTimeout(fetchActivities, 500);
     } catch {
       console.error("Failed to save note");
@@ -1129,7 +1164,23 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                               </div>
                             </div>
                           ) : (
-                            <p className="whitespace-pre-wrap">{entry.text}</p>
+                            <div>
+                              {entry.text && <p className="whitespace-pre-wrap">{entry.text}</p>}
+                              {entry.images && entry.images.length > 0 && (
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                  {entry.images.map((url, imgIdx) => (
+                                    <a key={imgIdx} href={url} target="_blank" rel="noopener noreferrer">
+                                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                                      <img
+                                        src={url}
+                                        alt={`Attachment ${imgIdx + 1}`}
+                                        className="rounded-lg border max-h-48 object-cover cursor-zoom-in hover:opacity-90 transition-opacity"
+                                      />
+                                    </a>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
                           )}
                         </div>
                         {editingNoteIndex !== i && (
@@ -1182,18 +1233,60 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                   rows={3}
                   className="text-base sm:text-sm"
                 />
-                <Button
-                  onClick={handleAddNote}
-                  disabled={savingNotes || !newNote.trim()}
-                  size="sm"
-                >
-                  {savingNotes ? (
-                    <Loader2 className="mr-2 h-3 w-3 animate-spin" />
-                  ) : (
-                    <Plus className="mr-2 h-3 w-3" />
-                  )}
-                  Add Note
-                </Button>
+
+                {/* Pending image previews */}
+                {pendingImages.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {pendingImages.map((url, i) => (
+                      <div key={i} className="relative group">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={url} alt={`Pending ${i + 1}`} className="h-20 w-20 rounded-lg object-cover border" />
+                        <button
+                          onClick={() => setPendingImages((prev) => prev.filter((_, idx) => idx !== i))}
+                          className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Button
+                    onClick={handleAddNote}
+                    disabled={savingNotes || (!newNote.trim() && pendingImages.length === 0)}
+                    size="sm"
+                  >
+                    {savingNotes ? <Loader2 className="mr-2 h-3 w-3 animate-spin" /> : <Plus className="mr-2 h-3 w-3" />}
+                    Add Note
+                  </Button>
+
+                  {/* Image upload button */}
+                  <label className="cursor-pointer">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                      onChange={async (e) => {
+                        const files = Array.from(e.target.files || []);
+                        for (const file of files) await handleImageUpload(file);
+                        e.target.value = "";
+                      }}
+                    />
+                    <span className={`inline-flex items-center gap-1.5 rounded-md border border-input bg-background px-3 py-1.5 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors ${uploadingImage ? "opacity-50 pointer-events-none" : ""}`}>
+                      {uploadingImage ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      )}
+                      {uploadingImage ? "Uploading…" : "Add Photo"}
+                    </span>
+                  </label>
+                </div>
               </div>
             </CardContent>
           </Card>
