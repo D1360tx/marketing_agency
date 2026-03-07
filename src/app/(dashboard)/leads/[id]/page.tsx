@@ -1375,9 +1375,9 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="relative space-y-0">
+                <div className="relative space-y-0 overflow-hidden">
                   {activities.map((act, i) => (
-                    <div key={act.id} className="flex gap-3 pb-4">
+                    <div key={act.id} className="flex gap-3 pb-4 min-w-0">
                       <div className="flex flex-col items-center">
                         <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border bg-background text-muted-foreground mt-0.5">
                           <ActivityIcon type={act.activity_type} />
@@ -1386,8 +1386,10 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                           <div className="w-px flex-1 bg-border mt-1" />
                         )}
                       </div>
-                      <div className="flex-1 pb-1">
-                        <p className="text-sm">{act.description}</p>
+                      <div className="flex-1 min-w-0 pb-1">
+                        <p className="text-sm break-words">
+                          {act.description?.replace(/\[img:https?:\/\/[^\]]+\]/g, "").replace(/\s+/g, " ").trim()}
+                        </p>
                         <p className="text-xs text-muted-foreground">
                           {new Date(act.created_at).toLocaleString()}
                         </p>

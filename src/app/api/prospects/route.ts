@@ -93,11 +93,14 @@ export async function PATCH(request: Request) {
       // Strip the timestamp header line to get just the note body
       const lines = newEntry.split("\n");
       const noteBody = lines.length > 1 ? lines.slice(1).join("\n").trim() : newEntry;
+      const cleanBody = noteBody.replace(/\[img:https?:\/\/[^\]]+\]/g, "").trim();
+      const attachmentCount = (noteBody.match(/\[img:/g) || []).length;
+      const suffix = attachmentCount > 0 ? ` (${attachmentCount} photo${attachmentCount > 1 ? "s" : ""})` : "";
       await logActivity(supabase, {
         prospect_id: id,
         user_id: user.id,
         activity_type: "notes_updated",
-        description: `Note added: ${noteBody.slice(0, 200)}${noteBody.length > 200 ? "…" : ""}`,
+        description: `Note added: ${cleanBody.slice(0, 200)}${cleanBody.length > 200 ? "…" : ""}${suffix}`,
       });
     }
 
