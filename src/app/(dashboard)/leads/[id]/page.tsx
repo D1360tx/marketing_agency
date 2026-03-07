@@ -125,12 +125,11 @@ interface ProspectMessage {
 }
 
 // Parse note log from plain text (entries separated by \n---\n)
-function parseNoteLog(raw: string | null): Array<{ timestamp: string; text: string; images?: string[] }> {
+function parseNoteLog(raw: string | null): Array<{ timestamp: string; text: string; rawBody: string; images?: string[] }> {
   if (!raw) return [];
   const entries = raw.split("\n---\n").filter(Boolean);
   return entries.map((entry) => {
     const lines = entry.trim().split("\n");
-    // First line may be a timestamp header like "[2024-01-15 10:30 AM]"
     const headerMatch = lines[0]?.match(/^\[(.+)\]$/);
     const body = headerMatch ? lines.slice(1).join("\n").trim() : entry.trim();
     // Extract [img:URL] tags
@@ -142,6 +141,7 @@ function parseNoteLog(raw: string | null): Array<{ timestamp: string; text: stri
     return {
       timestamp: headerMatch ? headerMatch[1] : "",
       text,
+      rawBody: body, // preserve original including [img:] tags for rebuilding
       ...(images.length > 0 ? { images } : {}),
     };
   });
@@ -462,10 +462,14 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
     setSavingNotes(true);
     try {
       const entries = parseNoteLog(prospect.notes);
-      entries[index] = { ...entries[index], text: editingNoteText.trim() };
-      // Rebuild raw notes string
+      // Rebuild body: keep existing [img:] tags, replace only the text portion
+      const imgTags = (entries[index].images || []).map((u) => `[img:${u}]`).join("\n");
+      const newBody = [editingNoteText.trim(), imgTags].filter(Boolean).join("\n");
       const updated = entries
-        .map((e) => (e.timestamp ? `[${e.timestamp}]\n${e.text}` : e.text))
+        .map((e, i) => {
+          const body = i === index ? newBody : e.rawBody;
+          return e.timestamp ? `[${e.timestamp}]\n${body}` : body;
+        })
         .join("\n---\n");
       await fetch("/api/prospects", {
         method: "PATCH",
@@ -489,7 +493,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
       const entries = parseNoteLog(prospect.notes);
       entries.splice(index, 1);
       const updated = entries
-        .map((e) => (e.timestamp ? `[${e.timestamp}]\n${e.text}` : e.text))
+        .map((e) => (e.timestamp ? `[${e.timestamp}]\n${e.rawBody}` : e.rawBody))
         .join("\n---\n");
       await fetch("/api/prospects", {
         method: "PATCH",
@@ -1142,9 +1146,9 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                     <div key={i} className="text-sm group">
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex-1 min-w-0">
-                          {entry.timestamp && (
-                            <p className="text-xs font-medium text-muted-foreground mb-0.5">{entry.timestamp}</p>
-                          )}
+                          <p className="text-xs font-semibold text-blue-600 mb-1">
+                            {entry.timestamp || "Note (no date)"}
+                          </p>
                           {editingNoteIndex === i ? (
                             <div className="space-y-2 mt-1">
                               <Textarea
@@ -1543,26 +1547,18 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
       </div>
 
       {/* Image Lightbox */}
-      {lightboxUrl && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
-          onClick={() => setLightboxUrl(null)}
-        >
-          <button
-            className="absolute top-4 right-4 text-white bg-black/50 rounded-full w-10 h-10 flex items-center justify-center text-xl hover:bg-black/80"
-            onClick={() => setLightboxUrl(null)}
-          >
-            ×
-          </button>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={lightboxUrl}
-            alt="Full size"
-            className="max-w-full max-h-full rounded-lg object-contain"
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
-      )}
+      <Dialog open={!!lightboxUrl} onOpenChange={(open) => { if (!open) setLightboxUrl(null); }}>
+        <DialogContent className="max-w-screen-lg w-full p-2 bg-black border-0">
+          {lightboxUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={lightboxUrl}
+              alt="Full size attachment"
+              className="w-full h-auto max-h-[85vh] object-contain rounded-lg"
+            />
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Win/Loss Dialog */}
       <Dialog open={showLossDialog} onOpenChange={(open) => { if (!open) { setShowLossDialog(false); setPendingStatus(null); } }}>
