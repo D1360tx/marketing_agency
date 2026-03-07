@@ -1142,7 +1142,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
             <CardContent className="space-y-4">
               {/* Existing note log */}
               {noteLog.length > 0 && (
-                <div className="space-y-3 max-h-72 overflow-y-auto rounded-lg border bg-muted/30 p-3">
+                <div className="space-y-3 max-h-72 overflow-y-auto overflow-x-hidden rounded-lg border bg-muted/30 p-3">
                   {noteLog.map((entry, i) => (
                     <div key={i} className="text-sm group">
                       <div className="flex items-start justify-between gap-2">
@@ -1175,12 +1175,12 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                               {entry.images && entry.images.length > 0 && (
                                 <div className="flex flex-wrap gap-2 mt-2">
                                   {entry.images.map((url, imgIdx) => (
-                                    <button key={imgIdx} onClick={() => setLightboxUrl(url)} className="block">
+                                    <button key={imgIdx} onClick={() => setLightboxUrl(url)} className="block w-full">
                                       {/* eslint-disable-next-line @next/next/no-img-element */}
                                       <img
                                         src={url}
                                         alt={`Attachment ${imgIdx + 1}`}
-                                        className="rounded-lg border max-h-40 object-cover cursor-zoom-in hover:opacity-90 transition-opacity"
+                                        className="rounded-lg border max-h-48 max-w-full w-full object-cover cursor-zoom-in hover:opacity-90 transition-opacity"
                                       />
                                     </button>
                                   ))}
@@ -1563,14 +1563,15 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
           </div>
           {/* Image — tap background to close */}
           <div
-            className="flex-1 flex items-center justify-center p-4 min-h-0"
+            className="flex-1 flex items-center justify-center p-4 overflow-hidden"
             onClick={() => setLightboxUrl(null)}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={lightboxUrl}
               alt="Full size attachment"
-              className="max-w-full max-h-full object-contain rounded-lg"
+              style={{ maxWidth: "calc(100vw - 2rem)", maxHeight: "calc(100vh - 80px)" }}
+              className="w-auto h-auto object-contain rounded-lg"
               onClick={(e) => e.stopPropagation()}
             />
           </div>
