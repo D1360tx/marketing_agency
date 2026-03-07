@@ -913,14 +913,14 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Left: Contact info + Notes + Messages + Activity */}
-        <div className="space-y-6 lg:col-span-2">
+        <div className="space-y-6 lg:col-span-2 min-w-0 overflow-hidden">
           {/* Contact info */}
           <Card>
             <CardHeader>
               <CardTitle>Contact Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2 min-w-0">
                 {/* Phone */}
                 {editing === "phone" ? (
                   <div className="flex items-center gap-2 rounded-lg border p-3">
@@ -990,11 +990,11 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                   </div>
                 ) : (
                   <div className="group flex items-center gap-2">
-                    <a href={prospect.email ? `mailto:${prospect.email}` : undefined} className="flex flex-1 items-center gap-3 rounded-lg border p-3 hover:bg-muted/50">
-                      <Mail className="h-5 w-5 text-muted-foreground" />
-                      <div>
+                    <a href={prospect.email ? `mailto:${prospect.email}` : undefined} className="flex flex-1 min-w-0 items-center gap-3 rounded-lg border p-3 hover:bg-muted/50">
+                      <Mail className="h-5 w-5 shrink-0 text-muted-foreground" />
+                      <div className="min-w-0">
                         <p className="text-xs text-muted-foreground">Email</p>
-                        <p className="font-medium">{prospect.email || <span className="text-muted-foreground italic text-sm">Not set</span>}</p>
+                        <p className="font-medium truncate">{prospect.email || <span className="text-muted-foreground italic text-sm">Not set</span>}</p>
                       </div>
                     </a>
                     <button
@@ -1008,13 +1008,13 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                 )}
 
                 {prospect.website_url && (
-                  <a href={prospect.website_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-lg border p-3 hover:bg-muted/50">
-                    <Globe className="h-5 w-5 text-muted-foreground" />
-                    <div>
+                  <a href={prospect.website_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-lg border p-3 hover:bg-muted/50 min-w-0">
+                    <Globe className="h-5 w-5 shrink-0 text-muted-foreground" />
+                    <div className="min-w-0">
                       <p className="text-xs text-muted-foreground">Website</p>
-                      <p className="flex items-center gap-1 font-medium">
+                      <p className="flex items-center gap-1 font-medium truncate">
                         {prospect.website_url.replace(/^https?:\/\//, "").slice(0, 30)}
-                        <ExternalLink className="h-3 w-3" />
+                        <ExternalLink className="h-3 w-3 shrink-0" />
                       </p>
                     </div>
                   </a>

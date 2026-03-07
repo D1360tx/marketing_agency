@@ -122,5 +122,13 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Prevent horizontal scroll on mobile — all overflow must be contained within components */
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+  /* Images never exceed their container */
+  img {
+    max-width: 100%;
+    height: auto;
   }
 }
