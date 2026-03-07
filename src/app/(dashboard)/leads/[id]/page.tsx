@@ -1170,23 +1170,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                               </div>
                             </div>
                           ) : (
-                            <div>
-                              {entry.text && <p className="whitespace-pre-wrap">{entry.text}</p>}
-                              {entry.images && entry.images.length > 0 && (
-                                <div className="flex flex-wrap gap-2 mt-2">
-                                  {entry.images.map((url, imgIdx) => (
-                                    <button key={imgIdx} onClick={() => setLightboxUrl(url)} className="block w-full">
-                                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                                      <img
-                                        src={url}
-                                        alt={`Attachment ${imgIdx + 1}`}
-                                        className="rounded-lg border max-h-48 max-w-full w-full object-cover cursor-zoom-in hover:opacity-90 transition-opacity"
-                                      />
-                                    </button>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
+                            <p className="whitespace-pre-wrap">{entry.text || <span className="text-muted-foreground italic text-xs">Photo only</span>}</p>
                           )}
                         </div>
                         {editingNoteIndex !== i && (
@@ -1213,6 +1197,29 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                   ))}
                 </div>
               )}
+
+              {/* Attachment thumbnails — all images across all notes */}
+              {(() => {
+                const allImages = noteLog.flatMap((e) => e.images || []);
+                if (allImages.length === 0) return null;
+                return (
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-2">📎 Attachments ({allImages.length})</p>
+                    <div className="flex flex-wrap gap-2">
+                      {allImages.map((url, i) => (
+                        <button key={i} onClick={() => setLightboxUrl(url)} className="shrink-0">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={url}
+                            alt={`Attachment ${i + 1}`}
+                            className="h-16 w-16 rounded-lg border object-cover hover:opacity-80 active:opacity-60 transition-opacity cursor-zoom-in"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Quick insert templates */}
               <div className="flex flex-wrap gap-1.5">
