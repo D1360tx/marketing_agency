@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, use } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -1546,19 +1547,36 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
         </div>
       </div>
 
-      {/* Image Lightbox */}
-      <Dialog open={!!lightboxUrl} onOpenChange={(open) => { if (!open) setLightboxUrl(null); }}>
-        <DialogContent className="max-w-screen-lg w-full p-2 bg-black border-0">
-          {lightboxUrl && (
-            // eslint-disable-next-line @next/next/no-img-element
+      {/* Image Lightbox — portal to document.body, bypasses layout stacking */}
+      {lightboxUrl && typeof document !== "undefined" && createPortal(
+        <div className="fixed inset-0 z-[9999] bg-black flex flex-col">
+          {/* Header */}
+          <div className="flex items-center justify-between px-4 py-3 shrink-0">
+            <span className="text-white/60 text-sm">Tap × to close</span>
+            <button
+              onClick={() => setLightboxUrl(null)}
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-white/20 text-white text-2xl leading-none hover:bg-white/30 active:bg-white/40"
+              aria-label="Close"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+          {/* Image — tap background to close */}
+          <div
+            className="flex-1 flex items-center justify-center p-4 min-h-0"
+            onClick={() => setLightboxUrl(null)}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={lightboxUrl}
               alt="Full size attachment"
-              className="w-full h-auto max-h-[85vh] object-contain rounded-lg"
+              className="max-w-full max-h-full object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
             />
-          )}
-        </DialogContent>
-      </Dialog>
+          </div>
+        </div>,
+        document.body
+      )}
 
       {/* Win/Loss Dialog */}
       <Dialog open={showLossDialog} onOpenChange={(open) => { if (!open) { setShowLossDialog(false); setPendingStatus(null); } }}>
