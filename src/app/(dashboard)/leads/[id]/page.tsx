@@ -1387,10 +1387,36 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                         )}
                       </div>
                       <div className="flex-1 min-w-0 pb-1">
-                        <p className="text-sm break-words">
-                          {act.description?.replace(/\[img:https?:\/\/[^\]]+\]/g, "").replace(/\s+/g, " ").trim()}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
+                        {(() => {
+                          const raw = act.description || "";
+                          const photoMatch = raw.match(/\[photos:([^\]]+)\]/);
+                          const photoUrls = photoMatch ? photoMatch[1].split("|").filter(Boolean) : [];
+                          const cleanDesc = raw
+                            .replace(/\n?\[photos:[^\]]+\]/g, "")
+                            .replace(/\[img:https?:\/\/[^\]]+\]/g, "")
+                            .replace(/\s+/g, " ")
+                            .trim();
+                          return (
+                            <>
+                              <p className="text-sm break-words">{cleanDesc}</p>
+                              {photoUrls.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mt-1.5">
+                                  {photoUrls.map((url, pi) => (
+                                    <button key={pi} onClick={() => setLightboxUrl(url)} className="shrink-0">
+                                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                                      <img
+                                        src={url}
+                                        alt={`Screenshot ${pi + 1}`}
+                                        className="h-10 w-10 rounded object-cover border hover:opacity-80 transition-opacity cursor-zoom-in"
+                                      />
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
+                            </>
+                          );
+                        })()}
+                        <p className="text-xs text-muted-foreground mt-0.5">
                           {new Date(act.created_at).toLocaleString()}
                         </p>
                       </div>
