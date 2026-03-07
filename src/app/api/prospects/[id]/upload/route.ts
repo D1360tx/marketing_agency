@@ -1,16 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient as createServiceClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabase/server";
 
-const supabaseAdmin = createServiceClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Lazily create admin client inside each request (avoids module-level
+// evaluation during Next.js build when env vars aren't present).
+function getAdminClient() {
+  return createServiceClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // Auth check
+    const supabaseAuth = await createClient();
+    const {
+      data: { user },
+    } = await supabaseAuth.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = await params;
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
@@ -36,6 +51,8 @@ export async function POST(
 
     const arrayBuffer = await file.arrayBuffer();
     const buffer = new Uint8Array(arrayBuffer);
+
+    const supabaseAdmin = getAdminClient();
 
     const { error } = await supabaseAdmin.storage
       .from("prospect-attachments")

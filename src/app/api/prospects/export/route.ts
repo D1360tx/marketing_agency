@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createClient as createServiceClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabase/server";
 
 function normalizeTrade(businessType: string | null): string {
   if (!businessType) return "";
@@ -30,13 +31,25 @@ function escapeCsv(value: string | number | null | undefined): string {
 
 export async function GET(request: NextRequest) {
   try {
+    // Auth check — must be a logged-in user
+    const supabaseAuth = await createClient();
+    const {
+      data: { user },
+    } = await supabaseAuth.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { searchParams } = request.nextUrl;
     const sequence = searchParams.get("sequence");
     const minScore = searchParams.get("minScore");
     const trade = searchParams.get("trade");
     const city = searchParams.get("city");
 
-    const supabase = createClient(
+    // Use service role to bypass RLS for the export query, but only after
+    // confirming the caller is authenticated above.
+    const supabase = createServiceClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
@@ -45,7 +58,8 @@ export async function GET(request: NextRequest) {
       .from("prospects")
       .select("id, email, business_name, city, business_type, website_url, phone, lead_score")
       .not("email", "is", null)
-      .eq("status", "new");
+      .eq("status", "new")
+      .eq("user_id", user.id); // Scope to the authenticated user's data
 
     // Sequence filters
     if (sequence === "A") {
