@@ -302,6 +302,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
   // Image attachment state
   const [uploadingImage, setUploadingImage] = useState(false);
   const [pendingImages, setPendingImages] = useState<string[]>([]); // URLs staged before adding note
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
 
   // Inline edit state
   const [editing, setEditing] = useState<"phone" | "email" | "business_name" | null>(null);
@@ -1169,14 +1170,14 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                               {entry.images && entry.images.length > 0 && (
                                 <div className="flex flex-wrap gap-2 mt-2">
                                   {entry.images.map((url, imgIdx) => (
-                                    <a key={imgIdx} href={url} target="_blank" rel="noopener noreferrer">
+                                    <button key={imgIdx} onClick={() => setLightboxUrl(url)} className="block">
                                       {/* eslint-disable-next-line @next/next/no-img-element */}
                                       <img
                                         src={url}
                                         alt={`Attachment ${imgIdx + 1}`}
-                                        className="rounded-lg border max-h-48 object-cover cursor-zoom-in hover:opacity-90 transition-opacity"
+                                        className="rounded-lg border max-h-40 object-cover cursor-zoom-in hover:opacity-90 transition-opacity"
                                       />
-                                    </a>
+                                    </button>
                                   ))}
                                 </div>
                               )}
@@ -1184,20 +1185,20 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                           )}
                         </div>
                         {editingNoteIndex !== i && (
-                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                          <div className="flex gap-1 shrink-0 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                             <button
                               onClick={() => { setEditingNoteIndex(i); setEditingNoteText(entry.text); }}
-                              className="p-1 text-muted-foreground hover:text-foreground"
+                              className="p-1.5 rounded text-muted-foreground hover:text-foreground hover:bg-muted"
                               title="Edit note"
                             >
-                              <Pencil className="h-3 w-3" />
+                              <Pencil className="h-3.5 w-3.5" />
                             </button>
                             <button
                               onClick={() => handleDeleteNote(i)}
-                              className="p-1 text-muted-foreground hover:text-red-500"
+                              className="p-1.5 rounded text-muted-foreground hover:text-red-500 hover:bg-red-50"
                               title="Delete note"
                             >
-                              <Trash2 className="h-3 w-3" />
+                              <Trash2 className="h-3.5 w-3.5" />
                             </button>
                           </div>
                         )}
@@ -1540,6 +1541,28 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
           </Card>
         </div>
       </div>
+
+      {/* Image Lightbox */}
+      {lightboxUrl && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+          onClick={() => setLightboxUrl(null)}
+        >
+          <button
+            className="absolute top-4 right-4 text-white bg-black/50 rounded-full w-10 h-10 flex items-center justify-center text-xl hover:bg-black/80"
+            onClick={() => setLightboxUrl(null)}
+          >
+            ×
+          </button>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={lightboxUrl}
+            alt="Full size"
+            className="max-w-full max-h-full rounded-lg object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
 
       {/* Win/Loss Dialog */}
       <Dialog open={showLossDialog} onOpenChange={(open) => { if (!open) { setShowLossDialog(false); setPendingStatus(null); } }}>
