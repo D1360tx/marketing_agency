@@ -707,90 +707,105 @@ export default function LandingOpusPage() {
         {/*  PRICING                                                     */}
         {/* ============================================================ */}
         <section className="border-y border-gray-200 bg-gray-50 py-16 sm:py-24">
-          <div className="mx-auto max-w-3xl px-4 sm:px-6">
-            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg">
-              <div className="border-b border-gray-200 bg-gray-900 px-6 py-8 text-center sm:px-10">
-                <p className="text-sm font-semibold text-orange-400">
-                  One plan. Everything included.
-                </p>
-                <div className="mt-4 flex items-baseline justify-center gap-1">
-                  <span className="text-5xl font-extrabold text-white">
-                    $399
-                  </span>
-                  <span className="text-lg font-semibold text-gray-400">
-                    /mo
-                  </span>
-                </div>
-                <p className="mt-3 text-sm text-gray-400">
-                  Month-to-month. Cancel anytime. No setup fees.
-                </p>
-              </div>
-
-              <div className="p-6 sm:p-10">
-                <ul className="space-y-4">
-                  {[
-                    {
-                      title: "Professional website",
-                      desc: "Custom-built for your trade, your city, your customers",
-                    },
-                    {
-                      title: "Google review automation",
-                      desc: "Automated requests after every job, 53+ reviews in 60 days avg",
-                    },
-                    {
-                      title: "Local SEO optimization",
-                      desc: "City + service pages, Google Business Profile tuning",
-                    },
-                    {
-                      title: "Ongoing updates",
-                      desc: "Content updates, speed monitoring, ranking tracking",
-                    },
-                    {
-                      title: "Direct support from real people",
-                      desc: "No ticket queues. Call or text your account manager.",
-                    },
-                    {
-                      title: "Exclusive territory",
-                      desc: `Only 1 business per trade ${areaIn}. Your spot is protected.`,
-                    },
-                  ].map((item, i) => (
-                    <li key={i} className="flex gap-3">
-                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100">
-                        <Check className="h-3.5 w-3.5 text-emerald-700" />
-                      </div>
-                      <div>
-                        <span className="text-sm font-semibold text-gray-900">
-                          {item.title}
-                        </span>
-                        <span className="text-sm text-gray-500">
-                          {" -- "}
-                          {item.desc}
-                        </span>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="mt-8 rounded-xl bg-orange-50 p-4 text-center">
-                  <p className="text-sm font-semibold text-orange-800">
-                    Our guarantee: measurable results in 30 days or your first
-                    month is free.
-                  </p>
-                  <p className="mt-1 text-xs text-orange-600">
-                    We don&apos;t win unless you do. That&apos;s the only way
-                    this works.
-                  </p>
-                </div>
-
-                <a
-                  href="#get-started"
-                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-orange-600 py-4 text-base font-bold text-white shadow-sm transition hover:bg-orange-700"
-                >
-                  Get Your Free Audit
-                  <ArrowRight className="h-5 w-5" />
-                </a>
-              </div>
+          <div className="mx-auto max-w-5xl px-4 sm:px-6">
+            {/* Intro */}
+            <div className="mb-10 text-center">
+              <p className="mx-auto max-w-2xl text-base text-gray-600">
+                Every plan includes a professionally built website at no extra charge. No setup fees. No long-term contracts. And when you sign up, we lock in your trade {areaIn} — we never take on a direct competitor in your market. The difference between the two plans is how aggressively you want to go after the top spot.
+              </p>
             </div>
+
+            {/* Two-column cards */}
+            <div className="grid gap-8 md:grid-cols-2 md:items-start">
+
+              {/* Plan 1 — The Full System */}
+              <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg">
+                <div className="border-b border-gray-200 bg-gray-900 px-6 py-8 text-center sm:px-10">
+                  <p className="text-sm font-semibold text-orange-400">The Full System</p>
+                  <div className="mt-4 flex items-baseline justify-center gap-1">
+                    <span className="text-5xl font-extrabold text-white">$399</span>
+                    <span className="text-lg font-semibold text-gray-400">/mo</span>
+                  </div>
+                  <p className="mt-3 text-sm text-gray-400">No setup fee. No contract. Cancel anytime.</p>
+                </div>
+                <div className="p-6 sm:p-8">
+                  <div className="mb-5 rounded-xl bg-orange-50 p-4">
+                    <p className="text-sm font-semibold text-orange-800">We build your website free.</p>
+                    <p className="mt-1 text-xs text-orange-700">Most agencies charge $1,000–$2,000 just to get started. You pay nothing upfront. Your site goes live in about a week.</p>
+                  </div>
+                  <ul className="space-y-4">
+                    {[
+                      { title: "Professional website — built free", desc: "Hosted and managed for you (worth $1,000–$2,000 to build, $99–$199/mo elsewhere)" },
+                      { title: "Google review automation", desc: "SMS + email requests after every job — reviews stack while you sleep" },
+                      { title: "Missed call text-back", desc: "Miss a call? An auto-text goes out in seconds so the lead doesn't call your competitor" },
+                      { title: "Monthly performance report", desc: "Reviews gained, ranking movement, call volume — proof it's working" },
+                      { title: "Exclusive territory", desc: `One business per trade ${areaIn}. Your spot is protected.` },
+                    ].map((item, i) => (
+                      <li key={i} className="flex gap-3">
+                        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100">
+                          <Check className="h-3.5 w-3.5 text-emerald-700" />
+                        </div>
+                        <div>
+                          <span className="text-sm font-semibold text-gray-900">{item.title}</span>
+                          <span className="text-sm text-gray-500"> — {item.desc}</span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-6 text-xs text-gray-500 text-center">For contractors who want to look like the obvious choice online and have their phone ring more.</p>
+                  <a href="#get-started" className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-orange-600 py-4 text-base font-bold text-white shadow-sm transition hover:bg-orange-700">
+                    Claim Your Spot <ArrowRight className="h-5 w-5" />
+                  </a>
+                </div>
+              </div>
+
+              {/* Plan 2 — Market Dominator */}
+              <div className="overflow-hidden rounded-2xl border-2 border-violet-500 bg-white shadow-xl md:scale-[1.02]">
+                <div className="border-b border-violet-800 bg-gray-900 px-6 py-8 text-center sm:px-10 relative">
+                  <span className="absolute top-3 right-3 rounded-full bg-violet-500 px-3 py-1 text-xs font-bold text-white">Best Value</span>
+                  <p className="text-sm font-semibold text-violet-400">Market Dominator</p>
+                  <div className="mt-4 flex items-baseline justify-center gap-1">
+                    <span className="text-5xl font-extrabold text-white">$697</span>
+                    <span className="text-lg font-semibold text-gray-400">/mo</span>
+                  </div>
+                  <p className="mt-3 text-sm text-gray-400">No setup fee. No contract. Cancel anytime.</p>
+                </div>
+                <div className="p-6 sm:p-8">
+                  <p className="mb-5 text-sm text-gray-600">Everything in The Full System, plus we go after the top spot in your market and don&apos;t stop until you own it.</p>
+                  <ul className="space-y-4">
+                    {[
+                      { title: "Everything in The Full System", desc: "Website, review automation, missed call text-back, monthly report, exclusive territory" },
+                      { title: "Full SEO audit", desc: "Exactly where competitors beat you and what we're doing about it — no vague reports" },
+                      { title: "Google Business Profile deep build-out", desc: "Right categories, photos, descriptions — all the signals Google uses to rank you in the Map Pack" },
+                      { title: "Citation cleanup across 30+ directories", desc: "So Google knows exactly who you are, where you are, and what you do" },
+                      { title: "Local backlink gap analysis", desc: "Who's linking to your competitors but not you — and how we fix that" },
+                      { title: "Quarterly strategy call", desc: "Rankings, review growth, and your next 90 days" },
+                    ].map((item, i) => (
+                      <li key={i} className="flex gap-3">
+                        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-100">
+                          <Check className="h-3.5 w-3.5 text-violet-700" />
+                        </div>
+                        <div>
+                          <span className="text-sm font-semibold text-gray-900">{item.title}</span>
+                          <span className="text-sm text-gray-500"> — {item.desc}</span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-6 text-xs text-gray-500 text-center">For contractors who want to lock down the number one spot before a competitor does.</p>
+                  <a href="#get-started" className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-violet-600 py-4 text-base font-bold text-white shadow-sm transition hover:bg-violet-700">
+                    Own My Market <ArrowRight className="h-5 w-5" />
+                  </a>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Trial nudge */}
+            <p className="mt-8 text-center text-sm text-gray-500">
+              Not ready to commit at full price?{" "}
+              <a href="#get-started" className="font-semibold text-orange-600 hover:underline">Ask about our first-month trial offer.</a>
+            </p>
           </div>
         </section>
 
