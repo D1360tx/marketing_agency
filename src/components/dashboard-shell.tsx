@@ -27,6 +27,7 @@ import {
   BarChart3,
   Star,
   CheckSquare,
+  BookOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -40,6 +41,7 @@ const navigation = [
   { name: "Generator", href: "/generator", icon: Globe },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
   { name: "Reviews", href: "/reviews", icon: Star },
+  { name: "Playbook", href: "/playbook", icon: BookOpen },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
