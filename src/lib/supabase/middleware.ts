@@ -31,6 +31,7 @@ export async function updateSession(request: NextRequest) {
     "/signup",
     "/auth",
     "/landing",
+    "/landing_opus",
     "/es",
     "/api/track",
     "/api/unsubscribe",
@@ -52,7 +53,7 @@ export async function updateSession(request: NextRequest) {
 
     if (!user) {
       const url = request.nextUrl.clone();
-      url.pathname = "/landing";
+      url.pathname = "/landing_opus";
       return NextResponse.redirect(url);
     }
     // Authenticated users see the dashboard
