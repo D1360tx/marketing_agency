@@ -25,10 +25,44 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  // Public routes that don't require authentication
+  // Root / always redirects to landing page — no auth check needed
+  if (request.nextUrl.pathname === "/") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/landing_opus";
+    return NextResponse.redirect(url);
+  }
+
+  // /app routes require auth
+  if (request.nextUrl.pathname.startsWith("/app")) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
+    }
+    return supabaseResponse;
+  }
+
+  // Login/signup redirect to /app if already logged in
+  if (
+    request.nextUrl.pathname.startsWith("/login") ||
+    request.nextUrl.pathname.startsWith("/signup")
+  ) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/app";
+      return NextResponse.redirect(url);
+    }
+    return supabaseResponse;
+  }
+
+  // Public routes — no auth needed
   const publicRoutes = [
-    "/login",
-    "/signup",
     "/auth",
     "/landing",
     "/landing_opus",
@@ -46,46 +80,8 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith(route)
   );
 
-  // Landing page: always show to visitors at /
-  // Check auth AFTER public route check to avoid unnecessary API calls
-  if (request.nextUrl.pathname === "/") {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/landing_opus";
-      return NextResponse.redirect(url);
-    }
-    // Authenticated users see the dashboard
-    return supabaseResponse;
-  }
-
-  // Public routes — no auth needed
   if (isPublicRoute) {
     return supabaseResponse;
-  }
-
-  // Everything else requires auth
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
-  }
-
-  // Redirect authenticated users away from auth pages
-  if (
-    request.nextUrl.pathname.startsWith("/login") ||
-    request.nextUrl.pathname.startsWith("/signup")
-  ) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/";
-    return NextResponse.redirect(url);
   }
 
   return supabaseResponse;

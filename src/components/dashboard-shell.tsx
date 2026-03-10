@@ -32,17 +32,17 @@ import {
 import { cn } from "@/lib/utils";
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Prospector", href: "/prospector", icon: Search },
-  { name: "Leads", href: "/leads", icon: Users },
-  { name: "Tasks", href: "/tasks", icon: CheckSquare },
-  { name: "Campaigns", href: "/campaigns", icon: Mail },
-  { name: "Sequences", href: "/sequences", icon: Zap },
-  { name: "Generator", href: "/generator", icon: Globe },
-  { name: "Analytics", href: "/analytics", icon: BarChart3 },
-  { name: "Reviews", href: "/reviews", icon: Star },
-  { name: "Playbook", href: "/playbook", icon: BookOpen },
-  { name: "Settings", href: "/settings", icon: Settings },
+  { name: "Dashboard", href: "/app", icon: LayoutDashboard },
+  { name: "Prospector", href: "/app/prospector", icon: Search },
+  { name: "Leads", href: "/app/leads", icon: Users },
+  { name: "Tasks", href: "/app/tasks", icon: CheckSquare },
+  { name: "Campaigns", href: "/app/campaigns", icon: Mail },
+  { name: "Sequences", href: "/app/sequences", icon: Zap },
+  { name: "Generator", href: "/app/generator", icon: Globe },
+  { name: "Analytics", href: "/app/analytics", icon: BarChart3 },
+  { name: "Reviews", href: "/app/reviews", icon: Star },
+  { name: "Playbook", href: "/app/playbook", icon: BookOpen },
+  { name: "Settings", href: "/app/settings", icon: Settings },
 ];
 
 function useTasksCount() {
@@ -93,8 +93,8 @@ function SidebarContent({ pathname }: { pathname: string }) {
       <nav className="flex-1 space-y-1 px-3 py-4">
         {navigation.map((item) => {
           const isActive =
-            item.href === "/"
-              ? pathname === "/"
+            item.href === "/app"
+              ? pathname === "/app"
               : pathname.startsWith(item.href);
           return (
             <Link
