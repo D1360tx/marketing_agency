@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Loader2, Save, Eye, EyeOff } from "lucide-react";
+import { Loader2, Save, Eye, EyeOff, Webhook } from "lucide-react";
 import { toast } from "sonner";
 
 interface SettingsForm {
@@ -50,6 +50,8 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showKeys, setShowKeys] = useState<Record<string, boolean>>({});
+  const [webhookUrl, setWebhookUrl] = useState("");
+  const [savingWebhook, setSavingWebhook] = useState(false);
 
   useEffect(() => {
     async function fetchSettings() {
@@ -57,6 +59,7 @@ export default function SettingsPage() {
         const res = await fetch("/api/settings");
         const data = await res.json();
         if (data.settings) {
+          setWebhookUrl(data.settings.webhook_url || "");
           setSettings({
             brave_api_key: data.settings.brave_api_key || "",
             outscraper_api_key: data.settings.outscraper_api_key || "",
@@ -101,6 +104,26 @@ export default function SettingsPage() {
       toast.error("Failed to save settings");
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleWebhookSave() {
+    setSavingWebhook(true);
+    try {
+      const res = await fetch("/api/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...settings, webhook_url: webhookUrl }),
+      });
+      if (res.ok) {
+        toast.success("Webhook URL saved");
+      } else {
+        toast.error("Failed to save webhook URL");
+      }
+    } catch {
+      toast.error("Failed to save webhook URL");
+    } finally {
+      setSavingWebhook(false);
     }
   }
 
@@ -361,6 +384,50 @@ export default function SettingsPage() {
                   }))
                 }
               />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Webhook className="h-5 w-5" />
+              Integrations
+            </CardTitle>
+            <CardDescription>
+              Connect Booked Out to external tools via webhooks
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="webhook_url">Webhook URL</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="webhook_url"
+                  type="url"
+                  placeholder="https://hooks.zapier.com/hooks/catch/..."
+                  value={webhookUrl}
+                  onChange={(e) => setWebhookUrl(e.target.value)}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleWebhookSave}
+                  disabled={savingWebhook}
+                >
+                  {savingWebhook ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    "Save"
+                  )}
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Fires when a lead is converted to <strong>Client</strong> status. Connect to GHL, Zapier, Make.com, or any webhook endpoint.
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Payload includes: business name, contact, email, phone, city, website.
+              </p>
             </div>
           </CardContent>
         </Card>

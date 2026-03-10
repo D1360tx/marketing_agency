@@ -32,6 +32,8 @@ export async function updateSession(request: NextRequest) {
     "/auth",
     "/landing",
     "/landing_opus",
+    "/landing_gemini",
+    "/landing_gpt1",
     "/es",
     "/api/track",
     "/api/unsubscribe",

@@ -58,6 +58,7 @@ export async function POST(request: Request) {
           sender_name: body.sender_name || null,
           gemini_api_key: body.gemini_api_key || null,
           anthropic_api_key: body.anthropic_api_key || null,
+          webhook_url: body.webhook_url || null,
           updated_at: new Date().toISOString(),
         },
         { onConflict: "user_id" }

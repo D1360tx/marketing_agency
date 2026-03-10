@@ -407,6 +407,34 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
       // Show deal dialog when converting to client
       if (status === "client") {
         setShowDealDialog(true);
+
+        // Fire webhook if configured
+        try {
+          const settingsRes = await fetch("/api/settings");
+          const { settings } = await settingsRes.json();
+          if (settings?.webhook_url) {
+            fetch(settings.webhook_url, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                event: "lead.converted",
+                timestamp: new Date().toISOString(),
+                prospect: {
+                  id: prospect.id,
+                  business_name: prospect.business_name,
+                  email: prospect.email,
+                  phone: prospect.phone,
+                  city: prospect.city,
+                  state: prospect.state,
+                  website: prospect.website_url,
+                  status: "client",
+                },
+              }),
+            }).catch(() => {}); // Fire and forget — don't block UI
+          }
+        } catch {
+          // Silently fail — webhook is best-effort
+        }
       }
     } catch {
       console.error("Failed to update status");
