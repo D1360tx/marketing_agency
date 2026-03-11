@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,6 +27,8 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Progress } from "@/components/ui/progress";
 import {
   WebsiteScoreBadge,
   NoWebsiteBadge,
@@ -45,6 +47,9 @@ import {
   Clock,
   Eye,
   TrendingUp,
+  Zap,
+  CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
 import type { Prospect, WebsiteAnalysis } from "@/types";
 
@@ -161,6 +166,76 @@ export default function ProspectorPage() {
 
   const [websiteFilter, setWebsiteFilter] = useState<"all" | "no_website" | "has_website">("all");
 
+  // --- Deep Scrape state ---
+  const [scrapeQuery, setScrapeQuery] = useState("");
+  const [scrapeLocation, setScrapeLocation] = useState("");
+  const [scrapeLimit, setScrapeLimit] = useState("60");
+  const [scrapeJobId, setScrapeJobId] = useState<string | null>(null);
+  const [scrapeStatus, setScrapeStatus] = useState<"idle" | "running" | "complete" | "error">("idle");
+  const [scrapeProgress, setScrapeProgress] = useState<string[]>([]);
+  const [scrapeTotal, setScrapeTotal] = useState(0);
+  const [scrapeImported, setScrapeImported] = useState(0);
+  const [scrapeError, setScrapeError] = useState<string | null>(null);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  async function handleDeepScrape(e: React.FormEvent) {
+    e.preventDefault();
+    setScrapeStatus("running");
+    setScrapeProgress([]);
+    setScrapeTotal(0);
+    setScrapeImported(0);
+    setScrapeError(null);
+    setScrapeJobId(null);
+
+    try {
+      const res = await fetch("/api/scraper/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: scrapeQuery,
+          location: scrapeLocation,
+          limit: parseInt(scrapeLimit) || 60,
+          enrich: true,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setScrapeStatus("error");
+        setScrapeError(data.error || "Failed to start scrape");
+        return;
+      }
+      setScrapeJobId(data.jobId);
+
+      // Poll for status
+      pollRef.current = setInterval(async () => {
+        try {
+          const statusRes = await fetch(`/api/scraper/status?jobId=${data.jobId}`);
+          const job = await statusRes.json();
+          setScrapeProgress(job.progress || []);
+          setScrapeTotal(job.total || 0);
+          if (job.status === "complete") {
+            setScrapeStatus("complete");
+            setScrapeImported(job.importedCount || 0);
+            if (pollRef.current) clearInterval(pollRef.current);
+          } else if (job.status === "error") {
+            setScrapeStatus("error");
+            setScrapeError(job.error || "Scrape failed");
+            if (pollRef.current) clearInterval(pollRef.current);
+          }
+        } catch {
+          // ignore transient poll errors
+        }
+      }, 3000);
+    } catch {
+      setScrapeStatus("error");
+      setScrapeError("Failed to start scrape. Check server logs.");
+    }
+  }
+
+  useEffect(() => {
+    return () => { if (pollRef.current) clearInterval(pollRef.current); };
+  }, []);
+
   const analyzedCount = Object.keys(analyses).length;
   const noWebsiteCount = prospects.filter((p) => !p.website_url).length;
   const poorGradeCount = Object.values(analyses).filter(
@@ -217,46 +292,207 @@ export default function ProspectorPage() {
         </p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Search Google Maps</CardTitle>
-          <CardDescription>
-            Enter a business type and location to find prospects
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSearch} className="flex flex-col gap-4 sm:flex-row sm:items-end">
-            <div className="flex-1 space-y-2">
-              <Label htmlFor="query">Business Type</Label>
-              <Input
-                id="query"
-                placeholder="e.g. plumber, dentist, restaurant"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                required
-              />
-            </div>
-            <div className="flex-1 space-y-2">
-              <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
-                placeholder="e.g. Austin, TX"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                required
-              />
-            </div>
-            <Button type="submit" disabled={loading} className="sm:w-auto">
-              {loading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Search className="mr-2 h-4 w-4" />
+      <Tabs defaultValue="quick">
+        <TabsList className="mb-4">
+          <TabsTrigger value="quick">
+            <Search className="mr-2 h-4 w-4" />
+            Quick Search
+          </TabsTrigger>
+          <TabsTrigger value="deep">
+            <Zap className="mr-2 h-4 w-4" />
+            Deep Scrape
+          </TabsTrigger>
+        </TabsList>
+
+        {/* ── Quick Search (existing Brave search) ── */}
+        <TabsContent value="quick">
+          <Card>
+            <CardHeader>
+              <CardTitle>Quick Search</CardTitle>
+              <CardDescription>
+                Fast search via Brave — up to 20 results, instant results
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSearch} className="flex flex-col gap-4 sm:flex-row sm:items-end">
+                <div className="flex-1 space-y-2">
+                  <Label htmlFor="query">Business Type</Label>
+                  <Input
+                    id="query"
+                    placeholder="e.g. plumber, dentist, restaurant"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="flex-1 space-y-2">
+                  <Label htmlFor="location">Location</Label>
+                  <Input
+                    id="location"
+                    placeholder="e.g. Austin, TX"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    required
+                  />
+                </div>
+                <Button type="submit" disabled={loading} className="sm:w-auto">
+                  {loading ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Search className="mr-2 h-4 w-4" />
+                  )}
+                  {loading ? "Searching..." : "Search"}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* ── Deep Scrape (Google Maps scraper) ── */}
+        <TabsContent value="deep">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Zap className="h-5 w-5 text-yellow-500" />
+                Deep Scrape
+              </CardTitle>
+              <CardDescription>
+                Full Google Maps scraper — up to 60 results with phone, address, email, and social links.
+                Runs in the background (~35-45 min for 60 enriched results).
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <form onSubmit={handleDeepScrape} className="flex flex-col gap-4 sm:flex-row sm:items-end">
+                <div className="flex-1 space-y-2">
+                  <Label htmlFor="scrape-query">Business Type</Label>
+                  <Input
+                    id="scrape-query"
+                    placeholder="e.g. HVAC contractors"
+                    value={scrapeQuery}
+                    onChange={(e) => setScrapeQuery(e.target.value)}
+                    required
+                    disabled={scrapeStatus === "running"}
+                  />
+                </div>
+                <div className="flex-1 space-y-2">
+                  <Label htmlFor="scrape-location">Location</Label>
+                  <Input
+                    id="scrape-location"
+                    placeholder="e.g. Austin TX"
+                    value={scrapeLocation}
+                    onChange={(e) => setScrapeLocation(e.target.value)}
+                    required
+                    disabled={scrapeStatus === "running"}
+                  />
+                </div>
+                <div className="w-28 space-y-2">
+                  <Label htmlFor="scrape-limit">Results</Label>
+                  <Input
+                    id="scrape-limit"
+                    type="number"
+                    min="5"
+                    max="120"
+                    value={scrapeLimit}
+                    onChange={(e) => setScrapeLimit(e.target.value)}
+                    disabled={scrapeStatus === "running"}
+                  />
+                </div>
+                <Button
+                  type="submit"
+                  disabled={scrapeStatus === "running"}
+                  className="sm:w-auto bg-yellow-500 hover:bg-yellow-600 text-black font-semibold"
+                >
+                  {scrapeStatus === "running" ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Zap className="mr-2 h-4 w-4" />
+                  )}
+                  {scrapeStatus === "running" ? "Scraping..." : "Start Scrape"}
+                </Button>
+              </form>
+
+              {/* Progress area */}
+              {scrapeStatus === "running" && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground flex items-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Scraping Google Maps + visiting websites for email &amp; socials...
+                    </span>
+                    {scrapeTotal > 0 && (
+                      <span className="font-medium">{scrapeTotal} found</span>
+                    )}
+                  </div>
+                  {scrapeTotal > 0 && (
+                    <Progress value={(scrapeTotal / parseInt(scrapeLimit)) * 100} className="h-2" />
+                  )}
+                  {scrapeProgress.length > 0 && (
+                    <div className="bg-muted rounded-md p-3 max-h-36 overflow-y-auto font-mono text-xs space-y-0.5">
+                      {scrapeProgress.slice(-12).map((line, i) => (
+                        <div key={i} className="text-muted-foreground">{line}</div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               )}
-              {loading ? "Searching..." : "Search"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+
+              {/* Complete */}
+              {scrapeStatus === "complete" && (
+                <div className="flex items-center gap-3 p-4 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
+                  <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0" />
+                  <div>
+                    <p className="font-medium text-green-800 dark:text-green-300">Scrape complete!</p>
+                    <p className="text-sm text-green-700 dark:text-green-400">
+                      {scrapeImported} leads imported to your CRM.{" "}
+                      <button
+                        onClick={() => setScrapeStatus("idle")}
+                        className="underline hover:no-underline"
+                      >
+                        Run another scrape
+                      </button>
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Error */}
+              {scrapeStatus === "error" && (
+                <div className="flex items-center gap-3 p-4 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-800">
+                  <AlertCircle className="h-5 w-5 text-red-600 shrink-0" />
+                  <div>
+                    <p className="font-medium text-red-800 dark:text-red-300">Scrape failed</p>
+                    <p className="text-sm text-red-700 dark:text-red-400">{scrapeError}</p>
+                    <button
+                      onClick={() => setScrapeStatus("idle")}
+                      className="text-sm underline hover:no-underline text-red-700"
+                    >
+                      Try again
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Info banner */}
+              {scrapeStatus === "idle" && (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+                  {[
+                    { icon: <Phone className="h-4 w-4" />, label: "Phone", stat: "~99%" },
+                    { icon: <Globe className="h-4 w-4" />, label: "Website", stat: "~98%" },
+                    { icon: <Mail className="h-4 w-4" />, label: "Email", stat: "~60%" },
+                    { icon: <TrendingUp className="h-4 w-4" />, label: "Social Links", stat: "~80%" },
+                  ].map((item) => (
+                    <div key={item.label} className="flex flex-col items-center p-3 bg-muted rounded-lg gap-1">
+                      <div className="text-muted-foreground">{item.icon}</div>
+                      <span className="font-bold text-lg">{item.stat}</span>
+                      <span className="text-muted-foreground text-xs">{item.label} hit rate</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
       {error && (
         <div className="rounded-md bg-destructive/10 p-4 text-destructive">
