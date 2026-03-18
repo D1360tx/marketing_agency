@@ -23,9 +23,22 @@ export default async function DashboardPage() {
   const weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 7);
 
-  const [prospectsResult, campaignsResult, weekActivitiesResult, followUpsTodayResult, sourceDataResult, clientDataResult] =
+  const [
+    prospectsCountResult,
+    newLeadsCountResult,
+    clientsCountResult,
+    warmLeadsCountResult,
+    campaignsResult,
+    weekActivitiesResult,
+    followUpsTodayResult,
+    sourceDataResult,
+    clientDataResult,
+  ] =
     await Promise.all([
-      supabase.from("prospects").select("status", { count: "exact", head: false }),
+      supabase.from("prospects").select("*", { count: "exact", head: true }).eq("user_id", user?.id ?? ""),
+      supabase.from("prospects").select("*", { count: "exact", head: true }).eq("user_id", user?.id ?? "").eq("status", "new"),
+      supabase.from("prospects").select("*", { count: "exact", head: true }).eq("user_id", user?.id ?? "").eq("status", "client"),
+      supabase.from("prospects").select("*", { count: "exact", head: true }).eq("user_id", user?.id ?? "").in("status", ["interested", "follow_up"]),
       supabase.from("campaigns").select("sent_count", { count: "exact", head: false }),
       supabase
         .from("prospect_activities")
@@ -34,19 +47,19 @@ export default async function DashboardPage() {
         .gte("created_at", weekAgo.toISOString()),
       supabase
         .from("prospects")
-        .select("id", { count: "exact", head: false })
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user?.id ?? "")
         .eq("status", "follow_up")
         .lte("follow_up_date", new Date().toISOString().split("T")[0]),
-      supabase.from("prospects").select("source, status"),
-      supabase.from("prospects").select("deal_value").eq("status", "client"),
+      supabase.from("prospects").select("source, status").eq("user_id", user?.id ?? "").limit(5000),
+      supabase.from("prospects").select("deal_value").eq("user_id", user?.id ?? "").eq("status", "client"),
     ]);
 
-  const prospects = prospectsResult.data || [];
   const campaigns = campaignsResult.data || [];
 
-  const totalProspects = prospects.length;
-  const newLeads = prospects.filter((p) => p.status === "new").length;
-  const clients = prospects.filter((p) => p.status === "client").length;
+  const totalProspects = prospectsCountResult.count ?? 0;
+  const newLeads = newLeadsCountResult.count ?? 0;
+  const clients = clientsCountResult.count ?? 0;
   const campaignsSent = campaigns.length;
   const conversionRate =
     totalProspects > 0 ? Math.round((clients / totalProspects) * 100) : 0;
@@ -56,9 +69,7 @@ export default async function DashboardPage() {
     (a) => (a.metadata as any)?.new_status === "contacted"
   ).length;
 
-  const warmLeads = prospects.filter((p) =>
-    ["interested", "follow_up"].includes(p.status)
-  ).length;
+  const warmLeads = warmLeadsCountResult.count ?? 0;
 
   const followUpsToday = followUpsTodayResult.count ?? 0;
 
@@ -83,7 +94,13 @@ export default async function DashboardPage() {
     }, {} as Record<string, { leads: number; contacted: number; interested: number; clients: number }>)
   ).sort((a, b) => b[1].leads - a[1].leads);
 
-  // Pipeline funnel
+  // Pipeline funnel — use server-side counts
+  const funnelStatusCounts: Record<string, number> = {
+    new: newLeads,
+    client: clients,
+    interested: warmLeadsCountResult.count ?? 0,
+    contacted: 0, // fetched below
+  };
   const funnel = [
     { label: "New", status: "new" },
     { label: "Contacted", status: "contacted" },
@@ -91,7 +108,7 @@ export default async function DashboardPage() {
     { label: "Client", status: "client" },
   ].map((stage) => ({
     ...stage,
-    count: prospects.filter((p) => p.status === stage.status).length,
+    count: funnelStatusCounts[stage.status] ?? 0,
   }));
 
   const funnelColors = ["bg-blue-500", "bg-purple-500", "bg-amber-500", "bg-emerald-500"];

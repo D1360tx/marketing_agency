@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Booked Out — Get More Customers With a Website That Works",
   description:
-    "We build websites for local service businesses in Texas. HVAC, plumbing, roofing, landscaping — if you do great work, we'll make sure customers find you.",
+    "More reviews. Better rankings. More booked jobs. We build the online presence local service businesses need to stop losing customers to the competition.",
 };
 
 export default function RootLayout({

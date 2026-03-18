@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { prospectUpdateSchema } from "@/types";
 import { logActivity } from "@/lib/activity-log";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const supabase = await createClient();
     const {
@@ -14,16 +14,29 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { data, error } = await supabase
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const pageSize = parseInt(searchParams.get("pageSize") || "100");
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    const { data, error, count } = await supabase
       .from("prospects")
-      .select("*, website_analyses(*)")
-      .order("created_at", { ascending: false });
+      .select("*, website_analyses(*)", { count: "exact" })
+      .order("created_at", { ascending: false })
+      .range(from, to);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ prospects: data });
+    return NextResponse.json({
+      prospects: data,
+      total: count,
+      page,
+      pageSize,
+      totalPages: Math.ceil((count || 0) / pageSize),
+    });
   } catch {
     return NextResponse.json(
       { error: "Internal server error" },

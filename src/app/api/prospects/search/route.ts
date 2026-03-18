@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { searchParamsSchema } from "@/types";
 import { searchMockProspects } from "@/lib/mock-data";
+import { searchBusinessesApify } from "@/lib/apify-google-maps";
 import { searchBusinessesBrave } from "@/lib/brave-local-search";
 import { searchBusinesses as searchBusinessesOutscraper } from "@/lib/outscraper";
 import { calculateLeadScore } from "@/lib/lead-scoring";
@@ -40,79 +41,84 @@ export async function POST(request: Request) {
       // Check for API keys in user settings first, then env vars
       const { data: settings } = await supabase
         .from("user_settings")
-        .select("outscraper_api_key, brave_api_key")
+        .select("outscraper_api_key, brave_api_key, apify_api_key")
         .eq("user_id", user.id)
         .single();
 
-      // Priority: Brave (free) → Outscraper (paid fallback)
+      // Priority: Apify (best data) → Brave (free fallback) → Outscraper (paid fallback)
+      const apifyKey =
+        settings?.apify_api_key || process.env.APIFY_API_KEY;
       const braveKey =
         settings?.brave_api_key || process.env.BRAVE_API_KEY;
       const outscraperKey =
         settings?.outscraper_api_key || process.env.OUTSCRAPER_API_KEY;
 
-      if (braveKey) {
-        // Primary: Brave Local Search (free tier)
+      if (apifyKey) {
+        // Primary: Apify Google Maps Scraper (best data — ratings, reviews, categories)
         try {
-          businesses = await searchBusinessesBrave(
-            braveKey,
+          businesses = await searchBusinessesApify(
+            apifyKey,
             query,
             location,
             limit
           );
         } catch (err) {
-          console.error("Brave Search error:", err);
-
-          // Fallback to Outscraper if Brave fails and key is available
-          if (outscraperKey) {
+          console.error("Apify error:", err);
+          // Fallback to Brave
+          if (braveKey) {
             try {
-              businesses = await searchBusinessesOutscraper(
-                outscraperKey,
-                query,
-                location,
-                limit
-              );
-            } catch (outscraperErr) {
-              console.error("Outscraper fallback error:", outscraperErr);
+              businesses = await searchBusinessesBrave(braveKey, query, location, limit);
+            } catch (braveErr) {
+              console.error("Brave fallback error:", braveErr);
               return NextResponse.json(
-                {
-                  error: `Search failed: ${err instanceof Error ? err.message : "Unknown error"}`,
-                },
+                { error: `Search failed: ${err instanceof Error ? err.message : "Unknown error"}` },
                 { status: 502 }
               );
             }
           } else {
             return NextResponse.json(
-              {
-                error: `Brave Search failed: ${err instanceof Error ? err.message : "Unknown error"}`,
-              },
+              { error: `Apify search failed: ${err instanceof Error ? err.message : "Unknown error"}` },
+              { status: 502 }
+            );
+          }
+        }
+      } else if (braveKey) {
+        // Fallback: Brave Local Search
+        try {
+          businesses = await searchBusinessesBrave(braveKey, query, location, limit);
+        } catch (err) {
+          console.error("Brave Search error:", err);
+          if (outscraperKey) {
+            try {
+              businesses = await searchBusinessesOutscraper(outscraperKey, query, location, limit);
+            } catch (outscraperErr) {
+              console.error("Outscraper fallback error:", outscraperErr);
+              return NextResponse.json(
+                { error: `Search failed: ${err instanceof Error ? err.message : "Unknown error"}` },
+                { status: 502 }
+              );
+            }
+          } else {
+            return NextResponse.json(
+              { error: `Brave Search failed: ${err instanceof Error ? err.message : "Unknown error"}` },
               { status: 502 }
             );
           }
         }
       } else if (outscraperKey) {
-        // Fallback: Outscraper (paid)
+        // Fallback: Outscraper
         try {
-          businesses = await searchBusinessesOutscraper(
-            outscraperKey,
-            query,
-            location,
-            limit
-          );
+          businesses = await searchBusinessesOutscraper(outscraperKey, query, location, limit);
         } catch (err) {
           console.error("Outscraper API error:", err);
           return NextResponse.json(
-            {
-              error: `Google Maps search failed: ${err instanceof Error ? err.message : "Unknown error"}`,
-            },
+            { error: `Google Maps search failed: ${err instanceof Error ? err.message : "Unknown error"}` },
             { status: 502 }
           );
         }
       } else {
         return NextResponse.json(
-          {
-            error:
-              "No search API configured. Add a Brave API key (free) or Outscraper API key in Settings, or set BRAVE_API_KEY / OUTSCRAPER_API_KEY env var.",
-          },
+          { error: "No search API configured. Add an Apify API key in Settings or set APIFY_API_KEY env var." },
           { status: 400 }
         );
       }

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import DeepScrapeTab from "@/components/deep-scrape-tab";
 import {
   Card,
   CardContent,
@@ -49,6 +50,7 @@ import {
 import type { Prospect, WebsiteAnalysis } from "@/types";
 
 export default function ProspectorPage() {
+  const [activeTab, setActiveTab] = useState<"quick" | "deep">("quick");
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState("");
   const [loading, setLoading] = useState(false);
@@ -217,7 +219,36 @@ export default function ProspectorPage() {
         </p>
       </div>
 
-      <Card>
+      {/* Tab switcher */}
+      <div className="flex rounded-lg border overflow-hidden w-fit">
+        <button
+          onClick={() => setActiveTab("quick")}
+          className={`px-4 py-2 text-sm font-medium transition-colors min-h-[44px] ${
+            activeTab === "quick"
+              ? "bg-primary text-primary-foreground"
+              : "bg-background hover:bg-muted"
+          }`}
+        >
+          Quick Search
+        </button>
+        <button
+          onClick={() => setActiveTab("deep")}
+          className={`px-4 py-2 text-sm font-medium transition-colors min-h-[44px] ${
+            activeTab === "deep"
+              ? "bg-primary text-primary-foreground"
+              : "bg-background hover:bg-muted"
+          }`}
+        >
+          Deep Scrape
+        </button>
+      </div>
+
+      {/* Deep Scrape tab */}
+      {activeTab === "deep" && <DeepScrapeTab />}
+
+      {/* Quick Search tab — all existing content below */}
+      {activeTab === "quick" && (
+      <><Card>
         <CardHeader>
           <CardTitle>Search Google Maps</CardTitle>
           <CardDescription>
@@ -586,6 +617,9 @@ export default function ProspectorPage() {
           )}
         </DialogContent>
       </Dialog>
+      </>
+      )}
+      {/* End Quick Search tab */}
     </div>
   );
 }

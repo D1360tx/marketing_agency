@@ -121,7 +121,7 @@ type SortField = "business_name" | "rating" | "lead_score" | "status" | "created
 export default function LeadsPage() {
   const [prospects, setProspects] = useState<ProspectWithAnalysis[]>([]);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState<"kanban" | "table">("kanban");
+  const [view, setView] = useState<"kanban" | "table">("table");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [tagFilter, setTagFilter] = useState<string>("all");

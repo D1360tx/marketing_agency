@@ -25,11 +25,11 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  // Root / always redirects to landing page — no auth check needed
+  // Root / serves landing_opus content but keeps URL as trybookedout.com
   if (request.nextUrl.pathname === "/") {
     const url = request.nextUrl.clone();
     url.pathname = "/landing_opus";
-    return NextResponse.redirect(url);
+    return NextResponse.rewrite(url);
   }
 
   // /app routes require auth

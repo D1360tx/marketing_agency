@@ -121,7 +121,7 @@ type SortField = "business_name" | "rating" | "lead_score" | "status" | "created
 export default function LeadsPage() {
   const [prospects, setProspects] = useState<ProspectWithAnalysis[]>([]);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState<"kanban" | "table">("kanban");
+  const [view, setView] = useState<"kanban" | "table">("table");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [tagFilter, setTagFilter] = useState<string>("all");
@@ -323,9 +323,21 @@ export default function LeadsPage() {
 
   async function fetchProspects() {
     try {
-      const res = await fetch("/api/prospects");
-      const data = await res.json();
-      setProspects(data.prospects || []);
+      // Fetch all prospects by paginating through all pages
+      let allProspects: ProspectWithAnalysis[] = [];
+      let page = 1;
+      const pageSize = 500;
+      let totalPages = 1;
+
+      do {
+        const res = await fetch(`/api/prospects?page=${page}&pageSize=${pageSize}`);
+        const data = await res.json();
+        allProspects = [...allProspects, ...(data.prospects || [])];
+        totalPages = data.totalPages || 1;
+        page++;
+      } while (page <= totalPages);
+
+      setProspects(allProspects);
     } catch {
       console.error("Failed to fetch prospects");
     } finally {
