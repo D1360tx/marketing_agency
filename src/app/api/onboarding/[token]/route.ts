@@ -32,7 +32,11 @@ async function sendTelegramNotification(data: {
     await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chat_id: chatId, text }),
+      body: JSON.stringify({
+        chat_id: chatId,
+        text,
+        ...(process.env.TELEGRAM_THREAD_ID ? { message_thread_id: Number(process.env.TELEGRAM_THREAD_ID) } : {}),
+      }),
     });
   } catch (err) {
     console.error("[onboarding] Telegram notification failed:", err);
