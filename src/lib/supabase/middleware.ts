@@ -74,6 +74,8 @@ export async function updateSession(request: NextRequest) {
     "/unsubscribe",
     "/preview",
     "/sites",
+    "/onboarding",
+    "/api/onboarding",
   ];
 
   const isPublicRoute = publicRoutes.some((route) =>

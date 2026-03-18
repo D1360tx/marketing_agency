@@ -28,6 +28,7 @@ import {
   Star,
   CheckSquare,
   BookOpen,
+  ClipboardList,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -42,6 +43,7 @@ const navigation = [
   { name: "Analytics", href: "/app/analytics", icon: BarChart3 },
   { name: "Reviews", href: "/app/reviews", icon: Star },
   { name: "Playbook", href: "/app/playbook", icon: BookOpen },
+  { name: "Onboarding", href: "/app/onboarding", icon: ClipboardList },
   { name: "Settings", href: "/app/settings", icon: Settings },
 ];
 
