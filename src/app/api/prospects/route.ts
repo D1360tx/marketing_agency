@@ -95,6 +95,41 @@ export async function PATCH(request: Request) {
         description: `Status changed from "${current.status}" to "${updates.status}"`,
         metadata: { old_status: current.status, new_status: updates.status },
       });
+
+      // Fire webhook when lead converts to Client
+      if (updates.status === "client") {
+        const { data: settings } = await supabase
+          .from("user_settings")
+          .select("webhook_url")
+          .eq("user_id", user.id)
+          .single();
+
+        if (settings?.webhook_url) {
+          const payload = {
+            event: "lead.converted",
+            timestamp: new Date().toISOString(),
+            lead: {
+              id: data.id,
+              business_name: data.business_name,
+              contact_name: data.contact_name ?? null,
+              email: data.email ?? null,
+              phone: data.phone ?? null,
+              city: data.city ?? null,
+              state: data.state ?? null,
+              website: data.website ?? null,
+              source: data.source ?? null,
+              status: "client",
+            },
+          };
+
+          // Fire and forget — don't block the response
+          fetch(settings.webhook_url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          }).catch((err) => console.error("Webhook delivery failed:", err));
+        }
+      }
     }
 
     // Log activity for notes updates
