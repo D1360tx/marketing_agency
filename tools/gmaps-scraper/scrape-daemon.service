@@ -1,0 +1,24 @@
+[Unit]
+Description=AgencyFlow Google Maps Scraper Daemon
+After=network.target
+
+[Service]
+Type=simple
+User=d1360
+WorkingDirectory=/home/d1360/.openclaw/workspace/tools/gmaps-scraper
+
+# Load env vars from .env.local (SUPABASE_SERVICE_ROLE_KEY lives here)
+EnvironmentFile=/home/d1360/.openclaw/workspace/marketing_agency/.env.local
+
+# Supabase URL is also in .env.local, but set it here as a fallback
+Environment=SUPABASE_URL=https://pjggltqecxhypjisfpvn.supabase.co
+
+ExecStart=/usr/bin/python3 /home/d1360/.openclaw/workspace/tools/gmaps-scraper/daemon.py
+Restart=always
+RestartSec=10
+
+# Give enough time for a scrape job to finish before SIGKILL
+TimeoutStopSec=300
+
+[Install]
+WantedBy=multi-user.target
