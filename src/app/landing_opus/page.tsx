@@ -348,6 +348,8 @@ export default function LandingOpusPage() {
       trade: "Plumbing",
       location: "Cedar Park, TX",
       quote: "Went from 6 reviews to 53 in two months. I stopped running ads because the phone was already ringing enough. Best money I spend every month.",
+      before: "6 Google reviews",
+      changed: "Review requests after every completed job",
       metric: "53 reviews in 60 days",
     },
     {
@@ -355,6 +357,8 @@ export default function LandingOpusPage() {
       trade: "Salon Owner",
       location: "Gilbert, AZ",
       quote: "My old website looked like it was from 2012. Within a week of launching the new one, I had three new clients mention they found me on Google. That never happened before.",
+      before: "Outdated website from 2012",
+      changed: "Mobile-first site with clearer Google signals",
       metric: "3x more Google traffic",
     },
     {
@@ -362,6 +366,8 @@ export default function LandingOpusPage() {
       trade: "HVAC",
       location: "Murfreesboro, TN",
       quote: "I've wasted thousands on marketing companies. These guys actually showed me what was broken and fixed it. No fluff, no jargon. My wife noticed the difference in the books within a month.",
+      before: "Marketing spend with no clear fixes",
+      changed: "Audit-led website and review system",
       metric: "40% more booked jobs",
     },
   ];
@@ -789,11 +795,15 @@ export default function LandingOpusPage() {
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="mx-auto max-w-3xl text-center">
               <p className="text-sm font-bold uppercase tracking-widest text-orange-400">
-                Real numbers from real businesses
+                Proof, not promises
               </p>
               <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-                They were skeptical too. Then the phone started ringing.
+                The right online presence changes who gets the call.
               </h2>
+              <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-gray-400">
+                These are the outcomes we build toward: more trust, more recent
+                reviews, and clearer reasons to call.
+              </p>
             </div>
 
             <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -803,11 +813,32 @@ export default function LandingOpusPage() {
                   className="flex flex-col rounded-2xl border border-gray-700 bg-gray-800/50 p-6"
                 >
                   <StarRating count={5} />
-                  <p className="mt-4 flex-1 text-sm leading-relaxed text-gray-300">
+                  <div className="mt-5 space-y-3 rounded-xl border border-gray-700 bg-gray-900/60 p-4">
+                    {[
+                      ["Before", t.before],
+                      ["Changed", t.changed],
+                      ["Result", t.metric],
+                    ].map(([label, value]) => (
+                      <div key={label} className="grid grid-cols-[72px_1fr] gap-3 text-sm">
+                        <div className="font-semibold text-gray-500">
+                          {label}
+                        </div>
+                        <div
+                          className={cl(
+                            "font-semibold",
+                            label === "Result" ? "text-emerald-300" : "text-gray-200"
+                          )}
+                        >
+                          {value}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-5 flex-1 text-sm leading-relaxed text-gray-300">
                     &ldquo;{t.quote}&rdquo;
                   </p>
                   <div className="mt-6 border-t border-gray-700 pt-4">
-                    <div className="flex items-center justify-between">
+                    <div>
                       <div>
                         <div className="text-sm font-semibold text-white">
                           {t.name}
@@ -816,9 +847,6 @@ export default function LandingOpusPage() {
                           {t.trade} -- {t.location}
                         </div>
                       </div>
-                      <span className="rounded-full bg-emerald-900/50 px-3 py-1 text-xs font-semibold text-emerald-300 ring-1 ring-emerald-700">
-                        {t.metric}
-                      </span>
                     </div>
                   </div>
                 </div>
@@ -845,26 +873,26 @@ export default function LandingOpusPage() {
               {[
                 {
                   step: "01",
-                  title: "Free Audit",
-                  desc: `We analyze your current online presence ${areaIn}: website speed, Google ranking, review count vs. competitors, conversion leaks. You get a clear report within 48 hours.`,
+                  title: "Find the leaks",
+                  desc: "We compare your website, reviews, Google profile, and competitors so you know exactly where calls are leaking.",
                   icon: Shield,
                 },
                 {
                   step: "02",
-                  title: "We Build It",
-                  desc: "Your professional website and review automation system get built and launched. Takes about a week. You answer a few questions. We handle the rest.",
+                  title: "Fix the first impression",
+                  desc: "We launch the pages, CTAs, trust proof, and review system that make you easier to choose.",
                   icon: Zap,
                 },
                 {
                   step: "03",
-                  title: "Reviews Stack Up",
-                  desc: "The automation kicks in. After every job, your customers get prompted to leave a review. No effort from you. Reviews start compounding.",
+                  title: "Ask every customer",
+                  desc: "Every completed job triggers a compliant review request by text or email, so recent proof keeps building.",
                   icon: Star,
                 },
                 {
                   step: "04",
-                  title: "Phone Rings More",
-                  desc: `Better website + more reviews + local SEO = you show up first when someone ${areaIn} searches for your service. The calls come to you.`,
+                  title: "Turn trust into calls",
+                  desc: "Better pages, stronger reviews, and clearer Google signals help more ready-to-buy customers call you first.",
                   icon: PhoneCall,
                 },
               ].map((s, i) => (
