@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import React, { useEffect, useState, useCallback } from "react";
 import {
   ArrowRight,
@@ -615,10 +616,12 @@ export default function LandingOpusPage() {
               {/* Service 1 */}
               <div className="overflow-hidden rounded-2xl border border-gray-200">
                 <div className="relative h-52 sm:h-64">
-                  <img
-                    src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=website+design+modern&w=800&auto=format&fit=crop"
-                    alt="Professional website on laptop"
-                    className="h-full w-full object-cover"
+                  <Image
+                    src="/marketing/website-call-system.png"
+                    alt="Mobile-first local service website with call buttons and trust proof"
+                    fill
+                    sizes="(min-width: 1024px) 50vw, 100vw"
+                    className="object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-4 left-5 right-5">
@@ -656,10 +659,12 @@ export default function LandingOpusPage() {
               {/* Service 2 */}
               <div className="overflow-hidden rounded-2xl border border-gray-200">
                 <div className="relative h-52 sm:h-64">
-                  <img
-                    src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=phone+reviews+business&w=800&auto=format&fit=crop"
-                    alt="Customer leaving a review on phone"
-                    className="h-full w-full object-cover"
+                  <Image
+                    src="/marketing/review-request-system.png"
+                    alt="Automated review request flow with text message and five-star review card"
+                    fill
+                    sizes="(min-width: 1024px) 50vw, 100vw"
+                    className="object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-4 left-5 right-5">
