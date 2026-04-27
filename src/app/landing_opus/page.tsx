@@ -599,11 +599,11 @@ export default function LandingOpusPage() {
                 The system
               </p>
               <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                Two things that actually move the needle
+                The two-part system that turns Google searches into booked jobs
               </h2>
               <p className="mt-4 text-lg text-gray-600">
-                Not 15 services. Not a mystery retainer. Two things, done right,
-                that make your phone ring more.
+                A better website gets prospects to trust you. Consistent review
+                requests make Google and future customers trust you.
               </p>
             </div>
 
@@ -622,25 +622,23 @@ export default function LandingOpusPage() {
                       Included
                     </span>
                     <h3 className="mt-2 text-xl font-bold text-white">
-                      Professional Website That Converts
+                      A Website Built to Make People Call
                     </h3>
                   </div>
                 </div>
                 <div className="p-6">
                   <p className="text-sm leading-relaxed text-gray-600">
-                    Not a template. A fast, mobile-first website built
-                    specifically for your trade and your city. Clear calls to
-                    action, trust signals, service pages that rank. The kind of
-                    site that makes customers pick up the phone instead of
-                    hitting the back button.
+                    We rebuild the first impression customers see on Google:
+                    fast mobile pages, clear service areas, tap-to-call buttons,
+                    and proof that makes you feel like the obvious choice.
                   </p>
                   <ul className="mt-5 space-y-3">
                     {[
-                      "Loads in under 2 seconds on any phone",
-                      "Tap-to-call on every page",
-                      "Service + city pages for local SEO",
-                      "Trust builders: licenses, reviews, warranties",
-                      "Written by people who understand your industry",
+                      "Mobile-first pages built for callers",
+                      "Tap-to-call CTAs above the fold",
+                      "Service + city pages Google can understand",
+                      "Reviews, licenses, warranties, and proof placed where buyers look",
+                      "Monthly edits included as your business changes",
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-2.5">
                         <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
@@ -665,24 +663,23 @@ export default function LandingOpusPage() {
                       Included
                     </span>
                     <h3 className="mt-2 text-xl font-bold text-white">
-                      Google Review Automation
+                      Review Requests That Happen After Every Job
                     </h3>
                   </div>
                 </div>
                 <div className="p-6">
                   <p className="text-sm leading-relaxed text-gray-600">
-                    After every job, every customer gets a simple text or email
-                    inviting honest feedback and a Google review. No awkward
-                    conversations. No remembering to ask. It happens
-                    consistently, and the compounding effect is what matters.
+                    Your team should not have to remember to ask. Every customer
+                    gets a simple, compliant request by text or email, so new
+                    reviews keep showing up while you focus on the work.
                   </p>
                   <ul className="mt-5 space-y-3">
                     {[
-                      "Automated text/email request after every job",
-                      "One-tap link straight to your Google page",
-                      "Private feedback option for service recovery",
-                      "Dashboard to track request volume and review growth",
-                      "Example campaign: 53 reviews in 60 days",
+                      "Request sent after every completed job",
+                      "Direct Google review link",
+                      "Private feedback channel for service recovery",
+                      "Review growth tracked monthly",
+                      "Works by text and email",
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-2.5">
                         <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
