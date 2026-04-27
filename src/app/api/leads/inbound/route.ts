@@ -19,10 +19,15 @@ export async function POST(request: Request) {
       name,
       source,
       city,
+      businessType,
+      serviceArea,
+      googleProfile,
     } = body;
 
     const business_name = _bn || business || "Unknown";
     const first_name = name ? name.split(" ")[0] : null;
+    const resolvedCity = serviceArea || city || "Austin";
+    const resolvedBusinessType = businessType || "service business";
 
     if (!business_name || !email) {
       return NextResponse.json(
@@ -46,17 +51,19 @@ export async function POST(request: Request) {
         email,
         phone: phone || null,
         website_url: website || null,
-        city: city || "Austin",
+        city: resolvedCity,
         state: "TX",
-        business_type: "service business",
+        business_type: resolvedBusinessType,
         status: "new",
         search_query: "Inbound — landing page",
         notes: [
           `Source: ${source || "landing page"}`,
           `Name: ${name || "—"}`,
           `First name: ${first_name || "—"}`,
-          `City: ${city || "Austin"}`,
+          `City/service area: ${resolvedCity}`,
+          `Business type: ${resolvedBusinessType}`,
           `Website: ${website || "none"}`,
+          `Google Business Profile: ${googleProfile || "none"}`,
         ].join("\n"),
       })
       .select("id")
@@ -101,8 +108,10 @@ export async function POST(request: Request) {
             <tr><td><strong>Name:</strong></td><td>${name || "—"}</td></tr>
             <tr><td><strong>Email:</strong></td><td>${email}</td></tr>
             <tr><td><strong>Phone:</strong></td><td>${phone || "—"}</td></tr>
+            <tr><td><strong>Business type:</strong></td><td>${resolvedBusinessType}</td></tr>
             <tr><td><strong>Website:</strong></td><td>${website || "—"}</td></tr>
-            <tr><td><strong>City:</strong></td><td>${city || "Austin"}</td></tr>
+            <tr><td><strong>City/service area:</strong></td><td>${resolvedCity}</td></tr>
+            <tr><td><strong>Google profile:</strong></td><td>${googleProfile || "—"}</td></tr>
             <tr><td><strong>Source:</strong></td><td>${source || "landing page"}</td></tr>
           </table>
           <p>Audit is running in the background. Check back in a few minutes.</p>
