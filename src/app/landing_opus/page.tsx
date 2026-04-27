@@ -930,17 +930,17 @@ export default function LandingOpusPage() {
             {/* Intro */}
             <div className="mb-10 text-center">
               <p className="mx-auto max-w-2xl text-base text-gray-600">
-                Every plan includes a professionally built website at no extra charge. No setup fees. No long-term contracts. And when you sign up, we lock in your trade {areaIn} — we never take on a direct competitor in your market. The difference between the two plans is how aggressively you want to go after the top spot.
+                Every plan includes the website, review system, missed-call follow-up, and reporting. No setup fee. No long contract. Pick the level based on how aggressively you want to compete for calls {areaIn}.
               </p>
             </div>
 
             {/* Two-column cards */}
             <div className="grid gap-8 md:grid-cols-2 md:items-start">
 
-              {/* Plan 1 — The Full System */}
+              {/* Plan 1 — Local Call System */}
               <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg">
                 <div className="border-b border-gray-200 bg-gray-900 px-6 py-8 text-center sm:px-10">
-                  <p className="text-sm font-semibold text-orange-400">The Full System</p>
+                  <p className="text-sm font-semibold text-orange-400">Local Call System</p>
                   <div className="mt-4 flex items-baseline justify-center gap-1">
                     <span className="text-5xl font-extrabold text-white">$399</span>
                     <span className="text-lg font-semibold text-gray-400">/mo</span>
@@ -949,16 +949,17 @@ export default function LandingOpusPage() {
                 </div>
                 <div className="p-6 sm:p-8">
                   <div className="mb-5 rounded-xl bg-orange-50 p-4">
-                    <p className="text-sm font-semibold text-orange-800">We build your website free.</p>
-                    <p className="mt-1 text-xs text-orange-700">Most agencies charge $1,000–$2,000 just to get started. You pay nothing upfront. Your site goes live in about a week.</p>
+                    <p className="text-sm font-semibold text-orange-800">Managed website included.</p>
+                    <p className="mt-1 text-xs text-orange-700">Your site, review system, missed-call follow-up, and reporting are set up and managed for you.</p>
                   </div>
                   <ul className="space-y-4">
                     {[
-                      { title: "Professional website — built free", desc: "Hosted and managed for you (worth $1,000–$2,000 to build, $99–$199/mo elsewhere)" },
-                      { title: "Google review automation", desc: "SMS + email requests after every job — reviews stack while you sleep" },
-                      { title: "Missed call text-back", desc: "Miss a call? An auto-text goes out in seconds so the lead doesn't call your competitor" },
-                      { title: "Monthly performance report", desc: "Reviews gained, ranking movement, call volume — proof it's working" },
-                      { title: "Exclusive territory", desc: `One business per trade ${areaIn}. Your spot is protected.` },
+                      { title: "Managed mobile-first website", desc: "Built around service areas, proof, and tap-to-call CTAs" },
+                      { title: "Review requests by SMS + email", desc: "Compliant requests after completed jobs so recent proof keeps building" },
+                      { title: "Missed-call text-back", desc: "A lead gets a reply in seconds if you miss the call" },
+                      { title: "Lead inbox + simple pipeline", desc: "Keep new audit and call opportunities from slipping through" },
+                      { title: "Monthly performance report", desc: "Calls, reviews, ranking movement, and next actions" },
+                      { title: "One trade per local market", desc: `We protect your spot ${areaIn}.` },
                     ].map((item, i) => (
                       <li key={i} className="flex gap-3">
                         <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100">
@@ -971,18 +972,18 @@ export default function LandingOpusPage() {
                       </li>
                     ))}
                   </ul>
-                  <p className="mt-6 text-xs text-gray-500 text-center">For contractors who want to look like the obvious choice online and have their phone ring more.</p>
+                  <p className="mt-6 text-center text-xs text-gray-500">For service businesses that need a better website, more reviews, and fewer missed calls without hiring a marketing team.</p>
                   <a href="#get-started" className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-orange-600 py-4 text-base font-bold text-white shadow-sm transition hover:bg-orange-700">
-                    Claim Your Spot <ArrowRight className="h-5 w-5" />
+                    Start With the Audit <ArrowRight className="h-5 w-5" />
                   </a>
                 </div>
               </div>
 
-              {/* Plan 2 — Market Dominator */}
+              {/* Plan 2 — Map Pack Growth */}
               <div className="overflow-hidden rounded-2xl border-2 border-violet-500 bg-white shadow-xl md:scale-[1.02]">
                 <div className="border-b border-violet-800 bg-gray-900 px-6 py-8 text-center sm:px-10 relative">
                   <span className="absolute top-3 right-3 rounded-full bg-violet-500 px-3 py-1 text-xs font-bold text-white">Best Value</span>
-                  <p className="text-sm font-semibold text-violet-400">Market Dominator</p>
+                  <p className="text-sm font-semibold text-violet-400">Map Pack Growth</p>
                   <div className="mt-4 flex items-baseline justify-center gap-1">
                     <span className="text-5xl font-extrabold text-white">$697</span>
                     <span className="text-lg font-semibold text-gray-400">/mo</span>
@@ -990,15 +991,16 @@ export default function LandingOpusPage() {
                   <p className="mt-3 text-sm text-gray-400">No setup fee. No contract. Cancel anytime.</p>
                 </div>
                 <div className="p-6 sm:p-8">
-                  <p className="mb-5 text-sm text-gray-600">Everything in The Full System, plus we go after the top spot in your market and don&apos;t stop until you own it.</p>
+                  <p className="mb-5 text-sm text-gray-600">Everything in Local Call System, plus the SEO and Google Business Profile work needed to compete harder in Maps.</p>
                   <ul className="space-y-4">
                     {[
-                      { title: "Everything in The Full System", desc: "Website, review automation, missed call text-back, monthly report, exclusive territory" },
-                      { title: "Full SEO audit", desc: "Exactly where competitors beat you and what we're doing about it — no vague reports" },
-                      { title: "Google Business Profile deep build-out", desc: "Right categories, photos, descriptions — all the signals Google uses to rank you in the Map Pack" },
-                      { title: "Citation cleanup across 30+ directories", desc: "So Google knows exactly who you are, where you are, and what you do" },
-                      { title: "Local backlink gap analysis", desc: "Who's linking to your competitors but not you — and how we fix that" },
-                      { title: "Quarterly strategy call", desc: "Rankings, review growth, and your next 90 days" },
+                      { title: "Everything in Local Call System", desc: "Website, reviews, missed-call follow-up, lead tracking, reporting, and territory protection" },
+                      { title: "Full SEO + competitor audit", desc: "What competitors are doing better and what we fix first" },
+                      { title: "Google Business Profile optimization", desc: "Categories, services, photos, descriptions, and local trust signals" },
+                      { title: "Citation/listing cleanup", desc: "Consistent business info across the places Google checks" },
+                      { title: "Local backlink gap review", desc: "Where competitors have authority you do not yet have" },
+                      { title: "Service/city page expansion", desc: "More specific pages for the jobs and areas you want most" },
+                      { title: "Quarterly growth call", desc: "Review momentum, ranking movement, and the next 90 days" },
                     ].map((item, i) => (
                       <li key={i} className="flex gap-3">
                         <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-100">
@@ -1011,9 +1013,9 @@ export default function LandingOpusPage() {
                       </li>
                     ))}
                   </ul>
-                  <p className="mt-6 text-xs text-gray-500 text-center">For contractors who want to lock down the number one spot before a competitor does.</p>
+                  <p className="mt-6 text-center text-xs text-gray-500">For businesses ready to compete harder for top local rankings, stronger Google signals, and more booked jobs.</p>
                   <a href="#get-started" className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-violet-600 py-4 text-base font-bold text-white shadow-sm transition hover:bg-violet-700">
-                    Own My Market <ArrowRight className="h-5 w-5" />
+                    Build My Local Lead System <ArrowRight className="h-5 w-5" />
                   </a>
                 </div>
               </div>
@@ -1022,8 +1024,11 @@ export default function LandingOpusPage() {
 
             {/* Trial nudge */}
             <p className="mt-8 text-center text-sm text-gray-500">
-              Not ready to commit at full price?{" "}
-              <a href="#get-started" className="font-semibold text-orange-600 hover:underline">Ask about our first-month trial offer.</a>
+              Start with the free audit.{" "}
+              <a href="#get-started" className="font-semibold text-orange-600 hover:underline">If we can&apos;t show a clear path to more calls, you should not buy.</a>
+            </p>
+            <p className="mx-auto mt-3 max-w-2xl text-center text-xs leading-relaxed text-gray-500">
+              SMS/email usage is included for normal local business volume. If your account ever needs unusually high message volume, we&apos;ll flag it before anything changes.
             </p>
           </div>
         </section>
