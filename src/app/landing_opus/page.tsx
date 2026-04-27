@@ -480,21 +480,21 @@ export default function LandingOpusPage() {
         </section>
 
         {/* ============================================================ */}
-        {/*  TRUST BREAK - "We know you've been burned"                  */}
+        {/*  TRUST BREAK                                                  */}
         {/* ============================================================ */}
         <section className="border-y border-gray-200 bg-white">
           <div className="mx-auto max-w-4xl px-4 py-14 sm:px-6 sm:py-20">
             <div className="text-center">
               <p className="text-sm font-bold uppercase tracking-widest text-orange-600">
-                Let&apos;s address the elephant in the room
+                No agency games
               </p>
               <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                You&apos;ve been burned by a marketing company before.
+                You shouldn&apos;t have to guess if your marketing is working.
               </h2>
               <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-gray-600">
-                They promised you the world. They showed you a pretty dashboard.
-                And your phone still didn&apos;t ring. We get it. That&apos;s
-                why we do things differently.
+                Most agencies sell reports, contracts, and vague SEO progress.
+                We keep it simple: more reviews, clearer rankings, more calls,
+                and no long-term contract keeping you stuck.
               </p>
             </div>
 
@@ -502,17 +502,17 @@ export default function LandingOpusPage() {
               {[
                 {
                   bad: "Locked into a 12-month contract",
-                  good: "Cancel anytime. Month-to-month.",
+                  good: "Month-to-month. Stay because it works.",
                   icon: X,
                 },
                 {
-                  bad: "Paid for 'SEO' you couldn't measure",
-                  good: "You'll see reviews, rankings, and calls.",
+                  bad: "Paid for reports you couldn't measure",
+                  good: "Track reviews, rankings, calls, and leads.",
                   icon: X,
                 },
                 {
-                  bad: "Never talked to a real person",
-                  good: "Direct line. Real humans. Same team.",
+                  bad: "Never talked to the same person twice",
+                  good: "A direct line to the team doing the work.",
                   icon: X,
                 },
               ].map((item, i) => (
