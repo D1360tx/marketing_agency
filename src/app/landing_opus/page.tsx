@@ -545,29 +545,33 @@ export default function LandingOpusPage() {
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="mx-auto max-w-3xl text-center">
               <p className="text-sm font-bold uppercase tracking-widest text-gray-500">
-                This is happening right now
+                Where the calls disappear
               </p>
               <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                While you&apos;re reading this, you&apos;re losing a $2,500 job.
+                Your next customer is choosing from Google before they call.
               </h2>
+              <p className="mt-4 text-lg leading-relaxed text-gray-600">
+                If your site, reviews, and Google profile do not answer their
+                questions fast, the call goes to someone else.
+              </p>
             </div>
 
             <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
               {[
                 {
                   icon: TrendingUp,
-                  title: "You don't have a real website",
-                  body: `A Facebook page isn't a website. A site from 2019 isn't a website. When someone ${areaIn} searches for your service, you either look like the obvious choice — or you don't show up at all. There's no in-between anymore.`,
+                  title: "Your website does not make the first impression",
+                  body: "Customers decide fast. If your site is slow, dated, hard to use on mobile, or missing clear service areas, they leave before they ever see how good your work is.",
                 },
                 {
                   icon: Star,
-                  title: "You don't have enough reviews",
-                  body: "93% of customers read reviews before calling. Your competitor has dozens of stars glowing on Google. The math makes the decision for them — before they ever see your work.",
+                  title: "Your competitor looks safer to call",
+                  body: "Reviews are proof when people do not know you yet. If the company next to you has more recent Google reviews, they win trust before the estimate even starts.",
                 },
                 {
                   icon: PhoneCall,
-                  title: "Google can't tell who you are",
-                  body: `You might be the best in a 50-mile radius. Doesn't matter. Google ranks what it can understand: fast sites, clear service pages, consistent activity, and real reviews. Everything else gets buried on page 2. And nobody goes to page 2.`,
+                  title: "Google does not have enough signals to rank you",
+                  body: "Clear services, service areas, reviews, photos, and consistent business info help Google understand when to show you. Without those signals, better businesses still get buried.",
                 },
               ].map((card, i) => (
                 <div
