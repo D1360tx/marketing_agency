@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import React, { useEffect, useState, useCallback } from "react";
 import {
   ArrowRight,
@@ -28,6 +29,10 @@ type FormData = {
   business: string;
   phone: string;
   email: string;
+  website: string;
+  businessType: string;
+  serviceArea: string;
+  googleProfile: string;
 };
 
 type FormStatus = "idle" | "submitting" | "success" | "error";
@@ -176,6 +181,10 @@ export default function LandingOpusPage() {
     business: "",
     phone: "",
     email: "",
+    website: "",
+    businessType: "",
+    serviceArea: "",
+    googleProfile: "",
   });
   const [status, setStatus] = useState<FormStatus>("idle");
 
@@ -187,7 +196,14 @@ export default function LandingOpusPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.name.trim() || !form.business.trim() || !form.phone.trim() || !form.email.trim()) {
+    if (
+      !form.name.trim() ||
+      !form.business.trim() ||
+      !form.phone.trim() ||
+      !form.email.trim() ||
+      !form.businessType.trim() ||
+      !form.serviceArea.trim()
+    ) {
       setStatus("error");
       return;
     }
@@ -201,13 +217,26 @@ export default function LandingOpusPage() {
           business: form.business.trim(),
           phone: form.phone.trim(),
           email: form.email.trim(),
+          website: form.website.trim(),
+          businessType: form.businessType.trim(),
+          serviceArea: form.serviceArea.trim(),
+          googleProfile: form.googleProfile.trim(),
           source: "landing_opus",
-          city: area,
+          city: form.serviceArea.trim() || area,
         }),
       });
       if (!res.ok) throw new Error();
       setStatus("success");
-      setForm({ name: "", business: "", phone: "", email: "" });
+      setForm({
+        name: "",
+        business: "",
+        phone: "",
+        email: "",
+        website: "",
+        businessType: "",
+        serviceArea: "",
+        googleProfile: "",
+      });
     } catch {
       setStatus("error");
     }
@@ -241,7 +270,76 @@ export default function LandingOpusPage() {
       q: "What happens if I want to cancel?",
       a: "You cancel. No penalties, no fees, no guilt trip. Your website stays live through the end of your billing period. We keep things simple because we'd rather earn your business every month than trap you in a contract.",
     },
+    {
+      q: "Do I own the website if I cancel?",
+      a: "The site stays live while your plan is active because hosting, updates, and management are included. If you ever want to leave, we'll give you a clean export of your content and core page files so another provider can rebuild or migrate it.",
+    },
+    {
+      q: "Are SMS, email, hosting, and reporting included?",
+      a: "Yes. Hosting, monthly reporting, and standard review request messages are included. If your account ever needs unusually high SMS volume, we'll flag it before any billing changes happen.",
+    },
+    {
+      q: "What happens in the first month?",
+      a: "We audit your current presence, launch or improve the website, set up review requests for every customer, clean up obvious Google Business Profile gaps, and give you a first report showing what changed and what we are watching next.",
+    },
   ];
+
+  const proofStats = [
+    { label: "Review gap", before: "12 reviews", after: "53 reviews", note: "60-day review request campaign" },
+    { label: "Call clarity", before: "3 buried CTAs", after: "Tap-to-call on every page", note: "Mobile-first website rebuild" },
+    { label: "Audit depth", before: "Guesswork", after: "Speed, rankings, reviews, competitors", note: "Delivered before the sales call" },
+  ];
+
+  const schema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://trybookedout.com/#organization",
+        name: "Booked Out",
+        url: "https://trybookedout.com/",
+        telephone: "+17372605332",
+        description:
+          "Websites and compliant review automation for local service businesses.",
+      },
+      {
+        "@type": "Service",
+        "@id": "https://trybookedout.com/#service",
+        name: "Local service business website and review automation",
+        provider: { "@id": "https://trybookedout.com/#organization" },
+        areaServed: "United States",
+        serviceType: "Website design, local SEO, and review automation",
+        offers: [
+          {
+            "@type": "Offer",
+            name: "The Full System",
+            price: "399",
+            priceCurrency: "USD",
+            availability: "https://schema.org/InStock",
+          },
+          {
+            "@type": "Offer",
+            name: "Market Dominator",
+            price: "697",
+            priceCurrency: "USD",
+            availability: "https://schema.org/InStock",
+          },
+        ],
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://trybookedout.com/#faq",
+        mainEntity: faqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.q,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.a,
+          },
+        })),
+      },
+    ],
+  };
 
   /* -- Testimonials ------------------------------------------------ */
   const testimonials = [
@@ -250,6 +348,8 @@ export default function LandingOpusPage() {
       trade: "Plumbing",
       location: "Cedar Park, TX",
       quote: "Went from 6 reviews to 53 in two months. I stopped running ads because the phone was already ringing enough. Best money I spend every month.",
+      before: "6 Google reviews",
+      changed: "Review requests after every completed job",
       metric: "53 reviews in 60 days",
     },
     {
@@ -257,6 +357,8 @@ export default function LandingOpusPage() {
       trade: "Salon Owner",
       location: "Gilbert, AZ",
       quote: "My old website looked like it was from 2012. Within a week of launching the new one, I had three new clients mention they found me on Google. That never happened before.",
+      before: "Outdated website from 2012",
+      changed: "Mobile-first site with clearer Google signals",
       metric: "3x more Google traffic",
     },
     {
@@ -264,6 +366,8 @@ export default function LandingOpusPage() {
       trade: "HVAC",
       location: "Murfreesboro, TN",
       quote: "I've wasted thousands on marketing companies. These guys actually showed me what was broken and fixed it. No fluff, no jargon. My wife noticed the difference in the books within a month.",
+      before: "Marketing spend with no clear fixes",
+      changed: "Audit-led website and review system",
       metric: "40% more booked jobs",
     },
   ];
@@ -271,6 +375,10 @@ export default function LandingOpusPage() {
   /* -- Render ------------------------------------------------------ */
   return (
     <div className="min-h-screen bg-white text-gray-900 antialiased">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      />
       {/* ============================================================ */}
       {/*  NAV                                                          */}
       {/* ============================================================ */}
@@ -295,7 +403,7 @@ export default function LandingOpusPage() {
               href="#get-started"
               className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-700"
             >
-              Free Audit
+              Get My Free Audit
               <ArrowRight className="h-4 w-4" />
             </a>
           </div>
@@ -329,16 +437,15 @@ export default function LandingOpusPage() {
             </div>
 
             <h1 className="mt-6 max-w-3xl text-4xl font-extrabold leading-[1.1] tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
-              You do great work{" "}
-              {city && <>{areaIn}</>}.{" "}
+              You do great work{city ? ` ${areaIn}` : ""}.{" "}
               <span className="text-orange-600">So why does your competitor get the call?</span>
             </h1>
 
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-gray-600 sm:text-xl">
-              They're not better than you. They just look better online. We fix
-              that — professional website + automated review system that turns
-              every finished job into a 5-star review. 47 new reviews in 60
-              days. No contracts. Results in 30 days or your first month is free.
+              They&apos;re not better than you. They just look better online. We
+              build fast local websites and compliant review request systems
+              that help service businesses get more calls from Google. No setup
+              fee. No contracts. Results in 30 days or your first month is free.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -346,7 +453,7 @@ export default function LandingOpusPage() {
                 href="#get-started"
                 className="inline-flex items-center justify-center gap-2 rounded-lg bg-orange-600 px-7 py-4 text-base font-bold text-white shadow-md transition hover:bg-orange-700 hover:shadow-lg"
               >
-                Get Your Free Audit
+                Get My Free Audit
                 <ArrowRight className="h-5 w-5" />
               </a>
               <a
@@ -361,6 +468,7 @@ export default function LandingOpusPage() {
             <div className="mt-8 flex flex-wrap gap-3">
               <Badge>No contracts</Badge>
               <Badge>Results in 30 days</Badge>
+              <Badge>Compliant review requests</Badge>
               <Badge>1 per trade per city</Badge>
             </div>
 
@@ -371,25 +479,29 @@ export default function LandingOpusPage() {
               <StatCard value="30" label="days to see results" />
               <StatCard value="0" label="long-term contracts" />
             </div>
+            <p className="mt-3 text-xs text-gray-500">
+              Example outcomes from recent local service campaigns. Your audit
+              will show the exact gap in your market before we recommend a plan.
+            </p>
           </div>
         </section>
 
         {/* ============================================================ */}
-        {/*  TRUST BREAK - "We know you've been burned"                  */}
+        {/*  TRUST BREAK                                                  */}
         {/* ============================================================ */}
         <section className="border-y border-gray-200 bg-white">
           <div className="mx-auto max-w-4xl px-4 py-14 sm:px-6 sm:py-20">
             <div className="text-center">
               <p className="text-sm font-bold uppercase tracking-widest text-orange-600">
-                Let&apos;s address the elephant in the room
+                No agency games
               </p>
               <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                You&apos;ve been burned by a marketing company before.
+                You shouldn&apos;t have to guess if your marketing is working.
               </h2>
               <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-gray-600">
-                They promised you the world. They showed you a pretty dashboard.
-                And your phone still didn&apos;t ring. We get it. That&apos;s
-                why we do things differently.
+                Most agencies sell reports, contracts, and vague SEO progress.
+                We keep it simple: more reviews, clearer rankings, more calls,
+                and no long-term contract keeping you stuck.
               </p>
             </div>
 
@@ -397,17 +509,17 @@ export default function LandingOpusPage() {
               {[
                 {
                   bad: "Locked into a 12-month contract",
-                  good: "Cancel anytime. Month-to-month.",
+                  good: "Month-to-month. Stay because it works.",
                   icon: X,
                 },
                 {
-                  bad: "Paid for 'SEO' you couldn't measure",
-                  good: "You'll see reviews, rankings, and calls.",
+                  bad: "Paid for reports you couldn't measure",
+                  good: "Track reviews, rankings, calls, and leads.",
                   icon: X,
                 },
                 {
-                  bad: "Never talked to a real person",
-                  good: "Direct line. Real humans. Same team.",
+                  bad: "Never talked to the same person twice",
+                  good: "A direct line to the team doing the work.",
                   icon: X,
                 },
               ].map((item, i) => (
@@ -440,29 +552,33 @@ export default function LandingOpusPage() {
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="mx-auto max-w-3xl text-center">
               <p className="text-sm font-bold uppercase tracking-widest text-gray-500">
-                This is happening right now
+                Where the calls disappear
               </p>
               <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                While you&apos;re reading this, you&apos;re losing a $2,500 job.
+                Your next customer is choosing from Google before they call.
               </h2>
+              <p className="mt-4 text-lg leading-relaxed text-gray-600">
+                If your site, reviews, and Google profile do not answer their
+                questions fast, the call goes to someone else.
+              </p>
             </div>
 
             <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
               {[
                 {
                   icon: TrendingUp,
-                  title: "You don't have a real website",
-                  body: `A Facebook page isn't a website. A site from 2019 isn't a website. When someone ${areaIn} searches for your service, you either look like the obvious choice — or you don't show up at all. There's no in-between anymore.`,
+                  title: "Your website does not make the first impression",
+                  body: "Customers decide fast. If your site is slow, dated, hard to use on mobile, or missing clear service areas, they leave before they ever see how good your work is.",
                 },
                 {
                   icon: Star,
-                  title: "You don't have enough reviews",
-                  body: "93% of customers read reviews before calling. Your competitor has dozens of stars glowing on Google. The math makes the decision for them — before they ever see your work.",
+                  title: "Your competitor looks safer to call",
+                  body: "Reviews are proof when people do not know you yet. If the company next to you has more recent Google reviews, they win trust before the estimate even starts.",
                 },
                 {
                   icon: PhoneCall,
-                  title: "Google can't tell who you are",
-                  body: `You might be the best in a 50-mile radius. Doesn't matter. Google ranks what it can understand: fast sites, clear service pages, consistent activity, and real reviews. Everything else gets buried on page 2. And nobody goes to page 2.`,
+                  title: "Google does not have enough signals to rank you",
+                  body: "Clear services, service areas, reviews, photos, and consistent business info help Google understand when to show you. Without those signals, better businesses still get buried.",
                 },
               ].map((card, i) => (
                 <div
@@ -494,11 +610,11 @@ export default function LandingOpusPage() {
                 The system
               </p>
               <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                Two things that actually move the needle
+                The two-part system that turns Google searches into booked jobs
               </h2>
               <p className="mt-4 text-lg text-gray-600">
-                Not 15 services. Not a mystery retainer. Two things, done right,
-                that make your phone ring more.
+                A better website gets prospects to trust you. Consistent review
+                requests make Google and future customers trust you.
               </p>
             </div>
 
@@ -506,10 +622,12 @@ export default function LandingOpusPage() {
               {/* Service 1 */}
               <div className="overflow-hidden rounded-2xl border border-gray-200">
                 <div className="relative h-52 sm:h-64">
-                  <img
-                    src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=website+design+modern&w=800&auto=format&fit=crop"
-                    alt="Professional website on laptop"
-                    className="h-full w-full object-cover"
+                  <Image
+                    src="/marketing/website-call-system.png"
+                    alt="Mobile-first local service website with call buttons and trust proof"
+                    fill
+                    sizes="(min-width: 1024px) 50vw, 100vw"
+                    className="object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-4 left-5 right-5">
@@ -517,25 +635,23 @@ export default function LandingOpusPage() {
                       Included
                     </span>
                     <h3 className="mt-2 text-xl font-bold text-white">
-                      Professional Website That Converts
+                      A Website Built to Make People Call
                     </h3>
                   </div>
                 </div>
                 <div className="p-6">
                   <p className="text-sm leading-relaxed text-gray-600">
-                    Not a template. A fast, mobile-first website built
-                    specifically for your trade and your city. Clear calls to
-                    action, trust signals, service pages that rank. The kind of
-                    site that makes customers pick up the phone instead of
-                    hitting the back button.
+                    We rebuild the first impression customers see on Google:
+                    fast mobile pages, clear service areas, tap-to-call buttons,
+                    and proof that makes you feel like the obvious choice.
                   </p>
                   <ul className="mt-5 space-y-3">
                     {[
-                      "Loads in under 2 seconds on any phone",
-                      "Tap-to-call on every page",
-                      "Service + city pages for local SEO",
-                      "Trust builders: licenses, reviews, warranties",
-                      "Written by people who understand your industry",
+                      "Mobile-first pages built for callers",
+                      "Tap-to-call CTAs above the fold",
+                      "Service + city pages Google can understand",
+                      "Reviews, licenses, warranties, and proof placed where buyers look",
+                      "Monthly edits included as your business changes",
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-2.5">
                         <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
@@ -549,10 +665,12 @@ export default function LandingOpusPage() {
               {/* Service 2 */}
               <div className="overflow-hidden rounded-2xl border border-gray-200">
                 <div className="relative h-52 sm:h-64">
-                  <img
-                    src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=phone+reviews+business&w=800&auto=format&fit=crop"
-                    alt="Customer leaving a review on phone"
-                    className="h-full w-full object-cover"
+                  <Image
+                    src="/marketing/review-request-system.png"
+                    alt="Automated review request flow with text message and five-star review card"
+                    fill
+                    sizes="(min-width: 1024px) 50vw, 100vw"
+                    className="object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-4 left-5 right-5">
@@ -560,24 +678,23 @@ export default function LandingOpusPage() {
                       Included
                     </span>
                     <h3 className="mt-2 text-xl font-bold text-white">
-                      Google Review Automation
+                      Review Requests That Happen After Every Job
                     </h3>
                   </div>
                 </div>
                 <div className="p-6">
                   <p className="text-sm leading-relaxed text-gray-600">
-                    After every job, your customer gets a simple text or email
-                    asking for a review. No awkward conversations. No
-                    remembering to ask. It happens automatically, and it works.
-                    Our clients average 53 new reviews in the first 60 days.
+                    Your team should not have to remember to ask. Every customer
+                    gets a simple, compliant request by text or email, so new
+                    reviews keep showing up while you focus on the work.
                   </p>
                   <ul className="mt-5 space-y-3">
                     {[
-                      "Automated text/email after every job",
-                      "One-tap link straight to your Google page",
-                      "Negative feedback caught privately first",
-                      "Dashboard to track growth",
-                      "Average: 53 new reviews in 60 days",
+                      "Request sent after every completed job",
+                      "Direct Google review link",
+                      "Private feedback channel for service recovery",
+                      "Review growth tracked monthly",
+                      "Works by text and email",
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-2.5">
                         <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
@@ -592,17 +709,101 @@ export default function LandingOpusPage() {
         </section>
 
         {/* ============================================================ */}
+        {/*  PROOF PREVIEW                                               */}
+        {/* ============================================================ */}
+        <section className="border-y border-gray-200 bg-white py-16 sm:py-24">
+          <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+            <div>
+              <p className="text-sm font-bold uppercase tracking-widest text-orange-600">
+                What your audit shows
+              </p>
+              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                We show the leak before we sell the fix.
+              </h2>
+              <p className="mt-4 text-base leading-relaxed text-gray-600">
+                Your free audit compares your website, Google profile, reviews,
+                and calls-to-action against the businesses already taking the
+                jobs you want. The goal is simple: make the next step obvious.
+              </p>
+              <div className="mt-6 grid gap-3">
+                {proofStats.map((stat) => (
+                  <div key={stat.label} className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+                    <div className="text-xs font-bold uppercase tracking-wide text-gray-500">
+                      {stat.label}
+                    </div>
+                    <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+                      <span className="rounded-md bg-white px-2.5 py-1 text-gray-500 line-through ring-1 ring-gray-200">
+                        {stat.before}
+                      </span>
+                      <ArrowRight className="h-4 w-4 text-orange-500" />
+                      <span className="rounded-md bg-emerald-50 px-2.5 py-1 font-semibold text-emerald-700 ring-1 ring-emerald-200">
+                        {stat.after}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-xs text-gray-500">{stat.note}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-gray-200 bg-gray-950 p-4 shadow-xl sm:p-6">
+              <div className="rounded-xl bg-white p-5">
+                <div className="flex items-start justify-between gap-4 border-b border-gray-200 pb-4">
+                  <div>
+                    <div className="text-xs font-bold uppercase tracking-widest text-orange-600">
+                      Sample audit snapshot
+                    </div>
+                    <h3 className="mt-1 text-lg font-bold text-gray-900">
+                      Smith&apos;s Plumbing vs. top 3 competitors
+                    </h3>
+                  </div>
+                  <span className="rounded-full bg-orange-50 px-3 py-1 text-xs font-bold text-orange-700 ring-1 ring-orange-200">
+                    48 hrs
+                  </span>
+                </div>
+                <div className="mt-5 grid gap-4 sm:grid-cols-3">
+                  {[
+                    ["Mobile speed", "41/100", "Slow load loses emergency calls"],
+                    ["Review gap", "-38", "Competitors have more recent proof"],
+                    ["CTA score", "C-", "Phone number hidden below the fold"],
+                  ].map(([label, value, note]) => (
+                    <div key={label} className="rounded-xl bg-gray-50 p-4">
+                      <div className="text-xs font-semibold text-gray-500">{label}</div>
+                      <div className="mt-2 text-2xl font-extrabold text-gray-900">{value}</div>
+                      <p className="mt-1 text-xs leading-relaxed text-gray-500">{note}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-5 rounded-xl border border-orange-200 bg-orange-50 p-4">
+                  <div className="text-sm font-bold text-orange-900">
+                    Biggest fix first
+                  </div>
+                  <p className="mt-1 text-sm leading-relaxed text-orange-800">
+                    Rebuild the first mobile viewport around emergency calls,
+                    proof, and service area clarity before spending more on ads.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ============================================================ */}
         {/*  RESULTS / SOCIAL PROOF                                      */}
         {/* ============================================================ */}
         <section className="bg-gray-900 py-16 sm:py-24">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="mx-auto max-w-3xl text-center">
               <p className="text-sm font-bold uppercase tracking-widest text-orange-400">
-                Real numbers from real businesses
+                Proof, not promises
               </p>
               <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-                They were skeptical too. Then the phone started ringing.
+                The right online presence changes who gets the call.
               </h2>
+              <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-gray-400">
+                These are the outcomes we build toward: more trust, more recent
+                reviews, and clearer reasons to call.
+              </p>
             </div>
 
             <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -612,11 +813,32 @@ export default function LandingOpusPage() {
                   className="flex flex-col rounded-2xl border border-gray-700 bg-gray-800/50 p-6"
                 >
                   <StarRating count={5} />
-                  <p className="mt-4 flex-1 text-sm leading-relaxed text-gray-300">
+                  <div className="mt-5 space-y-3 rounded-xl border border-gray-700 bg-gray-900/60 p-4">
+                    {[
+                      ["Before", t.before],
+                      ["Changed", t.changed],
+                      ["Result", t.metric],
+                    ].map(([label, value]) => (
+                      <div key={label} className="grid grid-cols-[72px_1fr] gap-3 text-sm">
+                        <div className="font-semibold text-gray-500">
+                          {label}
+                        </div>
+                        <div
+                          className={cl(
+                            "font-semibold",
+                            label === "Result" ? "text-emerald-300" : "text-gray-200"
+                          )}
+                        >
+                          {value}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-5 flex-1 text-sm leading-relaxed text-gray-300">
                     &ldquo;{t.quote}&rdquo;
                   </p>
                   <div className="mt-6 border-t border-gray-700 pt-4">
-                    <div className="flex items-center justify-between">
+                    <div>
                       <div>
                         <div className="text-sm font-semibold text-white">
                           {t.name}
@@ -625,9 +847,6 @@ export default function LandingOpusPage() {
                           {t.trade} -- {t.location}
                         </div>
                       </div>
-                      <span className="rounded-full bg-emerald-900/50 px-3 py-1 text-xs font-semibold text-emerald-300 ring-1 ring-emerald-700">
-                        {t.metric}
-                      </span>
                     </div>
                   </div>
                 </div>
@@ -654,26 +873,26 @@ export default function LandingOpusPage() {
               {[
                 {
                   step: "01",
-                  title: "Free Audit",
-                  desc: `We analyze your current online presence ${areaIn}: website speed, Google ranking, review count vs. competitors, conversion leaks. You get a clear report within 48 hours.`,
+                  title: "Find the leaks",
+                  desc: "We compare your website, reviews, Google profile, and competitors so you know exactly where calls are leaking.",
                   icon: Shield,
                 },
                 {
                   step: "02",
-                  title: "We Build It",
-                  desc: "Your professional website and review automation system get built and launched. Takes about a week. You answer a few questions. We handle the rest.",
+                  title: "Fix the first impression",
+                  desc: "We launch the pages, CTAs, trust proof, and review system that make you easier to choose.",
                   icon: Zap,
                 },
                 {
                   step: "03",
-                  title: "Reviews Stack Up",
-                  desc: "The automation kicks in. After every job, your customers get prompted to leave a review. No effort from you. Reviews start compounding.",
+                  title: "Ask every customer",
+                  desc: "Every completed job triggers a compliant review request by text or email, so recent proof keeps building.",
                   icon: Star,
                 },
                 {
                   step: "04",
-                  title: "Phone Rings More",
-                  desc: `Better website + more reviews + local SEO = you show up first when someone ${areaIn} searches for your service. The calls come to you.`,
+                  title: "Turn trust into calls",
+                  desc: "Better pages, stronger reviews, and clearer Google signals help more ready-to-buy customers call you first.",
                   icon: PhoneCall,
                 },
               ].map((s, i) => (
@@ -711,17 +930,17 @@ export default function LandingOpusPage() {
             {/* Intro */}
             <div className="mb-10 text-center">
               <p className="mx-auto max-w-2xl text-base text-gray-600">
-                Every plan includes a professionally built website at no extra charge. No setup fees. No long-term contracts. And when you sign up, we lock in your trade {areaIn} — we never take on a direct competitor in your market. The difference between the two plans is how aggressively you want to go after the top spot.
+                Every plan includes the website, review system, missed-call follow-up, and reporting. No setup fee. No long contract. Pick the level based on how aggressively you want to compete for calls {areaIn}.
               </p>
             </div>
 
             {/* Two-column cards */}
             <div className="grid gap-8 md:grid-cols-2 md:items-start">
 
-              {/* Plan 1 — The Full System */}
+              {/* Plan 1 — Local Call System */}
               <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg">
                 <div className="border-b border-gray-200 bg-gray-900 px-6 py-8 text-center sm:px-10">
-                  <p className="text-sm font-semibold text-orange-400">The Full System</p>
+                  <p className="text-sm font-semibold text-orange-400">Local Call System</p>
                   <div className="mt-4 flex items-baseline justify-center gap-1">
                     <span className="text-5xl font-extrabold text-white">$399</span>
                     <span className="text-lg font-semibold text-gray-400">/mo</span>
@@ -730,16 +949,17 @@ export default function LandingOpusPage() {
                 </div>
                 <div className="p-6 sm:p-8">
                   <div className="mb-5 rounded-xl bg-orange-50 p-4">
-                    <p className="text-sm font-semibold text-orange-800">We build your website free.</p>
-                    <p className="mt-1 text-xs text-orange-700">Most agencies charge $1,000–$2,000 just to get started. You pay nothing upfront. Your site goes live in about a week.</p>
+                    <p className="text-sm font-semibold text-orange-800">Managed website included.</p>
+                    <p className="mt-1 text-xs text-orange-700">Your site, review system, missed-call follow-up, and reporting are set up and managed for you.</p>
                   </div>
                   <ul className="space-y-4">
                     {[
-                      { title: "Professional website — built free", desc: "Hosted and managed for you (worth $1,000–$2,000 to build, $99–$199/mo elsewhere)" },
-                      { title: "Google review automation", desc: "SMS + email requests after every job — reviews stack while you sleep" },
-                      { title: "Missed call text-back", desc: "Miss a call? An auto-text goes out in seconds so the lead doesn't call your competitor" },
-                      { title: "Monthly performance report", desc: "Reviews gained, ranking movement, call volume — proof it's working" },
-                      { title: "Exclusive territory", desc: `One business per trade ${areaIn}. Your spot is protected.` },
+                      { title: "Managed mobile-first website", desc: "Built around service areas, proof, and tap-to-call CTAs" },
+                      { title: "Review requests by SMS + email", desc: "Compliant requests after completed jobs so recent proof keeps building" },
+                      { title: "Missed-call text-back", desc: "A lead gets a reply in seconds if you miss the call" },
+                      { title: "Lead inbox + simple pipeline", desc: "Keep new audit and call opportunities from slipping through" },
+                      { title: "Monthly performance report", desc: "Calls, reviews, ranking movement, and next actions" },
+                      { title: "One trade per local market", desc: `We protect your spot ${areaIn}.` },
                     ].map((item, i) => (
                       <li key={i} className="flex gap-3">
                         <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100">
@@ -752,18 +972,18 @@ export default function LandingOpusPage() {
                       </li>
                     ))}
                   </ul>
-                  <p className="mt-6 text-xs text-gray-500 text-center">For contractors who want to look like the obvious choice online and have their phone ring more.</p>
+                  <p className="mt-6 text-center text-xs text-gray-500">For service businesses that need a better website, more reviews, and fewer missed calls without hiring a marketing team.</p>
                   <a href="#get-started" className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-orange-600 py-4 text-base font-bold text-white shadow-sm transition hover:bg-orange-700">
-                    Claim Your Spot <ArrowRight className="h-5 w-5" />
+                    Start With the Audit <ArrowRight className="h-5 w-5" />
                   </a>
                 </div>
               </div>
 
-              {/* Plan 2 — Market Dominator */}
+              {/* Plan 2 — Map Pack Growth */}
               <div className="overflow-hidden rounded-2xl border-2 border-violet-500 bg-white shadow-xl md:scale-[1.02]">
                 <div className="border-b border-violet-800 bg-gray-900 px-6 py-8 text-center sm:px-10 relative">
                   <span className="absolute top-3 right-3 rounded-full bg-violet-500 px-3 py-1 text-xs font-bold text-white">Best Value</span>
-                  <p className="text-sm font-semibold text-violet-400">Market Dominator</p>
+                  <p className="text-sm font-semibold text-violet-400">Map Pack Growth</p>
                   <div className="mt-4 flex items-baseline justify-center gap-1">
                     <span className="text-5xl font-extrabold text-white">$697</span>
                     <span className="text-lg font-semibold text-gray-400">/mo</span>
@@ -771,15 +991,16 @@ export default function LandingOpusPage() {
                   <p className="mt-3 text-sm text-gray-400">No setup fee. No contract. Cancel anytime.</p>
                 </div>
                 <div className="p-6 sm:p-8">
-                  <p className="mb-5 text-sm text-gray-600">Everything in The Full System, plus we go after the top spot in your market and don&apos;t stop until you own it.</p>
+                  <p className="mb-5 text-sm text-gray-600">Everything in Local Call System, plus the SEO and Google Business Profile work needed to compete harder in Maps.</p>
                   <ul className="space-y-4">
                     {[
-                      { title: "Everything in The Full System", desc: "Website, review automation, missed call text-back, monthly report, exclusive territory" },
-                      { title: "Full SEO audit", desc: "Exactly where competitors beat you and what we're doing about it — no vague reports" },
-                      { title: "Google Business Profile deep build-out", desc: "Right categories, photos, descriptions — all the signals Google uses to rank you in the Map Pack" },
-                      { title: "Citation cleanup across 30+ directories", desc: "So Google knows exactly who you are, where you are, and what you do" },
-                      { title: "Local backlink gap analysis", desc: "Who's linking to your competitors but not you — and how we fix that" },
-                      { title: "Quarterly strategy call", desc: "Rankings, review growth, and your next 90 days" },
+                      { title: "Everything in Local Call System", desc: "Website, reviews, missed-call follow-up, lead tracking, reporting, and territory protection" },
+                      { title: "Full SEO + competitor audit", desc: "What competitors are doing better and what we fix first" },
+                      { title: "Google Business Profile optimization", desc: "Categories, services, photos, descriptions, and local trust signals" },
+                      { title: "Citation/listing cleanup", desc: "Consistent business info across the places Google checks" },
+                      { title: "Local backlink gap review", desc: "Where competitors have authority you do not yet have" },
+                      { title: "Service/city page expansion", desc: "More specific pages for the jobs and areas you want most" },
+                      { title: "Quarterly growth call", desc: "Review momentum, ranking movement, and the next 90 days" },
                     ].map((item, i) => (
                       <li key={i} className="flex gap-3">
                         <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-100">
@@ -792,9 +1013,9 @@ export default function LandingOpusPage() {
                       </li>
                     ))}
                   </ul>
-                  <p className="mt-6 text-xs text-gray-500 text-center">For contractors who want to lock down the number one spot before a competitor does.</p>
+                  <p className="mt-6 text-center text-xs text-gray-500">For businesses ready to compete harder for top local rankings, stronger Google signals, and more booked jobs.</p>
                   <a href="#get-started" className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-violet-600 py-4 text-base font-bold text-white shadow-sm transition hover:bg-violet-700">
-                    Own My Market <ArrowRight className="h-5 w-5" />
+                    Build My Local Lead System <ArrowRight className="h-5 w-5" />
                   </a>
                 </div>
               </div>
@@ -803,8 +1024,11 @@ export default function LandingOpusPage() {
 
             {/* Trial nudge */}
             <p className="mt-8 text-center text-sm text-gray-500">
-              Not ready to commit at full price?{" "}
-              <a href="#get-started" className="font-semibold text-orange-600 hover:underline">Ask about our first-month trial offer.</a>
+              Start with the free audit.{" "}
+              <a href="#get-started" className="font-semibold text-orange-600 hover:underline">If we can&apos;t show a clear path to more calls, you should not buy.</a>
+            </p>
+            <p className="mx-auto mt-3 max-w-2xl text-center text-xs leading-relaxed text-gray-500">
+              SMS/email usage is included for normal local business volume. If your account ever needs unusually high message volume, we&apos;ll flag it before anything changes.
             </p>
           </div>
         </section>
@@ -985,7 +1209,7 @@ export default function LandingOpusPage() {
                     </h3>
                     <p className="mt-2 text-base text-gray-600">
                       Your audit is being prepared. Expect it in your inbox
-                      within 48 hours. If you need anything sooner, call us at{" "}
+                      within 48 hours. Want to walk through it sooner? Call us at{" "}
                       <a
                         href="tel:+17372605332"
                         className="font-semibold text-orange-600"
@@ -994,6 +1218,13 @@ export default function LandingOpusPage() {
                       </a>
                       .
                     </p>
+                    <a
+                      href="tel:+17372605332"
+                      className="mt-6 inline-flex items-center justify-center gap-2 rounded-lg bg-orange-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-orange-700"
+                    >
+                      Call now
+                      <Phone className="h-4 w-4" />
+                    </a>
                   </div>
                 ) : (
                   <>
@@ -1001,7 +1232,7 @@ export default function LandingOpusPage() {
                       Request your free audit
                     </h3>
                     <p className="mt-1 text-sm text-gray-500">
-                      Takes 30 seconds. No commitment.
+                      Takes about 60 seconds. No commitment.
                     </p>
 
                     <form onSubmit={handleSubmit} className="mt-6 space-y-5">
@@ -1037,6 +1268,86 @@ export default function LandingOpusPage() {
                           onChange={set("business")}
                           placeholder="Smith's Plumbing"
                           autoComplete="organization"
+                          className="mt-1.5 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                        <div>
+                          <label
+                            htmlFor="opus-business-type"
+                            className="block text-sm font-semibold text-gray-700"
+                          >
+                            Trade or business type
+                          </label>
+                          <input
+                            id="opus-business-type"
+                            type="text"
+                            value={form.businessType}
+                            onChange={set("businessType")}
+                            placeholder="Plumbing, HVAC, salon..."
+                            autoComplete="organization-title"
+                            className="mt-1.5 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                          />
+                        </div>
+                        <div>
+                          <label
+                            htmlFor="opus-service-area"
+                            className="block text-sm font-semibold text-gray-700"
+                          >
+                            City or service area
+                          </label>
+                          <input
+                            id="opus-service-area"
+                            type="text"
+                            value={form.serviceArea}
+                            onChange={set("serviceArea")}
+                            placeholder={city || "Austin, TX"}
+                            autoComplete="address-level2"
+                            className="mt-1.5 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="opus-website"
+                          className="block text-sm font-semibold text-gray-700"
+                        >
+                          Current website
+                          <span className="font-normal text-gray-400">
+                            {" "}optional
+                          </span>
+                        </label>
+                        <input
+                          id="opus-website"
+                          type="url"
+                          value={form.website}
+                          onChange={set("website")}
+                          placeholder="https://smithplumbing.com"
+                          autoComplete="url"
+                          inputMode="url"
+                          className="mt-1.5 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="opus-google-profile"
+                          className="block text-sm font-semibold text-gray-700"
+                        >
+                          Google Business Profile link
+                          <span className="font-normal text-gray-400">
+                            {" "}optional
+                          </span>
+                        </label>
+                        <input
+                          id="opus-google-profile"
+                          type="url"
+                          value={form.googleProfile}
+                          onChange={set("googleProfile")}
+                          placeholder="Paste your Google profile link if you have it"
+                          inputMode="url"
                           className="mt-1.5 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                         />
                       </div>
@@ -1098,7 +1409,8 @@ export default function LandingOpusPage() {
 
                       {status === "error" && (
                         <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-                          Please fill out all fields and try again.
+                          Please fill out your contact info, business type, and
+                          service area so we can prepare the audit.
                         </div>
                       )}
 
