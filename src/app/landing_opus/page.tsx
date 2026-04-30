@@ -252,7 +252,7 @@ export default function LandingOpusPage() {
     },
     {
       q: "How is this different from the last agency that burned me?",
-      a: "Most agencies sell you a retainer and a dashboard. We sell you a system with measurable outcomes: more reviews, better rankings, more calls. No long contracts. If we're not delivering, you leave. That's the deal.",
+      a: "Most agencies sell you a retainer and a dashboard. We sell you a system with measurable outcomes: more reviews, better rankings, more calls. For clients who want to grow, we work like a partner, not a vendor hiding behind reports.",
     },
     {
       q: "What do I actually have to do?",
@@ -268,7 +268,7 @@ export default function LandingOpusPage() {
     },
     {
       q: "What happens if I want to cancel?",
-      a: "You cancel. No penalties, no fees, no guilt trip. Your website stays live through the end of your billing period. We keep things simple because we'd rather earn your business every month than trap you in a contract.",
+      a: "You cancel. No penalties, no fees, no guilt trip. Your website stays live through the end of your billing period. We keep things simple because we'd rather earn your business through results than trap you in a contract.",
     },
     {
       q: "Do I own the website if I cancel?",
@@ -312,15 +312,15 @@ export default function LandingOpusPage() {
         offers: [
           {
             "@type": "Offer",
-            name: "The Full System",
-            price: "399",
+            name: "Local Call System",
+            price: "499",
             priceCurrency: "USD",
             availability: "https://schema.org/InStock",
           },
           {
             "@type": "Offer",
-            name: "Market Dominator",
-            price: "697",
+            name: "Growth Partner",
+            price: "997",
             priceCurrency: "USD",
             availability: "https://schema.org/InStock",
           },
@@ -930,7 +930,7 @@ export default function LandingOpusPage() {
             {/* Intro */}
             <div className="mb-10 text-center">
               <p className="mx-auto max-w-2xl text-base text-gray-600">
-                Every plan includes the website, review system, missed-call follow-up, and reporting. No setup fee. No long contract. Pick the level based on how aggressively you want to compete for calls {areaIn}.
+                Every plan includes the website, review system, missed-call follow-up, and reporting. Choose the foundation if you want the system handled. Choose the growth partnership if you want to compete seriously for more calls {areaIn}.
               </p>
             </div>
 
@@ -942,15 +942,15 @@ export default function LandingOpusPage() {
                 <div className="border-b border-gray-200 bg-gray-900 px-6 py-8 text-center sm:px-10">
                   <p className="text-sm font-semibold text-orange-400">Local Call System</p>
                   <div className="mt-4 flex items-baseline justify-center gap-1">
-                    <span className="text-5xl font-extrabold text-white">$399</span>
+                    <span className="text-5xl font-extrabold text-white">$499</span>
                     <span className="text-lg font-semibold text-gray-400">/mo</span>
                   </div>
-                  <p className="mt-3 text-sm text-gray-400">No setup fee. No contract. Cancel anytime.</p>
+                  <p className="mt-3 text-sm text-gray-400">Standard setup included. No long contract.</p>
                 </div>
                 <div className="p-6 sm:p-8">
                   <div className="mb-5 rounded-xl bg-orange-50 p-4">
-                    <p className="text-sm font-semibold text-orange-800">Managed website included.</p>
-                    <p className="mt-1 text-xs text-orange-700">Your site, review system, missed-call follow-up, and reporting are set up and managed for you.</p>
+                    <p className="text-sm font-semibold text-orange-800">The foundation for more local calls.</p>
+                    <p className="mt-1 text-xs text-orange-700">Your site, review requests, missed-call follow-up, and reporting are set up and managed for you.</p>
                   </div>
                   <ul className="space-y-4">
                     {[
@@ -972,26 +972,26 @@ export default function LandingOpusPage() {
                       </li>
                     ))}
                   </ul>
-                  <p className="mt-6 text-center text-xs text-gray-500">For service businesses that need a better website, more reviews, and fewer missed calls without hiring a marketing team.</p>
+                  <p className="mt-6 text-center text-xs text-gray-500">For service businesses that want the essentials handled well without a heavy strategy relationship.</p>
                   <a href="#get-started" className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-orange-600 py-4 text-base font-bold text-white shadow-sm transition hover:bg-orange-700">
                     Start With the Audit <ArrowRight className="h-5 w-5" />
                   </a>
                 </div>
               </div>
 
-              {/* Plan 2 — Map Pack Growth */}
+              {/* Plan 2 — Growth Partner */}
               <div className="overflow-hidden rounded-2xl border-2 border-violet-500 bg-white shadow-xl md:scale-[1.02]">
                 <div className="border-b border-violet-800 bg-gray-900 px-6 py-8 text-center sm:px-10 relative">
-                  <span className="absolute top-3 right-3 rounded-full bg-violet-500 px-3 py-1 text-xs font-bold text-white">Best Value</span>
-                  <p className="text-sm font-semibold text-violet-400">Map Pack Growth</p>
+                  <span className="absolute top-3 right-3 rounded-full bg-violet-500 px-3 py-1 text-xs font-bold text-white">Growth Partner</span>
+                  <p className="text-sm font-semibold text-violet-400">Growth Partner</p>
                   <div className="mt-4 flex items-baseline justify-center gap-1">
-                    <span className="text-5xl font-extrabold text-white">$697</span>
+                    <span className="text-5xl font-extrabold text-white">$997</span>
                     <span className="text-lg font-semibold text-gray-400">/mo</span>
                   </div>
-                  <p className="mt-3 text-sm text-gray-400">No setup fee. No contract. Cancel anytime.</p>
+                  <p className="mt-3 text-sm text-gray-400">For businesses ready to grow with us.</p>
                 </div>
                 <div className="p-6 sm:p-8">
-                  <p className="mb-5 text-sm text-gray-600">Everything in Local Call System, plus the SEO and Google Business Profile work needed to compete harder in Maps.</p>
+                  <p className="mb-5 text-sm text-gray-600">Everything in Local Call System, plus the strategy and execution needed to compete harder in Google Maps and turn online trust into booked work.</p>
                   <ul className="space-y-4">
                     {[
                       { title: "Everything in Local Call System", desc: "Website, reviews, missed-call follow-up, lead tracking, reporting, and territory protection" },
@@ -999,8 +999,8 @@ export default function LandingOpusPage() {
                       { title: "Google Business Profile optimization", desc: "Categories, services, photos, descriptions, and local trust signals" },
                       { title: "Citation/listing cleanup", desc: "Consistent business info across the places Google checks" },
                       { title: "Local backlink gap review", desc: "Where competitors have authority you do not yet have" },
-                      { title: "Service/city page expansion", desc: "More specific pages for the jobs and areas you want most" },
-                      { title: "Quarterly growth call", desc: "Review momentum, ranking movement, and the next 90 days" },
+                      { title: "Priority service/city page expansion", desc: "Focused pages for the jobs and areas you want most" },
+                      { title: "Monthly growth call", desc: "Review momentum, ranking movement, lead quality, and the next actions" },
                     ].map((item, i) => (
                       <li key={i} className="flex gap-3">
                         <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-100">
@@ -1013,9 +1013,9 @@ export default function LandingOpusPage() {
                       </li>
                     ))}
                   </ul>
-                  <p className="mt-6 text-center text-xs text-gray-500">For businesses ready to compete harder for top local rankings, stronger Google signals, and more booked jobs.</p>
+                  <p className="mt-6 text-center text-xs text-gray-500">For owners who want a closer partner, clearer goals, and steady pressure toward more qualified calls.</p>
                   <a href="#get-started" className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-violet-600 py-4 text-base font-bold text-white shadow-sm transition hover:bg-violet-700">
-                    Build My Local Lead System <ArrowRight className="h-5 w-5" />
+                    Talk Growth Strategy <ArrowRight className="h-5 w-5" />
                   </a>
                 </div>
               </div>
@@ -1027,8 +1027,11 @@ export default function LandingOpusPage() {
               Start with the free audit.{" "}
               <a href="#get-started" className="font-semibold text-orange-600 hover:underline">If we can&apos;t show a clear path to more calls, you should not buy.</a>
             </p>
+            <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-gray-500">
+              Only need help getting more reviews? Ask about our lighter Review Engine option during the audit call.
+            </p>
             <p className="mx-auto mt-3 max-w-2xl text-center text-xs leading-relaxed text-gray-500">
-              SMS/email usage is included for normal local business volume. If your account ever needs unusually high message volume, we&apos;ll flag it before anything changes.
+              SMS/email usage is included for normal local business volume. If your account ever needs unusually high message volume or custom work outside the standard site build, we&apos;ll flag it before anything changes.
             </p>
           </div>
         </section>
