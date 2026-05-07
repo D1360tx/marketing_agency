@@ -94,7 +94,7 @@ function StatCard({
     >
       <div
         className={cl(
-          "text-3xl font-bold tracking-tight sm:text-4xl",
+          "text-2xl font-bold leading-tight tracking-tight sm:text-3xl",
           accent ? "text-orange-600" : "text-gray-900"
         )}
       >
@@ -392,6 +392,9 @@ export default function LandingOpusPage() {
           </a>
 
           <div className="flex items-center gap-3">
+            <span className="hidden rounded-full bg-gray-50 px-3 py-1.5 text-xs font-semibold text-gray-600 ring-1 ring-gray-200 lg:inline-flex">
+              One business per trade per city
+            </span>
             <a
               href="tel:+17372605332"
               className="hidden items-center gap-2 text-sm font-semibold text-gray-700 hover:text-gray-900 sm:inline-flex"
@@ -417,11 +420,19 @@ export default function LandingOpusPage() {
         <section className="relative overflow-hidden bg-gray-50">
           {/* Subtle texture */}
           <div
-            className="pointer-events-none absolute inset-0 opacity-[0.03]"
+            className="pointer-events-none absolute inset-0 opacity-[0.035] sm:opacity-[0.055]"
             style={{
               backgroundImage:
                 "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
             }}
+            aria-hidden
+          />
+          <div
+            className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.78)_0%,rgba(249,250,251,0.42)_42%,rgba(249,250,251,0.92)_100%)]"
+            aria-hidden
+          />
+          <div
+            className="pointer-events-none absolute inset-y-0 left-0 w-1/2 bg-[linear-gradient(90deg,rgba(249,250,251,1)_0%,rgba(249,250,251,0)_100%)]"
             aria-hidden
           />
 
@@ -444,8 +455,9 @@ export default function LandingOpusPage() {
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-gray-600 sm:text-xl">
               They&apos;re not better than you. They just look better online. We
               build fast local websites and compliant review request systems
-              that help service businesses get more calls from Google. No setup
-              fee. No contracts. Results in 30 days or your first month is free.
+              that help serious service businesses earn more calls from Google.
+              Start with a free audit so you can see the gaps before you buy
+              anything.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -464,24 +476,29 @@ export default function LandingOpusPage() {
                 Call (737) 260-5332
               </a>
             </div>
+            <p className="mt-4 flex max-w-2xl items-start gap-2 text-sm font-medium leading-relaxed text-gray-600">
+              <Shield className="mt-0.5 h-4 w-4 shrink-0 text-orange-600" />
+              Your free audit shows review gaps, ranking gaps, website leaks,
+              and missed-call risks.
+            </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <Badge>No contracts</Badge>
-              <Badge>Results in 30 days</Badge>
+              <Badge>No long contracts</Badge>
+              <Badge>Audit before we recommend a plan</Badge>
               <Badge>Compliant review requests</Badge>
               <Badge>1 per trade per city</Badge>
             </div>
 
             {/* Stats strip */}
             <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4">
-              <StatCard value="340%" label="avg. increase in calls" accent />
-              <StatCard value="53" label="avg. reviews in 60 days" />
-              <StatCard value="30" label="days to see results" />
-              <StatCard value="0" label="long-term contracts" />
+              <StatCard value="Review gap" label="recent proof vs. competitors" accent />
+              <StatCard value="Ranking gap" label="where Google cannot trust you yet" />
+              <StatCard value="Site speed" label="mobile leaks that cost calls" />
+              <StatCard value="Missed calls" label="follow-up risk before they book" />
             </div>
             <p className="mt-3 text-xs text-gray-500">
-              Example outcomes from recent local service campaigns. Your audit
-              will show the exact gap in your market before we recommend a plan.
+              Your audit shows the exact gaps in your market before we
+              recommend a plan.
             </p>
           </div>
         </section>
