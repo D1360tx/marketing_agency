@@ -287,6 +287,7 @@ export default function LandingOpusPage() {
   const proofStats = [
     { label: "Review gap", before: "12 reviews", after: "53 reviews", note: "60-day review request campaign" },
     { label: "Call clarity", before: "3 buried CTAs", after: "Tap-to-call on every page", note: "Mobile-first website rebuild" },
+    { label: "Follow-up gap", before: "20+ min avg.", after: "Fast text-back", note: "Speed-to-lead workflow" },
     { label: "Audit depth", before: "Guesswork", after: "Speed, rankings, reviews, competitors", note: "Delivered before the sales call" },
   ];
 
@@ -454,10 +455,9 @@ export default function LandingOpusPage() {
 
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-gray-600 sm:text-xl">
               They&apos;re not better than you. They just look better online. We
-              build fast local websites and compliant review request systems
-              that help serious service businesses earn more calls from Google.
-              Start with a free audit so you can see the gaps before you buy
-              anything.
+              build fast local websites, compliant review request systems, and
+              follow-up workflows that help serious service businesses get
+              found, trusted, and answered before the lead goes cold.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -479,7 +479,7 @@ export default function LandingOpusPage() {
             <p className="mt-4 flex max-w-2xl items-start gap-2 text-sm font-medium leading-relaxed text-gray-600">
               <Shield className="mt-0.5 h-4 w-4 shrink-0 text-orange-600" />
               Your free audit shows review gaps, ranking gaps, website leaks,
-              and missed-call risks.
+              and follow-up delays that cost booked jobs.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
@@ -494,7 +494,7 @@ export default function LandingOpusPage() {
               <StatCard value="Review gap" label="recent proof vs. competitors" accent />
               <StatCard value="Ranking gap" label="where Google cannot trust you yet" />
               <StatCard value="Site speed" label="mobile leaks that cost calls" />
-              <StatCard value="Missed calls" label="follow-up risk before they book" />
+              <StatCard value="Lead speed" label="follow-up risk before they book" />
             </div>
             <p className="mt-3 text-xs text-gray-500">
               Your audit shows the exact gaps in your market before we
@@ -594,8 +594,8 @@ export default function LandingOpusPage() {
                 },
                 {
                   icon: PhoneCall,
-                  title: "Google does not have enough signals to rank you",
-                  body: "Clear services, service areas, reviews, photos, and consistent business info help Google understand when to show you. Without those signals, better businesses still get buried.",
+                  title: "New leads go cold while your team is busy",
+                  body: "When someone needs help now, 20 minutes is enough time to contact two or three other companies. Fast follow-up keeps the lead warm until your team can take over.",
                 },
               ].map((card, i) => (
                 <div
@@ -627,15 +627,16 @@ export default function LandingOpusPage() {
                 The system
               </p>
               <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                The two-part system that turns Google searches into booked jobs
+                The three-part system that turns Google searches into booked jobs
               </h2>
               <p className="mt-4 text-lg text-gray-600">
                 A better website gets prospects to trust you. Consistent review
-                requests make Google and future customers trust you.
+                requests build proof. Fast follow-up keeps new leads warm before
+                they call the next company.
               </p>
             </div>
 
-            <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-2">
+            <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-3">
               {/* Service 1 */}
               <div className="overflow-hidden rounded-2xl border border-gray-200">
                 <div className="relative h-52 sm:h-64">
@@ -721,6 +722,45 @@ export default function LandingOpusPage() {
                   </ul>
                 </div>
               </div>
+
+              {/* Service 3 */}
+              <div className="overflow-hidden rounded-2xl border border-gray-200">
+                <div className="relative h-52 bg-gray-950 p-5 sm:h-64">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.25),transparent_34%),linear-gradient(180deg,rgba(17,24,39,1),rgba(3,7,18,1))]" />
+                  <div className="relative flex h-full flex-col justify-end">
+                    <div className="mb-5 max-w-[92%] rounded-2xl rounded-bl-sm bg-white p-3 text-sm font-medium leading-relaxed text-gray-800 shadow-lg">
+                      Got your AC request. Is it blowing warm air, making noise, or not turning on at all?
+                    </div>
+                    <span className="w-fit rounded-full bg-orange-600 px-3 py-1 text-xs font-bold text-white">
+                      Included
+                    </span>
+                    <h3 className="mt-2 text-xl font-bold text-white">
+                      Fast Follow-Up Before Leads Go Cold
+                    </h3>
+                  </div>
+                </div>
+                <div className="p-6">
+                  <p className="text-sm leading-relaxed text-gray-600">
+                    Most marketing stops when the lead comes in. We help you keep
+                    going with fast, relevant text follow-up when someone fills
+                    out a form, misses your call, or reaches out after hours.
+                  </p>
+                  <ul className="mt-5 space-y-3">
+                    {[
+                      "Fast missed-call text-back",
+                      "Fast form-lead response while your team is busy",
+                      "Qualifying questions for service, urgency, and location",
+                      "Lead details sent to your team before the callback",
+                      "Speed-to-lead tracked in reporting",
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-2.5">
+                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                        <span className="text-sm text-gray-700">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -778,11 +818,12 @@ export default function LandingOpusPage() {
                     48 hrs
                   </span>
                 </div>
-                <div className="mt-5 grid gap-4 sm:grid-cols-3">
+                <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   {[
                     ["Mobile speed", "41/100", "Slow load loses emergency calls"],
                     ["Review gap", "-38", "Competitors have more recent proof"],
                     ["CTA score", "C-", "Phone number hidden below the fold"],
+                    ["Lead speed", "20+ min", "Follow-up delay lets leads shop around"],
                   ].map(([label, value, note]) => (
                     <div key={label} className="rounded-xl bg-gray-50 p-4">
                       <div className="text-xs font-semibold text-gray-500">{label}</div>
@@ -797,7 +838,8 @@ export default function LandingOpusPage() {
                   </div>
                   <p className="mt-1 text-sm leading-relaxed text-orange-800">
                     Rebuild the first mobile viewport around emergency calls,
-                    proof, and service area clarity before spending more on ads.
+                    proof, service area clarity, and fast follow-up before
+                    spending more on ads.
                   </p>
                 </div>
               </div>
@@ -947,7 +989,7 @@ export default function LandingOpusPage() {
             {/* Intro */}
             <div className="mb-10 text-center">
               <p className="mx-auto max-w-2xl text-base text-gray-600">
-                Every plan includes the website, review system, missed-call follow-up, and reporting. Choose the foundation if you want the system handled. Choose the growth partnership if you want to compete seriously for more calls {areaIn}.
+                Every plan includes the website, review system, speed-to-lead follow-up, and reporting. Choose the foundation if you want the system handled. Choose the growth partnership if you want to compete seriously for more calls {areaIn}.
               </p>
             </div>
 
@@ -967,13 +1009,14 @@ export default function LandingOpusPage() {
                 <div className="p-6 sm:p-8">
                   <div className="mb-5 rounded-xl bg-orange-50 p-4">
                     <p className="text-sm font-semibold text-orange-800">The foundation for more local calls.</p>
-                    <p className="mt-1 text-xs text-orange-700">Your site, review requests, missed-call follow-up, and reporting are set up and managed for you.</p>
+                    <p className="mt-1 text-xs text-orange-700">Your site, review requests, speed-to-lead follow-up, and reporting are set up and managed for you.</p>
                   </div>
                   <ul className="space-y-4">
                     {[
                       { title: "Managed mobile-first website", desc: "Built around service areas, proof, and tap-to-call CTAs" },
                       { title: "Review requests by SMS + email", desc: "Compliant requests after completed jobs so recent proof keeps building" },
-                      { title: "Missed-call text-back", desc: "A lead gets a reply in seconds if you miss the call" },
+                      { title: "Missed-call text-back", desc: "A lead gets a fast reply if you miss the call" },
+                      { title: "Basic form-lead response", desc: "New website leads get acknowledged quickly while your team is busy" },
                       { title: "Lead inbox + simple pipeline", desc: "Keep new audit and call opportunities from slipping through" },
                       { title: "Monthly performance report", desc: "Calls, reviews, ranking movement, and next actions" },
                       { title: "One trade per local market", desc: `We protect your spot ${areaIn}.` },
@@ -1008,15 +1051,16 @@ export default function LandingOpusPage() {
                   <p className="mt-3 text-sm text-gray-400">For businesses ready to grow with us.</p>
                 </div>
                 <div className="p-6 sm:p-8">
-                  <p className="mb-5 text-sm text-gray-600">Everything in Local Call System, plus the strategy and execution needed to compete harder in Google Maps and turn online trust into booked work.</p>
+                  <p className="mb-5 text-sm text-gray-600">Everything in Local Call System, plus the strategy and execution needed to compete harder in Google Maps and convert new leads before they go cold.</p>
                   <ul className="space-y-4">
                     {[
-                      { title: "Everything in Local Call System", desc: "Website, reviews, missed-call follow-up, lead tracking, reporting, and territory protection" },
+                      { title: "Everything in Local Call System", desc: "Website, reviews, speed-to-lead follow-up, lead tracking, reporting, and territory protection" },
                       { title: "Full SEO + competitor audit", desc: "What competitors are doing better and what we fix first" },
                       { title: "Google Business Profile optimization", desc: "Categories, services, photos, descriptions, and local trust signals" },
                       { title: "Citation/listing cleanup", desc: "Consistent business info across the places Google checks" },
                       { title: "Local backlink gap review", desc: "Where competitors have authority you do not yet have" },
                       { title: "Priority service/city page expansion", desc: "Focused pages for the jobs and areas you want most" },
+                      { title: "Advanced speed-to-lead workflows", desc: "Follow-up across forms, missed calls, and supported lead channels" },
                       { title: "Monthly growth call", desc: "Review momentum, ranking movement, lead quality, and the next actions" },
                     ].map((item, i) => (
                       <li key={i} className="flex gap-3">
