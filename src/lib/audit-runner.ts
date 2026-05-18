@@ -6,7 +6,7 @@
 
 import { createClient } from "@supabase/supabase-js";
 
-const BRAVE_API_KEY = "BSAPW5OPgVsHLiYgQQbK_cggT48mAD6";
+const BRAVE_API_KEY = process.env.BRAVE_API_KEY?.trim();
 
 function extractReviewCount(text: string): number | null {
   const patterns = [
@@ -80,31 +80,38 @@ export async function runAudit(prospect_id: string): Promise<AuditResult> {
   const competitorReviews: number[] = [];
   let braveResults: unknown[] = [];
 
-  try {
-    const city = prospect.city || "Austin";
-    const businessType = prospect.business_type || "service business";
-    const query = `${businessType} ${city} TX`;
-    const braveUrl = `https://api.search.brave.com/res/v1/web/search?q=${encodeURIComponent(query)}&count=5`;
+  if (BRAVE_API_KEY) {
+    try {
+      const city = prospect.city || "Austin";
+      const businessType = prospect.business_type || "service business";
+      const query = `${businessType} ${city} TX`;
+      const braveUrl = `https://api.search.brave.com/res/v1/web/search?q=${encodeURIComponent(query)}&count=5`;
 
-    const braveRes = await fetch(braveUrl, {
-      headers: { "X-Subscription-Token": BRAVE_API_KEY },
-      signal: AbortSignal.timeout(10000),
-    });
+      const braveRes = await fetch(braveUrl, {
+        headers: { "X-Subscription-Token": BRAVE_API_KEY },
+        signal: AbortSignal.timeout(10000),
+      });
 
-    if (braveRes.ok) {
-      const braveData = await braveRes.json();
-      braveResults = braveData?.web?.results || [];
+      if (braveRes.ok) {
+        const braveData = await braveRes.json();
+        braveResults = braveData?.web?.results || [];
 
-      for (const result of braveResults as { description?: string; title?: string }[]) {
-        const text = `${result.title || ""} ${result.description || ""}`;
-        const count = extractReviewCount(text);
-        if (count !== null && competitorReviews.length < 3) {
-          competitorReviews.push(count);
+        for (const result of braveResults as {
+          description?: string;
+          title?: string;
+        }[]) {
+          const text = `${result.title || ""} ${result.description || ""}`;
+          const count = extractReviewCount(text);
+          if (count !== null && competitorReviews.length < 3) {
+            competitorReviews.push(count);
+          }
         }
       }
+    } catch (err) {
+      console.error("[audit] Brave search error:", err);
     }
-  } catch (err) {
-    console.error("[audit] Brave search error:", err);
+  } else {
+    console.warn("[audit] BRAVE_API_KEY missing; competitor search skipped");
   }
 
   // --- Grade calculation ---

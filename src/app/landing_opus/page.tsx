@@ -1503,7 +1503,8 @@ export default function LandingOpusPage() {
                 <span className="text-sm font-bold">Booked Out</span>
               </div>
               <p className="mt-2 text-sm text-gray-500">
-                Websites + review automation for local service businesses.
+                Websites, reviews, and fast follow-up for local service
+                businesses.
               </p>
               <a
                 href="tel:+17372605332"
@@ -1513,9 +1514,20 @@ export default function LandingOpusPage() {
                 (737) 260-5332
               </a>
             </div>
-            <p className="text-xs text-gray-400">
-              &copy; {new Date().getFullYear()} Booked Out. All rights reserved.
-            </p>
+            <div className="flex flex-col gap-3 text-xs text-gray-400 sm:items-end">
+              <p>
+                &copy; {new Date().getFullYear()} Booked Out. All rights
+                reserved.
+              </p>
+              <div className="flex gap-4">
+                <a href="/privacy" className="hover:text-gray-700">
+                  Privacy
+                </a>
+                <a href="/terms" className="hover:text-gray-700">
+                  Terms
+                </a>
+              </div>
+            </div>
           </div>
         </footer>
       </main>
