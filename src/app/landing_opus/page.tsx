@@ -491,10 +491,10 @@ export default function LandingOpusPage() {
 
             {/* Stats strip */}
             <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4">
-              <StatCard value="Review gap" label="recent proof vs. competitors" accent />
-              <StatCard value="Ranking gap" label="where Google cannot trust you yet" />
-              <StatCard value="Site speed" label="mobile leaks that cost calls" />
-              <StatCard value="Lead speed" label="follow-up risk before they book" />
+              <StatCard value="Review gap" label="competitor proof" accent />
+              <StatCard value="Ranking gap" label="trust signals" />
+              <StatCard value="Site speed" label="speed leaks" />
+              <StatCard value="Lead speed" label="reply risk" />
             </div>
             <p className="mt-3 text-xs text-gray-500">
               Your audit shows the exact gaps in your market before we
