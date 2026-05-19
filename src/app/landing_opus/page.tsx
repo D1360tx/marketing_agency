@@ -94,13 +94,13 @@ function StatCard({
     >
       <div
         className={cl(
-          "text-2xl font-bold leading-tight tracking-tight sm:text-3xl",
+          "text-2xl font-bold leading-tight tracking-tight [text-wrap:balance] sm:text-3xl",
           accent ? "text-orange-600" : "text-gray-900"
         )}
       >
         {value}
       </div>
-      <div className="mt-1 text-sm text-gray-600">{label}</div>
+      <div className="mt-1 text-sm text-gray-600 [text-wrap:balance]">{label}</div>
     </div>
   );
 }
@@ -414,7 +414,7 @@ export default function LandingOpusPage() {
         </div>
       </header>
 
-      <main id="top">
+      <main id="top" className="[text-wrap:pretty]">
         {/* ============================================================ */}
         {/*  HERO                                                        */}
         {/* ============================================================ */}
@@ -448,12 +448,12 @@ export default function LandingOpusPage() {
               )}
             </div>
 
-            <h1 className="mt-6 max-w-3xl text-4xl font-extrabold leading-[1.1] tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
+            <h1 className="mt-6 max-w-3xl text-4xl font-extrabold leading-[1.1] tracking-tight text-gray-900 [text-wrap:balance] sm:text-5xl lg:text-6xl">
               You do great work{city ? ` ${areaIn}` : ""}.{" "}
               <span className="text-orange-600">So why does your competitor get the call?</span>
             </h1>
 
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-gray-600 sm:text-xl">
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-gray-600 [text-wrap:pretty] sm:text-xl">
               They&apos;re not better than you. They just look better online. We
               build fast local websites, compliant review request systems, and
               follow-up workflows that help serious service businesses get
@@ -496,9 +496,8 @@ export default function LandingOpusPage() {
               <StatCard value="Site speed" label="speed leaks" />
               <StatCard value="Lead speed" label="reply risk" />
             </div>
-            <p className="mt-3 text-xs text-gray-500">
-              Your audit shows the exact gaps in your market before we
-              recommend a plan.
+            <p className="mt-3 text-xs text-gray-500 [text-wrap:balance]">
+              We show the gaps before we recommend a plan.
             </p>
           </div>
         </section>
@@ -512,10 +511,10 @@ export default function LandingOpusPage() {
               <p className="text-sm font-bold uppercase tracking-widest text-orange-600">
                 No agency games
               </p>
-              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                You shouldn&apos;t have to guess if your marketing is working.
+              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 [text-wrap:balance] sm:text-4xl">
+                Know exactly what your marketing is doing.
               </h2>
-              <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-gray-600">
+              <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-gray-600 [text-wrap:pretty]">
                 Most agencies sell reports, contracts, and vague SEO progress.
                 We keep it simple: more reviews, clearer rankings, more calls,
                 and no long-term contract keeping you stuck.
@@ -526,17 +525,17 @@ export default function LandingOpusPage() {
               {[
                 {
                   bad: "Locked into a 12-month contract",
-                  good: "Month-to-month. Stay because it works.",
+                  good: "Month-to-month. Stay for results.",
                   icon: X,
                 },
                 {
                   bad: "Paid for reports you couldn't measure",
-                  good: "Track reviews, rankings, calls, and leads.",
+                  good: "Track calls, reviews, and leads.",
                   icon: X,
                 },
                 {
                   bad: "Never talked to the same person twice",
-                  good: "A direct line to the team doing the work.",
+                  good: "Same team. Direct line.",
                   icon: X,
                 },
               ].map((item, i) => (
@@ -571,10 +570,10 @@ export default function LandingOpusPage() {
               <p className="text-sm font-bold uppercase tracking-widest text-gray-500">
                 Where the calls disappear
               </p>
-              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                Your next customer is choosing from Google before they call.
+              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 [text-wrap:balance] sm:text-4xl">
+                Your next customer chooses from Google first.
               </h2>
-              <p className="mt-4 text-lg leading-relaxed text-gray-600">
+              <p className="mt-4 text-lg leading-relaxed text-gray-600 [text-wrap:pretty]">
                 If your site, reviews, and Google profile do not answer their
                 questions fast, the call goes to someone else.
               </p>
@@ -584,7 +583,7 @@ export default function LandingOpusPage() {
               {[
                 {
                   icon: TrendingUp,
-                  title: "Your website does not make the first impression",
+                  title: "Your website loses the first impression",
                   body: "Customers decide fast. If your site is slow, dated, hard to use on mobile, or missing clear service areas, they leave before they ever see how good your work is.",
                 },
                 {
@@ -605,10 +604,10 @@ export default function LandingOpusPage() {
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-100">
                     <card.icon className="h-6 w-6 text-orange-600" />
                   </div>
-                  <h3 className="mt-5 text-lg font-bold text-gray-900">
+                  <h3 className="mt-5 text-lg font-bold text-gray-900 [text-wrap:balance]">
                     {card.title}
                   </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                  <p className="mt-2 text-sm leading-relaxed text-gray-600 [text-wrap:pretty]">
                     {card.body}
                   </p>
                 </div>
@@ -626,10 +625,10 @@ export default function LandingOpusPage() {
               <p className="text-sm font-bold uppercase tracking-widest text-orange-600">
                 The system
               </p>
-              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                The three-part system that turns Google searches into booked jobs
+              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 [text-wrap:balance] sm:text-4xl">
+                Three moves that turn Google searches into booked jobs
               </h2>
-              <p className="mt-4 text-lg text-gray-600">
+              <p className="mt-4 text-lg text-gray-600 [text-wrap:pretty]">
                 A better website gets prospects to trust you. Consistent review
                 requests build proof. Fast follow-up keeps new leads warm before
                 they call the next company.
@@ -774,10 +773,10 @@ export default function LandingOpusPage() {
               <p className="text-sm font-bold uppercase tracking-widest text-orange-600">
                 What your audit shows
               </p>
-              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 [text-wrap:balance] sm:text-4xl">
                 We show the leak before we sell the fix.
               </h2>
-              <p className="mt-4 text-base leading-relaxed text-gray-600">
+              <p className="mt-4 text-base leading-relaxed text-gray-600 [text-wrap:pretty]">
                 Your free audit compares your website, Google profile, reviews,
                 and calls-to-action against the businesses already taking the
                 jobs you want. The goal is simple: make the next step obvious.
@@ -810,7 +809,7 @@ export default function LandingOpusPage() {
                     <div className="text-xs font-bold uppercase tracking-widest text-orange-600">
                       Sample audit snapshot
                     </div>
-                    <h3 className="mt-1 text-lg font-bold text-gray-900">
+                    <h3 className="mt-1 text-lg font-bold text-gray-900 [text-wrap:balance]">
                       Smith&apos;s Plumbing vs. top 3 competitors
                     </h3>
                   </div>
@@ -820,15 +819,15 @@ export default function LandingOpusPage() {
                 </div>
                 <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   {[
-                    ["Mobile speed", "41/100", "Slow load loses emergency calls"],
-                    ["Review gap", "-38", "Competitors have more recent proof"],
-                    ["CTA score", "C-", "Phone number hidden below the fold"],
-                    ["Lead speed", "20+ min", "Follow-up delay lets leads shop around"],
+                    ["Mobile speed", "41/100", "Slow on mobile"],
+                    ["Review gap", "-38", "Fresher competitor proof"],
+                    ["CTA score", "C-", "Phone buried low"],
+                    ["Lead speed", "20+ min", "Slow replies lose jobs"],
                   ].map(([label, value, note]) => (
                     <div key={label} className="rounded-xl bg-gray-50 p-4">
                       <div className="text-xs font-semibold text-gray-500">{label}</div>
                       <div className="mt-2 text-2xl font-extrabold text-gray-900">{value}</div>
-                      <p className="mt-1 text-xs leading-relaxed text-gray-500">{note}</p>
+                      <p className="mt-1 text-xs leading-relaxed text-gray-500 [text-wrap:balance]">{note}</p>
                     </div>
                   ))}
                 </div>
@@ -836,7 +835,7 @@ export default function LandingOpusPage() {
                   <div className="text-sm font-bold text-orange-900">
                     Biggest fix first
                   </div>
-                  <p className="mt-1 text-sm leading-relaxed text-orange-800">
+                  <p className="mt-1 text-sm leading-relaxed text-orange-800 [text-wrap:pretty]">
                     Rebuild the first mobile viewport around emergency calls,
                     proof, service area clarity, and fast follow-up before
                     spending more on ads.
@@ -856,10 +855,10 @@ export default function LandingOpusPage() {
               <p className="text-sm font-bold uppercase tracking-widest text-orange-400">
                 Proof, not promises
               </p>
-              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-white [text-wrap:balance] sm:text-4xl">
                 The right online presence changes who gets the call.
               </h2>
-              <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-gray-400">
+              <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-gray-400 [text-wrap:pretty]">
                 These are the outcomes we build toward: more trust, more recent
                 reviews, and clearer reasons to call.
               </p>
@@ -923,7 +922,7 @@ export default function LandingOpusPage() {
               <p className="text-sm font-bold uppercase tracking-widest text-gray-500">
                 Simple process
               </p>
-              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 [text-wrap:balance] sm:text-4xl">
                 We do the work. You do your job.
               </h2>
             </div>
@@ -969,10 +968,10 @@ export default function LandingOpusPage() {
                   <div className="mt-2 flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
                     <s.icon className="h-5 w-5 text-gray-700" />
                   </div>
-                  <h3 className="mt-4 text-base font-bold text-gray-900">
+                  <h3 className="mt-4 text-base font-bold text-gray-900 [text-wrap:balance]">
                     {s.title}
                   </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                  <p className="mt-2 text-sm leading-relaxed text-gray-600 [text-wrap:pretty]">
                     {s.desc}
                   </p>
                 </div>
@@ -988,7 +987,7 @@ export default function LandingOpusPage() {
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
             {/* Intro */}
             <div className="mb-10 text-center">
-              <p className="mx-auto max-w-2xl text-base text-gray-600">
+              <p className="mx-auto max-w-2xl text-base text-gray-600 [text-wrap:pretty]">
                 Every plan includes the website, review system, speed-to-lead follow-up, and reporting. Choose the foundation if you want the system handled. Choose the growth partnership if you want to compete seriously for more calls {areaIn}.
               </p>
             </div>
@@ -1009,7 +1008,7 @@ export default function LandingOpusPage() {
                 <div className="p-6 sm:p-8">
                   <div className="mb-5 rounded-xl bg-orange-50 p-4">
                     <p className="text-sm font-semibold text-orange-800">The foundation for more local calls.</p>
-                    <p className="mt-1 text-xs text-orange-700">Your site, review requests, speed-to-lead follow-up, and reporting are set up and managed for you.</p>
+                    <p className="mt-1 text-xs text-orange-700 [text-wrap:pretty]">Your site, reviews, follow-up, and reporting are set up and managed for you.</p>
                   </div>
                   <ul className="space-y-4">
                     {[
@@ -1032,7 +1031,7 @@ export default function LandingOpusPage() {
                       </li>
                     ))}
                   </ul>
-                  <p className="mt-6 text-center text-xs text-gray-500">For service businesses that want the essentials handled well without a heavy strategy relationship.</p>
+                  <p className="mt-6 text-center text-xs text-gray-500 [text-wrap:balance]">For service businesses that want the essentials handled well.</p>
                   <a href="#get-started" className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-orange-600 py-4 text-base font-bold text-white shadow-sm transition hover:bg-orange-700">
                     Start With the Audit <ArrowRight className="h-5 w-5" />
                   </a>
@@ -1051,7 +1050,7 @@ export default function LandingOpusPage() {
                   <p className="mt-3 text-sm text-gray-400">For businesses ready to grow with us.</p>
                 </div>
                 <div className="p-6 sm:p-8">
-                  <p className="mb-5 text-sm text-gray-600">Everything in Local Call System, plus the strategy and execution needed to compete harder in Google Maps and convert new leads before they go cold.</p>
+                  <p className="mb-5 text-sm text-gray-600 [text-wrap:pretty]">Everything in Local Call System, plus deeper strategy to compete harder in Google Maps and convert new leads faster.</p>
                   <ul className="space-y-4">
                     {[
                       { title: "Everything in Local Call System", desc: "Website, reviews, speed-to-lead follow-up, lead tracking, reporting, and territory protection" },
@@ -1074,7 +1073,7 @@ export default function LandingOpusPage() {
                       </li>
                     ))}
                   </ul>
-                  <p className="mt-6 text-center text-xs text-gray-500">For owners who want a closer partner, clearer goals, and steady pressure toward more qualified calls.</p>
+                  <p className="mt-6 text-center text-xs text-gray-500 [text-wrap:balance]">For owners who want a closer partner and clearer growth goals.</p>
                   <a href="#get-started" className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-violet-600 py-4 text-base font-bold text-white shadow-sm transition hover:bg-violet-700">
                     Talk Growth Strategy <ArrowRight className="h-5 w-5" />
                   </a>
@@ -1088,10 +1087,10 @@ export default function LandingOpusPage() {
               Start with the free audit.{" "}
               <a href="#get-started" className="font-semibold text-orange-600 hover:underline">If we can&apos;t show a clear path to more calls, you should not buy.</a>
             </p>
-            <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-gray-500">
+            <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-gray-500 [text-wrap:balance]">
               Only need help getting more reviews? Ask about our lighter Review Engine option during the audit call.
             </p>
-            <p className="mx-auto mt-3 max-w-2xl text-center text-xs leading-relaxed text-gray-500">
+            <p className="mx-auto mt-3 max-w-2xl text-center text-xs leading-relaxed text-gray-500 [text-wrap:pretty]">
               SMS/email usage is included for normal local business volume. If your account ever needs unusually high message volume or custom work outside the standard site build, we&apos;ll flag it before anything changes.
             </p>
           </div>
@@ -1103,10 +1102,10 @@ export default function LandingOpusPage() {
         <section className="bg-white py-16 sm:py-24">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="mx-auto max-w-3xl text-center">
-              <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+              <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 [text-wrap:balance] sm:text-4xl">
                 Built for businesses that do real work
               </h2>
-              <p className="mt-4 text-lg text-gray-600">
+              <p className="mt-4 text-lg text-gray-600 [text-wrap:pretty]">
                 We specialize in local service businesses. If your customers find
                 you on Google and call you for a job, we can help.
               </p>
@@ -1147,7 +1146,7 @@ export default function LandingOpusPage() {
         {/* ============================================================ */}
         <section className="border-t border-gray-200 bg-gray-50 py-16 sm:py-24">
           <div className="mx-auto max-w-3xl px-4 sm:px-6">
-            <h2 className="text-center text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+            <h2 className="text-center text-3xl font-extrabold tracking-tight text-gray-900 [text-wrap:balance] sm:text-4xl">
               Common questions
             </h2>
 
@@ -1175,7 +1174,7 @@ export default function LandingOpusPage() {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-orange-400 opacity-75" />
                 <span className="relative inline-flex h-3 w-3 rounded-full bg-orange-500" />
               </span>
-              <p className="text-sm font-semibold text-white">
+              <p className="text-sm font-semibold text-white [text-wrap:balance]">
                 We only take <span className="text-orange-400">1 business per trade</span> {areaIn}.
                 Once your spot is claimed, it&apos;s gone.
               </p>
@@ -1201,10 +1200,10 @@ export default function LandingOpusPage() {
                 <p className="text-sm font-bold uppercase tracking-widest text-orange-400">
                   Free audit
                 </p>
-                <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-                  Find out exactly why you&apos;re not ranking {areaIn}.
+                <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-white [text-wrap:balance] sm:text-4xl">
+                  See what is keeping you from ranking {areaIn}.
                 </h2>
-                <p className="mt-4 text-base leading-relaxed text-gray-400">
+                <p className="mt-4 text-base leading-relaxed text-gray-400 [text-wrap:pretty]">
                   Fill out the form. Within 48 hours, you&apos;ll get a clear
                   breakdown of what&apos;s holding you back online -- your
                   website speed, review count vs. competitors, ranking gaps, and
@@ -1271,7 +1270,7 @@ export default function LandingOpusPage() {
                     <h3 className="mt-6 text-2xl font-bold text-gray-900">
                       We got your request.
                     </h3>
-                    <p className="mt-2 text-base text-gray-600">
+                    <p className="mt-2 text-base text-gray-600 [text-wrap:pretty]">
                       Your audit is being prepared. Expect it in your inbox
                       within 48 hours. Want to walk through it sooner? Call us at{" "}
                       <a
@@ -1295,7 +1294,7 @@ export default function LandingOpusPage() {
                     <h3 className="text-xl font-bold text-gray-900">
                       Request your free audit
                     </h3>
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-1 text-sm text-gray-500 [text-wrap:balance]">
                       Takes about 60 seconds. No commitment.
                     </p>
 
@@ -1478,7 +1477,7 @@ export default function LandingOpusPage() {
                         </div>
                       )}
 
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-gray-400 [text-wrap:pretty]">
                         By submitting, you agree to a follow-up about your
                         audit results. No spam. Unsubscribe anytime.
                       </p>
@@ -1502,7 +1501,7 @@ export default function LandingOpusPage() {
                 </div>
                 <span className="text-sm font-bold">Booked Out</span>
               </div>
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-2 text-sm text-gray-500 [text-wrap:balance]">
                 Websites, reviews, and fast follow-up for local service
                 businesses.
               </p>
