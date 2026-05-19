@@ -1,14 +1,32 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import type { ReactNode } from "react";
+
+const contactEmail = "info@trybookedout.com";
 
 export const metadata: Metadata = {
   title: "Privacy Policy - Booked Out",
   description:
-    "How Booked Out collects and uses information submitted through the free audit form.",
+    "How Booked Out collects, uses, protects, and shares information submitted through trybookedout.com.",
   alternates: {
     canonical: "/privacy",
   },
 };
+
+function Section({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <section>
+      <h2 className="text-xl font-bold text-gray-950">{title}</h2>
+      <div className="mt-3 space-y-3">{children}</div>
+    </section>
+  );
+}
 
 export default function PrivacyPage() {
   return (
@@ -20,59 +38,138 @@ export default function PrivacyPage() {
         <h1 className="mt-8 text-4xl font-black tracking-tight">
           Privacy Policy
         </h1>
-        <p className="mt-3 text-sm text-gray-500">Last updated May 18, 2026</p>
+        <p className="mt-3 text-sm text-gray-500">Last updated May 19, 2026</p>
 
-        <div className="mt-10 space-y-8 text-base leading-7 text-gray-700">
-          <section>
-            <h2 className="text-xl font-bold text-gray-950">
-              Information we collect
-            </h2>
-            <p className="mt-3">
-              When you request an audit, we collect the business and contact
-              details you submit, including your name, email address, phone
-              number, business name, website, Google profile, service area, and
-              business type.
+        <div className="mt-10 space-y-9 text-base leading-7 text-gray-700 [text-wrap:pretty]">
+          <Section title="Overview">
+            <p>
+              This Privacy Policy explains how Booked Out collects, uses, and
+              protects information when you visit trybookedout.com, request a
+              free audit, call us, or otherwise communicate with us.
             </p>
-          </section>
+          </Section>
 
-          <section>
-            <h2 className="text-xl font-bold text-gray-950">
-              How we use information
-            </h2>
-            <p className="mt-3">
-              We use submitted information to review your online presence,
-              prepare audit notes, contact you about your request, and improve
-              Booked Out services. We may use third-party tools for lead
-              storage, email notifications, analytics, and audit research.
+          <Section title="Information we collect">
+            <p>
+              We collect information you choose to provide, including your name,
+              email address, phone number, business name, website, Google
+              Business Profile link, trade or business type, city, service area,
+              and any other details you send through a form, call, text, or
+              email.
             </p>
-          </section>
-
-          <section>
-            <h2 className="text-xl font-bold text-gray-950">
-              Sharing and retention
-            </h2>
-            <p className="mt-3">
-              We do not sell your personal information. We share information
-              only with service providers needed to operate the site, respond to
-              your audit request, or comply with legal obligations. We retain
-              information as long as reasonably needed for those purposes.
+            <p>
+              We may also collect basic technical information automatically, such
+              as browser type, device type, pages visited, approximate location,
+              referral source, and interaction data. This helps us understand
+              how visitors use the site and improve the experience.
             </p>
-          </section>
+          </Section>
 
-          <section>
-            <h2 className="text-xl font-bold text-gray-950">Your choices</h2>
-            <p className="mt-3">
-              You can ask us to update or delete your information, or stop
-              follow-up communications, by contacting us at{" "}
+          <Section title="How we use information">
+            <p>We use collected information to:</p>
+            <ul className="list-disc space-y-2 pl-6">
+              <li>Prepare and deliver audit findings.</li>
+              <li>Respond to your form submission, call, email, or text.</li>
+              <li>Evaluate your website, reviews, Google profile, and market.</li>
+              <li>Operate, secure, and improve Booked Out services.</li>
+              <li>Send service-related messages and follow-up communications.</li>
+              <li>Measure site performance, lead quality, and campaign results.</li>
+              <li>Comply with legal, security, and operational obligations.</li>
+            </ul>
+          </Section>
+
+          <Section title="SMS, calls, and email">
+            <p>
+              If you provide your phone number or email address, we may contact
+              you about your audit request, service options, scheduling, and
+              related follow-up. Message and data rates may apply for SMS. You
+              can ask us to stop marketing follow-up at any time.
+            </p>
+          </Section>
+
+          <Section title="Cookies and analytics">
+            <p>
+              We may use cookies, pixels, analytics tools, and similar
+              technologies to understand site traffic, improve pages, measure
+              campaigns, and protect the site from misuse. You can control
+              cookies through your browser settings, though some features may not
+              work as intended if cookies are disabled.
+            </p>
+          </Section>
+
+          <Section title="Service providers">
+            <p>
+              We use third-party service providers to run our business, such as
+              hosting, database, email, SMS, analytics, lead management, audit
+              research, and automation providers. These providers may process
+              information on our behalf only as needed to provide their services
+              to us.
+            </p>
+          </Section>
+
+          <Section title="Sharing information">
+            <p>
+              We do not sell personal information. We may share information with
+              service providers, professional advisors, legal authorities when
+              required, or another organization if Booked Out is involved in a
+              merger, acquisition, financing, or sale of assets.
+            </p>
+          </Section>
+
+          <Section title="Data retention">
+            <p>
+              We keep information for as long as reasonably needed to respond to
+              requests, provide services, maintain business records, improve our
+              systems, resolve disputes, and meet legal obligations. Retention
+              periods may vary based on the type of information and how it is
+              used.
+            </p>
+          </Section>
+
+          <Section title="Security">
+            <p>
+              We use reasonable administrative, technical, and organizational
+              safeguards designed to protect information. No method of
+              transmission or storage is completely secure, so we cannot
+              guarantee absolute security.
+            </p>
+          </Section>
+
+          <Section title="Your choices">
+            <p>
+              You may ask us to update, delete, or provide information
+              associated with you, subject to legal and operational limits. You
+              may also ask us to stop marketing follow-up.
+            </p>
+          </Section>
+
+          <Section title="Children's privacy">
+            <p>
+              Booked Out is intended for business users and is not directed to
+              children under 13. We do not knowingly collect personal
+              information from children under 13.
+            </p>
+          </Section>
+
+          <Section title="Changes to this policy">
+            <p>
+              We may update this Privacy Policy from time to time. The updated
+              version will be posted on this page with a revised update date.
+            </p>
+          </Section>
+
+          <Section title="Contact">
+            <p>
+              Questions or requests about this Privacy Policy can be sent to{" "}
               <a
-                href="mailto:diego@trybookedout.com"
+                href={`mailto:${contactEmail}`}
                 className="font-semibold text-orange-600"
               >
-                diego@trybookedout.com
+                {contactEmail}
               </a>
               .
             </p>
-          </section>
+          </Section>
         </div>
       </div>
     </main>

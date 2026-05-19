@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
+import Link from "next/link";
 import {
   ArrowRight,
   Check,
@@ -103,12 +104,12 @@ export default function PartnersPage() {
       {/* ============================================================ */}
       <header className="sticky top-0 z-50 border-b border-gray-800 bg-gray-900/95 backdrop-blur-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
-          <a href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-600">
               <Zap className="h-4 w-4 text-white" />
             </div>
             <span className="text-lg font-bold tracking-tight text-white">Booked Out</span>
-          </a>
+          </Link>
 
           <div className="flex items-center gap-3">
             <a
@@ -648,10 +649,10 @@ export default function PartnersPage() {
               <p className="mt-2 text-sm text-gray-500">
                 Questions? Email us at{" "}
                 <a
-                  href="mailto:hello@trybookedout.com"
+                  href="mailto:info@trybookedout.com"
                   className="text-orange-400 hover:text-orange-300"
                 >
-                  hello@trybookedout.com
+                  info@trybookedout.com
                 </a>{" "}
                 or call{" "}
                 <a

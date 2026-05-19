@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     }
 
     const apiKey = process.env.RESEND_API_KEY;
-    const fromEmail = process.env.RESEND_FROM_EMAIL || "diego@trybookedout.com";
+    const fromEmail = process.env.RESEND_FROM_EMAIL || "info@trybookedout.com";
     const fromName = process.env.RESEND_FROM_NAME || "Booked Out";
 
     if (!apiKey) {

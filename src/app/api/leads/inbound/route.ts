@@ -7,7 +7,7 @@ import { enrollProspect } from "@/lib/drip-engine";
 const DEFAULT_OWNER_USER_ID = "8337f5a8-dd50-43c5-8f35-b32e2180492d";
 const DEFAULT_SEQUENCE_ID = "58e2a4a5-8603-44ea-b103-a3eb0c01b4ce";
 const DEFAULT_NOTIFICATION_EMAIL = "dcamp905@gmail.com";
-const DEFAULT_FROM_EMAIL = "Booked Out <diego@trybookedout.com>";
+const DEFAULT_FROM_EMAIL = "Booked Out <info@trybookedout.com>";
 
 function requiredEnv(name: string): string | null {
   const value = process.env[name]?.trim();
