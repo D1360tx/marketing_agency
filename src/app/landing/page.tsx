@@ -44,22 +44,6 @@ function cl(...args: (string | false | null | undefined)[]) {
 /*  Micro-components                                                   */
 /* ------------------------------------------------------------------ */
 
-function StarRating({ count = 5 }: { count?: number }) {
-  return (
-    <span className="inline-flex gap-0.5" aria-label={`${count} stars`}>
-      {Array.from({ length: 5 }, (_, i) => (
-        <Star
-          key={i}
-          className={cl(
-            "h-4 w-4",
-            i < count ? "fill-amber-400 text-amber-400" : "text-gray-300"
-          )}
-        />
-      ))}
-    </span>
-  );
-}
-
 function Badge({ children }: { children: React.ReactNode }) {
   return (
     <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200">
@@ -231,7 +215,7 @@ export default function LandingOpusPage() {
     },
     {
       q: "How fast will I see results?",
-      a: "Review growth starts within the first week of automation going live. Website and SEO improvements typically show measurable ranking changes within 30 days. Most clients report noticeably more calls within the first 6 weeks.",
+      a: "The site and workflows can launch quickly after we receive your materials, but outcomes vary by market, baseline, and customer volume. We establish your baseline and report what changes each month without guaranteeing a specific number of calls, reviews, or rankings.",
     },
     {
       q: "Why do you only take one business per trade per city?",
@@ -239,32 +223,29 @@ export default function LandingOpusPage() {
     },
     {
       q: "What happens if I want to cancel?",
-      a: "You cancel. No penalties, no fees, no guilt trip. Your website stays live through the end of your billing period. We keep things simple because we'd rather earn your business every month than trap you in a contract.",
+      a: "You can cancel without a long-term contract. Service stays active through the paid billing period. After three paid months, you can request an export of the website content and core page files; before then, the managed site remains part of the Booked Out service.",
     },
   ];
 
-  /* -- Testimonials ------------------------------------------------ */
-  const testimonials = [
+  /* -- Transparent process proof ----------------------------------- */
+  const proofCards = [
     {
-      name: "Mike Hernandez",
-      trade: "Plumbing",
-      location: "Cedar Park, TX",
-      quote: "Went from 6 reviews to 53 in two months. I stopped running ads because the phone was already ringing enough. Best money I spend every month.",
-      metric: "53 reviews in 60 days",
+      title: "Find the leaks",
+      startingPoint: "Website, Google profile, reviews, and lead response",
+      work: "Compare your business with the local competitors winning calls",
+      deliverable: "A prioritized audit with the first fixes clearly ranked",
     },
     {
-      name: "Sarah Chen",
-      trade: "Salon Owner",
-      location: "Gilbert, AZ",
-      quote: "My old website looked like it was from 2012. Within a week of launching the new one, I had three new clients mention they found me on Google. That never happened before.",
-      metric: "3x more Google traffic",
+      title: "Install the system",
+      startingPoint: "Disconnected pages, requests, and follow-up",
+      work: "Launch the site, neutral review requests, and lead-response workflow",
+      deliverable: "One managed system built around your real operation",
     },
     {
-      name: "James Washington",
-      trade: "HVAC",
-      location: "Murfreesboro, TN",
-      quote: "I've wasted thousands on marketing companies. These guys actually showed me what was broken and fixed it. No fluff, no jargon. My wife noticed the difference in the books within a month.",
-      metric: "40% more booked jobs",
+      title: "Measure your baseline",
+      startingPoint: "Marketing activity without clear accountability",
+      work: "Track calls, lead response, review requests, and ranking movement",
+      deliverable: "Monthly evidence, lessons, and the next actions to take",
     },
   ];
 
@@ -342,10 +323,9 @@ export default function LandingOpusPage() {
             </h1>
 
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-gray-600 sm:text-xl">
-              They're not better than you. They just look better online. We fix
-              that — professional website + automated review system that turns
-              every finished job into a 5-star review. 47 new reviews in 60
-              days. No contracts. Results in 30 days or your first month is free.
+              They&apos;re not better than you. They just look better online. We
+              build fast local websites, compliant review request systems, and
+              follow-up workflows that help serious service businesses get found and answered.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -366,17 +346,18 @@ export default function LandingOpusPage() {
             </div>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <Badge>No contracts</Badge>
-              <Badge>Results in 30 days</Badge>
+              <Badge>No long contracts</Badge>
+              <Badge>Audit before we recommend</Badge>
+              <Badge>Neutral review requests</Badge>
               <Badge>1 per trade per city</Badge>
             </div>
 
             {/* Stats strip */}
             <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4">
-              <StatCard value="340%" label="avg. increase in calls" accent />
-              <StatCard value="53" label="avg. reviews in 60 days" />
-              <StatCard value="30" label="days to see results" />
-              <StatCard value="0" label="long-term contracts" />
+              <StatCard value="Review gap" label="competitor proof" accent />
+              <StatCard value="Ranking gap" label="trust signals" />
+              <StatCard value="Site speed" label="conversion leaks" />
+              <StatCard value="Lead speed" label="response risk" />
             </div>
           </div>
         </section>
@@ -450,7 +431,7 @@ export default function LandingOpusPage() {
                 This is happening right now
               </p>
               <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                While you&apos;re reading this, you&apos;re losing a $2,500 job.
+                Your next customer is comparing local options right now.
               </h2>
             </div>
 
@@ -464,7 +445,7 @@ export default function LandingOpusPage() {
                 {
                   icon: Star,
                   title: "You don't have enough reviews",
-                  body: "93% of customers read reviews before calling. Your competitor has dozens of stars glowing on Google. The math makes the decision for them — before they ever see your work.",
+                  body: "Customers compare recent reviews, owner responses, and trust signals before calling. We measure your real gap against the local competitors winning attention.",
                 },
                 {
                   icon: PhoneCall,
@@ -575,16 +556,16 @@ export default function LandingOpusPage() {
                   <p className="text-sm leading-relaxed text-gray-600">
                     After every job, your customer gets a simple text or email
                     asking for a review. No awkward conversations. No
-                    remembering to ask. It happens automatically, and it works.
-                    Our clients average 53 new reviews in the first 60 days.
+                    remembering to ask. The same neutral request goes to every
+                    eligible customer, and responses are measured from your baseline.
                   </p>
                   <ul className="mt-5 space-y-3">
                     {[
                       "Automated text/email after every job",
                       "One-tap link straight to your Google page",
-                      "Negative feedback caught privately first",
+                      "Separate service feedback form for every customer",
                       "Dashboard to track growth",
-                      "Average: 53 new reviews in 60 days",
+                      "Monthly tracking from your baseline",
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-2.5">
                         <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
@@ -599,43 +580,43 @@ export default function LandingOpusPage() {
         </section>
 
         {/* ============================================================ */}
-        {/*  RESULTS / SOCIAL PROOF                                      */}
+        {/*  TRANSPARENT PROCESS PROOF                                   */}
         {/* ============================================================ */}
         <section className="bg-gray-900 py-16 sm:py-24">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="mx-auto max-w-3xl text-center">
               <p className="text-sm font-bold uppercase tracking-widest text-orange-400">
-                Real numbers from real businesses
+                Process proof, not borrowed claims
               </p>
               <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-                They were skeptical too. Then the phone started ringing.
+                See exactly what we inspect, install, and measure.
               </h2>
+              <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-gray-400">
+                We are building our first verified case studies. Until then, we
+                show the work clearly and measure every client from their own baseline.
+              </p>
             </div>
 
             <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
-              {testimonials.map((t, i) => (
+              {proofCards.map((card, i) => (
                 <div
                   key={i}
                   className="flex flex-col rounded-2xl border border-gray-700 bg-gray-800/50 p-6"
                 >
-                  <StarRating count={5} />
-                  <p className="mt-4 flex-1 text-sm leading-relaxed text-gray-300">
-                    &ldquo;{t.quote}&rdquo;
-                  </p>
-                  <div className="mt-6 border-t border-gray-700 pt-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-sm font-semibold text-white">
-                          {t.name}
-                        </div>
-                        <div className="text-xs text-gray-400">
-                          {t.trade} -- {t.location}
-                        </div>
+                  <div className="text-sm font-bold uppercase tracking-wider text-orange-400">
+                    {card.title}
+                  </div>
+                  <div className="mt-5 space-y-3 rounded-xl border border-gray-700 bg-gray-900/60 p-4">
+                    {[
+                      ["Starting point", card.startingPoint],
+                      ["Our work", card.work],
+                      ["You receive", card.deliverable],
+                    ].map(([label, value]) => (
+                      <div key={label} className="grid grid-cols-[92px_1fr] gap-3 text-sm">
+                        <div className="font-semibold text-gray-500">{label}</div>
+                        <div className={cl("font-semibold", label === "You receive" ? "text-emerald-300" : "text-gray-200")}>{value}</div>
                       </div>
-                      <span className="rounded-full bg-emerald-900/50 px-3 py-1 text-xs font-semibold text-emerald-300 ring-1 ring-emerald-700">
-                        {t.metric}
-                      </span>
-                    </div>
+                    ))}
                   </div>
                 </div>
               ))}
@@ -722,7 +703,7 @@ export default function LandingOpusPage() {
                 </p>
                 <div className="mt-4 flex items-baseline justify-center gap-1">
                   <span className="text-5xl font-extrabold text-white">
-                    $399
+                    $499
                   </span>
                   <span className="text-lg font-semibold text-gray-400">
                     /mo
@@ -742,7 +723,7 @@ export default function LandingOpusPage() {
                     },
                     {
                       title: "Google review automation",
-                      desc: "Automated requests after every job, 53+ reviews in 60 days avg",
+                      desc: "The same neutral request for every eligible customer, tracked monthly",
                     },
                     {
                       title: "Local SEO optimization",
@@ -780,8 +761,7 @@ export default function LandingOpusPage() {
 
                 <div className="mt-8 rounded-xl bg-orange-50 p-4 text-center">
                   <p className="text-sm font-semibold text-orange-800">
-                    Our guarantee: measurable results in 30 days or your first
-                    month is free.
+                    We measure from your baseline and show the work completed each month.
                   </p>
                   <p className="mt-1 text-xs text-orange-600">
                     We don&apos;t win unless you do. That&apos;s the only way

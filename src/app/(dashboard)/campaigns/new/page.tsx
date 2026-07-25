@@ -81,7 +81,7 @@ Booked Out`,
 
 Quick question — are you actively asking your customers for Google reviews after each job?
 
-Most local businesses in {{city}} aren't, and it's costing them leads. Google ranks businesses with more reviews higher, which means more calls.
+Prospects compare recent reviews before they call, and an inconsistent request process can leave good work invisible online.
 
 We set up an automated system that sends your customers a review request right after the job is done. Takes zero effort on your end.
 
@@ -91,15 +91,15 @@ Diego
 Booked Out`,
   },
   social_proof: {
-    name: "Social Proof / FOMO",
-    subject: "How {{city}} businesses are getting more calls",
+    name: "Audit-Led Outreach",
+    subject: "A quick review-gap check for {{business_name}}",
     body: `Hi {{business_name}},
 
-We recently helped a local {{city}} business go from 12 Google reviews to 47 in under 60 days — their phone started ringing noticeably more.
+I took a quick look at how {{business_name}} appears next to other local options in {{city}}. There may be a gap in recent review activity, website clarity, or lead response.
 
-The secret? An automated review request system that texts or emails customers right after the job. Most say yes because the timing is perfect.
+Booked Out starts with a short audit, then recommends only the highest-priority fixes. If it makes sense, we can set up the website, neutral review requests, and lead follow-up as one managed system.
 
-We also redesigned their website while we were at it. The whole thing was live in 48 hours.
+No guaranteed numbers and no long contract — just a clear baseline and measurable work.
 
 Would love to show you what this could look like for {{business_name}}. Have 10 minutes this week?
 

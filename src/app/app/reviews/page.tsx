@@ -142,11 +142,11 @@ export default function ReviewsPage() {
           <CardContent className="space-y-4 text-sm text-muted-foreground">
             <div className="flex gap-3">
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">1</span>
-              <p>Customer receives a branded email from <strong>diego@trybookedout.com</strong></p>
+              <p>Customer receives a branded email from <strong>info@trybookedout.com</strong></p>
             </div>
             <div className="flex gap-3">
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">2</span>
-              <p>Email thanks them for their business and includes a big <strong>"Leave a Review"</strong> button</p>
+              <p>Email thanks them for their business and includes a big <strong>&quot;Leave a Review&quot;</strong> button</p>
             </div>
             <div className="flex gap-3">
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">3</span>

@@ -694,7 +694,7 @@ export default function LandingPage() {
                   },
                   {
                     name: "Growth",
-                    price: "$399",
+                    price: "$499",
                     badge: "Most popular",
                     desc: "Everything in Starter + reviews + GBP optimization.",
                     features: [

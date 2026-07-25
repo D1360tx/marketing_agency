@@ -44,22 +44,6 @@ function cl(...args: (string | false | null | undefined)[]) {
 /*  Micro-components                                                   */
 /* ------------------------------------------------------------------ */
 
-function StarRating({ count = 5 }: { count?: number }) {
-  return (
-    <span className="inline-flex gap-0.5" aria-label={`${count} estrellas`}>
-      {Array.from({ length: 5 }, (_, i) => (
-        <Star
-          key={i}
-          className={cl(
-            "h-4 w-4",
-            i < count ? "fill-amber-400 text-amber-400" : "text-gray-300"
-          )}
-        />
-      ))}
-    </span>
-  );
-}
-
 function Badge({ children }: { children: React.ReactNode }) {
   return (
     <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200">
@@ -224,7 +208,7 @@ export default function EsPage() {
     },
     {
       q: "¿En qué se diferencia esto de la última agencia que me falló?",
-      a: "La mayoría de las agencias te venden una mensualidad y un panel de control. Nosotros te vendemos un sistema con resultados medibles: más reseñas, mejores posiciones, más llamadas. Sin contratos largos. Si no entregamos resultados, te vas. Así de simple.",
+      a: "La mayoría de las agencias te venden actividad y un panel. Nosotros empezamos con una auditoría, priorizamos los problemas y medimos llamadas, solicitudes de reseñas, tiempo de respuesta y movimiento en posiciones desde tu propio punto de partida. Sin contratos largos.",
     },
     {
       q: "¿Qué tengo que hacer yo?",
@@ -232,7 +216,7 @@ export default function EsPage() {
     },
     {
       q: "¿Qué tan rápido veré resultados?",
-      a: "El crecimiento de reseñas comienza en la primera semana de activar la automatización. Las mejoras del sitio web y SEO generalmente muestran cambios medibles en posiciones dentro de 30 días. La mayoría de los clientes reportan notablemente más llamadas en las primeras 6 semanas.",
+      a: "El sitio y los flujos pueden lanzarse rápidamente después de recibir tus materiales, pero el tiempo de los resultados varía según tu mercado, punto de partida y volumen de clientes. Establecemos una línea base y reportamos lo que cambia cada mes sin garantizar cifras específicas.",
     },
     {
       q: "¿Por qué solo aceptan un negocio por oficio por ciudad?",
@@ -240,32 +224,29 @@ export default function EsPage() {
     },
     {
       q: "¿Qué pasa si quiero cancelar?",
-      a: "Cancelas. Sin penalizaciones, sin cargos, sin presión. Tu sitio web sigue activo hasta el final de tu período de facturación. Mantenemos todo simple porque preferimos ganarte cada mes que atraparte en un contrato.",
+      a: "Puedes cancelar sin contrato largo. El servicio sigue activo hasta el final del período pagado. Después de tres meses pagados puedes solicitar una exportación del contenido y los archivos principales del sitio; antes de eso, el sitio administrado sigue siendo parte del servicio Booked Out.",
     },
   ];
 
-  /* -- Testimonials ------------------------------------------------ */
-  const testimonials = [
+  /* -- Prueba transparente del proceso ------------------------------ */
+  const proofCards = [
     {
-      name: "Mike Hernandez",
-      trade: "Plomería",
-      location: "Cedar Park, TX",
-      quote: "Pasé de 6 reseñas a 53 en dos meses. Dejé de hacer publicidad porque el teléfono ya sonaba suficiente. Es el mejor dinero que gasto cada mes.",
-      metric: "53 reseñas en 60 días",
+      title: "Encontrar las fugas",
+      startingPoint: "Sitio, perfil de Google, reseñas y respuesta a prospectos",
+      work: "Comparamos tu negocio con los competidores locales que reciben llamadas",
+      deliverable: "Una auditoría priorizada con las primeras correcciones claras",
     },
     {
-      name: "Sarah Chen",
-      trade: "Salón de Belleza",
-      location: "Gilbert, AZ",
-      quote: "Mi sitio web anterior parecía del 2012. A la semana de lanzar el nuevo, tres clientes nuevos me dijeron que me encontraron en Google. Eso nunca había pasado antes.",
-      metric: "3x más tráfico en Google",
+      title: "Instalar el sistema",
+      startingPoint: "Páginas, solicitudes y seguimiento desconectados",
+      work: "Lanzamos el sitio, solicitudes neutrales y seguimiento de prospectos",
+      deliverable: "Un sistema administrado alrededor de tu operación real",
     },
     {
-      name: "James Washington",
-      trade: "HVAC",
-      location: "Murfreesboro, TN",
-      quote: "He desperdiciado miles en empresas de marketing. Estos chicos me mostraron qué estaba fallando y lo arreglaron. Sin rodeos, sin tecnicismos. Mi esposa notó la diferencia en los libros al mes.",
-      metric: "40% más trabajos contratados",
+      title: "Medir desde tu línea base",
+      startingPoint: "Marketing sin responsabilidad clara",
+      work: "Medimos llamadas, respuesta, solicitudes y movimiento en posiciones",
+      deliverable: "Evidencia mensual, aprendizajes y próximas acciones",
     },
   ];
 
@@ -343,11 +324,9 @@ export default function EsPage() {
             </h1>
 
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-gray-600 sm:text-xl">
-              No son mejores que tú. Solo se ven mejor en línea. Nosotros lo
-              arreglamos — sitio web profesional + sistema automatizado de
-              reseñas que convierte cada trabajo terminado en una reseña de
-              5 estrellas. 47 nuevas reseñas en 60 días. Sin contratos.
-              Resultados en 30 días o tu primer mes es gratis.
+              No son mejores que tú. Solo se ven mejor en línea. Construimos
+              sitios locales rápidos, solicitudes de reseñas que cumplen las
+              políticas y seguimiento para que cada prospecto reciba una respuesta.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -368,17 +347,18 @@ export default function EsPage() {
             </div>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <Badge>Sin contratos</Badge>
-              <Badge>Resultados en 30 días</Badge>
+              <Badge>Sin contratos largos</Badge>
+              <Badge>Auditoría antes de recomendar</Badge>
+              <Badge>Solicitudes de reseñas neutrales</Badge>
               <Badge>1 por oficio por ciudad</Badge>
             </div>
 
             {/* Stats strip */}
             <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4">
-              <StatCard value="340%" label="aumento promedio en llamadas" accent />
-              <StatCard value="53" label="reseñas promedio en 60 días" />
-              <StatCard value="30" label="días para ver resultados" />
-              <StatCard value="0" label="contratos a largo plazo" />
+              <StatCard value="Brecha de reseñas" label="prueba frente a competidores" accent />
+              <StatCard value="Brecha local" label="señales de confianza" />
+              <StatCard value="Velocidad web" label="fugas de conversión" />
+              <StatCard value="Respuesta" label="riesgo del prospecto" />
             </div>
           </div>
         </section>
@@ -452,7 +432,7 @@ export default function EsPage() {
                 Esto está pasando ahora mismo
               </p>
               <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                Mientras lees esto, estás perdiendo un trabajo de $2,500.
+                Tu próximo cliente está comparando opciones locales ahora mismo.
               </h2>
             </div>
 
@@ -466,7 +446,7 @@ export default function EsPage() {
                 {
                   icon: Star,
                   title: "No tienes suficientes reseñas",
-                  body: "El 93% de los clientes lee reseñas antes de llamar. Tu competidor tiene decenas de estrellas brillando en Google. Los números toman la decisión por ellos — antes de que siquiera vean tu trabajo.",
+                  body: "Tus clientes comparan reseñas recientes, respuestas del negocio y señales de confianza antes de llamar. Medimos tu brecha real contra los competidores locales.",
                 },
                 {
                   icon: PhoneCall,
@@ -578,16 +558,16 @@ export default function EsPage() {
                     Después de cada trabajo, tu cliente recibe un mensaje o
                     correo pidiéndole una reseña. Sin conversaciones incómodas.
                     Sin tener que recordar preguntar. Pasa automáticamente, y
-                    funciona. Nuestros clientes promedian 53 nuevas reseñas en
-                    los primeros 60 días.
+                    funciona. Enviamos la misma solicitud neutral a cada cliente
+                    elegible y medimos las respuestas desde tu línea base.
                   </p>
                   <ul className="mt-5 space-y-3">
                     {[
                       "Mensaje/correo automático después de cada trabajo",
                       "Enlace directo con un toque a tu página de Google",
-                      "Comentarios negativos recibidos en privado primero",
+                      "Formulario separado de servicio para cada cliente",
                       "Panel para seguir el crecimiento",
-                      "Promedio: 53 nuevas reseñas en 60 días",
+                      "Seguimiento mensual desde tu línea base",
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-2.5">
                         <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
@@ -602,43 +582,43 @@ export default function EsPage() {
         </section>
 
         {/* ============================================================ */}
-        {/*  RESULTS / SOCIAL PROOF                                      */}
+        {/*  TRANSPARENT PROCESS PROOF                                   */}
         {/* ============================================================ */}
         <section className="bg-gray-900 py-16 sm:py-24">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="mx-auto max-w-3xl text-center">
               <p className="text-sm font-bold uppercase tracking-widest text-orange-400">
-                Números reales de negocios reales
+                Proceso claro, sin testimonios prestados
               </p>
               <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-                Ellos también dudaban. Luego el teléfono empezó a sonar.
+                Mira exactamente lo que revisamos, instalamos y medimos.
               </h2>
+              <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-gray-400">
+                Estamos creando nuestros primeros casos de estudio verificados.
+                Mientras tanto, mostramos el trabajo y medimos cada negocio desde su propia línea base.
+              </p>
             </div>
 
             <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
-              {testimonials.map((t, i) => (
+              {proofCards.map((card, i) => (
                 <div
                   key={i}
                   className="flex flex-col rounded-2xl border border-gray-700 bg-gray-800/50 p-6"
                 >
-                  <StarRating count={5} />
-                  <p className="mt-4 flex-1 text-sm leading-relaxed text-gray-300">
-                    &ldquo;{t.quote}&rdquo;
-                  </p>
-                  <div className="mt-6 border-t border-gray-700 pt-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-sm font-semibold text-white">
-                          {t.name}
-                        </div>
-                        <div className="text-xs text-gray-400">
-                          {t.trade} -- {t.location}
-                        </div>
+                  <div className="text-sm font-bold uppercase tracking-wider text-orange-400">
+                    {card.title}
+                  </div>
+                  <div className="mt-5 space-y-3 rounded-xl border border-gray-700 bg-gray-900/60 p-4">
+                    {[
+                      ["Punto inicial", card.startingPoint],
+                      ["Nuestro trabajo", card.work],
+                      ["Lo que recibes", card.deliverable],
+                    ].map(([label, value]) => (
+                      <div key={label} className="grid grid-cols-[100px_1fr] gap-3 text-sm">
+                        <div className="font-semibold text-gray-500">{label}</div>
+                        <div className={cl("font-semibold", label === "Lo que recibes" ? "text-emerald-300" : "text-gray-200")}>{value}</div>
                       </div>
-                      <span className="rounded-full bg-emerald-900/50 px-3 py-1 text-xs font-semibold text-emerald-300 ring-1 ring-emerald-700">
-                        {t.metric}
-                      </span>
-                    </div>
+                    ))}
                   </div>
                 </div>
               ))}
@@ -725,7 +705,7 @@ export default function EsPage() {
                 </p>
                 <div className="mt-4 flex items-baseline justify-center gap-1">
                   <span className="text-5xl font-extrabold text-white">
-                    $399
+                    $499
                   </span>
                   <span className="text-lg font-semibold text-gray-400">
                     /mes
@@ -745,7 +725,7 @@ export default function EsPage() {
                     },
                     {
                       title: "Automatización de reseñas en Google",
-                      desc: "Solicitudes automáticas después de cada trabajo, promedio de 53+ reseñas en 60 días",
+                      desc: "La misma solicitud neutral para cada cliente elegible, con seguimiento mensual",
                     },
                     {
                       title: "Optimización SEO local",
@@ -783,8 +763,7 @@ export default function EsPage() {
 
                 <div className="mt-8 rounded-xl bg-orange-50 p-4 text-center">
                   <p className="text-sm font-semibold text-orange-800">
-                    Nuestra garantía: resultados medibles en 30 días o tu
-                    primer mes es gratis.
+                    Medimos desde tu línea base y mostramos el trabajo realizado cada mes.
                   </p>
                   <p className="mt-1 text-xs text-orange-600">
                     Nosotros no ganamos si tú no ganas. Así funciona esto.
