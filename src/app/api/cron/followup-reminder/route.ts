@@ -1,22 +1,31 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { verifyBearerSecret } from "@/lib/server-auth";
 
-const TELEGRAM_CHAT_ID = "138971046";
-const BASE_URL = "https://trybookedout.com";
-
-async function sendTelegram(token: string, text: string) {
+async function sendTelegram(token: string, chatId: string, text: string) {
   await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text, parse_mode: "HTML" }),
+    body: JSON.stringify({ chat_id: chatId, text, parse_mode: "HTML" }),
   });
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const authorization = verifyBearerSecret(
+    request.headers.get("authorization"),
+    process.env.CRON_SECRET
+  );
+  if (!authorization.ok) {
+    const error = authorization.reason === "missing-secret" ? "Server misconfigured" : "Unauthorized";
+    return NextResponse.json({ error }, { status: authorization.status });
+  }
+
   try {
     const token = process.env.TELEGRAM_BOT_TOKEN;
-    if (!token) {
-      return NextResponse.json({ error: "TELEGRAM_BOT_TOKEN not set" }, { status: 500 });
+    const chatId = process.env.TELEGRAM_CHAT_ID?.trim();
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
+    if (!token || !chatId || !baseUrl) {
+      return NextResponse.json({ error: "Reminder routing is not configured" }, { status: 500 });
     }
 
     const supabase = await createClient();
@@ -48,9 +57,9 @@ export async function GET() {
 📞 ${prospect.phone || "no phone"}
 📝 ${noteSnippet}
 
-Open: ${BASE_URL}/leads/${prospect.id}`;
+Open: ${baseUrl}/leads/${prospect.id}`;
 
-      await sendTelegram(token, message);
+      await sendTelegram(token, chatId, message);
     }
 
     return NextResponse.json({ ok: true, sent: prospects.length });

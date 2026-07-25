@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
 import { runAudit } from "@/lib/audit-runner";
+import { createClient } from "@/lib/supabase/server";
+import { z } from "zod";
+
+const auditRequestSchema = z.object({
+  prospect_id: z.string().uuid(),
+});
 
 /**
  * POST /api/audit/run
@@ -7,18 +13,41 @@ import { runAudit } from "@/lib/audit-runner";
  *
  * Runs PageSpeed Insights + Brave competitor search for a prospect,
  * calculates an A–F grade, saves to website_analyses, and returns the results.
- * Uses service role key — no auth required (called from internal triggers).
+ * Requires a signed-in user who owns the requested prospect. The audit runner
+ * uses the service-role key only after this ownership check succeeds.
  */
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { prospect_id } = body;
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
-    if (!prospect_id) {
-      return NextResponse.json(
-        { error: "prospect_id is required" },
-        { status: 400 }
-      );
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const parsed = auditRequestSchema.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Valid prospect_id is required" }, { status: 400 });
+    }
+
+    const { prospect_id } = parsed.data;
+    const { data: prospect, error: prospectError } = await supabase
+      .from("prospects")
+      .select("id")
+      .eq("id", prospect_id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (prospectError) {
+      console.error("[audit/run] Ownership check failed:", prospectError);
+      return NextResponse.json({ error: "Unable to verify prospect" }, { status: 500 });
+    }
+
+    if (!prospect) {
+      return NextResponse.json({ error: "Prospect not found" }, { status: 404 });
     }
 
     const result = await runAudit(prospect_id);

@@ -4,11 +4,6 @@ import { Resend } from "resend";
 import { runAudit } from "@/lib/audit-runner";
 import { enrollProspect } from "@/lib/drip-engine";
 
-const DEFAULT_OWNER_USER_ID = "8337f5a8-dd50-43c5-8f35-b32e2180492d";
-const DEFAULT_SEQUENCE_ID = "58e2a4a5-8603-44ea-b103-a3eb0c01b4ce";
-const DEFAULT_NOTIFICATION_EMAIL = "dcamp905@gmail.com";
-const DEFAULT_FROM_EMAIL = "Booked Out <info@trybookedout.com>";
-
 function requiredEnv(name: string): string | null {
   const value = process.env[name]?.trim();
   return value || null;
@@ -80,14 +75,18 @@ export async function POST(request: Request) {
       );
     }
 
-    const ownerUserId =
-      process.env.BOOKED_OUT_OWNER_USER_ID?.trim() || DEFAULT_OWNER_USER_ID;
-    const defaultSequenceId =
-      process.env.BOOKED_OUT_DEFAULT_SEQUENCE_ID?.trim() || DEFAULT_SEQUENCE_ID;
-    const notificationEmail =
-      process.env.INBOUND_LEAD_TO_EMAIL?.trim() || DEFAULT_NOTIFICATION_EMAIL;
-    const fromEmail =
-      process.env.INBOUND_LEAD_FROM_EMAIL?.trim() || DEFAULT_FROM_EMAIL;
+    const ownerUserId = requiredEnv("BOOKED_OUT_OWNER_USER_ID");
+    const defaultSequenceId = requiredEnv("BOOKED_OUT_DEFAULT_SEQUENCE_ID");
+    const notificationEmail = requiredEnv("INBOUND_LEAD_TO_EMAIL");
+    const fromEmail = requiredEnv("INBOUND_LEAD_FROM_EMAIL");
+
+    if (!ownerUserId || !defaultSequenceId || !notificationEmail || !fromEmail) {
+      console.error("[inbound] Missing lead-routing configuration");
+      return NextResponse.json(
+        { error: "Lead routing is not configured yet" },
+        { status: 503 }
+      );
+    }
 
     // Service role client — bypasses RLS for inbound lead storage
     const supabase = createClient(supabaseUrl, serviceRoleKey);

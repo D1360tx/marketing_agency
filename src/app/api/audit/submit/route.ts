@@ -10,12 +10,14 @@ export async function POST(req: NextRequest) {
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !supabaseKey) {
-      console.error("Missing Supabase env vars");
-      // Still return success so the UI works even without Supabase configured
-      return NextResponse.json({ success: true, leadId: "demo-mode" });
+      console.error("[audit/submit] Missing Supabase server configuration");
+      return NextResponse.json(
+        { error: "Audit submission is not configured" },
+        { status: 503 }
+      );
     }
 
     const supabase = createClient(supabaseUrl, supabaseKey);
