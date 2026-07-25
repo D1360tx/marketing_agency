@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { verifyBearerSecret } from "@/lib/server-auth";
 
 // Group chat + Booked Out topic (thread_id=3). Falls back to direct chat if not set.
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || "138971046";
@@ -22,11 +23,13 @@ async function sendTelegram(token: string, text: string) {
 }
 
 export async function GET(request: Request) {
-  // Verify cron secret to prevent unauthorized triggers
-  const authHeader = request.headers.get("authorization");
-  const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authorization = verifyBearerSecret(
+    request.headers.get("authorization"),
+    process.env.CRON_SECRET
+  );
+  if (!authorization.ok) {
+    const error = authorization.reason === "missing-secret" ? "Server misconfigured" : "Unauthorized";
+    return NextResponse.json({ error }, { status: authorization.status });
   }
 
   try {

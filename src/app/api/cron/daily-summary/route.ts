@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { verifyBearerSecret } from "@/lib/server-auth";
 
 const TELEGRAM_CHAT_ID = "138971046";
 
@@ -11,7 +12,16 @@ async function sendTelegram(token: string, text: string) {
   });
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const authorization = verifyBearerSecret(
+    request.headers.get("authorization"),
+    process.env.CRON_SECRET
+  );
+  if (!authorization.ok) {
+    const error = authorization.reason === "missing-secret" ? "Server misconfigured" : "Unauthorized";
+    return NextResponse.json({ error }, { status: authorization.status });
+  }
+
   try {
     const token = process.env.TELEGRAM_BOT_TOKEN;
     if (!token) {
