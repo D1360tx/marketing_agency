@@ -22,7 +22,21 @@ export async function GET(
     return new NextResponse(site.html_content, {
       headers: {
         "Content-Type": "text/html; charset=utf-8",
-        "Cache-Control": "public, max-age=3600",
+        "Cache-Control": "private, no-store",
+        "Content-Security-Policy": [
+          "sandbox allow-scripts",
+          "default-src 'none'",
+          "script-src 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net",
+          "style-src 'unsafe-inline' https://fonts.googleapis.com",
+          "img-src https: data: blob:",
+          "font-src https://fonts.gstatic.com data:",
+          "connect-src 'none'",
+          "frame-ancestors 'self'",
+          "base-uri 'none'",
+          "form-action 'none'",
+        ].join("; "),
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "no-referrer",
       },
     });
   } catch {

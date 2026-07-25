@@ -2,13 +2,11 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { verifyBearerSecret } from "@/lib/server-auth";
 
-const TELEGRAM_CHAT_ID = "138971046";
-
-async function sendTelegram(token: string, text: string) {
+async function sendTelegram(token: string, chatId: string, text: string) {
   await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text, parse_mode: "HTML" }),
+    body: JSON.stringify({ chat_id: chatId, text, parse_mode: "HTML" }),
   });
 }
 
@@ -24,8 +22,9 @@ export async function GET(request: Request) {
 
   try {
     const token = process.env.TELEGRAM_BOT_TOKEN;
-    if (!token) {
-      return NextResponse.json({ error: "TELEGRAM_BOT_TOKEN not set" }, { status: 500 });
+    const chatId = process.env.TELEGRAM_CHAT_ID?.trim();
+    if (!token || !chatId) {
+      return NextResponse.json({ error: "Telegram is not configured" }, { status: 500 });
     }
 
     const supabase = await createClient();
@@ -96,7 +95,7 @@ Follow-ups due tomorrow: ${followUpsTomorrow?.length ?? 0}
 
 💪 Keep going!`;
 
-    await sendTelegram(token, message);
+    await sendTelegram(token, chatId, message);
 
     return NextResponse.json({ ok: true });
   } catch (err) {

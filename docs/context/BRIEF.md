@@ -43,7 +43,7 @@ A two-sided business:
 - **With email:** 761 verified
 - **Coverage:** 12 Austin-area cities × 5 trades
 - **Cities:** Dripping Springs, Wimberley, Kyle, Buda, Cedar Park, Leander, Georgetown, Pflugerville, San Marcos, New Braunfels, Bastrop, Lockhart
-- **User ID (Diego):** 8337f5a8-dd50-43c5-8f35-b32e2180492d
+- **Owner user routing:** configured server-side via `BOOKED_OUT_OWNER_USER_ID` (not stored in tracked documentation)
 
 ## Email Sequences
 All loaded in Supabase drip_sequences table:

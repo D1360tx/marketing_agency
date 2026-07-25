@@ -37,6 +37,21 @@ Required checks:
 
 Local comparison on July 25, 2026 showed the configured local key does **not** match the historical literal. This does not prove the production Vercel value was updated.
 
+## Required lead and notification routing
+
+Tracked source contains no production owner UUID, sequence UUID, personal notification email, or Telegram chat ID. Configure these server-side before deployment:
+
+- `BOOKED_OUT_OWNER_USER_ID`
+- `BOOKED_OUT_DEFAULT_SEQUENCE_ID`
+- `INBOUND_LEAD_TO_EMAIL`
+- `INBOUND_LEAD_FROM_EMAIL`
+- `TELEGRAM_BOT_TOKEN`
+- `TELEGRAM_CHAT_ID`
+- `TELEGRAM_THREAD_ID` (optional)
+- `NEXT_PUBLIC_APP_URL`
+
+Inbound lead capture and notification cron routes fail safely when required routing is missing.
+
 ## Audit route authorization
 
 `POST /api/audit/run` requires:
@@ -45,7 +60,11 @@ Local comparison on July 25, 2026 showed the configured local key does **not** m
 - A UUID `prospect_id`
 - A prospect owned by that same user
 
-The service-role audit runner is called only after these checks pass.
+The service-role audit runner is called only after these checks pass. `POST /api/audit/submit` also requires the service-role key and no longer pretends to succeed in demo mode when server configuration is absent.
+
+## Token preview isolation
+
+Generated HTML returned from `/api/preview/[token]` is no longer publicly cached and is served with a CSP sandbox that allows rendering scripts without granting same-origin access. Form submission, API connections, base-tag changes, and framing by other origins are blocked.
 
 ## Verification commands
 
