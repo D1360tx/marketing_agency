@@ -4,7 +4,8 @@
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| Pricing | $399/mo, no contract | Low enough to be a no-brainer; no contract removes risk objection |
+| Pricing | $499/mo Local Call System; $997/mo Growth Partner | Approved Day 0 operating offer as of 2026-07-25; all active surfaces must use `OFFER-SOURCE-OF-TRUTH.md` |
+| Founding clients | First 3 at $499/mo, no setup fee, month-to-month; website ownership transfers after 3 paid months | Reduces initial friction while protecting unrecovered website work; no outcome guarantees |
 | Territory model | 1 per trade per city | Creates genuine scarcity + exclusivity; aligns our success with client success |
 | Target market | Local service trades, Texas | High need, low digital sophistication, high LTV potential |
 | Cold email persona | Maria Egil | Neutral name, female sender (higher open rates in trades) |

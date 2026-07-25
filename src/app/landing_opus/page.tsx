@@ -49,22 +49,6 @@ function cl(...args: (string | false | null | undefined)[]) {
 /*  Micro-components                                                   */
 /* ------------------------------------------------------------------ */
 
-function StarRating({ count = 5 }: { count?: number }) {
-  return (
-    <span className="inline-flex gap-0.5" aria-label={`${count} stars`}>
-      {Array.from({ length: 5 }, (_, i) => (
-        <Star
-          key={i}
-          className={cl(
-            "h-4 w-4",
-            i < count ? "fill-amber-400 text-amber-400" : "text-gray-300"
-          )}
-        />
-      ))}
-    </span>
-  );
-}
-
 function Badge({ children }: { children: React.ReactNode }) {
   return (
     <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200">
@@ -260,7 +244,7 @@ export default function LandingOpusPage() {
     },
     {
       q: "How fast will I see results?",
-      a: "Review growth starts within the first week of automation going live. Website and SEO improvements typically show measurable ranking changes within 30 days. Most clients report noticeably more calls within the first 6 weeks.",
+      a: "The site and workflows can launch quickly after we receive your materials, but outcomes vary by market, baseline, and customer volume. We establish your baseline and report what changes each month without guaranteeing a specific number of calls, reviews, or rankings.",
     },
     {
       q: "Why do you only take one business per trade per city?",
@@ -268,11 +252,11 @@ export default function LandingOpusPage() {
     },
     {
       q: "What happens if I want to cancel?",
-      a: "You cancel. No penalties, no fees, no guilt trip. Your website stays live through the end of your billing period. We keep things simple because we'd rather earn your business through results than trap you in a contract.",
+      a: "You can cancel without a long-term contract. Service stays active through the paid billing period. After three paid months, you can request an export of the website content and core page files; before then, the managed site remains part of the Booked Out service.",
     },
     {
       q: "Do I own the website if I cancel?",
-      a: "The site stays live while your plan is active because hosting, updates, and management are included. If you ever want to leave, we'll give you a clean export of your content and core page files so another provider can rebuild or migrate it.",
+      a: "After three paid months, you can request an export of your website content and core page files for another provider to rebuild or migrate. Hosting, software integrations, automations, and third-party licenses remain part of the managed service.",
     },
     {
       q: "Are SMS, email, hosting, and reporting included?",
@@ -285,9 +269,9 @@ export default function LandingOpusPage() {
   ];
 
   const proofStats = [
-    { label: "Review gap", before: "12 reviews", after: "53 reviews", note: "60-day review request campaign" },
-    { label: "Call clarity", before: "3 buried CTAs", after: "Tap-to-call on every page", note: "Mobile-first website rebuild" },
-    { label: "Follow-up gap", before: "20+ min avg.", after: "Fast text-back", note: "Speed-to-lead workflow" },
+    { label: "Review gap", before: "Behind local leaders", after: "Baseline + neutral request workflow", note: "Measured against real local competitors" },
+    { label: "Call clarity", before: "Calls hard to find", after: "Tap-to-call on key pages", note: "Mobile-first website rebuild" },
+    { label: "Follow-up gap", before: "No automatic response", after: "Fast text-back", note: "Speed-to-lead workflow" },
     { label: "Audit depth", before: "Guesswork", after: "Speed, rankings, reviews, competitors", note: "Delivered before the sales call" },
   ];
 
@@ -342,34 +326,25 @@ export default function LandingOpusPage() {
     ],
   };
 
-  /* -- Testimonials ------------------------------------------------ */
-  const testimonials = [
+  /* -- Transparent process proof ----------------------------------- */
+  const proofCards = [
     {
-      name: "Mike Hernandez",
-      trade: "Plumbing",
-      location: "Cedar Park, TX",
-      quote: "Went from 6 reviews to 53 in two months. I stopped running ads because the phone was already ringing enough. Best money I spend every month.",
-      before: "6 Google reviews",
-      changed: "Review requests after every completed job",
-      metric: "53 reviews in 60 days",
+      title: "Find the leaks",
+      startingPoint: "Website, Google profile, reviews, and lead response",
+      work: "Compare your business with the local competitors winning calls",
+      deliverable: "A prioritized audit with the first fixes clearly ranked",
     },
     {
-      name: "Sarah Chen",
-      trade: "Salon Owner",
-      location: "Gilbert, AZ",
-      quote: "My old website looked like it was from 2012. Within a week of launching the new one, I had three new clients mention they found me on Google. That never happened before.",
-      before: "Outdated website from 2012",
-      changed: "Mobile-first site with clearer Google signals",
-      metric: "3x more Google traffic",
+      title: "Install the system",
+      startingPoint: "Disconnected pages, requests, and follow-up",
+      work: "Launch the site, neutral review requests, and lead-response workflow",
+      deliverable: "One managed system built around your real operation",
     },
     {
-      name: "James Washington",
-      trade: "HVAC",
-      location: "Murfreesboro, TN",
-      quote: "I've wasted thousands on marketing companies. These guys actually showed me what was broken and fixed it. No fluff, no jargon. My wife noticed the difference in the books within a month.",
-      before: "Marketing spend with no clear fixes",
-      changed: "Audit-led website and review system",
-      metric: "40% more booked jobs",
+      title: "Measure your baseline",
+      startingPoint: "Marketing activity without clear accountability",
+      work: "Track calls, lead response, review requests, and ranking movement",
+      deliverable: "Monthly evidence, lessons, and the next actions to take",
     },
   ];
 
@@ -709,7 +684,7 @@ export default function LandingOpusPage() {
                     {[
                       "Request sent after every completed job",
                       "Direct Google review link",
-                      "Private feedback channel for service recovery",
+                      "Separate service feedback form for every customer",
                       "Review growth tracked monthly",
                       "Works by text and email",
                     ].map((item, i) => (
@@ -847,65 +822,52 @@ export default function LandingOpusPage() {
         </section>
 
         {/* ============================================================ */}
-        {/*  RESULTS / SOCIAL PROOF                                      */}
+        {/*  TRANSPARENT PROCESS PROOF                                   */}
         {/* ============================================================ */}
         <section className="bg-gray-900 py-16 sm:py-24">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="mx-auto max-w-3xl text-center">
               <p className="text-sm font-bold uppercase tracking-widest text-orange-400">
-                Proof, not promises
+                Process proof, not borrowed claims
               </p>
               <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-white [text-wrap:balance] sm:text-4xl">
-                The right online presence changes who gets the call.
+                See exactly what we inspect, install, and measure.
               </h2>
               <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-gray-400 [text-wrap:pretty]">
-                These are the outcomes we build toward: more trust, more recent
-                reviews, and clearer reasons to call.
+                We are building our first verified case studies. Until then, we
+                show the work clearly and measure every client from their own baseline.
               </p>
             </div>
 
             <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
-              {testimonials.map((t, i) => (
+              {proofCards.map((card, i) => (
                 <div
                   key={i}
                   className="flex flex-col rounded-2xl border border-gray-700 bg-gray-800/50 p-6"
                 >
-                  <StarRating count={5} />
+                  <div className="text-sm font-bold uppercase tracking-wider text-orange-400">
+                    {card.title}
+                  </div>
                   <div className="mt-5 space-y-3 rounded-xl border border-gray-700 bg-gray-900/60 p-4">
                     {[
-                      ["Before", t.before],
-                      ["Changed", t.changed],
-                      ["Result", t.metric],
+                      ["Starting point", card.startingPoint],
+                      ["Our work", card.work],
+                      ["You receive", card.deliverable],
                     ].map(([label, value]) => (
-                      <div key={label} className="grid grid-cols-[72px_1fr] gap-3 text-sm">
+                      <div key={label} className="grid grid-cols-[92px_1fr] gap-3 text-sm">
                         <div className="font-semibold text-gray-500">
                           {label}
                         </div>
                         <div
                           className={cl(
                             "font-semibold",
-                            label === "Result" ? "text-emerald-300" : "text-gray-200"
+                            label === "You receive" ? "text-emerald-300" : "text-gray-200"
                           )}
                         >
                           {value}
                         </div>
                       </div>
                     ))}
-                  </div>
-                  <p className="mt-5 flex-1 text-sm leading-relaxed text-gray-300">
-                    &ldquo;{t.quote}&rdquo;
-                  </p>
-                  <div className="mt-6 border-t border-gray-700 pt-4">
-                    <div>
-                      <div>
-                        <div className="text-sm font-semibold text-white">
-                          {t.name}
-                        </div>
-                        <div className="text-xs text-gray-400">
-                          {t.trade} -- {t.location}
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
               ))}

@@ -167,8 +167,8 @@ export default function LandingPage() {
                 <span className="text-amber-400">So Why Does Your Competitor Get the Call?</span>
               </h1>
               <p className="text-lg md:text-xl text-slate-300 mb-8 leading-relaxed">
-                They're not better than you. They just look better online. We fix that — professional website + automated review system that turns every finished job into a 5-star review.
-                <strong className="text-white"> 47 new reviews in 60 days. No contracts.</strong> Results in 30 days or your first month is free.
+                They&apos;re not better than you. They just look better online. We build fast local websites, neutral review request systems, and lead follow-up workflows.
+                <strong className="text-white"> No long contracts. Audit before we recommend a plan.</strong>
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4">
@@ -213,8 +213,8 @@ export default function LandingPage() {
                   <BarChart3 className="w-8 h-8 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-slate-500 font-bold uppercase tracking-wider">Average Result</p>
-                  <p className="text-2xl font-black text-slate-900">+47 Calls/Mo</p>
+                  <p className="text-sm text-slate-500 font-bold uppercase tracking-wider">What We Measure</p>
+                  <p className="text-2xl font-black text-slate-900">Calls · Reviews · Response</p>
                 </div>
               </div>
             </div>
@@ -256,7 +256,7 @@ export default function LandingPage() {
       <section className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">While You're Reading This, You're Losing a $2,500 Job</h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Your Next Customer Is Comparing Local Options Right Now</h2>
             <p className="text-lg text-slate-600">Every day your online presence stays "good enough," you're handing calls to the contractor who took theirs seriously.</p>
           </div>
 
@@ -273,7 +273,7 @@ export default function LandingPage() {
                 <Star className="w-6 h-6 text-red-600" />
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-3">You Don't Have Enough Reviews</h3>
-              <p className="text-slate-600">93% of customers read reviews before calling. Your competitor has dozens of stars glowing on Google. The math makes the decision for them — before they ever see your work.</p>
+              <p className="text-slate-600">Customers compare recent reviews, owner responses, and trust signals before calling. We measure your actual gap against local competitors.</p>
             </div>
             <div className="bg-white p-8 rounded-xl border border-slate-200 shadow-sm">
               <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-6">
@@ -311,7 +311,7 @@ export default function LandingPage() {
                   </div>
                   <div>
                     <h4 className="text-xl font-bold mb-2">Automated Google Reviews</h4>
-                    <p className="text-slate-400">Our software automatically texts your customers after a job is done, driving them directly to your Google Business profile to leave a 5-star review.</p>
+                    <p className="text-slate-400">Our software sends the same neutral request to every eligible customer after a completed job and tracks responses from your baseline.</p>
                   </div>
                 </div>
 
@@ -349,74 +349,24 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Social Proof */}
+      {/* Transparent Process Proof */}
       <section className="py-20 bg-slate-50 border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Real Results for Real Tradesmen.</h2>
-            <p className="text-lg text-slate-600">We let our numbers do the talking.</p>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Process Proof, Not Borrowed Claims.</h2>
+            <p className="text-lg text-slate-600">We are building verified case studies. Until then, we show the work and measure each business from its own baseline.</p>
           </div>
-          
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-white p-8 rounded-xl border border-slate-200 shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-green-100 text-green-800 font-bold px-4 py-1 rounded-bl-lg text-sm">
-                +312% Call Volume
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { title: "Find the Leaks", body: "Compare your site, Google profile, reviews, and response time with local competitors." },
+              { title: "Install the System", body: "Launch the website, neutral review requests, and lead follow-up around your real operation." },
+              { title: "Measure the Baseline", body: "Track calls, requests, response time, and ranking movement with clear monthly reporting." },
+            ].map((item) => (
+              <div key={item.title} className="bg-white p-8 rounded-xl border border-slate-200 shadow-sm">
+                <h3 className="text-xl font-bold text-slate-900 mb-3">{item.title}</h3>
+                <p className="text-slate-600">{item.body}</p>
               </div>
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-14 h-14 bg-slate-200 rounded-full flex items-center justify-center font-bold text-xl text-slate-600">
-                  JD
-                </div>
-                <div>
-                  <h4 className="font-bold text-slate-900 text-lg">John Davis</h4>
-                  <p className="text-slate-500 text-sm">Davis Plumbing & Rooter</p>
-                </div>
-              </div>
-              <p className="text-slate-700 italic mb-6">
-                "I was paying a big agency $1,200 a month and getting maybe 4-5 calls. Booked Out built my new site and turned on the review software. In 45 days, we went from 12 reviews to 87. Last month we had 54 inbound calls directly from Google."
-              </p>
-              <div className="flex items-center gap-8 border-t border-slate-100 pt-6">
-                <div>
-                  <p className="text-sm text-slate-500 font-medium">Before</p>
-                  <p className="font-bold text-slate-900">4 calls/mo</p>
-                </div>
-                <ArrowRight className="w-5 h-5 text-slate-300" />
-                <div>
-                  <p className="text-sm text-slate-500 font-medium">After (Day 45)</p>
-                  <p className="font-bold text-green-600 text-xl">54 calls/mo</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-8 rounded-xl border border-slate-200 shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-green-100 text-green-800 font-bold px-4 py-1 rounded-bl-
-
-lg text-sm">
-                +215% Revenue
-              </div>
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-14 h-14 bg-slate-200 rounded-full flex items-center justify-center font-bold text-xl text-slate-600">
-                  MR
-                </div>
-                <div>
-                  <h4 className="font-bold text-slate-900 text-lg">Mike Reynolds</h4>
-                  <p className="text-slate-500 text-sm">Reynolds Electric</p>
-                </div>
-              </div>
-              <p className="text-slate-700 italic mb-6">
-                "The missed-call text back feature alone paid for the whole year in the first week. We used to miss calls when on a ladder. Now, the system texts them instantly, and we book the job before we even climb down."
-              </p>
-              <div className="flex items-center gap-8 border-t border-slate-100 pt-6">
-                <div>
-                  <p className="text-sm text-slate-500 font-medium">Missed Leads</p>
-                  <p className="font-bold text-slate-900">~15/mo</p>
-                </div>
-                <ArrowRight className="w-5 h-5 text-slate-300" />
-                <div>
-                  <p className="text-sm text-slate-500 font-medium">Recovered Leads</p>
-                  <p className="font-bold text-green-600 text-xl">12/mo</p>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -428,7 +378,7 @@ lg text-sm">
             You Do Great Work. It's Time Your Online Presence Showed It.
           </h2>
           <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
-            Get a high-converting website, automated review generation, and missed-call text back. All for one flat monthly rate.
+            Get a conversion-focused website, compliant review requests, and missed-call follow-up for one flat monthly rate.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="bg-white text-blue-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-slate-50 transition-colors shadow-lg flex items-center justify-center gap-2">
