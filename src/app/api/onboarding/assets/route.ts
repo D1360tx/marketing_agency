@@ -7,7 +7,7 @@ import {
   ONBOARDING_ASSET_BUCKET,
 } from "@/lib/onboarding-security";
 
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -18,6 +18,9 @@ export async function GET(request: Request) {
 
   const path = normalizeOnboardingAssetPath(rawPath);
   const recordKey = path?.split("/")[0] || "";
+  // New objects are UUID-prefixed. Token-prefixed lookup remains temporarily
+  // for private access to assets created by the original public-bucket flow.
+  // Both branches still require an authenticated owner match below.
   const keyColumn = UUID_PATTERN.test(recordKey)
     ? "id"
     : isValidOnboardingToken(recordKey)

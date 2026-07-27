@@ -30,8 +30,8 @@ function validSubmission(overrides = {}) {
     existing_website: "https://example.com",
     brand_colors: "Blue and white",
     style_notes: "Clean and professional",
-    logo_url: `${recordId}/logo/550e8400-e29b-41d4-a716-446655440001.png`,
-    photo_urls: [`${recordId}/photos/550e8400-e29b-41d4-a716-446655440002.jpg`],
+    logo_url: `${recordId}/logo/current`,
+    photo_urls: [`${recordId}/photos/0`],
     primary_contact_name: "Jane Owner",
     primary_contact_email: "jane@example.com",
     primary_contact_phone: "512-555-0100",
@@ -111,9 +111,31 @@ test("submission schema rejects invalid email, URL, and oversized notes", () => 
   );
 });
 
+test("submission schema enforces deterministic asset paths and unique photo slots", () => {
+  assert.equal(
+    onboardingSubmissionSchema.safeParse(validSubmission({ logo_url: "https://evil.example/logo.png" })).success,
+    false
+  );
+  assert.equal(
+    onboardingSubmissionSchema.safeParse(validSubmission({ photo_urls: [`${recordId}/photos/10`] })).success,
+    false
+  );
+  assert.equal(
+    onboardingSubmissionSchema.safeParse(
+      validSubmission({ photo_urls: [`${recordId}/photos/0`, `${recordId}/photos/0`] })
+    ).success,
+    false
+  );
+});
+
 test("asset paths must stay inside the matching onboarding record", () => {
-  const validPath = `${recordId}/photos/550e8400-e29b-41d4-a716-446655440002.webp`;
+  const validPath = `${recordId}/photos/9`;
   assert.equal(isAssetPathForOnboarding(validPath, recordId), true);
+  assert.equal(isAssetPathForOnboarding(`${recordId}/logo/current`, recordId), true);
+  assert.equal(
+    isAssetPathForOnboarding(`${recordId}/photos/550e8400-e29b-41d4-a716-446655440002.webp`, recordId),
+    true
+  );
   assert.equal(
     isAssetPathForOnboarding(
       `650e8400-e29b-41d4-a716-446655440000/photos/550e8400-e29b-41d4-a716-446655440002.webp`,
@@ -122,6 +144,7 @@ test("asset paths must stay inside the matching onboarding record", () => {
     false
   );
   assert.equal(isAssetPathForOnboarding(`${recordId}/../secret.png`, recordId), false);
+  assert.equal(isAssetPathForOnboarding(`${recordId}/PHOTOS/0`, recordId), false);
   assert.equal(isAssetPathForOnboarding(`${recordId}/documents/file.pdf`, recordId), false);
 });
 

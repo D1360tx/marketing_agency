@@ -54,7 +54,8 @@ function noStoreJson(body: object, init?: ResponseInit) {
 }
 
 function nullable(value: string) {
-  return value || null;
+  const trimmed = value.trim();
+  return trimmed || null;
 }
 
 export async function GET(

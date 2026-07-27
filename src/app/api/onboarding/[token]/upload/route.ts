@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import {
@@ -71,16 +70,16 @@ export async function POST(
     return NextResponse.json({ error: validation.error }, { status: 400 });
   }
 
-  const folder = kind === "logo" ? "logo" : "photos";
-  const { data: existingFiles, error: listError } = await supabase.storage
-    .from(ONBOARDING_ASSET_BUCKET)
-    .list(`${onboarding.id}/${folder}`, { limit: ONBOARDING_MAX_PHOTOS + 1 });
-
-  if (listError) {
-    return NextResponse.json({ error: "Image upload failed" }, { status: 500 });
-  }
-  if (kind === "photo" && (existingFiles?.length || 0) >= ONBOARDING_MAX_PHOTOS) {
-    return NextResponse.json({ error: "A maximum of 10 photos is allowed" }, { status: 400 });
+  let path: string;
+  if (kind === "logo") {
+    path = `${onboarding.id}/logo/current`;
+  } else {
+    const rawSlot = formData.get("slot");
+    const slot = typeof rawSlot === "string" ? Number(rawSlot) : Number.NaN;
+    if (!Number.isInteger(slot) || slot < 0 || slot >= ONBOARDING_MAX_PHOTOS) {
+      return NextResponse.json({ error: "Photo slot must be between 0 and 9" }, { status: 400 });
+    }
+    path = `${onboarding.id}/photos/${slot}`;
   }
 
   const bytes = Buffer.from(await file.arrayBuffer());
@@ -88,23 +87,12 @@ export async function POST(
     return NextResponse.json({ error: "Image content does not match its file type" }, { status: 400 });
   }
 
-  if (kind === "logo" && existingFiles?.length) {
-    const oldPaths = existingFiles.map((item) => `${onboarding.id}/logo/${item.name}`);
-    const { error: removeError } = await supabase.storage
-      .from(ONBOARDING_ASSET_BUCKET)
-      .remove(oldPaths);
-    if (removeError) {
-      return NextResponse.json({ error: "Existing logo could not be replaced" }, { status: 500 });
-    }
-  }
-
-  const path = `${onboarding.id}/${folder}/${randomUUID()}.${validation.extension}`;
   const { error: uploadError } = await supabase.storage
     .from(ONBOARDING_ASSET_BUCKET)
     .upload(path, bytes, {
       contentType: file.type,
       cacheControl: "3600",
-      upsert: false,
+      upsert: true,
     });
 
   if (uploadError) {
@@ -117,7 +105,6 @@ export async function POST(
     .createSignedUrl(path, 15 * 60);
 
   if (signedError || !signed?.signedUrl) {
-    await supabase.storage.from(ONBOARDING_ASSET_BUCKET).remove([path]);
     return NextResponse.json({ error: "Image preview could not be created" }, { status: 500 });
   }
 

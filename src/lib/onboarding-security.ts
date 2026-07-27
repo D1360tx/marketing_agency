@@ -34,6 +34,22 @@ const optionalEmail = z
   .optional()
   .default("");
 
+const UUID_SEGMENT = "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}";
+const LEGACY_OBJECT_SEGMENT = `${UUID_SEGMENT}\\.(?:jpg|png|webp)`;
+const ONBOARDING_LOGO_PATH_PATTERN = new RegExp(
+  `^${UUID_SEGMENT}/logo/(?:current|${LEGACY_OBJECT_SEGMENT})$`
+);
+const ONBOARDING_PHOTO_PATH_PATTERN = new RegExp(
+  `^${UUID_SEGMENT}/photos/(?:[0-9]|${LEGACY_OBJECT_SEGMENT})$`
+);
+
+const optionalLogoPath = z
+  .union([z.literal(""), z.string().trim().max(500).regex(ONBOARDING_LOGO_PATH_PATTERN)])
+  .optional()
+  .default("");
+
+const photoPath = z.string().trim().max(500).regex(ONBOARDING_PHOTO_PATH_PATTERN);
+
 export const onboardingSubmissionSchema = z
   .object({
     business_name: z.string().trim().min(1).max(120),
@@ -54,8 +70,13 @@ export const onboardingSubmissionSchema = z
     existing_website: optionalUrl,
     brand_colors: optionalText(500),
     style_notes: optionalText(5000),
-    logo_url: optionalText(500),
-    photo_urls: z.array(z.string().trim().min(1).max(500)).max(ONBOARDING_MAX_PHOTOS).optional().default([]),
+    logo_url: optionalLogoPath,
+    photo_urls: z
+      .array(photoPath)
+      .max(ONBOARDING_MAX_PHOTOS)
+      .refine((paths) => new Set(paths).size === paths.length, { message: "Photo paths must be unique" })
+      .optional()
+      .default([]),
     primary_contact_name: optionalText(120),
     primary_contact_email: optionalEmail,
     primary_contact_phone: optionalText(40),
@@ -119,9 +140,9 @@ export function isAssetPathForOnboarding(value: string, onboardingId: string): b
   if (!path) return false;
 
   const escapedId = onboardingId.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const objectId = "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}";
   return new RegExp(
-    `^${escapedId}/(?:logo|photos)/[0-9a-f-]+\\.(?:jpg|png|webp)$`,
-    "i"
+    `^${escapedId}/(?:logo/(?:current|${objectId}\\.(?:jpg|png|webp))|photos/(?:[0-9]|${objectId}\\.(?:jpg|png|webp)))$`
   ).test(path);
 }
 

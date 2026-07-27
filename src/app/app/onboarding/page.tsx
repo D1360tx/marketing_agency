@@ -151,7 +151,9 @@ export default function AdminOnboardingPage() {
       const supabase = createClient();
       const { data, error } = await supabase
         .from("client_onboarding")
-        .select("*")
+        .select(
+          "id, token, user_id, prospect_id, business_name, owner_name, phone, address, city, state, zip, service_areas, services_offered, has_google_my_business, google_my_business_url, existing_website, brand_colors, style_notes, logo_url, photo_urls, primary_contact_name, primary_contact_email, primary_contact_phone, preferred_contact_method, review_process_notes, additional_notes, status, submitted_at, created_at, expires_at, revoked_at"
+        )
         .order("created_at", { ascending: false });
 
       if (error) throw error;

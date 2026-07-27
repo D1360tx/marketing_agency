@@ -239,6 +239,7 @@ export default function OnboardingPage({
       for (let i = 0; i < Math.min(files.length, remaining); i++) {
         const body = new FormData();
         body.append("kind", "photo");
+        body.append("slot", String(form.photo_urls.length + uploaded.length));
         body.append("file", files[i]);
         const response = await fetch(`/api/onboarding/${token}/upload`, {
           method: "POST",

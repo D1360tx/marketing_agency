@@ -1,4 +1,7 @@
 -- P0 privacy hardening for client onboarding.
+-- This upgrades deployments that already ran the original 023 migration.
+-- Fresh deployments should still run both 023 and 024 because this migration
+-- creates/configures the private storage bucket and removes legacy policies.
 -- Public form access now goes exclusively through token-validating server routes.
 
 ALTER TABLE public.client_onboarding
@@ -103,6 +106,10 @@ ON CONFLICT (id) DO UPDATE SET
   file_size_limit = EXCLUDED.file_size_limit,
   allowed_mime_types = EXCLUDED.allowed_mime_types;
 
+-- Intentionally create no storage.objects policies for this bucket. With RLS
+-- enabled by Supabase, absence of an ALLOW policy denies every anon/authenticated
+-- direct request; service-role API routes are the only storage access path.
+-- Any future storage policy must join client_onboarding and enforce user_id ownership.
 DROP POLICY IF EXISTS "public_upload_onboarding_assets" ON storage.objects;
 DROP POLICY IF EXISTS "public_read_onboarding_assets" ON storage.objects;
 DROP POLICY IF EXISTS "anon_upload_onboarding_assets" ON storage.objects;
