@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS client_onboarding (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   token TEXT UNIQUE NOT NULL DEFAULT encode(gen_random_bytes(16), 'hex'),
   prospect_id UUID REFERENCES prospects(id) ON DELETE SET NULL,
+  user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
   -- Business info
   business_name TEXT,
   owner_name TEXT,
@@ -34,6 +35,8 @@ CREATE TABLE IF NOT EXISTS client_onboarding (
   -- Status
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'reviewed', 'complete')),
   submitted_at TIMESTAMPTZ,
+  expires_at TIMESTAMPTZ NOT NULL DEFAULT (now() + interval '14 days'),
+  revoked_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
@@ -45,41 +48,46 @@ CREATE INDEX IF NOT EXISTS idx_client_onboarding_status ON client_onboarding(sta
 -- Enable RLS
 ALTER TABLE client_onboarding ENABLE ROW LEVEL SECURITY;
 
--- Public can INSERT (token-based, no auth needed)
-CREATE POLICY "public_insert_onboarding"
-  ON client_onboarding
-  FOR INSERT
-  TO anon
-  WITH CHECK (true);
-
--- Public can SELECT their own record by token (for form validation)
-CREATE POLICY "public_select_own_onboarding"
-  ON client_onboarding
-  FOR SELECT
-  TO anon
-  USING (true);
-
--- Authenticated users can SELECT/UPDATE all
+-- Public token access is handled only by server routes using the service role.
+-- Authenticated users can access only their own onboarding records.
 CREATE POLICY "auth_select_onboarding"
   ON client_onboarding
   FOR SELECT
   TO authenticated
-  USING (true);
+  USING (auth.uid() = user_id);
 
 CREATE POLICY "auth_update_onboarding"
   ON client_onboarding
   FOR UPDATE
   TO authenticated
-  USING (true)
-  WITH CHECK (true);
+  USING (auth.uid() = user_id)
+  WITH CHECK (
+    auth.uid() = user_id
+    AND (
+      prospect_id IS NULL
+      OR EXISTS (
+        SELECT 1 FROM public.prospects AS owned_prospect
+        WHERE owned_prospect.id = client_onboarding.prospect_id
+          AND owned_prospect.user_id = auth.uid()
+      )
+    )
+  );
 
 CREATE POLICY "auth_insert_onboarding"
   ON client_onboarding
   FOR INSERT
   TO authenticated
-  WITH CHECK (true);
+  WITH CHECK (
+    auth.uid() = user_id
+    AND (
+      prospect_id IS NULL
+      OR EXISTS (
+        SELECT 1 FROM public.prospects AS owned_prospect
+        WHERE owned_prospect.id = client_onboarding.prospect_id
+          AND owned_prospect.user_id = auth.uid()
+      )
+    )
+  );
 
--- NOTE: Diego needs to manually create the Supabase Storage bucket:
--- Bucket name: onboarding-assets
--- Set to PUBLIC
--- Upload paths: [token]/logo.[ext] and [token]/photos/[filename]
+-- The onboarding-assets bucket is created as private by migration 024.
+-- Public token holders upload through /api/onboarding/[token]/upload.

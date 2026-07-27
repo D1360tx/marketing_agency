@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { useEffect, useRef, useState } from "react";
 
 const SERVICE_OPTIONS = [
   "HVAC",
@@ -153,6 +152,8 @@ export default function OnboardingPage({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [logoUploading, setLogoUploading] = useState(false);
   const [photosUploading, setPhotosUploading] = useState(false);
+  const [logoPreviewUrl, setLogoPreviewUrl] = useState("");
+  const [photoPreviewUrls, setPhotoPreviewUrls] = useState<string[]>([]);
   const logoRef = useRef<HTMLInputElement>(null);
   const photosRef = useRef<HTMLInputElement>(null);
 
@@ -209,20 +210,20 @@ export default function OnboardingPage({
     if (!token) return;
     setLogoUploading(true);
     try {
-      const supabase = createClient();
-      const ext = file.name.split(".").pop() || "jpg";
-      const path = `${token}/logo.${ext}`;
-      const { error } = await supabase.storage
-        .from("onboarding-assets")
-        .upload(path, file, { upsert: true });
-      if (error) throw error;
-      const { data: urlData } = supabase.storage
-        .from("onboarding-assets")
-        .getPublicUrl(path);
-      set("logo_url", urlData.publicUrl);
+      const body = new FormData();
+      body.append("kind", "logo");
+      body.append("file", file);
+      const response = await fetch(`/api/onboarding/${token}/upload`, {
+        method: "POST",
+        body,
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Upload failed");
+      set("logo_url", result.path);
+      setLogoPreviewUrl(result.previewUrl);
     } catch (err) {
       console.error("Logo upload failed:", err);
-      alert("Logo upload failed. Please try again.");
+      alert(err instanceof Error ? err.message : "Logo upload failed. Please try again.");
     } finally {
       setLogoUploading(false);
     }
@@ -232,25 +233,27 @@ export default function OnboardingPage({
     if (!token) return;
     setPhotosUploading(true);
     const uploaded: string[] = [];
+    const previews: string[] = [];
     try {
-      const supabase = createClient();
-      for (let i = 0; i < Math.min(files.length, 10); i++) {
-        const file = files[i];
-        const path = `${token}/photos/${Date.now()}-${file.name}`;
-        const { error } = await supabase.storage
-          .from("onboarding-assets")
-          .upload(path, file, { upsert: true });
-        if (!error) {
-          const { data: urlData } = supabase.storage
-            .from("onboarding-assets")
-            .getPublicUrl(path);
-          uploaded.push(urlData.publicUrl);
-        }
+      const remaining = Math.max(0, 10 - form.photo_urls.length);
+      for (let i = 0; i < Math.min(files.length, remaining); i++) {
+        const body = new FormData();
+        body.append("kind", "photo");
+        body.append("file", files[i]);
+        const response = await fetch(`/api/onboarding/${token}/upload`, {
+          method: "POST",
+          body,
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "Upload failed");
+        uploaded.push(result.path);
+        previews.push(result.previewUrl);
       }
       set("photo_urls", [...form.photo_urls, ...uploaded]);
+      setPhotoPreviewUrls((current) => [...current, ...previews]);
     } catch (err) {
       console.error("Photo upload failed:", err);
-      alert("Photo upload failed. Please try again.");
+      alert(err instanceof Error ? err.message : "Photo upload failed. Please try again.");
     } finally {
       setPhotosUploading(false);
     }
@@ -515,10 +518,10 @@ export default function OnboardingPage({
                 className="mt-1 border-2 border-dashed border-gray-200 rounded-lg p-4 text-center cursor-pointer hover:border-blue-300 hover:bg-blue-50/30 transition-colors"
                 onClick={() => logoRef.current?.click()}
               >
-                {form.logo_url ? (
+                {form.logo_url && logoPreviewUrl ? (
                   <div className="space-y-2">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={form.logo_url} alt="Logo" className="h-16 object-contain mx-auto" />
+                    <img src={logoPreviewUrl} alt="Logo" className="h-16 object-contain mx-auto" />
                     <p className="text-xs text-green-600 font-medium">Logo uploaded</p>
                   </div>
                 ) : logoUploading ? (
@@ -532,14 +535,14 @@ export default function OnboardingPage({
                       <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                     <p className="text-sm text-gray-500">Click to upload your logo</p>
-                    <p className="text-xs text-gray-400">PNG, JPG, SVG up to 10MB</p>
+                    <p className="text-xs text-gray-400">PNG, JPG, or WebP up to 5MB</p>
                   </div>
                 )}
               </div>
               <input
                 ref={logoRef}
                 type="file"
-                accept="image/*"
+                accept="image/jpeg,image/png,image/webp"
                 className="sr-only"
                 onChange={(e) => {
                   const file = e.target.files?.[0];
@@ -571,9 +574,9 @@ export default function OnboardingPage({
                   </div>
                 )}
               </div>
-              {form.photo_urls.length > 0 && (
+              {photoPreviewUrls.length > 0 && (
                 <div className="grid grid-cols-4 gap-2 mt-2">
-                  {form.photo_urls.map((url, i) => (
+                  {photoPreviewUrls.map((url, i) => (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       key={i}
@@ -587,7 +590,7 @@ export default function OnboardingPage({
               <input
                 ref={photosRef}
                 type="file"
-                accept="image/*"
+                accept="image/jpeg,image/png,image/webp"
                 multiple
                 className="sr-only"
                 onChange={(e) => {

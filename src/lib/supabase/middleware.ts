@@ -9,6 +9,18 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
+  if (
+    request.nextUrl.pathname.startsWith("/onboarding/") ||
+    request.nextUrl.pathname.startsWith("/api/onboarding/")
+  ) {
+    const response = NextResponse.next({ request });
+    response.headers.set("Cache-Control", "private, no-store");
+    response.headers.set("Referrer-Policy", "no-referrer");
+    response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+    response.headers.set("X-Content-Type-Options", "nosniff");
+    return response;
+  }
+
   // Public routes should not require Supabase env vars during local QA.
   const publicRoutes = [
     "/auth",
