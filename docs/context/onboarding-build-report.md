@@ -70,16 +70,17 @@ supabase db push
 ```
 Or paste the contents into Supabase Dashboard → SQL Editor → Run.
 
-### 2. Create the Storage Bucket
-File uploads (logo + photos) use Supabase Storage.
-1. Go to Supabase Dashboard → Storage
-2. Create a new bucket named: **`onboarding-assets`**
-3. Set it to **Public** (so uploaded images are accessible via URL)
-4. Upload paths will be:
-   - Logo: `[token]/logo.[ext]`
-   - Photos: `[token]/photos/[filename]`
+### 2. Apply the Privacy Hardening Migration
+Migration `024_harden_client_onboarding.sql` must be applied before deploying the hardened application code. It:
+- removes all anonymous table access
+- scopes staff access by `user_id`
+- adds 14-day expiry and revocation fields
+- makes `onboarding-assets` private
+- limits uploads to JPG, PNG, and WebP files up to 5 MB
 
-If the bucket doesn't exist, file uploads on the form will silently fail (the rest of the form still submits fine — logo_url and photo_urls will just be empty).
+The application now uploads through `/api/onboarding/[token]/upload`; clients never receive storage credentials or permanent public asset URLs. Staff images are served through authenticated, short-lived signed redirects.
+
+Do **not** deploy the new application routes before migration 024 is applied, because the routes query the new ownership and expiry columns.
 
 ### 3. Verify Telegram Env Vars
 The POST handler sends a Telegram notification using:
