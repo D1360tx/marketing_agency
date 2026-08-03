@@ -65,6 +65,9 @@ import {
   RefreshCw,
   FileText,
   Send,
+  CalendarDays,
+  FileSignature,
+  CreditCard,
 } from "lucide-react";
 import {
   Tooltip,
@@ -926,6 +929,24 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
               <Copy className="mr-1 h-4 w-4" />
               Pitch
             </Button>
+            <Button asChild variant="outline" size="sm" className="flex-1 sm:flex-none">
+              <a href="/go/book" target="_blank" rel="noopener noreferrer">
+                  <CalendarDays className="mr-1 h-4 w-4" />
+                  Book
+              </a>
+            </Button>
+            <Button asChild variant="outline" size="sm" className="flex-1 sm:flex-none">
+              <a href="/go/agreement" target="_blank" rel="noopener noreferrer">
+                  <FileSignature className="mr-1 h-4 w-4" />
+                  Agreement
+              </a>
+            </Button>
+            <Button asChild variant="outline" size="sm" className="flex-1 sm:flex-none">
+              <a href="/go/start" target="_blank" rel="noopener noreferrer">
+                  <CreditCard className="mr-1 h-4 w-4" />
+                  $499 Payment
+              </a>
+            </Button>
             <Link href={`/generator?prospect=${prospect.id}`} className="flex-1 sm:flex-none">
               <Button variant="outline" size="sm" className="w-full">
                 <Palette className="mr-1 h-4 w-4" />
@@ -1523,13 +1544,12 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
           </Card>
 
           {/* Deal Value */}
-          {prospect.status === "client" && (prospect as any).deal_value && (
+          {prospect.status === "client" && prospect.deal_value && (
             <div className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 p-3">
               <DollarSign className="h-5 w-5 text-emerald-600" />
               <div>
                 <p className="text-xs text-muted-foreground">Monthly Value</p>
-                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                <p className="font-semibold text-emerald-700">${(prospect as any).deal_value}/mo</p>
+                <p className="font-semibold text-emerald-700">${prospect.deal_value}/mo</p>
               </div>
             </div>
           )}

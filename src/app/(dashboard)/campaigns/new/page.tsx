@@ -67,7 +67,7 @@ Booked Out`,
 
 I noticed you don't have a website yet. In {{city}}, most of your competitors do — and that means customers searching online aren't finding you.
 
-We build clean, professional websites for local service businesses starting at $299. Usually live within 48 hours.
+We start with a free audit. If there is a fit, our managed Local Call System is $499/month with no setup fee and no long-term contract.
 
 Worth a quick 10-minute chat? I can show you exactly what we'd build.
 
@@ -126,7 +126,7 @@ Booked Out`,
 
 const defaultEmailTemplate = emailTemplates.website_pain.body;
 
-const defaultSmsTemplate = `Hi {{business_name}}! We noticed your website scored {{website_grade}}. We help businesses in {{city}} get modern, fast websites. Interested in a free consultation? Reply YES`;
+const defaultSmsTemplate = `Hi {{business_name}}, this is Diego from Booked Out following up on your requested audit. Would you like to review the findings? Reply STOP to opt out.`;
 
 export default function NewCampaignPage() {
   const router = useRouter();

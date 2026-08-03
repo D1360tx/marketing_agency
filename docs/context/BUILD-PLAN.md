@@ -1,74 +1,76 @@
-# Booked Out — Build Plan
-*Created: 2026-03-22 | Status: Ready to execute*
+# Booked Out Revenue-Readiness Build Plan
 
-## Phase 1 — Revenue Infrastructure (Priority: THIS WEEK)
-Unlocks the ability to close and collect money.
+## Objective
 
-### 1a. Stripe Subscriptions
-- `/checkout?tier=full` ($399/mo) and `/checkout?tier=dominator` ($697/mo)
-- Monthly billing, success redirect → client intake form
-- **Needs:** Diego's Stripe secret key + publishable key
-- **Status:** ⏳ Waiting on Stripe keys from Diego
+Make the $499/month Local Call System safe to sell, collect, onboard, fulfill, and report without unsupported claims or hidden manual gaps.
 
-### 1b. Booking Page
-- `/book` — embedded Calendly or built-in scheduler
-- Link from: cold email replies, landing page CTA, proposal page
-- **Status:** ⏳ Not started
+## Gate 1: Production Safety
 
----
+- Merge and deploy security and onboarding privacy work
+- Apply Supabase migrations 023, 024, 025, and 026 in order
+- Verify cron, audit, onboarding, private assets, and service-role ownership
+- Keep production dependencies at zero known audit findings
+- Protect public lead capture with strict schemas, bounded bodies, distributed rate limits, honeypot, and optional Turnstile
+- Retire the mock audit and old public landing variants
 
-## Phase 2 — Close & Onboard (Priority: THIS WEEK)
+## Gate 2: Revenue Conversion
 
-### 2a. Client Intake Form
-- `/onboard` — fires after Stripe payment success
-- Collects: business name, address, phone, Google account email, services offered, target cities, existing website URL
-- Saves to Supabase `clients` table
-- **Status:** ⏳ Not started
+Configure these Vercel variables:
 
-### 2b. Proposal Page
-- `/proposal` — clean one-pager to send after sales call
-- Shows: tiers, guarantee, FAQ, "Get Started" → Stripe checkout
-- **Status:** ⏳ Not started
+- `BOOKED_OUT_BOOKING_URL`
+- `BOOKED_OUT_AGREEMENT_URL`
+- `BOOKED_OUT_LOCAL_CALL_PAYMENT_URL`
 
----
+The public site and CRM use stable `/go/book`, `/go/agreement`, and `/go/start` routes so provider URLs remain server-side. Do not create or configure a Growth Partner payment link until recurring fulfillment is approved.
 
-## Phase 3 — Operations (Next Week)
+Before the first payment:
 
-### 3a. Affiliate Supabase Tracking
-- Wire /partners form to Supabase `affiliates` table
-- Generate unique referral codes per affiliate
-- Track referrals + commissions
-- **Status:** /partners page ✅ live — backend not wired yet
+- Service agreement reviewed by Texas counsel
+- Agreement loaded into an e-sign tool
+- Booked Out mailing address completed
+- Cancellation and renewal process tested
+- Payment receipt and failed-payment alerts tested
 
-### 3b. Weekly Telegram Pipeline Report
-- Sunday 6pm cron
-- Pulls from Supabase: leads added, emails sent, replies, closes, active clients
-- Delivers to Booked Out topic (topic 3)
-- **Status:** ⏳ Not started
+## Gate 3: Fulfillment
 
----
+- Phone/SMS provider selected
+- A2P or equivalent messaging registration approved
+- Missed-call text-back tested
+- Form-lead follow-up tested
+- Review requests remain neutral
+- SMS is blocked without recorded consent
+- STOP and suppression behavior verified
+- Website deployment checklist verified
+- Monthly evidence report template approved
 
-## Phase 4 — Retention (When 3+ clients)
+## Gate 4: Dry Run
 
-### 4a. Client Portal
-- Login → see website status, review count, monthly report
-- **Status:** ⏳ Not started (deprioritized until clients exist)
+Run fake client ABC Plumbing through:
 
----
+1. Prospect and sourced audit
+2. Booking
+3. Agreement
+4. Test recurring payment
+5. Secure onboarding
+6. Asset upload
+7. Website generation and approval
+8. Domain deployment
+9. Review-request workflow
+10. Missed-call and form-lead follow-up
+11. Opt-out
+12. Monthly report
+13. Cancellation and export scenario
 
-## What's Already Built ✅
-- Landing page (trybookedout.com) — live
-- Spanish landing (/es) — live
-- AgencyFlow CRM (internal dashboard) — live
-- Lead scraper (1,772 leads, 761 with email) — live
-- Email sequences loaded in Supabase — ready
-- Instantly.ai cold email infrastructure (9 inboxes warming) — warming
-- /partners affiliate page — just built, deploying now
-- Client Service Agreement template — `projects/bookedout/CLIENT-SERVICE-AGREEMENT.md`
-- Affiliate program structure + copy — `projects/bookedout/AFFILIATE-PROGRAM.md` + `affiliate-copy-draft.md`
+Every failed step must have an owner, fix, fallback, and passing retest.
 
----
+## Gate 5: Founder-Led Sales
 
-## Immediate Next Step
-Diego to provide Stripe secret key + publishable key in the Booked Out topic.
-Then John builds Phase 1 (Stripe + booking page) simultaneously.
+Start with HVAC in one Texas metro cluster. Daily target after the dry run passes:
+
+- 20 calls
+- 10 personalized direct messages
+- 20-30 personalized emails
+- 5 follow-ups
+- 1-2 sourced audits
+
+Do not launch high-volume automation, paid ads, an affiliate program, a client portal, or automated domain provisioning before three paying clients.

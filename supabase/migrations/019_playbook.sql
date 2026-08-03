@@ -38,9 +38,9 @@ insert into playbook_sections (category, title, content, sort_order) values
 (
   'scripts',
   'Opening Line (Cold Call)',
-  'Hey [Name], this is [Your Name] with Booked Out — we help local service businesses get more 5-star reviews and fill their calendar automatically. I know you''re busy, so I''ll be quick — do you have 60 seconds?
+  'Hey [Name], this is [Your Name] with Booked Out. We help local service businesses tighten up their website, review-request process, and lead follow-up. I know you''re busy, so I''ll be quick — do you have 60 seconds?
 
-[If yes] → Great. We work with [plumbers / roofers / HVAC companies] in [City] to automate their follow-up so they''re consistently getting reviews and referrals without lifting a finger. I''d love to show you exactly how it works. Are you open to a quick 15-minute demo this week?',
+[If yes] → Great. I prepared a short audit of how the business appears online and where follow-up may be leaking. Are you open to a 15-minute review this week?',
   10
 ),
 (
@@ -63,9 +63,9 @@ Listen for: manual chaos, no reviews system, no CRM, owner doing everything them
   'Closing Script',
   'So based on everything you told me, it sounds like [recap their pain: e.g., "you''re doing great work but not getting the reviews to show for it"].
 
-Here''s what we do: we automate your follow-up after every job — review requests, reminders, referral asks — all on autopilot. Most clients see 3-5x more Google reviews within the first 60 days.
+Here''s what we do: we install a managed website, neutral review requests, and lead follow-up, then report against the starting baseline. Results vary, so we do not promise a fixed number of calls, reviews, rankings, jobs, or revenue.
 
-We have a [Starter / Growth] plan that would be a perfect fit for you. It''s [price] per month, no long-term contract.
+The Local Call System is $499 per month with no setup fee for the founding offer and no long-term contract.
 
 Can we get you set up this week?
 
@@ -80,7 +80,7 @@ insert into playbook_sections (category, title, content, sort_order) values
   '"I''m not interested."',
   'No problem at all — can I ask, is it that you''re happy with how things are going, or just not the right time?
 
-[If happy] → That''s great to hear. Most of our clients felt the same way until they saw what automated follow-up could add to their monthly revenue. Even just 10 extra Google reviews can move you from page 2 to page 1. Would you be open to a 10-minute look, no strings?
+[If happy] → That''s great to hear. I can still show you the audit baseline so you can confirm whether there is anything worth fixing. Would you be open to a 10-minute look, no strings?
 
 [If timing] → Makes sense. When would be a better time to reconnect?',
   10
@@ -96,9 +96,9 @@ What does your current person handle for you? [Listen] — Is review generation 
 (
   'objections',
   '"It''s too expensive."',
-  'I hear you — let''s put it in perspective. If our system gets you 5 extra jobs per month at $500 average ticket, that''s $2,500 in revenue. Our plan is [price]. The math usually works out pretty fast.
+  'I hear you. The right comparison is the cost of the current gaps, not a made-up revenue projection. Let''s review the audit and decide whether the website, review requests, and lead follow-up are worth $499 per month for your business.
 
-Also — we don''t lock you into a contract. If it''s not producing results in the first 60 days, you can cancel.
+There is no long-term contract. Service is month-to-month, and we report what was actually delivered and observed.
 
 Would it help if I showed you what results look like for a business similar to yours?',
   30
@@ -116,9 +116,9 @@ One thing I can do is set you up with a 2-week trial so you can see it work befo
 (
   'objections',
   '"I don''t have time to manage another tool."',
-  'That''s exactly why our clients love it — there''s nothing to manage. Once we set it up, it runs automatically. You do the job, we handle the follow-up. No extra work on your end.
+  'The system is managed for you, but we still need accurate business information, access, approvals, and lawful customer data. Once configured, Booked Out handles the agreed website and follow-up operations.
 
-Setup takes about 30 minutes on our end. You just connect your Google account and we do the rest.',
+Onboarding usually takes about 15-30 minutes of your time. We confirm the actual launch schedule after reviewing access and scope.',
   50
 );
 
@@ -126,58 +126,50 @@ Setup takes about 30 minutes on our end. You just connect your Google account an
 insert into playbook_sections (category, title, content, sort_order) values
 (
   'pricing',
-  'Starter Plan — $297/month',
-  'Best for: Solo operators and small crews just getting started with automation.
+  'Local Call System — $499/month',
+  'Best for: Local service businesses that need a credible website, consistent review requests, and faster lead follow-up.
 
 Includes:
-• Automated Google review requests (SMS + email)
-• Up to 100 contacts/month
-• 1 follow-up sequence (5-step)
-• Basic reporting dashboard
-• Email support
+• Managed mobile-first website and hosting
+• Neutral Google review requests by email and consented SMS
+• Missed-call and form-lead follow-up
+• Google Business Profile foundation work
+• Monthly edits and evidence-based reporting
+• Month-to-month service with no setup fee
 
-Ideal prospect: 1-5 person operation, <50 jobs/month, less than 50 Google reviews.',
+Do not promise a specific number of calls, reviews, rankings, jobs, or revenue.',
   10
 ),
 (
   'pricing',
-  'Growth Plan — $597/month',
-  'Best for: Established businesses ready to scale reviews and referrals.
+  'Growth Partner — $997/month',
+  'Best for: Established clients that have completed the Local Call System launch and need recurring growth work.
 
-Includes everything in Starter, plus:
-• Unlimited contacts
-• Up to 3 follow-up sequences
-• Referral request automation
-• Review response templates
-• Priority support + monthly strategy call
-• CRM integration (if applicable)
+Includes everything in Local Call System, plus:
+• Expanded Google Business Profile work
+• Ongoing content and citation work
+• Conversion optimization
+• Monthly strategy review
 
-Ideal prospect: 5-20 person team, 50-200 jobs/month, wants to dominate local SEO.',
+Sell this tier only when its recurring fulfillment capacity is confirmed.',
   20
 ),
 (
   'pricing',
-  'Agency / White-Label — Custom',
-  'For marketing agencies or businesses with multiple locations.
+  'Founding Client Terms',
+  'The first three clients may join the Local Call System at $499/month with no setup fee.
 
-Includes:
-• All Growth features
-• Multi-location dashboard
-• White-label options
-• Dedicated onboarding
-• Custom integrations
-
-Price: Custom quote based on locations and volume. Start the conversation at $1,500+/month.',
+Service is month-to-month. Website content and core page files are available for export after three paid months. Hosting, third-party licenses, software integrations, and automations remain part of the managed service.',
   30
 ),
 (
   'pricing',
-  'What''s Always Included',
-  '• Initial setup and onboarding call
-• We configure everything — you don''t need to be technical
-• No long-term contracts (month-to-month)
-• 30-day satisfaction guarantee
-• Access to all future platform updates',
+  'What Is Always Included',
+  '• Initial audit and onboarding
+• Configuration handled by Booked Out
+• Month-to-month billing
+• Clear baseline and monthly evidence
+• No guaranteed calls, reviews, rankings, jobs, or revenue',
   40
 );
 
@@ -186,13 +178,13 @@ insert into playbook_sections (category, title, content, sort_order) values
 (
   'faqs',
   'How long does setup take?',
-  'Typically 24-48 hours from when you sign up. We handle the setup — you just need to connect your Google Business Profile and give us a few details about your business. We''ll walk you through it on an onboarding call.',
+  'We confirm the launch schedule after receiving your onboarding information and required account access. Timing varies by website scope, domain access, and messaging registration. We provide a written launch plan rather than promising a fixed turnaround.',
   10
 ),
 (
   'faqs',
   'Do you require a contract?',
-  'No long-term contracts. Everything is month-to-month. You can cancel anytime with 30 days notice. We''d rather earn your business every month than lock you in.',
+  'No long-term contract. Service is month-to-month and continues through the current paid billing period after cancellation. Follow the signed service agreement for notice and export terms.',
   20
 ),
 (
@@ -204,22 +196,22 @@ insert into playbook_sections (category, title, content, sort_order) values
 (
   'faqs',
   'How do you send the review requests?',
-  'We send automated SMS and/or email messages to your customers after each job is marked complete. The message includes a direct link to your Google review page. You set the timing (e.g., 2 hours after job close, then a reminder 3 days later).',
+  'We send neutral review requests by email and, when affirmative consent is recorded, SMS. Messages include a direct link to the client''s review page and do not filter customers by expected sentiment. Recipients can opt out.',
   40
 ),
 (
   'faqs',
   'What results can I expect?',
-  'Most clients see 3-5x more Google reviews within the first 60 days. Average response rate on review requests is 15-25%. Clients typically move up 1-2 positions in local search rankings within 90 days. Results depend on job volume and how responsive your customers are.',
+  'Results vary by market, starting point, customer volume, and client cooperation. We establish a baseline and report requests sent, delivery failures, opt-outs, reviews, calls or forms captured, and ranking movement where those data are available. We do not guarantee calls, reviews, rankings, jobs, or revenue.',
   50
 ),
 (
   'faqs',
   'What do I need to get started?',
-  '1. A Google Business Profile (we can help you claim one if needed)
-2. A customer list or CRM export (even a spreadsheet works)
-3. A phone number for SMS sending (we provide one)
-4. 30 minutes for the onboarding call
+  '1. Accurate business and service-area information
+2. Website, domain, and Google Business Profile access where applicable
+3. Approved customer contact data with the consent records required for each messaging channel
+4. About 15-30 minutes for onboarding
 
 That''s it.',
   60
@@ -265,13 +257,13 @@ P.S. If the timing isn''t right, just let me know and I''ll follow up next quart
 (
   'templates',
   '1-Week Follow-up',
-  'Subject: One thing I forgot to mention
+  'Subject: One more useful detail
 
 Hey [Name],
 
-I realized I didn''t mention this on our call — we''re running a promotion through [end of month] where new clients get their first month at 50% off.
+One thing I want to make clear: Booked Out is month-to-month, with no setup fee for the founding Local Call System offer. We establish the baseline first and do not guarantee a specific number of calls, reviews, rankings, jobs, or revenue.
 
-Wanted to make sure you knew before it expired. Would you like to lock that in?
+Would it be useful to review the audit priorities together?
 
 [Your name]',
   30
@@ -291,7 +283,7 @@ Hey [Name],
 
 We spoke a while back about automating your review follow-up. Wanted to check in — is that still something you''re looking to solve?
 
-We just rolled out [new feature or social proof, e.g., "a new referral automation module" or "50 new clients in your area are now using Booked Out"].
+If it is still relevant, I can refresh the audit and show you the current priorities.
 
 Worth a quick 10-minute call to revisit?
 

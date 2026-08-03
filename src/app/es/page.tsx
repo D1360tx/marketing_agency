@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import React, { useEffect, useState, useCallback } from "react";
+import { PublicFormTurnstile } from "@/components/public-form-turnstile";
 import {
   ArrowRight,
   Check,
@@ -153,7 +155,7 @@ export default function EsPage() {
 
   const area = city || "tu área";
   const areaIn = city ? `en ${city}` : "en tu área";
-  const areaEn = city ? `en ${city}` : "en tu zona";
+
 
   /* -- Form -------------------------------------------------------- */
   const [form, setForm] = useState<FormData>({
@@ -163,6 +165,9 @@ export default function EsPage() {
     email: "",
   });
   const [status, setStatus] = useState<FormStatus>("idle");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [contactTime, setContactTime] = useState("");
+  const [smsConsent, setSmsConsent] = useState(false);
 
   const set = useCallback(
     (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -188,10 +193,16 @@ export default function EsPage() {
           email: form.email.trim(),
           source: "landing_es",
           city: area,
+          turnstileToken,
+          contact_time: contactTime,
+          smsConsent,
         }),
       });
       if (!res.ok) throw new Error();
       setStatus("success");
+      setTurnstileToken("");
+      setContactTime("");
+      setSmsConsent(false);
       setForm({ name: "", business: "", phone: "", email: "" });
     } catch {
       setStatus("error");
@@ -219,8 +230,8 @@ export default function EsPage() {
       a: "El sitio y los flujos pueden lanzarse rápidamente después de recibir tus materiales, pero el tiempo de los resultados varía según tu mercado, punto de partida y volumen de clientes. Establecemos una línea base y reportamos lo que cambia cada mes sin garantizar cifras específicas.",
     },
     {
-      q: "¿Por qué solo aceptan un negocio por oficio por ciudad?",
-      a: "Porque estaríamos trabajando en contra de nosotros mismos. Si construimos dos plomeros en la misma ciudad para posicionar en #1, uno de ellos pierde. Preferimos darlo todo por ti y realmente entregar resultados.",
+      q: "¿Ofrecen exclusividad territorial?",
+      a: "No por defecto. Limitamos la capacidad de clientes fundadores para mantener la calidad. Cualquier exclusividad por oficio o zona debe definirse en un anexo territorial firmado.",
     },
     {
       q: "¿Qué pasa si quiero cancelar?",
@@ -266,13 +277,13 @@ export default function EsPage() {
           </a>
 
           <div className="flex items-center gap-3">
-            <a
+            <Link
               href="/"
               className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-700"
               title="View in English"
             >
               🇺🇸 English
-            </a>
+            </Link>
             <a
               href="tel:+17372605332"
               className="hidden items-center gap-2 text-sm font-semibold text-gray-700 hover:text-gray-900 sm:inline-flex"
@@ -712,7 +723,7 @@ export default function EsPage() {
                   </span>
                 </div>
                 <p className="mt-3 text-sm text-gray-400">
-                  Mes a mes. Cancela cuando quieras. Sin costos de instalación.
+                  Oferta fundadora: primeros 3 clientes, sin costo de instalación y mes a mes.
                 </p>
               </div>
 
@@ -724,8 +735,8 @@ export default function EsPage() {
                       desc: "Construido a medida para tu oficio, tu ciudad, tus clientes",
                     },
                     {
-                      title: "Automatización de reseñas en Google",
-                      desc: "La misma solicitud neutral para cada cliente elegible, con seguimiento mensual",
+                      title: "Solicitudes de reseñas por email y SMS autorizado",
+                      desc: "La misma solicitud neutral para cada cliente elegible, con manejo de cancelación",
                     },
                     {
                       title: "Optimización SEO local",
@@ -740,8 +751,8 @@ export default function EsPage() {
                       desc: "Sin colas de tickets. Llama o manda mensaje a tu gestor de cuenta.",
                     },
                     {
-                      title: "Territorio exclusivo",
-                      desc: `Solo 1 negocio por oficio ${areaIn}. Tu lugar está protegido.`,
+                      title: "Capacidad limitada",
+                      desc: `Aceptamos pocos clientes fundadores ${areaIn} para mantener la calidad del servicio.`,
                     },
                   ].map((item, i) => (
                     <li key={i} className="flex gap-3">
@@ -765,9 +776,7 @@ export default function EsPage() {
                   <p className="text-sm font-semibold text-orange-800">
                     Medimos desde tu línea base y mostramos el trabajo realizado cada mes.
                   </p>
-                  <p className="mt-1 text-xs text-orange-600">
-                    Nosotros no ganamos si tú no ganas. Así funciona esto.
-                  </p>
+
                 </div>
 
                 <a
@@ -913,7 +922,7 @@ export default function EsPage() {
                     {
                       icon: Shield,
                       title: "Tu información es privada",
-                      desc: "No vendemos datos. No hacemos spam. Una llamada de seguimiento, eso es todo.",
+                      desc: "No vendemos tus datos. El seguimiento se enfoca en tu auditoría y puedes cancelarlo cuando quieras.",
                     },
                   ].map((item, i) => (
                     <div key={i} className="flex gap-4">
@@ -959,8 +968,8 @@ export default function EsPage() {
                       Recibimos tu solicitud.
                     </h3>
                     <p className="mt-2 text-base text-gray-600">
-                      Tu auditoría está siendo preparada. Espérala en tu
-                      bandeja de entrada en 48 horas. Si necesitas algo antes,
+                      Estamos revisando los datos disponibles y enviaremos el
+                      próximo paso por correo. Para hablar de las prioridades,
                       llámanos al{" "}
                       <a
                         href="tel:+17372605332"
@@ -970,6 +979,24 @@ export default function EsPage() {
                       </a>
                       .
                     </p>
+                    <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                      <a
+                        href="/go/book"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-orange-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-orange-700"
+                      >
+                        Agendar revisión
+                        <Clock className="h-4 w-4" />
+                      </a>
+                      <a
+                        href="tel:+173****5332"
+                        className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-5 py-3 text-sm font-bold text-gray-800 transition hover:bg-gray-50"
+                      >
+                        Llamar ahora
+                        <Phone className="h-4 w-4" />
+                      </a>
+                    </div>
                   </div>
                 ) : (
                   <>
@@ -981,6 +1008,21 @@ export default function EsPage() {
                     </p>
 
                     <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+                      <div
+                        className="absolute -left-[10000px] top-auto h-px w-px overflow-hidden"
+                        aria-hidden="true"
+                      >
+                        <label htmlFor="es-contact-time">Hora de contacto</label>
+                        <input
+                          id="es-contact-time"
+                          name="contact_time"
+                          type="text"
+                          value={contactTime}
+                          onChange={(event) => setContactTime(event.target.value)}
+                          tabIndex={-1}
+                          autoComplete="off"
+                        />
+                      </div>
                       <div>
                         <label
                           htmlFor="es-name"
@@ -1055,6 +1097,26 @@ export default function EsPage() {
                           />
                         </div>
                       </div>
+
+                      <label className="flex items-start gap-3 text-xs leading-relaxed text-gray-500">
+                        <input
+                          type="checkbox"
+                          checked={smsConsent}
+                          onChange={(event) => setSmsConsent(event.target.checked)}
+                          className="mt-0.5 h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+                        />
+                        <span>
+                          Acepto recibir llamadas o textos automatizados sobre mi
+                          auditoría y los servicios de Booked Out. El consentimiento
+                          no es requisito para comprar. Pueden aplicar tarifas.
+                          Responde STOP para cancelar.
+                        </span>
+                      </label>
+
+                      <PublicFormTurnstile
+                        action="inbound_lead"
+                        onToken={setTurnstileToken}
+                      />
 
                       <button
                         type="submit"

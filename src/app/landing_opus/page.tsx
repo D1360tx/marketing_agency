@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import React, { useEffect, useState, useCallback } from "react";
+import { PublicFormTurnstile } from "@/components/public-form-turnstile";
 import {
   ArrowRight,
   Check,
@@ -171,6 +172,9 @@ export default function LandingOpusPage() {
     googleProfile: "",
   });
   const [status, setStatus] = useState<FormStatus>("idle");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [contactTime, setContactTime] = useState("");
+  const [smsConsent, setSmsConsent] = useState(false);
 
   const set = useCallback(
     (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -207,10 +211,16 @@ export default function LandingOpusPage() {
           googleProfile: form.googleProfile.trim(),
           source: "landing_opus",
           city: form.serviceArea.trim() || area,
+          turnstileToken,
+          contact_time: contactTime,
+          smsConsent,
         }),
       });
       if (!res.ok) throw new Error();
       setStatus("success");
+      setTurnstileToken("");
+      setContactTime("");
+      setSmsConsent(false);
       setForm({
         name: "",
         business: "",
@@ -247,8 +257,8 @@ export default function LandingOpusPage() {
       a: "The site and workflows can launch quickly after we receive your materials, but outcomes vary by market, baseline, and customer volume. We establish your baseline and report what changes each month without guaranteeing a specific number of calls, reviews, or rankings.",
     },
     {
-      q: "Why do you only take one business per trade per city?",
-      a: "Because we'd be working against ourselves. If we build two plumbers in the same city to rank #1, one of them loses. We'd rather go all-in for you and actually deliver.",
+      q: "Do you offer territory exclusivity?",
+      a: "Not by default. We limit founding-client capacity so service quality stays high. Any trade or geographic exclusivity must be defined in a separate written territory addendum.",
     },
     {
       q: "What happens if I want to cancel?",
@@ -299,13 +309,6 @@ export default function LandingOpusPage() {
             "@type": "Offer",
             name: "Local Call System",
             price: "499",
-            priceCurrency: "USD",
-            availability: "https://schema.org/InStock",
-          },
-          {
-            "@type": "Offer",
-            name: "Growth Partner",
-            price: "997",
             priceCurrency: "USD",
             availability: "https://schema.org/InStock",
           },
@@ -369,7 +372,7 @@ export default function LandingOpusPage() {
 
           <div className="flex items-center gap-3">
             <span className="hidden rounded-full bg-gray-50 px-3 py-1.5 text-xs font-semibold text-gray-600 ring-1 ring-gray-200 lg:inline-flex">
-              One business per trade per city
+              Limited founding-client capacity
             </span>
             <a
               href="tel:+17372605332"
@@ -950,12 +953,11 @@ export default function LandingOpusPage() {
             {/* Intro */}
             <div className="mb-10 text-center">
               <p className="mx-auto max-w-2xl text-base text-gray-600 [text-wrap:pretty]">
-                Every plan includes the website, review system, speed-to-lead follow-up, and reporting. Choose the foundation if you want the system handled. Choose the growth partnership if you want to compete seriously for more calls {areaIn}.
+                The founding Local Call System includes the website, compliant review requests, speed-to-lead follow-up, and reporting. The first three accepted clients receive setup at no additional charge.
               </p>
             </div>
 
-            {/* Two-column cards */}
-            <div className="grid gap-8 md:grid-cols-2 md:items-start">
+            <div className="mx-auto grid max-w-2xl gap-8">
 
               {/* Plan 1 — Local Call System */}
               <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg">
@@ -965,7 +967,7 @@ export default function LandingOpusPage() {
                     <span className="text-5xl font-extrabold text-white">$499</span>
                     <span className="text-lg font-semibold text-gray-400">/mo</span>
                   </div>
-                  <p className="mt-3 text-sm text-gray-400">Standard setup included. No long contract.</p>
+                  <p className="mt-3 text-sm text-gray-400">Founding offer: first 3 clients, setup included, month-to-month.</p>
                 </div>
                 <div className="p-6 sm:p-8">
                   <div className="mb-5 rounded-xl bg-orange-50 p-4">
@@ -975,12 +977,12 @@ export default function LandingOpusPage() {
                   <ul className="space-y-4">
                     {[
                       { title: "Managed mobile-first website", desc: "Built around service areas, proof, and tap-to-call CTAs" },
-                      { title: "Review requests by SMS + email", desc: "Compliant requests after completed jobs so recent proof keeps building" },
+                      { title: "Review requests by email + consented SMS", desc: "Neutral requests after completed jobs, with opt-out handling" },
                       { title: "Missed-call text-back", desc: "A lead gets a fast reply if you miss the call" },
                       { title: "Basic form-lead response", desc: "New website leads get acknowledged quickly while your team is busy" },
                       { title: "Lead inbox + simple pipeline", desc: "Keep new audit and call opportunities from slipping through" },
                       { title: "Monthly performance report", desc: "Calls, reviews, ranking movement, and next actions" },
-                      { title: "One trade per local market", desc: `We protect your spot ${areaIn}.` },
+
                     ].map((item, i) => (
                       <li key={i} className="flex gap-3">
                         <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100">
@@ -1000,47 +1002,6 @@ export default function LandingOpusPage() {
                 </div>
               </div>
 
-              {/* Plan 2 — Growth Partner */}
-              <div className="overflow-hidden rounded-2xl border-2 border-violet-500 bg-white shadow-xl md:scale-[1.02]">
-                <div className="border-b border-violet-800 bg-gray-900 px-6 py-8 text-center sm:px-10 relative">
-                  <span className="absolute top-3 right-3 rounded-full bg-violet-500 px-3 py-1 text-xs font-bold text-white">Growth Partner</span>
-                  <p className="text-sm font-semibold text-violet-400">Growth Partner</p>
-                  <div className="mt-4 flex items-baseline justify-center gap-1">
-                    <span className="text-5xl font-extrabold text-white">$997</span>
-                    <span className="text-lg font-semibold text-gray-400">/mo</span>
-                  </div>
-                  <p className="mt-3 text-sm text-gray-400">For businesses ready to grow with us.</p>
-                </div>
-                <div className="p-6 sm:p-8">
-                  <p className="mb-5 text-sm text-gray-600 [text-wrap:pretty]">Everything in Local Call System, plus deeper strategy to compete harder in Google Maps and convert new leads faster.</p>
-                  <ul className="space-y-4">
-                    {[
-                      { title: "Everything in Local Call System", desc: "Website, reviews, speed-to-lead follow-up, lead tracking, reporting, and territory protection" },
-                      { title: "Full SEO + competitor audit", desc: "What competitors are doing better and what we fix first" },
-                      { title: "Google Business Profile optimization", desc: "Categories, services, photos, descriptions, and local trust signals" },
-                      { title: "Citation/listing cleanup", desc: "Consistent business info across the places Google checks" },
-                      { title: "Local backlink gap review", desc: "Where competitors have authority you do not yet have" },
-                      { title: "Priority service/city page expansion", desc: "Focused pages for the jobs and areas you want most" },
-                      { title: "Advanced speed-to-lead workflows", desc: "Follow-up across forms, missed calls, and supported lead channels" },
-                      { title: "Monthly growth call", desc: "Review momentum, ranking movement, lead quality, and the next actions" },
-                    ].map((item, i) => (
-                      <li key={i} className="flex gap-3">
-                        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-100">
-                          <Check className="h-3.5 w-3.5 text-violet-700" />
-                        </div>
-                        <div>
-                          <span className="text-sm font-semibold text-gray-900">{item.title}</span>
-                          <span className="text-sm text-gray-500"> — {item.desc}</span>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="mt-6 text-center text-xs text-gray-500 [text-wrap:balance]">For owners who want a closer partner and clearer growth goals.</p>
-                  <a href="#get-started" className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-violet-600 py-4 text-base font-bold text-white shadow-sm transition hover:bg-violet-700">
-                    Talk Growth Strategy <ArrowRight className="h-5 w-5" />
-                  </a>
-                </div>
-              </div>
 
             </div>
 
@@ -1049,9 +1010,7 @@ export default function LandingOpusPage() {
               Start with the free audit.{" "}
               <a href="#get-started" className="font-semibold text-orange-600 hover:underline">If we can&apos;t show a clear path to more calls, you should not buy.</a>
             </p>
-            <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-gray-500 [text-wrap:balance]">
-              Only need help getting more reviews? Ask about our lighter Review Engine option during the audit call.
-            </p>
+
             <p className="mx-auto mt-3 max-w-2xl text-center text-xs leading-relaxed text-gray-500 [text-wrap:pretty]">
               SMS/email usage is included for normal local business volume. If your account ever needs unusually high message volume or custom work outside the standard site build, we&apos;ll flag it before anything changes.
             </p>
@@ -1187,7 +1146,7 @@ export default function LandingOpusPage() {
                     {
                       icon: Shield,
                       title: "Your information stays private",
-                      desc: "We don't sell data. We don't spam. One follow-up call, that's it.",
+                      desc: "We don't sell your data. Follow-up stays focused on your audit, and you can opt out anytime.",
                     },
                   ].map((item, i) => (
                     <div key={i} className="flex gap-4">
@@ -1233,8 +1192,8 @@ export default function LandingOpusPage() {
                       We got your request.
                     </h3>
                     <p className="mt-2 text-base text-gray-600 [text-wrap:pretty]">
-                      Your audit is being prepared. Expect it in your inbox
-                      within 48 hours. Want to walk through it sooner? Call us at{" "}
+                      We are reviewing the available source data and will email
+                      the next step. Want to talk through the priorities? Call us at{" "}
                       <a
                         href="tel:+17372605332"
                         className="font-semibold text-orange-600"
@@ -1243,13 +1202,24 @@ export default function LandingOpusPage() {
                       </a>
                       .
                     </p>
-                    <a
-                      href="tel:+17372605332"
-                      className="mt-6 inline-flex items-center justify-center gap-2 rounded-lg bg-orange-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-orange-700"
-                    >
-                      Call now
-                      <Phone className="h-4 w-4" />
-                    </a>
+                    <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                      <a
+                        href="/go/book"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-orange-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-orange-700"
+                      >
+                        Schedule audit review
+                        <Clock className="h-4 w-4" />
+                      </a>
+                      <a
+                        href="tel:+173****5332"
+                        className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-5 py-3 text-sm font-bold text-gray-800 transition hover:bg-gray-50"
+                      >
+                        Call now
+                        <Phone className="h-4 w-4" />
+                      </a>
+                    </div>
                   </div>
                 ) : (
                   <>
@@ -1261,6 +1231,21 @@ export default function LandingOpusPage() {
                     </p>
 
                     <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+                      <div
+                        className="absolute -left-[10000px] top-auto h-px w-px overflow-hidden"
+                        aria-hidden="true"
+                      >
+                        <label htmlFor="opus-contact-time">Contact time</label>
+                        <input
+                          id="opus-contact-time"
+                          name="contact_time"
+                          type="text"
+                          value={contactTime}
+                          onChange={(event) => setContactTime(event.target.value)}
+                          tabIndex={-1}
+                          autoComplete="off"
+                        />
+                      </div>
                       <div>
                         <label
                           htmlFor="opus-name"
@@ -1415,6 +1400,26 @@ export default function LandingOpusPage() {
                           />
                         </div>
                       </div>
+
+                      <label className="flex items-start gap-3 text-xs leading-relaxed text-gray-500">
+                        <input
+                          type="checkbox"
+                          checked={smsConsent}
+                          onChange={(event) => setSmsConsent(event.target.checked)}
+                          className="mt-0.5 h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+                        />
+                        <span>
+                          I agree to receive automated calls or texts about my
+                          audit and Booked Out services. Consent is not required
+                          to purchase. Message and data rates may apply. Reply
+                          STOP to opt out.
+                        </span>
+                      </label>
+
+                      <PublicFormTurnstile
+                        action="inbound_lead"
+                        onToken={setTurnstileToken}
+                      />
 
                       <button
                         type="submit"
