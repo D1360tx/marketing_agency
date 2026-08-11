@@ -29,6 +29,7 @@ export async function updateSession(request: NextRequest) {
     "/landing_gemini",
     "/landing_gpt1",
     "/es",
+    "/go",
     "/api/geo",
     "/api/leads/inbound",
     "/api/track",

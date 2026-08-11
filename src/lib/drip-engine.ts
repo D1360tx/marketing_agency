@@ -183,6 +183,15 @@ export async function processDripQueue(
 
     if (!prospect || steps.length === 0) continue;
 
+    // Never send automated SMS without a recorded affirmative consent event.
+    if (sequence.channel === "sms" && !prospect.sms_consent_at) {
+      await supabase
+        .from("drip_enrollments")
+        .update({ status: "cancelled", next_send_at: null })
+        .eq("id", enrollment.id);
+      continue;
+    }
+
     // Find the next step to send
     const nextStepIndex = enrollment.current_step; // 0-based index into sorted steps
     const step = steps[nextStepIndex];

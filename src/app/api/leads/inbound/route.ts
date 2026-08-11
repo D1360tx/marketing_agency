@@ -1,8 +1,15 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 import { runAudit } from "@/lib/audit-runner";
 import { enrollProspect } from "@/lib/drip-engine";
+import {
+  consumePublicRateLimit,
+  inboundLeadSchema,
+  PUBLIC_SUBMISSION_HEADERS,
+  readBoundedJson,
+  verifyTurnstileToken,
+} from "@/lib/public-submission-security";
 
 function requiredEnv(name: string): string | null {
   const value = process.env[name]?.trim();
@@ -18,85 +25,131 @@ function escapeHtml(value: unknown): string {
     .replaceAll("'", "&#39;");
 }
 
+function json(body: unknown, status = 200, headers?: Record<string, string>) {
+  return NextResponse.json(body, {
+    status,
+    headers: { ...PUBLIC_SUBMISSION_HEADERS, ...headers },
+  });
+}
+
 export async function POST(request: Request) {
   try {
-    let body: Record<string, unknown>;
-    try {
-      body = await request.json();
-    } catch {
-      return NextResponse.json(
-        { error: "Invalid JSON payload" },
-        { status: 400 }
+    const boundedBody = await readBoundedJson(request);
+    if (!boundedBody.ok) {
+      return json({ error: boundedBody.error }, boundedBody.status);
+    }
+
+    const parsed = inboundLeadSchema.safeParse(boundedBody.value);
+    if (!parsed.success) {
+      return json(
+        {
+          error: "Invalid lead submission",
+          fields: parsed.error.issues.map((issue) => issue.path.join(".")).filter(Boolean),
+        },
+        400
       );
     }
 
-    const {
-      business_name: _bn,
-      business,
-      website,
-      email,
-      phone,
-      name,
-      source,
-      city,
-      businessType,
-      serviceArea,
-      googleProfile,
-    } = body;
-
-    const business_name = String(_bn || business || "").trim();
-    const contactName = String(name || "").trim();
-    const emailAddress = String(email || "").trim();
-    const phoneNumber = String(phone || "").trim();
-    const websiteUrl = String(website || "").trim();
-    const sourceName = String(source || "landing page").trim();
-    const googleProfileUrl = String(googleProfile || "").trim();
-    const first_name = contactName ? contactName.split(" ")[0] : null;
-    const resolvedCity = String(serviceArea || city || "Austin").trim();
-    const resolvedBusinessType = String(
-      businessType || "service business"
-    ).trim();
-
-    if (!business_name || !emailAddress) {
-      return NextResponse.json(
-        { error: "Business name and email are required" },
-        { status: 400 }
-      );
-    }
+    const input = parsed.data;
+    // Honeypot submissions get a quiet success response but trigger no side effects.
+    if (input.contact_time) return json({ success: true });
 
     const supabaseUrl = requiredEnv("NEXT_PUBLIC_SUPABASE_URL");
     const serviceRoleKey = requiredEnv("SUPABASE_SERVICE_ROLE_KEY");
-
     if (!supabaseUrl || !serviceRoleKey) {
       console.error("[inbound] Missing Supabase server configuration");
-      return NextResponse.json(
-        { error: "Lead capture is not configured yet" },
-        { status: 503 }
+      return json({ error: "Lead capture is not configured yet" }, 503);
+    }
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey);
+    const rateLimit = await consumePublicRateLimit(
+      request,
+      supabase as unknown as Parameters<typeof consumePublicRateLimit>[1],
+      "inbound-lead",
+      10,
+      3600
+    );
+    if (!rateLimit.ok) {
+      return json(
+        { error: rateLimit.error },
+        rateLimit.status,
+        rateLimit.status === 429 ? { "Retry-After": "3600" } : undefined
       );
     }
+
+    const turnstile = await verifyTurnstileToken(
+      input.turnstileToken,
+      request,
+      "inbound_lead"
+    );
+    if (!turnstile.ok) return json({ error: turnstile.error }, turnstile.status);
 
     const ownerUserId = requiredEnv("BOOKED_OUT_OWNER_USER_ID");
     const defaultSequenceId = requiredEnv("BOOKED_OUT_DEFAULT_SEQUENCE_ID");
     const notificationEmail = requiredEnv("INBOUND_LEAD_TO_EMAIL");
     const fromEmail = requiredEnv("INBOUND_LEAD_FROM_EMAIL");
-
     if (!ownerUserId || !defaultSequenceId || !notificationEmail || !fromEmail) {
       console.error("[inbound] Missing lead-routing configuration");
-      return NextResponse.json(
-        { error: "Lead routing is not configured yet" },
-        { status: 503 }
-      );
+      return json({ error: "Lead routing is not configured yet" }, 503);
     }
 
-    // Service role client — bypasses RLS for inbound lead storage
-    const supabase = createClient(supabaseUrl, serviceRoleKey);
+    const { data: configuredSequence, error: sequenceError } = await supabase
+      .from("drip_sequences")
+      .select("id")
+      .eq("id", defaultSequenceId)
+      .eq("user_id", ownerUserId)
+      .eq("status", "active")
+      .maybeSingle();
+    if (sequenceError || !configuredSequence?.id) {
+      console.error("[inbound] Default sequence is missing or inactive", sequenceError);
+      return json({ error: "Lead routing is not configured yet" }, 503);
+    }
 
-    // Insert prospect
+    const businessName = input.business_name || input.business;
+    const contactName = input.name;
+    const emailAddress = input.email;
+    const phoneNumber = input.phone;
+    const websiteUrl = input.website;
+    const sourceName = input.source || "landing page";
+    const googleProfileUrl = input.googleProfile;
+    const firstName = contactName ? contactName.split(" ")[0] : null;
+    const resolvedCity = input.serviceArea || input.city || "Austin";
+    const resolvedBusinessType = input.businessType || "service business";
+
+    // Avoid duplicate records from refreshes/double-clicks without requiring a
+    // potentially unsafe global unique-index migration over historical data.
+    const duplicateCutoff = new Date(Date.now() - 15 * 60 * 1000).toISOString();
+    const { data: existing } = await supabase
+      .from("prospects")
+      .select("id")
+      .eq("user_id", ownerUserId)
+      .eq("email", emailAddress)
+      .eq("search_query", "Inbound — landing page")
+      .gte("created_at", duplicateCutoff)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (existing?.id) {
+      const retryEnrollment = await enrollProspect(supabase, {
+        sequence_id: defaultSequenceId,
+        prospect_id: existing.id,
+        user_id: ownerUserId,
+      });
+      if (
+        retryEnrollment.error &&
+        retryEnrollment.error !== "Prospect already enrolled in this sequence"
+      ) {
+        console.error("[inbound] Duplicate enrollment retry failed:", retryEnrollment.error);
+        return json({ error: "Lead follow-up is temporarily unavailable" }, 503);
+      }
+      return json({ success: true });
+    }
+
     const { data: prospect, error: insertError } = await supabase
       .from("prospects")
       .insert({
         user_id: ownerUserId,
-        business_name,
+        business_name: businessName,
         email: emailAddress,
         phone: phoneNumber || null,
         website_url: websiteUrl || null,
@@ -105,83 +158,73 @@ export async function POST(request: Request) {
         business_type: resolvedBusinessType,
         status: "new",
         search_query: "Inbound — landing page",
+        sms_consent_at: input.smsConsent ? new Date().toISOString() : null,
+        sms_consent_source: input.smsConsent ? sourceName : null,
         notes: [
           `Source: ${sourceName}`,
           `Name: ${contactName || "—"}`,
-          `First name: ${first_name || "—"}`,
+          `First name: ${firstName || "—"}`,
           `City/service area: ${resolvedCity}`,
           `Business type: ${resolvedBusinessType}`,
           `Website: ${websiteUrl || "none"}`,
           `Google Business Profile: ${googleProfileUrl || "none"}`,
+          `SMS consent: ${input.smsConsent ? "yes" : "no"}`,
         ].join("\n"),
       })
       .select("id")
       .single();
 
-    if (insertError) {
+    if (insertError || !prospect?.id) {
       console.error("[inbound] Insert error:", insertError);
-      return NextResponse.json(
-        { error: "Failed to save lead" },
-        { status: 500 }
-      );
+      return json({ error: "Failed to save lead" }, 500);
     }
 
-    const prospect_id = prospect.id;
+    const prospectId = prospect.id;
+    // Persist nurture enrollment before returning; Vercel may freeze work after a response.
+    const enrollment = await enrollProspect(supabase, {
+      sequence_id: defaultSequenceId,
+      prospect_id: prospectId,
+      user_id: ownerUserId,
+    });
+    if (enrollment.error) {
+      console.error("[inbound] Drip enrollment failed:", enrollment.error);
+      return json({ error: "Lead follow-up is temporarily unavailable" }, 503);
+    }
 
-    // Fire-and-forget: run audit + enroll in drip sequence
-    // We do NOT await these — return 200 immediately
-    Promise.all([
-      runAudit(prospect_id).catch((err) =>
-        console.error("[inbound] Audit error:", err)
-      ),
-      enrollProspect(supabase, {
-        sequence_id: defaultSequenceId,
-        prospect_id,
-        user_id: ownerUserId,
-      }).catch((err) =>
-        console.error("[inbound] Drip enrollment error:", err)
-      ),
-    ]).catch(() => {});
+    // Next.js after() keeps longer audit/notification work in the supported
+    // post-response lifecycle without making the form wait on external services.
+    after(async () => {
+      await runAudit(prospectId).catch((error) =>
+        console.error("[inbound] Audit error:", error)
+      );
 
-    // Notify owner. Non-fatal — lead is already saved.
-    const resendKey = process.env.RESEND_API_KEY?.trim();
-    if (resendKey) {
+      const resendKey = process.env.RESEND_API_KEY?.trim();
+      if (!resendKey) {
+        console.warn("[inbound] RESEND_API_KEY missing; notification skipped");
+        return;
+      }
+
       try {
         const resend = new Resend(resendKey);
         await resend.emails.send({
           from: fromEmail,
           to: notificationEmail,
-          subject: `New inbound lead: ${business_name}`,
+          subject: "New inbound lead captured",
           html: `
-          <h2>New lead from trybookedout.com</h2>
-          <table>
-            <tr><td><strong>Business:</strong></td><td>${escapeHtml(business_name)}</td></tr>
-            <tr><td><strong>Name:</strong></td><td>${escapeHtml(contactName || "—")}</td></tr>
-            <tr><td><strong>Email:</strong></td><td>${escapeHtml(emailAddress)}</td></tr>
-            <tr><td><strong>Phone:</strong></td><td>${escapeHtml(phoneNumber || "—")}</td></tr>
-            <tr><td><strong>Business type:</strong></td><td>${escapeHtml(resolvedBusinessType)}</td></tr>
-            <tr><td><strong>Website:</strong></td><td>${escapeHtml(websiteUrl || "—")}</td></tr>
-            <tr><td><strong>City/service area:</strong></td><td>${escapeHtml(resolvedCity)}</td></tr>
-            <tr><td><strong>Google profile:</strong></td><td>${escapeHtml(googleProfileUrl || "—")}</td></tr>
-            <tr><td><strong>Source:</strong></td><td>${escapeHtml(sourceName)}</td></tr>
-          </table>
-          <p>Audit and drip enrollment are running in the background.</p>
-          <p><a href="https://trybookedout.com/leads">View in Booked Out →</a></p>
-        `,
+            <h2>New lead from trybookedout.com</h2>
+            <p>A new prospect was saved and enrolled in the approved follow-up sequence.</p>
+            <p>Contact details are available only inside the authenticated CRM.</p>
+            <p><a href="${escapeHtml(requiredEnv("NEXT_PUBLIC_APP_URL") || "https://trybookedout.com")}/app/leads/${escapeHtml(prospectId)}">View lead →</a></p>
+          `,
         });
-      } catch (emailErr) {
-        console.error("[inbound] Notification email error:", emailErr);
+      } catch (error) {
+        console.error("[inbound] Notification email error:", error);
       }
-    } else {
-      console.warn("[inbound] RESEND_API_KEY missing; notification skipped");
-    }
+    });
 
-    return NextResponse.json({ success: true, prospect_id });
-  } catch (err) {
-    console.error("[inbound] Unexpected error:", err);
-    return NextResponse.json(
-      { error: "Failed to save lead" },
-      { status: 500 }
-    );
+    return json({ success: true });
+  } catch (error) {
+    console.error("[inbound] Unexpected error:", error);
+    return json({ error: "Failed to save lead" }, 500);
   }
 }

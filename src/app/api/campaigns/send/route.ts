@@ -269,12 +269,25 @@ export async function POST(request: Request) {
       }
 
       let sentCount = 0;
+      let skippedNoConsent = 0;
 
       await sendInBatches(
         messages,
         async (msg) => {
           const prospect = msg.prospects;
           if (!prospect) return;
+
+          if (!prospect.sms_consent_at) {
+            await supabase
+              .from("campaign_messages")
+              .update({
+                status: "failed",
+                error_message: "SMS blocked: no recorded consent",
+              })
+              .eq("id", msg.id);
+            skippedNoConsent++;
+            return;
+          }
 
           const grade = gradeMap.get(prospect.id);
           const vars = buildTemplateVars(prospect, grade);
@@ -322,7 +335,8 @@ export async function POST(request: Request) {
 
       return NextResponse.json({
         sent: sentCount,
-        failed: messages.length - sentCount,
+        failed: messages.length - sentCount - skippedNoConsent,
+        skipped_no_consent: skippedNoConsent,
         total: messages.length,
       });
     }

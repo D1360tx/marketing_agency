@@ -1523,13 +1523,12 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
           </Card>
 
           {/* Deal Value */}
-          {prospect.status === "client" && (prospect as any).deal_value && (
+          {prospect.status === "client" && prospect.deal_value && (
             <div className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 p-3">
               <DollarSign className="h-5 w-5 text-emerald-600" />
               <div>
                 <p className="text-xs text-muted-foreground">Monthly Value</p>
-                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                <p className="font-semibold text-emerald-700">${(prospect as any).deal_value}/mo</p>
+                <p className="font-semibold text-emerald-700">${prospect.deal_value}/mo</p>
               </div>
             </div>
           )}
