@@ -65,7 +65,7 @@ export default function CampaignsPage() {
             Manage your outreach campaigns
           </p>
         </div>
-        <Link href="/campaigns/new">
+        <Link href="/app/campaigns/new">
           <Button>
             <Plus className="mr-2 h-4 w-4" />
             New Campaign
@@ -84,7 +84,7 @@ export default function CampaignsPage() {
                 prospects.
               </p>
             </div>
-            <Link href="/campaigns/new">
+            <Link href="/app/campaigns/new">
               <Button>
                 <Plus className="mr-2 h-4 w-4" />
                 Create Campaign
@@ -109,14 +109,14 @@ export default function CampaignsPage() {
                   <TableHead>Status</TableHead>
                   <TableHead className="text-center">Sent</TableHead>
                   <TableHead className="text-center">Opens</TableHead>
-                  <TableHead className="text-center">Replies</TableHead>
+
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {campaigns.map((campaign) => (
-                  <TableRow key={campaign.id} className="cursor-pointer hover:bg-muted/50" onClick={() => window.location.href = `/campaigns/${campaign.id}`}>
+                  <TableRow key={campaign.id} className="cursor-pointer hover:bg-muted/50" onClick={() => window.location.href = `/app/campaigns/${campaign.id}`}>
                     <TableCell className="font-medium">
-                      <Link href={`/campaigns/${campaign.id}`} className="hover:underline">
+                      <Link href={`/app/campaigns/${campaign.id}`} className="hover:underline">
                         {campaign.name}
                       </Link>
                     </TableCell>
@@ -144,9 +144,7 @@ export default function CampaignsPage() {
                     <TableCell className="text-center">
                       {campaign.open_count}
                     </TableCell>
-                    <TableCell className="text-center">
-                      {campaign.reply_count}
-                    </TableCell>
+
                   </TableRow>
                 ))}
               </TableBody>

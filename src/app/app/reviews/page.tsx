@@ -56,9 +56,9 @@ export default function ReviewsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Review Requests</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Manual Review Email</h1>
         <p className="text-muted-foreground">
-          Send customers a quick email asking them to leave a Google review.
+          Send one customer a Google review request after a completed job.
         </p>
       </div>
 
@@ -70,7 +70,7 @@ export default function ReviewsPage() {
               Send Review Request
             </CardTitle>
             <CardDescription>
-              Fill in the customer details and their Google review link.
+              This is a manual fallback, not an automated review workflow.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -142,7 +142,7 @@ export default function ReviewsPage() {
           <CardContent className="space-y-4 text-sm text-muted-foreground">
             <div className="flex gap-3">
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">1</span>
-              <p>Customer receives a branded email from <strong>info@trybookedout.com</strong></p>
+              <p>Customer receives an email from the sender configured in Settings.</p>
             </div>
             <div className="flex gap-3">
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">2</span>
@@ -154,11 +154,11 @@ export default function ReviewsPage() {
             </div>
             <div className="flex gap-3">
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">4</span>
-              <p>More reviews = better Google ranking = happy client = recurring revenue 💰</p>
+              <p>The send is logged for internal follow-up. Review completion is not tracked.</p>
             </div>
             <div className="mt-4 rounded-md bg-muted p-3">
-              <p className="font-medium text-foreground">💡 Pro tip</p>
-              <p className="mt-1">Send within 24 hours of job completion for the highest response rates.</p>
+              <p className="font-medium text-foreground">Timing tip</p>
+              <p className="mt-1">Send promptly while the completed job is still fresh for the customer.</p>
             </div>
           </CardContent>
         </Card>

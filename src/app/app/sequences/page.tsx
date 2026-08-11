@@ -154,7 +154,7 @@ export default function SequencesPage() {
             )}
             Process Queue
           </Button>
-          <Link href="/sequences/new">
+          <Link href="/app/sequences/new">
             <Button>
               <Plus className="mr-2 h-4 w-4" />
               New Sequence
@@ -171,7 +171,7 @@ export default function SequencesPage() {
             <p className="text-muted-foreground mb-4">
               Create your first drip sequence to automate follow-ups
             </p>
-            <Link href="/sequences/new">
+            <Link href="/app/sequences/new">
               <Button>
                 <Plus className="mr-2 h-4 w-4" />
                 Create Sequence
@@ -244,7 +244,7 @@ export default function SequencesPage() {
             <CardHeader>
               <CardTitle>All Sequences</CardTitle>
               <CardDescription>
-                Click a sequence to view details and manage enrollments
+                Activate, pause, and monitor approved follow-up sequences
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -265,12 +265,7 @@ export default function SequencesPage() {
                   {sequences.map((seq) => (
                     <TableRow key={seq.id}>
                       <TableCell>
-                        <Link
-                          href={`/sequences/${seq.id}`}
-                          className="font-medium hover:underline"
-                        >
-                          {seq.name}
-                        </Link>
+                        <span className="font-medium">{seq.name}</span>
                         {seq.description && (
                           <p className="text-xs text-muted-foreground">
                             {seq.description}

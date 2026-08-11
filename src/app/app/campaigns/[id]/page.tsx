@@ -31,7 +31,6 @@ import {
   XCircle,
   Clock,
   Eye,
-  Reply,
 } from "lucide-react";
 import type { Campaign, CampaignMessage } from "@/types";
 
@@ -47,7 +46,7 @@ const messageStatusIcons: Record<string, React.ReactNode> = {
   sent: <Send className="h-3.5 w-3.5 text-blue-500" />,
   delivered: <CheckCircle className="h-3.5 w-3.5 text-emerald-500" />,
   opened: <Eye className="h-3.5 w-3.5 text-purple-500" />,
-  replied: <Reply className="h-3.5 w-3.5 text-amber-500" />,
+
   bounced: <XCircle className="h-3.5 w-3.5 text-red-500" />,
   failed: <XCircle className="h-3.5 w-3.5 text-red-500" />,
 };
@@ -86,13 +85,20 @@ export default function CampaignDetailPage({
 
   async function handleSend() {
     if (!campaign) return;
+    const messageIds = messages
+      .filter((message) => message.status === "pending")
+      .map((message) => message.id);
+    if (messageIds.length === 0) return;
+    if (!window.confirm(`Approve and send ${messageIds.length} reviewed message${messageIds.length === 1 ? "" : "s"}?`)) {
+      return;
+    }
     setSending(true);
 
     try {
       const res = await fetch("/api/campaigns/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ campaign_id: campaign.id }),
+        body: JSON.stringify({ campaign_id: campaign.id, message_ids: messageIds }),
       });
 
       const data = await res.json();
@@ -138,7 +144,7 @@ export default function CampaignDetailPage({
   if (!campaign) {
     return (
       <div className="space-y-4">
-        <Link href="/campaigns">
+        <Link href="/app/campaigns">
           <Button variant="ghost" size="sm">
             <ArrowLeft className="mr-2 h-4 w-4" /> Back
           </Button>
@@ -152,14 +158,14 @@ export default function CampaignDetailPage({
   const sentCount = messages.filter((m) => m.status === "sent" || m.status === "delivered").length;
   const failedCount = messages.filter((m) => m.status === "failed" || m.status === "bounced").length;
   const openedCount = messages.filter((m) => m.status === "opened").length;
-  const repliedCount = messages.filter((m) => m.status === "replied").length;
+
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/campaigns">
+          <Link href="/app/campaigns">
             <Button variant="ghost" size="icon">
               <ArrowLeft className="h-4 w-4" />
             </Button>
@@ -198,14 +204,14 @@ export default function CampaignDetailPage({
               ) : (
                 <Send className="mr-2 h-4 w-4" />
               )}
-              Send {pendingCount} Pending
+              Approve & Send {pendingCount}
             </Button>
           )}
         </div>
       </div>
 
       {/* Stats */}
-      <div className="grid gap-3 sm:grid-cols-5">
+      <div className="grid gap-3 sm:grid-cols-4">
         <Card>
           <CardContent className="pt-6">
             <div className="text-2xl font-bold">{messages.length}</div>
@@ -224,12 +230,7 @@ export default function CampaignDetailPage({
             <p className="text-xs text-muted-foreground">Opened</p>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-2xl font-bold text-amber-600">{repliedCount}</div>
-            <p className="text-xs text-muted-foreground">Replied</p>
-          </CardContent>
-        </Card>
+
         <Card>
           <CardContent className="pt-6">
             <div className="text-2xl font-bold text-red-600">{failedCount}</div>

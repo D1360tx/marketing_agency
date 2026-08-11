@@ -76,7 +76,7 @@ export const defaultData: Record<string, TemplateData> = {
     services: ["Plumbing", "Electrical", "HVAC", "Remodeling"],
     primaryColor: "#1d4ed8",
     description:
-      "Licensed and insured professionals with 20+ years of experience. We handle residential and commercial projects of any size.",
+      "Reliable home-service professionals focused on clear communication, careful work, and straightforward estimates.",
   },
   professional: {
     businessName: "Summit Advisory Group",

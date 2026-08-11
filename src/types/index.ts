@@ -24,6 +24,8 @@ export const prospectSchema = z.object({
   zip: z.string().nullable(),
   phone: z.string().nullable(),
   email: z.string().nullable(),
+  sms_consent_at: z.string().nullable().optional(),
+  sms_consent_source: z.string().nullable().optional(),
   website_url: z.string().nullable(),
   google_maps_url: z.string().nullable(),
   rating: z.number().nullable(),

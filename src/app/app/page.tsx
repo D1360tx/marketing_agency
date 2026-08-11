@@ -60,7 +60,10 @@ export default async function DashboardPage() {
   const totalProspects = prospectsCountResult.count ?? 0;
   const newLeads = newLeadsCountResult.count ?? 0;
   const clients = clientsCountResult.count ?? 0;
-  const campaignsSent = campaigns.length;
+  const campaignsSent = campaigns.reduce(
+    (sum, campaign) => sum + (campaign.sent_count || 0),
+    0
+  );
   const conversionRate =
     totalProspects > 0 ? Math.round((clients / totalProspects) * 100) : 0;
 
@@ -94,31 +97,43 @@ export default async function DashboardPage() {
     }, {} as Record<string, { leads: number; contacted: number; interested: number; clients: number }>)
   ).sort((a, b) => b[1].leads - a[1].leads);
 
-  // Pipeline funnel — use server-side counts
-  const funnelStatusCounts: Record<string, number> = {
-    new: newLeads,
-    client: clients,
-    interested: warmLeadsCountResult.count ?? 0,
-    contacted: 0, // fetched below
-  };
+  // Cumulative pipeline stages. A client has also been contacted and qualified.
+  const contactedStatuses = [
+    "contacted",
+    "interested",
+    "follow_up",
+    "call_scheduled",
+    "client",
+  ];
+  const interestedStatuses = [
+    "interested",
+    "follow_up",
+    "call_scheduled",
+    "client",
+  ];
   const funnel = [
-    { label: "New", status: "new" },
-    { label: "Contacted", status: "contacted" },
-    { label: "Interested", status: "interested" },
-    { label: "Client", status: "client" },
-  ].map((stage) => ({
-    ...stage,
-    count: funnelStatusCounts[stage.status] ?? 0,
-  }));
+    { label: "Leads", status: "leads", count: totalProspects },
+    {
+      label: "Contacted",
+      status: "contacted",
+      count: sourceData.filter((lead) => contactedStatuses.includes(lead.status)).length,
+    },
+    {
+      label: "Interested",
+      status: "interested",
+      count: sourceData.filter((lead) => interestedStatuses.includes(lead.status)).length,
+    },
+    { label: "Client", status: "client", count: clients },
+  ];
 
   const funnelColors = ["bg-blue-500", "bg-purple-500", "bg-amber-500", "bg-emerald-500"];
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Today</h1>
         <p className="text-muted-foreground">
-          Welcome back{user?.email ? `, ${user.email}` : ""}
+          Your next revenue actions{user?.email ? `, ${user.email}` : ""}
         </p>
       </div>
 
@@ -142,7 +157,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{followUpsToday}</div>
-            <Link href="/tasks" className="text-xs text-primary hover:underline">
+            <Link href="/app/tasks" className="text-xs text-primary hover:underline">
               View tasks →
             </Link>
           </CardContent>
@@ -292,7 +307,7 @@ export default async function DashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Link href="/prospector">
+            <Link href="/app/prospector">
               <Button className="w-full">Start Searching</Button>
             </Link>
           </CardContent>
@@ -309,7 +324,7 @@ export default async function DashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Link href="/leads">
+            <Link href="/app/leads">
               <Button variant="outline" className="w-full">
                 View Pipeline
               </Button>
@@ -328,7 +343,7 @@ export default async function DashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Link href="/campaigns">
+            <Link href="/app/campaigns">
               <Button variant="outline" className="w-full">
                 Create Campaign
               </Button>

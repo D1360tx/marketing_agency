@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { normalizePublicHttpUrl, safeFetchHtml } from "@/lib/generator-security";
+
+export const runtime = "nodejs";
+
+const MAX_TOTAL_HTML_BYTES = 1024 * 1024;
+const MAX_PAGE_HTML_BYTES = 384 * 1024;
 
 const PHONE_REGEX = /(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/g;
 const EMAIL_REGEX = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
@@ -54,51 +60,46 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { url } = await request.json();
+    const body = await request.json();
+    const url = typeof body?.url === "string" ? body.url.trim() : "";
 
-    if (!url) {
+    if (!url || url.length > 2048) {
       return NextResponse.json(
-        { error: "URL is required" },
+        { error: "A valid website URL is required" },
         { status: 400 }
       );
     }
 
-    // Normalize URL
-    let targetUrl = url;
-    if (!targetUrl.startsWith("http")) {
-      targetUrl = `https://${targetUrl}`;
+    const targetUrl = normalizePublicHttpUrl(url);
+    if (!targetUrl) {
+      return NextResponse.json(
+        { error: "Only public HTTP(S) website URLs are allowed" },
+        { status: 400 }
+      );
     }
-    const baseUrl = targetUrl.replace(/\/$/, "");
+    const baseUrl = targetUrl.href.replace(/\/$/, "");
 
-    // Fetch multiple pages in parallel for comprehensive scraping
+    // Keep scraping focused on the pages that provide useful sales context.
     const pagesToFetch = [
       { url: baseUrl, label: "homepage" },
-      { url: `${baseUrl}/about`, label: "about" },
-      { url: `${baseUrl}/about-us`, label: "about" },
-      { url: `${baseUrl}/contact`, label: "contact" },
-      { url: `${baseUrl}/contact-us`, label: "contact" },
-      { url: `${baseUrl}/services`, label: "services" },
-      { url: `${baseUrl}/menu`, label: "menu" },
-      { url: `${baseUrl}/our-team`, label: "team" },
-      { url: `${baseUrl}/team`, label: "team" },
-      { url: `${baseUrl}/gallery`, label: "gallery" },
-      { url: `${baseUrl}/testimonials`, label: "testimonials" },
-      { url: `${baseUrl}/reviews`, label: "testimonials" },
+      { url: new URL("/about", targetUrl).href, label: "about" },
+      { url: new URL("/services", targetUrl).href, label: "services" },
+      { url: new URL("/contact", targetUrl).href, label: "contact" },
     ];
 
     const results = await Promise.allSettled(
       pagesToFetch.map(async (page) => {
-        const res = await fetch(page.url, {
-          headers: {
-            "User-Agent":
-              "Mozilla/5.0 (compatible; Booked Out/1.0; +https://bookedout.app)",
-          },
-          redirect: "follow",
-          signal: AbortSignal.timeout(8000),
+        const response = await safeFetchHtml(page.url, {
+          maxBytes: MAX_PAGE_HTML_BYTES,
         });
-        if (!res.ok) return { label: page.label, html: "", url: page.url };
-        const html = await res.text();
-        return { label: page.label, html, url: page.url };
+        if (response.status < 200 || response.status >= 300) {
+          return { label: page.label, html: "", url: response.url.href };
+        }
+        return {
+          label: page.label,
+          html: response.html,
+          url: response.url.href,
+        };
       })
     );
 
@@ -106,12 +107,23 @@ export async function POST(request: Request) {
     const pages: Record<string, string> = {};
     const allHTML: string[] = [];
 
+    let totalBytes = 0;
     for (const result of results) {
       if (result.status === "fulfilled" && result.value.html) {
         const { label, html } = result.value;
+        const htmlBytes = Buffer.byteLength(html);
+        if (totalBytes + htmlBytes > MAX_TOTAL_HTML_BYTES) continue;
+        totalBytes += htmlBytes;
         if (!pages[label]) pages[label] = html;
         allHTML.push(html);
       }
+    }
+
+    if (!pages.homepage) {
+      return NextResponse.json(
+        { error: "The website could not be safely retrieved" },
+        { status: 422 }
+      );
     }
 
     const combinedHTML = allHTML.join("\n");
@@ -152,7 +164,6 @@ function extractFullContent(
   }
 
   const allText = htmlToText(allHTML);
-  const homepageText = htmlToText(homepage);
 
   // ── Business Name ──
   const titleMatch = homepage.match(/<title[^>]*>([^<]+)<\/title>/i);

@@ -1,85 +1,104 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { Resend } from "resend";
+import { z } from "zod";
+import { createClient } from "@/lib/supabase/server";
+import { escapeEmailHtml, isGoogleReviewUrl } from "@/lib/review-security";
+
+const MAX_REQUEST_BYTES = 16 * 1024;
+const reviewRequestSchema = z.object({
+  customer_name: z.string().trim().min(1).max(100),
+  customer_email: z.string().trim().email().max(254),
+  business_name: z.string().trim().min(1).max(160),
+  google_review_url: z
+    .string()
+    .trim()
+    .max(2048)
+    .refine(isGoogleReviewUrl, "Use a valid HTTPS Google review link"),
+});
 
 export async function POST(request: Request) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { customer_name, customer_email, business_name, google_review_url } =
-      await request.json();
-
-    if (!customer_name || !customer_email || !business_name || !google_review_url) {
-      return NextResponse.json({ error: "All fields are required" }, { status: 400 });
+    const raw = await request.text();
+    if (Buffer.byteLength(raw, "utf8") > MAX_REQUEST_BYTES) {
+      return NextResponse.json({ error: "Request is too large" }, { status: 413 });
     }
 
-    const apiKey = process.env.RESEND_API_KEY;
-    const fromEmail = process.env.RESEND_FROM_EMAIL || "info@trybookedout.com";
-    const fromName = process.env.RESEND_FROM_NAME || "Booked Out";
+    let input: unknown;
+    try {
+      input = JSON.parse(raw);
+    } catch {
+      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    }
+    const parsed = reviewRequestSchema.safeParse(input);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.issues[0]?.message || "Invalid review request" },
+        { status: 400 }
+      );
+    }
+    const body = parsed.data;
 
+    const { data: settings } = await supabase
+      .from("user_settings")
+      .select("resend_api_key, sender_email, sender_name")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    const apiKey = settings?.resend_api_key || process.env.RESEND_API_KEY;
+    const fromEmail =
+      settings?.sender_email || process.env.RESEND_FROM_EMAIL || "info@trybookedout.com";
+    const fromName =
+      settings?.sender_name || process.env.RESEND_FROM_NAME || "Booked Out";
     if (!apiKey) {
-      return NextResponse.json({ error: "Email not configured" }, { status: 500 });
+      return NextResponse.json({ error: "Email is not configured" }, { status: 503 });
     }
 
-    const resend = new Resend(apiKey);
-
-    const html = `
-<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"></head>
-<body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f9f9f9;">
-  <div style="background: white; border-radius: 8px; padding: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-    <h2 style="color: #1a1a1a; margin-bottom: 8px;">Hi ${customer_name}! 👋</h2>
-    <p style="color: #444; font-size: 16px; line-height: 1.6;">
-      Thank you for choosing <strong>${business_name}</strong>! We hope everything went smoothly.
-    </p>
-    <p style="color: #444; font-size: 16px; line-height: 1.6;">
-      If you had a great experience, we'd really appreciate it if you could leave us a quick review. It only takes 30 seconds and helps us a lot!
-    </p>
-    <div style="text-align: center; margin: 32px 0;">
-      <a href="${google_review_url}" 
-         style="background: #4F46E5; color: white; padding: 14px 32px; border-radius: 6px; text-decoration: none; font-size: 16px; font-weight: bold; display: inline-block;">
-        ⭐ Leave a Review
-      </a>
+    const customerName = escapeEmailHtml(body.customer_name);
+    const businessName = escapeEmailHtml(body.business_name);
+    const reviewUrl = escapeEmailHtml(body.google_review_url);
+    const html = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head>
+<body style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#f9f9f9">
+  <div style="background:white;border-radius:8px;padding:40px">
+    <h2 style="color:#1a1a1a;margin-bottom:8px">Hi ${customerName},</h2>
+    <p style="color:#444;font-size:16px;line-height:1.6">Thank you for choosing <strong>${businessName}</strong>. We hope everything went smoothly.</p>
+    <p style="color:#444;font-size:16px;line-height:1.6">If you had a great experience, we would appreciate a quick Google review.</p>
+    <div style="text-align:center;margin:32px 0">
+      <a href="${reviewUrl}" style="background:#4F46E5;color:white;padding:14px 32px;border-radius:6px;text-decoration:none;font-size:16px;font-weight:bold;display:inline-block">Leave a Review</a>
     </div>
-    <p style="color: #888; font-size: 14px;">
-      Thanks again for your business. We truly appreciate it!
-    </p>
-    <p style="color: #888; font-size: 14px;">— The ${business_name} Team</p>
+    <p style="color:#888;font-size:14px">Thank you again.<br>— The ${businessName} Team</p>
   </div>
-</body>
-</html>`;
+</body></html>`;
 
-    const { error } = await resend.emails.send({
+    const { error: sendError } = await new Resend(apiKey).emails.send({
       from: `${fromName} <${fromEmail}>`,
-      to: customer_email,
-      subject: `How did we do, ${customer_name}? ⭐`,
+      to: body.customer_email,
+      subject: `How did we do, ${body.customer_name}?`,
       html,
     });
-
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    if (sendError) {
+      console.error("Review request send failed:", sendError.message);
+      return NextResponse.json({ error: "Review request could not be sent" }, { status: 502 });
     }
 
-    // Log to Supabase
-    await supabase.from("review_requests").insert({
+    const { error: logError } = await supabase.from("review_requests").insert({
       user_id: user.id,
-      customer_name,
-      customer_email,
-      business_name,
-      google_review_url,
+      ...body,
     });
+    if (logError) {
+      console.error("Review request logging failed after delivery:", logError.message);
+    }
 
-    return NextResponse.json({ success: true });
-  } catch (err) {
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Failed to send" },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: true, logged: !logError });
+  } catch (error) {
+    console.error("Review request failed:", error);
+    return NextResponse.json({ error: "Review request could not be sent" }, { status: 500 });
   }
 }

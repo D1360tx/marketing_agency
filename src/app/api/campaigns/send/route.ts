@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import {
   sendEmail,
@@ -16,6 +17,12 @@ import {
 
 const BATCH_SIZE = 5;
 const BATCH_DELAY_MS = 500;
+
+const sendRequestSchema = z.object({
+  campaign_id: z.string().uuid(),
+  message_ids: z.array(z.string().uuid()).min(1).max(100)
+    .refine((ids) => new Set(ids).size === ids.length),
+}).strict();
 
 /** Send messages in batches using Promise.allSettled */
 async function sendInBatches<T>(
@@ -44,21 +51,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { campaign_id } = await request.json();
-
-    if (!campaign_id) {
+    const parsed = sendRequestSchema.safeParse(await request.json());
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "campaign_id is required" },
+        { error: "Choose one or more reviewed messages to send" },
         { status: 400 }
       );
     }
+    const { campaign_id, message_ids } = parsed.data;
 
     // Fetch campaign
     const { data: campaign, error: campaignError } = await supabase
       .from("campaigns")
       .select("*")
       .eq("id", campaign_id)
-      .single();
+      .eq("user_id", user.id)
+      .maybeSingle();
 
     if (campaignError || !campaign) {
       return NextResponse.json(
@@ -72,16 +80,17 @@ export async function POST(request: Request) {
       .from("campaign_messages")
       .select("*, prospects(*)")
       .eq("campaign_id", campaign_id)
-      .eq("status", "pending");
+      .eq("status", "pending")
+      .in("id", message_ids);
 
     if (msgError) {
       return NextResponse.json({ error: msgError.message }, { status: 500 });
     }
 
-    if (!messages || messages.length === 0) {
+    if (!messages || messages.length !== message_ids.length) {
       return NextResponse.json(
-        { error: "No pending messages to send" },
-        { status: 400 }
+        { error: "One or more reviewed messages are no longer available to send" },
+        { status: 409 }
       );
     }
 
@@ -111,6 +120,22 @@ export async function POST(request: Request) {
       }
     }
 
+    const { data: latestPreviews, error: previewsError } = await supabase
+      .from("generated_sites")
+      .select("prospect_id, share_token, created_at")
+      .in("prospect_id", prospectIds)
+      .order("created_at", { ascending: false });
+    if (previewsError) {
+      console.error("Campaign preview lookup failed:", previewsError.message);
+      return NextResponse.json({ error: "Could not load approved previews" }, { status: 500 });
+    }
+    const previewMap = new Map<string, string>();
+    for (const preview of latestPreviews || []) {
+      if (!previewMap.has(preview.prospect_id)) {
+        previewMap.set(preview.prospect_id, preview.share_token);
+      }
+    }
+
     // --- Check unsubscribes upfront ---
     const recipientEmails = messages
       .map((m) => m.to_address)
@@ -126,10 +151,39 @@ export async function POST(request: Request) {
       (unsubscribed || []).map((u) => u.email.toLowerCase())
     );
 
-    // Build base URL for unsubscribe links
-    const baseUrl =
-      process.env.NEXT_PUBLIC_APP_URL ||
-      (request.headers.get("origin") ?? "http://localhost:3001");
+    // Build canonical base URL for unsubscribe, tracking, and preview links.
+    const configuredBaseUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "");
+    if (!configuredBaseUrl && process.env.NODE_ENV === "production") {
+      return NextResponse.json(
+        { error: "Outbound links are not configured" },
+        { status: 503 }
+      );
+    }
+    const baseUrl = configuredBaseUrl || new URL(request.url).origin;
+
+    async function claimApprovedMessages() {
+      const { data: claimed, error: claimError } = await supabase
+        .from("campaign_messages")
+        .update({ status: "sending", error_message: null })
+        .eq("campaign_id", campaign_id)
+        .eq("status", "pending")
+        .in("id", message_ids)
+        .select("id");
+
+      if (!claimError && claimed?.length === message_ids.length) return true;
+
+      const claimedIds = (claimed || []).map((message) => message.id);
+      if (claimedIds.length > 0) {
+        await supabase
+          .from("campaign_messages")
+          .update({ status: "pending" })
+          .eq("campaign_id", campaign_id)
+          .eq("status", "sending")
+          .in("id", claimedIds);
+      }
+      if (claimError) console.error("Campaign message claim failed:", claimError.message);
+      return false;
+    }
 
     if (campaign.type === "email") {
       const apiKey = settings?.resend_api_key || process.env.RESEND_API_KEY;
@@ -143,6 +197,16 @@ export async function POST(request: Request) {
       const senderEmail = settings?.sender_email || process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
       const senderName = settings?.sender_name || process.env.RESEND_FROM_NAME || "Booked Out";
       const from = `${senderName} <${senderEmail}>`;
+
+      if (!process.env.TRACKING_SECRET || process.env.TRACKING_SECRET.length < 32) {
+        return NextResponse.json({ error: "Email tracking is not configured" }, { status: 503 });
+      }
+      if (!(await claimApprovedMessages())) {
+        return NextResponse.json(
+          { error: "One or more reviewed messages are already being sent" },
+          { status: 409 }
+        );
+      }
 
       let sentCount = 0;
       let skippedCount = 0;
@@ -167,12 +231,14 @@ export async function POST(request: Request) {
           }
 
           const grade = gradeMap.get(prospect.id);
-          const vars = buildTemplateVars(prospect, grade);
+          const shareToken = previewMap.get(prospect.id);
+          const previewUrl = shareToken ? `${baseUrl}/preview/${shareToken}` : null;
+          const vars = buildTemplateVars(prospect, grade, previewUrl);
 
-          const subject = campaign.subject_template
-            ? interpolateTemplate(campaign.subject_template, vars)
+          const subject = msg.subject
+            ? interpolateTemplate(msg.subject, vars)
             : "A message for your business";
-          const body = interpolateTemplate(campaign.body_template, vars);
+          const body = interpolateTemplate(msg.body, vars);
 
           const unsubscribeUrl = buildUnsubscribeUrl(
             baseUrl,
@@ -268,6 +334,13 @@ export async function POST(request: Request) {
         );
       }
 
+      if (!(await claimApprovedMessages())) {
+        return NextResponse.json(
+          { error: "One or more reviewed messages are already being sent" },
+          { status: 409 }
+        );
+      }
+
       let sentCount = 0;
       let skippedNoConsent = 0;
 
@@ -290,8 +363,10 @@ export async function POST(request: Request) {
           }
 
           const grade = gradeMap.get(prospect.id);
-          const vars = buildTemplateVars(prospect, grade);
-          const body = interpolateTemplate(campaign.body_template, vars);
+          const shareToken = previewMap.get(prospect.id);
+          const previewUrl = shareToken ? `${baseUrl}/preview/${shareToken}` : null;
+          const vars = buildTemplateVars(prospect, grade, previewUrl);
+          const body = interpolateTemplate(msg.body, vars);
 
           const result = await sendSMS({
             accountSid,

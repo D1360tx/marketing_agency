@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   Card,
@@ -32,7 +32,7 @@ import {
   Phone,
   Eye,
 } from "lucide-react";
-import type { ProspectWithAnalysis, ProspectStatus } from "@/types";
+import type { ProspectWithAnalysis } from "@/types";
 
 const templateVars = [
   { key: "business_name", label: "Business Name" },
@@ -41,6 +41,7 @@ const templateVars = [
   { key: "phone", label: "Phone" },
   { key: "website_url", label: "Website URL" },
   { key: "rating", label: "Rating" },
+  { key: "preview_url", label: "Preview URL" },
 ];
 
 const emailTemplates: Record<string, { name: string; subject: string; body: string }> = {
@@ -53,7 +54,7 @@ I was checking out local {{city}} businesses online and came across yours — yo
 
 Most customers check a website before calling. If it's slow, outdated, or hard to use on a phone, they move on to a competitor.
 
-We build modern, mobile-friendly websites for local service businesses — usually live in 48 hours, no setup fees.
+We build and manage modern, mobile-friendly websites for local service businesses with no setup fee.
 
 Would it be worth a 10-minute call this week to show you what we'd build for you?
 
@@ -83,7 +84,7 @@ Quick question — are you actively asking your customers for Google reviews aft
 
 Prospects compare recent reviews before they call, and an inconsistent request process can leave good work invisible online.
 
-We set up an automated system that sends your customers a review request right after the job is done. Takes zero effort on your end.
+We help put a simple, neutral review-request process in place so completed jobs do not get forgotten.
 
 Mind if I show you how it works on a quick call this week?
 
@@ -113,7 +114,7 @@ Booked Out`,
 
 Just tried giving you a call — wanted to follow up by email.
 
-We help local service businesses in {{city}} get more customers through a better website and automated Google review requests.
+We help local service businesses in {{city}} present themselves clearly online and follow up with new leads consistently.
 
 If you're open to it, I'd love to show you a quick demo. Takes about 10 minutes and there's no pitch — just showing you what's possible.
 
@@ -130,6 +131,8 @@ const defaultSmsTemplate = `Hi {{business_name}}, this is Diego from Booked Out 
 
 export default function NewCampaignPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const requestedProspectId = searchParams.get("prospect");
   const [name, setName] = useState("");
   const [type, setType] = useState<"email" | "sms">("email");
   const [selectedTemplate, setSelectedTemplate] = useState("website_pain");
@@ -161,6 +164,14 @@ export default function NewCampaignPage() {
     fetchProspects();
   }, []);
 
+  useEffect(() => {
+    if (!requestedProspectId || prospects.length === 0) return;
+    const selected = prospects.find((prospect) => prospect.id === requestedProspectId);
+    if (!selected) return;
+    setSelectedIds(new Set([selected.id]));
+    setName((current) => current || `${selected.business_name} outreach`);
+  }, [prospects, requestedProspectId]);
+
   // Switch template when type changes
   useEffect(() => {
     setBody(type === "email" ? defaultEmailTemplate : defaultSmsTemplate);
@@ -170,7 +181,7 @@ export default function NewCampaignPage() {
     return prospects.filter((p) => {
       const matchesStatus = statusFilter === "all" || p.status === statusFilter;
       const hasEmail = !!p.email;
-      const hasPhone = !!p.phone;
+      const hasPhone = !!p.phone && !!p.sms_consent_at;
 
       if (type === "email" && contactFilter === "has_contact" && !hasEmail)
         return false;
@@ -219,7 +230,8 @@ export default function NewCampaignPage() {
       .replace(/\{\{phone\}\}/g, previewProspect.phone || "")
       .replace(/\{\{website_url\}\}/g, previewProspect.website_url || "no website")
       .replace(/\{\{website_grade\}\}/g, grade)
-      .replace(/\{\{rating\}\}/g, previewProspect.rating?.toString() || "N/A");
+      .replace(/\{\{rating\}\}/g, previewProspect.rating?.toString() || "N/A")
+      .replace(/\{\{preview_url\}\}/g, "Latest saved preview link");
   }
 
   async function handleCreate(e: React.FormEvent) {
@@ -234,7 +246,6 @@ export default function NewCampaignPage() {
     setLoading(true);
 
     try {
-      // 1. Create campaign
       const campaignRes = await fetch("/api/campaigns", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -243,6 +254,7 @@ export default function NewCampaignPage() {
           type,
           subject_template: type === "email" ? subject : null,
           body_template: body,
+          recipient_ids: Array.from(selectedIds),
         }),
       });
 
@@ -253,45 +265,7 @@ export default function NewCampaignPage() {
         return;
       }
 
-      const campaignId = campaignData.campaign.id;
-
-      // 2. Create campaign messages for selected recipients
-      const selectedProspects = prospects.filter((p) => selectedIds.has(p.id));
-      const messages = selectedProspects
-        .map((p) => {
-          const address =
-            type === "email" ? p.email : p.phone;
-          if (!address) return null;
-          return {
-            campaign_id: campaignId,
-            prospect_id: p.id,
-            channel: type,
-            to_address: address,
-            subject: type === "email" ? subject : null,
-            body: body,
-            status: "pending",
-          };
-        })
-        .filter(Boolean);
-
-      if (messages.length === 0) {
-        setError("None of the selected prospects have contact info for this channel");
-        return;
-      }
-
-      const msgRes = await fetch("/api/campaigns/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages }),
-      });
-
-      if (!msgRes.ok) {
-        const msgData = await msgRes.json();
-        setError(msgData.error || "Failed to add recipients");
-        return;
-      }
-
-      router.push(`/campaigns/${campaignId}`);
+      router.push(`/app/campaigns/${campaignData.campaign.id}`);
     } catch {
       setError("Failed to create campaign");
     } finally {
@@ -302,15 +276,15 @@ export default function NewCampaignPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <Link href="/campaigns">
+        <Link href="/app/campaigns">
           <Button variant="ghost" size="icon">
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">New Campaign</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Review Outreach</h1>
           <p className="text-muted-foreground">
-            Create an outreach campaign for your prospects
+            Review the exact audience and message before anything is sent.
           </p>
         </div>
       </div>
@@ -561,7 +535,7 @@ export default function NewCampaignPage() {
         </div>
 
         <div className="mt-6 flex justify-end gap-3">
-          <Link href="/campaigns">
+          <Link href="/app/campaigns">
             <Button variant="outline" type="button">Cancel</Button>
           </Link>
           <Button type="submit" disabled={loading || selectedIds.size === 0}>

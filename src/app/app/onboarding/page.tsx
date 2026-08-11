@@ -181,19 +181,15 @@ export default function AdminOnboardingPage() {
   async function generateLink() {
     setGenerating(true);
     try {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) throw new Error("You must be signed in");
-
-      const { data, error } = await supabase
-        .from("client_onboarding")
-        .insert({ status: "pending", user_id: user.id })
-        .select("token")
-        .single();
-
-      if (error) throw error;
+      const response = await fetch("/api/onboarding", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{}",
+      });
+      const data = await response.json();
+      if (!response.ok || !data.token) {
+        throw new Error(data.error || "Failed to generate link");
+      }
 
       const url = `${window.location.origin}/onboarding/${data.token}`;
       await navigator.clipboard.writeText(url);
@@ -201,7 +197,6 @@ export default function AdminOnboardingPage() {
         description: url,
       });
 
-      // Refresh list
       await fetchRecords();
     } catch (err) {
       console.error("Failed to generate link:", err);

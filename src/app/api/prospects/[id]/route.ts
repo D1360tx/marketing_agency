@@ -16,17 +16,34 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { data, error } = await supabase
-      .from("prospects")
-      .select("*, website_analyses(*)")
-      .eq("id", id)
-      .single();
+    const [prospectResult, previewResult] = await Promise.all([
+      supabase
+        .from("prospects")
+        .select("*, website_analyses(*)")
+        .eq("id", id)
+        .eq("user_id", user.id)
+        .maybeSingle(),
+      supabase
+        .from("generated_sites")
+        .select("id, share_token, business_name, created_at")
+        .eq("prospect_id", id)
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+    ]);
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 404 });
+    if (prospectResult.error || !prospectResult.data) {
+      return NextResponse.json({ error: "Prospect not found" }, { status: 404 });
+    }
+    if (previewResult.error) {
+      console.error("Latest preview lookup failed:", previewResult.error.message);
     }
 
-    return NextResponse.json({ prospect: data });
+    return NextResponse.json({
+      prospect: prospectResult.data,
+      latest_preview: previewResult.data || null,
+    });
   } catch {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
