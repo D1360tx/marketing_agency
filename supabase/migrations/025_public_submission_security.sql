@@ -2,8 +2,15 @@
 -- Apply after 023_client_onboarding.sql and 024_harden_client_onboarding.sql.
 
 -- The old audit tool used fabricated GBP data and no longer accepts submissions.
-DROP POLICY IF EXISTS "anon insert" ON public.audit_leads;
-REVOKE ALL ON TABLE public.audit_leads FROM anon, authenticated;
+-- Some production databases never created audit_leads, so guard the legacy cleanup.
+DO $$
+BEGIN
+  IF to_regclass('public.audit_leads') IS NOT NULL THEN
+    EXECUTE 'DROP POLICY IF EXISTS "anon insert" ON public.audit_leads';
+    EXECUTE 'REVOKE ALL ON TABLE public.audit_leads FROM anon, authenticated';
+  END IF;
+END;
+$$;
 
 ALTER TABLE public.prospects
   ADD COLUMN IF NOT EXISTS sms_consent_at timestamptz,
