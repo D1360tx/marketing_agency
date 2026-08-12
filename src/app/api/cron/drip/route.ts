@@ -1,16 +1,18 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { processDripQueue } from "@/lib/drip-engine";
+import { verifyBearerSecret } from "@/lib/server-auth";
 
 // Vercel cron job — runs daily at 9am CST
 // Configured in vercel.json
 export async function GET(request: Request) {
-  // Verify cron secret to prevent unauthorized calls
-  const authHeader = request.headers.get("authorization");
-  const cronSecret = process.env.CRON_SECRET;
-
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authorization = verifyBearerSecret(
+    request.headers.get("authorization"),
+    process.env.CRON_SECRET
+  );
+  if (!authorization.ok) {
+    const error = authorization.reason === "missing-secret" ? "Server misconfigured" : "Unauthorized";
+    return NextResponse.json({ error }, { status: authorization.status });
   }
 
   try {

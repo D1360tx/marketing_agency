@@ -1,18 +1,15 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { verifyBearerSecret } from "@/lib/server-auth";
 
-// Group chat + Booked Out topic (thread_id=3). Falls back to direct chat if not set.
-const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || "138971046";
-const TELEGRAM_THREAD_ID = process.env.TELEGRAM_THREAD_ID || null;
-
-async function sendTelegram(token: string, text: string) {
+async function sendTelegram(token: string, chatId: string, threadId: string | null, text: string) {
   const body: Record<string, unknown> = {
-    chat_id: TELEGRAM_CHAT_ID,
+    chat_id: chatId,
     text,
     parse_mode: "HTML",
   };
-  if (TELEGRAM_THREAD_ID) {
-    body.message_thread_id = TELEGRAM_THREAD_ID;
+  if (threadId) {
+    body.message_thread_id = threadId;
   }
   await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: "POST",
@@ -22,16 +19,22 @@ async function sendTelegram(token: string, text: string) {
 }
 
 export async function GET(request: Request) {
-  // Verify cron secret to prevent unauthorized triggers
-  const authHeader = request.headers.get("authorization");
-  const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authorization = verifyBearerSecret(
+    request.headers.get("authorization"),
+    process.env.CRON_SECRET
+  );
+  if (!authorization.ok) {
+    const error = authorization.reason === "missing-secret" ? "Server misconfigured" : "Unauthorized";
+    return NextResponse.json({ error }, { status: authorization.status });
   }
 
   try {
     const token = process.env.TELEGRAM_BOT_TOKEN;
-    if (!token) return NextResponse.json({ error: "TELEGRAM_BOT_TOKEN not set" }, { status: 500 });
+    const chatId = process.env.TELEGRAM_CHAT_ID?.trim();
+    const threadId = process.env.TELEGRAM_THREAD_ID?.trim() || null;
+    if (!token || !chatId) {
+      return NextResponse.json({ error: "Telegram is not configured" }, { status: 500 });
+    }
 
     const supabase = await createClient();
 
@@ -132,7 +135,7 @@ ${upcomingList}
 
 \ud83d\udcaa Keep pushing. Consistency wins.`;
 
-    await sendTelegram(token, message);
+    await sendTelegram(token, chatId, threadId, message);
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("Weekly summary error:", err);

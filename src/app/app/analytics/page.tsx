@@ -23,7 +23,6 @@ import {
   Mail,
   Eye,
   MousePointer,
-  MessageSquare,
   Users,
   UserCheck,
   Target,
@@ -40,10 +39,8 @@ interface Analytics {
   emailStats: {
     total_sent: number;
     total_opened: number;
-    total_replied: number;
     total_clicks: number;
     open_rate: number;
-    reply_rate: number;
     click_rate: number;
   };
   campaignStats: Array<{
@@ -55,9 +52,7 @@ interface Analytics {
     stats: {
       sent: number;
       opened: number;
-      replied: number;
       open_rate: number;
-      reply_rate: number;
     };
   }>;
   sequenceStats: Array<{
@@ -201,7 +196,7 @@ export default function AnalyticsPage() {
       </Card>
 
       {/* Email Performance */}
-      <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Emails Sent</CardTitle>
@@ -235,18 +230,7 @@ export default function AnalyticsPage() {
             </p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Reply Rate</CardTitle>
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{emailStats.reply_rate}%</div>
-            <p className="text-xs text-muted-foreground">
-              {emailStats.total_replied} replies
-            </p>
-          </CardContent>
-        </Card>
+
       </div>
 
       {/* Activity Timeline (last 30 days) */}
@@ -349,10 +333,7 @@ export default function AnalyticsPage() {
                     <span className={c.stats.open_rate >= 30 ? "text-green-600 font-medium" : c.stats.open_rate >= 15 ? "text-yellow-600" : "text-red-500"}>
                       {c.stats.open_rate}% ({c.stats.opened} opened)
                     </span>
-                    <span className="text-muted-foreground">Reply Rate</span>
-                    <span className={c.stats.reply_rate >= 5 ? "text-green-600 font-medium" : "text-muted-foreground"}>
-                      {c.stats.reply_rate}% ({c.stats.replied} replies)
-                    </span>
+
                   </div>
                 </div>
               ))}
@@ -368,8 +349,7 @@ export default function AnalyticsPage() {
                     <TableHead>Sent</TableHead>
                     <TableHead>Opened</TableHead>
                     <TableHead>Open Rate</TableHead>
-                    <TableHead>Replied</TableHead>
-                    <TableHead>Reply Rate</TableHead>
+
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -385,12 +365,7 @@ export default function AnalyticsPage() {
                           {c.stats.open_rate}%
                         </span>
                       </TableCell>
-                      <TableCell>{c.stats.replied}</TableCell>
-                      <TableCell>
-                        <span className={c.stats.reply_rate >= 5 ? "text-green-600 font-medium" : "text-muted-foreground"}>
-                          {c.stats.reply_rate}%
-                        </span>
-                      </TableCell>
+
                     </TableRow>
                   ))}
                 </TableBody>

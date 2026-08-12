@@ -1,19 +1,22 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import {
+  isAssetPathForOnboarding,
+  isPendingOnboardingLinkActive,
+  isValidOnboardingToken,
+  onboardingSubmissionSchema,
+} from "@/lib/onboarding-security";
 
 function getServiceClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key);
 }
 
 async function sendTelegramNotification(data: {
   business_name: string;
-  owner_name: string;
-  phone: string;
   services_offered: string[];
-  has_google_my_business: boolean;
 }) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
@@ -22,10 +25,8 @@ async function sendTelegramNotification(data: {
   const text = [
     "🎉 New Client Intake Submitted!",
     `Business: ${data.business_name || "—"}`,
-    `Owner: ${data.owner_name || "—"}`,
-    `Phone: ${data.phone || "—"}`,
-    `Services: ${data.services_offered?.length ? data.services_offered.join(", ") : "—"}`,
-    `GBP: ${data.has_google_my_business ? "yes" : "no"}`,
+    `Services: ${data.services_offered.length ? data.services_offered.join(", ") : "—"}`,
+    "Review contact details securely in the Booked Out dashboard.",
   ].join("\n");
 
   try {
@@ -35,7 +36,9 @@ async function sendTelegramNotification(data: {
       body: JSON.stringify({
         chat_id: chatId,
         text,
-        ...(process.env.TELEGRAM_THREAD_ID ? { message_thread_id: Number(process.env.TELEGRAM_THREAD_ID) } : {}),
+        ...(process.env.TELEGRAM_THREAD_ID
+          ? { message_thread_id: Number(process.env.TELEGRAM_THREAD_ID) }
+          : {}),
       }),
     });
   } catch (err) {
@@ -43,29 +46,52 @@ async function sendTelegramNotification(data: {
   }
 }
 
+function noStoreJson(body: object, init?: ResponseInit) {
+  const response = NextResponse.json(body, init);
+  response.headers.set("Cache-Control", "private, no-store");
+  response.headers.set("Referrer-Policy", "no-referrer");
+  return response;
+}
+
+function nullable(value: string) {
+  const trimmed = value.trim();
+  return trimmed || null;
+}
+
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ token: string }> }
 ) {
   const { token } = await params;
+  if (!isValidOnboardingToken(token)) {
+    return noStoreJson({ valid: false, error: "Link not found or expired" }, { status: 404 });
+  }
 
   const supabase = getServiceClient();
+  if (!supabase) {
+    return noStoreJson({ valid: false, error: "Onboarding is not configured" }, { status: 503 });
+  }
 
   const { data, error } = await supabase
     .from("client_onboarding")
-    .select("id, status, submitted_at, business_name, owner_name, phone, prospect_id")
+    .select(
+      "id, user_id, status, submitted_at, expires_at, revoked_at, business_name, owner_name, phone, prospect_id"
+    )
     .eq("token", token)
     .single();
 
-  if (error || !data) {
-    return NextResponse.json({ valid: false, error: "Link not found or expired" }, { status: 404 });
+  if (error || !data || data.revoked_at) {
+    return noStoreJson({ valid: false, error: "Link not found or expired" }, { status: 404 });
   }
 
   if (data.submitted_at) {
-    return NextResponse.json({ valid: true, submitted: true });
+    return noStoreJson({ valid: true, submitted: true });
   }
 
-  // Pre-fill: if linked to a prospect, pull their data
+  if (!isPendingOnboardingLinkActive(data)) {
+    return noStoreJson({ valid: false, error: "Link not found or expired" }, { status: 410 });
+  }
+
   let prefill: Record<string, string | null> = {
     business_name: data.business_name || null,
     owner_name: data.owner_name || null,
@@ -77,6 +103,7 @@ export async function GET(
       .from("prospects")
       .select("business_name, phone, email, address, city, state, zip, website_url")
       .eq("id", data.prospect_id)
+      .eq("user_id", data.user_id)
       .single();
 
     if (prospect) {
@@ -94,7 +121,7 @@ export async function GET(
     }
   }
 
-  return NextResponse.json({ valid: true, submitted: false, prefill });
+  return noStoreJson({ valid: true, submitted: false, prefill });
 }
 
 export async function POST(
@@ -102,99 +129,106 @@ export async function POST(
   { params }: { params: Promise<{ token: string }> }
 ) {
   const { token } = await params;
+  if (!isValidOnboardingToken(token)) {
+    return noStoreJson({ error: "Link not found or expired" }, { status: 404 });
+  }
 
   const supabase = getServiceClient();
+  if (!supabase) {
+    return noStoreJson({ error: "Onboarding is not configured" }, { status: 503 });
+  }
 
-  // Validate token exists and not already submitted
   const { data: existing, error: lookupError } = await supabase
     .from("client_onboarding")
-    .select("id, submitted_at")
+    .select("id, submitted_at, expires_at, revoked_at")
     .eq("token", token)
     .single();
 
-  if (lookupError || !existing) {
-    return NextResponse.json({ error: "Link not found or expired" }, { status: 404 });
+  if (lookupError || !existing || existing.revoked_at) {
+    return noStoreJson({ error: "Link not found or expired" }, { status: 404 });
   }
-
   if (existing.submitted_at) {
-    return NextResponse.json({ error: "Already submitted" }, { status: 409 });
+    return noStoreJson({ error: "Already submitted" }, { status: 409 });
+  }
+  if (!isPendingOnboardingLinkActive(existing)) {
+    return noStoreJson({ error: "Link not found or expired" }, { status: 410 });
   }
 
-  let body: Record<string, unknown>;
+  let rawBody: unknown;
   try {
-    body = await request.json();
+    const rawText = await request.text();
+    if (Buffer.byteLength(rawText, "utf8") > 100 * 1024) {
+      return noStoreJson({ error: "Request body is too large" }, { status: 413 });
+    }
+    rawBody = JSON.parse(rawText);
   } catch {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+    return noStoreJson({ error: "Invalid request body" }, { status: 400 });
   }
 
-  const {
-    business_name,
-    owner_name,
-    phone,
-    address,
-    city,
-    state,
-    zip,
-    service_areas,
-    services_offered,
-    has_google_my_business,
-    google_my_business_url,
-    existing_website,
-    brand_colors,
-    style_notes,
-    logo_url,
-    photo_urls,
-    primary_contact_name,
-    primary_contact_email,
-    primary_contact_phone,
-    preferred_contact_method,
-    review_process_notes,
-    additional_notes,
-  } = body as Record<string, unknown>;
+  const parsed = onboardingSubmissionSchema.safeParse(rawBody);
+  if (!parsed.success) {
+    return noStoreJson(
+      { error: "Invalid onboarding details", fields: parsed.error.flatten().fieldErrors },
+      { status: 400 }
+    );
+  }
 
-  const { error: updateError } = await supabase
+  const body = parsed.data;
+  if (body.logo_url && !isAssetPathForOnboarding(body.logo_url, existing.id)) {
+    return noStoreJson({ error: "Invalid logo asset" }, { status: 400 });
+  }
+  if (body.photo_urls.some((path) => !isAssetPathForOnboarding(path, existing.id))) {
+    return noStoreJson({ error: "Invalid photo asset" }, { status: 400 });
+  }
+
+  const now = new Date().toISOString();
+  const { data: updated, error: updateError } = await supabase
     .from("client_onboarding")
     .update({
-      business_name: business_name || null,
-      owner_name: owner_name || null,
-      phone: phone || null,
-      address: address || null,
-      city: city || null,
-      state: state || null,
-      zip: zip || null,
-      service_areas: service_areas || null,
-      services_offered: Array.isArray(services_offered) ? services_offered : [],
-      has_google_my_business: Boolean(has_google_my_business),
-      google_my_business_url: google_my_business_url || null,
-      existing_website: existing_website || null,
-      brand_colors: brand_colors || null,
-      style_notes: style_notes || null,
-      logo_url: logo_url || null,
-      photo_urls: Array.isArray(photo_urls) ? photo_urls : [],
-      primary_contact_name: primary_contact_name || null,
-      primary_contact_email: primary_contact_email || null,
-      primary_contact_phone: primary_contact_phone || null,
-      preferred_contact_method: preferred_contact_method || null,
-      review_process_notes: review_process_notes || null,
-      additional_notes: additional_notes || null,
-      submitted_at: new Date().toISOString(),
+      business_name: body.business_name,
+      owner_name: nullable(body.owner_name),
+      phone: nullable(body.phone),
+      address: nullable(body.address),
+      city: nullable(body.city),
+      state: nullable(body.state),
+      zip: nullable(body.zip),
+      service_areas: nullable(body.service_areas),
+      services_offered: body.services_offered,
+      has_google_my_business: body.has_google_my_business,
+      google_my_business_url: nullable(body.google_my_business_url),
+      existing_website: nullable(body.existing_website),
+      brand_colors: nullable(body.brand_colors),
+      style_notes: nullable(body.style_notes),
+      logo_url: nullable(body.logo_url),
+      photo_urls: body.photo_urls,
+      primary_contact_name: nullable(body.primary_contact_name),
+      primary_contact_email: nullable(body.primary_contact_email),
+      primary_contact_phone: nullable(body.primary_contact_phone),
+      preferred_contact_method: body.preferred_contact_method,
+      review_process_notes: nullable(body.review_process_notes),
+      additional_notes: nullable(body.additional_notes),
+      submitted_at: now,
       status: "pending",
     })
-    .eq("token", token);
+    .eq("id", existing.id)
+    .is("submitted_at", null)
+    .is("revoked_at", null)
+    .gt("expires_at", now)
+    .select("id")
+    .maybeSingle();
 
   if (updateError) {
     console.error("[onboarding] Update error:", updateError);
-    return NextResponse.json({ error: "Failed to save submission" }, { status: 500 });
+    return noStoreJson({ error: "Failed to save submission" }, { status: 500 });
+  }
+  if (!updated) {
+    return noStoreJson({ error: "Link has expired or was already submitted" }, { status: 409 });
   }
 
-  // Send Telegram notification (fire-and-forget)
   sendTelegramNotification({
-    business_name: String(business_name || ""),
-    owner_name: String(owner_name || ""),
-    phone: String(phone || ""),
-    services_offered: Array.isArray(services_offered) ? (services_offered as string[]) : [],
-    has_google_my_business: Boolean(has_google_my_business),
+    business_name: body.business_name,
+    services_offered: body.services_offered,
   }).catch(() => {});
 
-  return NextResponse.json({ success: true });
+  return noStoreJson({ success: true });
 }

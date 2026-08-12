@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
@@ -17,64 +16,23 @@ import {
   LayoutDashboard,
   Search,
   Users,
-  Mail,
   Settings,
+  ClipboardList,
+  Megaphone,
   LogOut,
   Menu,
-  Megaphone,
-  Globe,
-  Zap,
-  BarChart3,
-  Star,
-  CheckSquare,
-  BookOpen,
-  ClipboardList,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navigation = [
-  { name: "Dashboard", href: "/app", icon: LayoutDashboard },
-  { name: "Prospector", href: "/app/prospector", icon: Search },
+  { name: "Today", href: "/app", icon: LayoutDashboard },
   { name: "Leads", href: "/app/leads", icon: Users },
-  { name: "Tasks", href: "/app/tasks", icon: CheckSquare },
-  { name: "Campaigns", href: "/app/campaigns", icon: Mail },
-  { name: "Sequences", href: "/app/sequences", icon: Zap },
-  { name: "Generator", href: "/app/generator", icon: Globe },
-  { name: "Analytics", href: "/app/analytics", icon: BarChart3 },
-  { name: "Reviews", href: "/app/reviews", icon: Star },
-  { name: "Playbook", href: "/app/playbook", icon: BookOpen },
-  { name: "Onboarding", href: "/app/onboarding", icon: ClipboardList },
-  { name: "Settings", href: "/app/settings", icon: Settings },
+  { name: "Find Leads", href: "/app/prospector", icon: Search },
+  { name: "Clients", href: "/app/onboarding", icon: ClipboardList },
 ];
-
-function useTasksCount() {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    async function fetchCount() {
-      try {
-        const res = await fetch("/api/prospects");
-        if (!res.ok) return;
-        const data = await res.json();
-        const today = new Date().toISOString().split("T")[0];
-        const due = (data.prospects || []).filter(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (p: any) => p.status === "follow_up" && p.follow_up_date && p.follow_up_date <= today
-        ).length;
-        setCount(due);
-      } catch {
-        // fail silently
-      }
-    }
-    fetchCount();
-  }, []);
-
-  return count;
-}
 
 function SidebarContent({ pathname }: { pathname: string }) {
   const router = useRouter();
-  const tasksCount = useTasksCount();
 
   async function handleSignOut() {
     const supabase = createClient();
@@ -111,17 +69,24 @@ function SidebarContent({ pathname }: { pathname: string }) {
             >
               <item.icon className="h-4 w-4" />
               <span className="flex-1">{item.name}</span>
-              {item.name === "Tasks" && tasksCount > 0 && (
-                <Badge className="h-5 min-w-5 rounded-full bg-red-500 px-1.5 text-[10px] font-bold text-white hover:bg-red-500">
-                  {tasksCount}
-                </Badge>
-              )}
             </Link>
           );
         })}
       </nav>
       <Separator />
-      <div className="px-3 py-4">
+      <div className="space-y-1 px-3 py-4">
+        <Link
+          href="/app/settings"
+          className={cn(
+            "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+            pathname.startsWith("/app/settings")
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+          )}
+        >
+          <Settings className="h-4 w-4" />
+          Settings
+        </Link>
         <Button
           variant="ghost"
           className="w-full justify-start gap-3 text-muted-foreground"

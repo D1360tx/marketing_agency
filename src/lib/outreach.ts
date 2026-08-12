@@ -33,6 +33,8 @@ export function buildTemplateVars(
     website_grade: grade || "N/A",
     rating: prospect.rating?.toString() || "N/A",
     preview_url: previewUrl || "",
+    booking_url: `${(process.env.NEXT_PUBLIC_APP_URL || "https://trybookedout.com").replace(/\/$/, "")}/go/book`,
+    payment_url: `${(process.env.NEXT_PUBLIC_APP_URL || "https://trybookedout.com").replace(/\/$/, "")}/go/start`,
   };
 }
 

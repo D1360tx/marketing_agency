@@ -6,21 +6,23 @@ import { ArrowRight, Loader2, CheckCircle } from "lucide-react";
 export function AuditForm() {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
   const [form, setForm] = useState({ business_name: "", phone: "", email: "", website: "" });
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    setError("");
     try {
-      await fetch("/api/leads/inbound", {
+      const response = await fetch("/api/leads/inbound", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, source: "audit_form" }),
       });
+      if (!response.ok) throw new Error("Submission failed");
       setSubmitted(true);
     } catch {
-      // still show success to user
-      setSubmitted(true);
+      setError("We could not submit the request. Please retry or call (737) 260-5332.");
     } finally {
       setLoading(false);
     }
@@ -32,8 +34,11 @@ export function AuditForm() {
         <CheckCircle className="h-10 w-10 text-green-500" />
         <div>
           <p className="text-lg font-semibold text-slate-900">You&apos;re on the list!</p>
-          <p className="mt-1 text-sm text-slate-600">We&apos;ll review your site and reach out within 24 hours.</p>
+          <p className="mt-1 text-sm text-slate-600">We&apos;ll review the available source data and email the next step.</p>
         </div>
+        <a href="/go/book" className="text-sm font-semibold text-blue-700 underline underline-offset-4">
+          Schedule an audit review
+        </a>
       </div>
     );
   }
@@ -95,6 +100,7 @@ export function AuditForm() {
           <>Get My Free Website Audit <ArrowRight className="h-4 w-4" /></>
         )}
       </button>
+      {error && <p role="alert" className="text-sm font-medium text-red-600">{error}</p>}
     </form>
   );
 }

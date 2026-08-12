@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { getMockAnalysis } from "@/lib/mock-data";
 import { analyzeWebsite } from "@/lib/website-analyzer";
@@ -6,6 +7,12 @@ import { extractEmails } from "@/lib/email-extractor";
 import { findEmailByDomain } from "@/lib/hunter";
 import { calculateLeadScore } from "@/lib/lead-scoring";
 import { logActivity } from "@/lib/activity-log";
+import { isMockDataEnabled } from "@/lib/runtime-flags";
+
+const analyzeRequestSchema = z.object({
+  prospect_id: z.string().uuid(),
+  website_url: z.string().max(2048).optional(),
+});
 
 export async function POST(request: Request) {
   try {
@@ -18,14 +25,25 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { prospect_id, website_url } = await request.json();
-
-    if (!prospect_id) {
+    const parsed = analyzeRequestSchema.safeParse(await request.json());
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "prospect_id is required" },
+        { error: "A valid prospect is required" },
         { status: 400 }
       );
     }
+    const { prospect_id } = parsed.data;
+
+    const { data: ownedProspect, error: prospectError } = await supabase
+      .from("prospects")
+      .select("website_url, email, phone, rating, review_count")
+      .eq("id", prospect_id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (prospectError || !ownedProspect) {
+      return NextResponse.json({ error: "Prospect not found" }, { status: 404 });
+    }
+    const website_url = ownedProspect.website_url;
 
     if (!website_url) {
       return NextResponse.json({
@@ -34,7 +52,7 @@ export async function POST(request: Request) {
       });
     }
 
-    const useMock = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
+    const useMock = isMockDataEnabled();
 
     let analysis;
     let extractedEmails: string[] = [];
@@ -48,7 +66,7 @@ export async function POST(request: Request) {
         .from("user_settings")
         .select("google_pagespeed_key, hunter_api_key")
         .eq("user_id", user.id)
-        .single();
+        .maybeSingle();
 
       const apiKey =
         settings?.google_pagespeed_key ||
@@ -74,7 +92,7 @@ export async function POST(request: Request) {
         console.error("Analysis error:", err);
         return NextResponse.json(
           {
-            error: `Website analysis failed: ${err instanceof Error ? err.message : "Unknown error"}`,
+            error: "Website analysis could not be completed",
           },
           { status: 502 }
         );
@@ -136,6 +154,7 @@ export async function POST(request: Request) {
         .from("prospects")
         .update({ email: extractedEmails[0] })
         .eq("id", prospect_id)
+        .eq("user_id", user.id)
         .is("email", null); // only update if no email exists
 
       // Log email discovery
@@ -153,7 +172,8 @@ export async function POST(request: Request) {
       .from("prospects")
       .select("website_url, email, phone, rating, review_count")
       .eq("id", prospect_id)
-      .single();
+      .eq("user_id", user.id)
+      .maybeSingle();
 
     if (prospect) {
       const { score, breakdown } = calculateLeadScore(prospect, data);
@@ -163,7 +183,8 @@ export async function POST(request: Request) {
           lead_score: score,
           lead_score_breakdown: breakdown,
         })
-        .eq("id", prospect_id);
+        .eq("id", prospect_id)
+        .eq("user_id", user.id);
     }
 
     // Log analysis activity

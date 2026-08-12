@@ -1,5 +1,8 @@
 # Booked Out — Fulfillment Pipeline Gap Report
-**Dry-Run Client:** ABC Plumbing (fake client, $597/mo — Full System plan)
+
+> **Historical report:** This dry run used a superseded offer and price. Use `OFFER-SOURCE-OF-TRUTH.md`, `BRIEF.md`, and `REVENUE-READINESS-RUNBOOK.md` for current operations. The historical details below are preserved as evidence of the earlier dry run.
+
+**Dry-Run Client:** ABC Plumbing (fake client, superseded plan)
 **Date:** 2026-03-24
 **Author:** John 💻 (web developer sub-agent)
 **Purpose:** Find every gap in the delivery pipeline before Diego sells to a real client.

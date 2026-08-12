@@ -7,7 +7,7 @@ import { searchBusinessesBrave } from "@/lib/brave-local-search";
 import { searchBusinesses as searchBusinessesOutscraper } from "@/lib/outscraper";
 import { calculateLeadScore } from "@/lib/lead-scoring";
 import { logActivity } from "@/lib/activity-log";
-import { extractEmails } from "@/lib/email-extractor";
+import { isMockDataEnabled } from "@/lib/runtime-flags";
 
 export async function POST(request: Request) {
   try {
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     }
 
     const { query, location, limit } = parsed.data;
-    const useMock = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
+    const useMock = isMockDataEnabled();
 
     let businesses;
 
@@ -217,28 +217,6 @@ export async function POST(request: Request) {
       }
     }
 
-    // Fire-and-forget email extraction for prospects without emails
-    if (data) {
-      const needsEmail = data.filter((p) => !p.email && p.website_url);
-      if (needsEmail.length > 0) {
-        // Don't await — runs in background so search response returns quickly
-        Promise.allSettled(
-          needsEmail.map(async (prospect) => {
-            try {
-              const emails = await extractEmails(prospect.website_url!);
-              if (emails.length > 0) {
-                await supabase
-                  .from("prospects")
-                  .update({ email: emails[0] })
-                  .eq("id", prospect.id);
-              }
-            } catch {
-              // Silently ignore extraction failures
-            }
-          })
-        );
-      }
-    }
 
     return NextResponse.json({
       prospects: data,

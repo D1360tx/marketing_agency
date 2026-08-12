@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
+const SENT_STATUSES = ["sent", "delivered", "opened", "replied"];
+
 export async function GET() {
   try {
     const supabase = await createClient();
@@ -29,21 +31,21 @@ export async function GET() {
         .eq("user_id", user.id),
       supabase
         .from("campaign_messages")
-        .select("id, status, sent_at, opened_at, replied_at, campaign_id")
-        .eq("status", "sent")
+        .select("id, status, sent_at, opened_at, campaign_id")
+        .in("status", SENT_STATUSES)
         .order("sent_at", { ascending: false }),
       supabase
         .from("drip_messages")
-        .select("id, status, sent_at, opened_at, replied_at, step_id")
+        .select("id, status, sent_at, opened_at, step_id")
         .eq("user_id", user.id),
       supabase
         .from("tracked_opens")
-        .select("id, opened_at, message_type")
+        .select("id, message_id, opened_at, message_type")
         .eq("user_id", user.id)
         .order("opened_at", { ascending: false }),
       supabase
         .from("tracked_clicks")
-        .select("id, clicked_at, message_type, url")
+        .select("id, message_id, clicked_at, message_type, url")
         .eq("user_id", user.id)
         .order("clicked_at", { ascending: false }),
       supabase
@@ -61,6 +63,25 @@ export async function GET() {
         .eq("user_id", user.id),
     ]);
 
+    const queryResults = [
+      prospectsResult,
+      campaignMsgsResult,
+      dripMsgsResult,
+      opensResult,
+      clicksResult,
+      campaignsResult,
+      sequencesResult,
+      enrollmentsResult,
+    ];
+    const failedQuery = queryResults.find((result) => result.error);
+    if (failedQuery?.error) {
+      console.error("Analytics query failed:", failedQuery.error.message);
+      return NextResponse.json(
+        { error: "Analytics data is temporarily unavailable" },
+        { status: 503 }
+      );
+    }
+
     const prospects = prospectsResult.data || [];
     const campaignMsgs = campaignMsgsResult.data || [];
     const dripMsgs = dripMsgsResult.data || [];
@@ -70,6 +91,29 @@ export async function GET() {
     const sequences = sequencesResult.data || [];
     const enrollments = enrollmentsResult.data || [];
 
+    const uniqueOpenMessageIds = new Set(
+      opens.map((event) => `${event.message_type}:${event.message_id}`)
+    );
+    const uniqueClickMessageIds = new Set(
+      clicks.map((event) => `${event.message_type}:${event.message_id}`)
+    );
+    const uniqueOpens = Array.from(
+      new Map(
+        opens.map((event) => [
+          `${event.message_type}:${event.message_id}`,
+          event,
+        ])
+      ).values()
+    );
+    const uniqueClicks = Array.from(
+      new Map(
+        clicks.map((event) => [
+          `${event.message_type}:${event.message_id}`,
+          event,
+        ])
+      ).values()
+    );
+
     // All messages combined
     const allSent = [
       ...campaignMsgs.filter((m) => ["sent", "delivered", "opened", "replied"].includes(m.status)),
@@ -78,10 +122,6 @@ export async function GET() {
     const allOpened = [
       ...campaignMsgs.filter((m) => ["opened", "replied"].includes(m.status)),
       ...dripMsgs.filter((m) => ["opened", "replied"].includes(m.status)),
-    ];
-    const allReplied = [
-      ...campaignMsgs.filter((m) => m.status === "replied"),
-      ...dripMsgs.filter((m) => m.status === "replied"),
     ];
 
     // Funnel
@@ -100,19 +140,15 @@ export async function GET() {
     const emailStats = {
       total_sent: allSent.length,
       total_opened: allOpened.length,
-      total_replied: allReplied.length,
-      total_clicks: clicks.length,
+      total_clicks: uniqueClickMessageIds.size,
       open_rate:
         allSent.length > 0
           ? Math.round((allOpened.length / allSent.length) * 100)
           : 0,
-      reply_rate:
-        allSent.length > 0
-          ? Math.round((allReplied.length / allSent.length) * 100)
-          : 0,
+
       click_rate:
         allSent.length > 0
-          ? Math.round((clicks.length / allSent.length) * 100)
+          ? Math.round((uniqueClickMessageIds.size / allSent.length) * 100)
           : 0,
     };
 
@@ -121,16 +157,14 @@ export async function GET() {
       const msgs = campaignMsgs.filter((m) => m.campaign_id === c.id);
       const cSent = msgs.filter((m) => ["sent", "delivered", "opened", "replied"].includes(m.status)).length;
       const cOpened = msgs.filter((m) => ["opened", "replied"].includes(m.status)).length;
-      const cReplied = msgs.filter((m) => m.status === "replied").length;
+
 
       return {
         ...c,
         stats: {
           sent: cSent,
           opened: cOpened,
-          replied: cReplied,
           open_rate: cSent > 0 ? Math.round((cOpened / cSent) * 100) : 0,
-          reply_rate: cSent > 0 ? Math.round((cReplied / cSent) * 100) : 0,
         },
       };
     });
@@ -167,12 +201,12 @@ export async function GET() {
       }
     }
 
-    for (const open of opens) {
+    for (const open of uniqueOpens) {
       const day = open.opened_at.split("T")[0];
       if (dailyActivity[day]) dailyActivity[day].opened++;
     }
 
-    for (const click of clicks) {
+    for (const click of uniqueClicks) {
       const day = click.clicked_at.split("T")[0];
       if (dailyActivity[day]) dailyActivity[day].clicked++;
     }
@@ -193,8 +227,8 @@ export async function GET() {
         campaigns: campaigns.length,
         sequences: sequences.length,
         enrollments: enrollments.length,
-        uniqueOpens: opens.length,
-        uniqueClicks: clicks.length,
+        uniqueOpens: uniqueOpenMessageIds.size,
+        uniqueClicks: uniqueClickMessageIds.size,
       },
     });
   } catch (err) {

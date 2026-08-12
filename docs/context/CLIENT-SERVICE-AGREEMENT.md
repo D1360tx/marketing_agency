@@ -1,138 +1,148 @@
-# Booked Out — Client Service Agreement
-*Standard template. Fill in bracketed fields before sending.*
+# Booked Out Client Service Agreement
 
----
+> **Operational template, not legal advice. Texas counsel should review this template before the first client signs it. Complete every bracketed field and delete all unused options.**
 
-**SERVICE AGREEMENT**
+## Service Agreement
 
-This Service Agreement ("Agreement") is entered into as of **[DATE]** between:
+This Service Agreement (the **“Agreement”**) is entered into as of **[EFFECTIVE DATE]** between:
 
-**Booked Out** ("Company"), operated by Diego Campos, located in Dripping Springs, Texas
-**[CLIENT BUSINESS NAME]** ("Client"), located at **[CLIENT ADDRESS]**
+- **Booked Out**, operated by Diego Campos, with a mailing address at **[BOOKED OUT MAILING ADDRESS]** (**“Company”**); and
+- **[CLIENT LEGAL NAME]**, located at **[CLIENT ADDRESS]** (**“Client”**).
 
----
+The Company and Client are each a **“Party”** and together the **“Parties.”**
 
-## 1. SERVICES
+## 1. Selected Service
 
-Company agrees to provide the following services ("Services") to Client:
+**Select one and delete the other before signing.**
 
-**[SELECT TIER — delete the other]**
+### Local Call System: $499 per month
 
-**The Full System — $399/month**
-- Professional business website (custom design, mobile-optimized, hosted)
-- Google review automation system (automated review request sequences)
-- Missed call text-back (auto-SMS to missed calls)
-- Google My Business (GMB) setup and optimization
-- Monthly performance report
-- Direct support access
-- Exclusive territory: Client holds exclusive rights to their trade + city combination. Company will not onboard a competing business in the same trade and city while this Agreement is active.
+- Managed mobile-first website and hosting
+- Neutral review-request workflow by email and, when legally permitted and supported by recorded consent, SMS
+- Form-lead and missed-call follow-up configuration
+- Google Business Profile foundation and optimization work
+- Reasonable monthly website edits
+- Monthly evidence-based performance report
+- Direct support during normal business hours
 
-**Market Dominator — $697/month**
-- Everything in The Full System, plus:
-- GMB deep build-out (posts, Q&A, photo optimization, category optimization)
-- Citation cleanup (30+ business directories)
-- SEO audit
-- Backlink gap analysis
-- Quarterly strategy call
+**Founding-client setup fee:** $0 for the first three accepted clients.
 
----
+### Growth Partner: $997 per month
 
-## 2. TERM AND CANCELLATION
+- Everything in the Local Call System
+- Expanded Google Business Profile work
+- Ongoing content and citation work
+- Conversion optimization
+- Monthly strategy review
+- Additional deliverables listed in **[ATTACHED STATEMENT OF WORK]**
 
-- This Agreement begins on the date above and continues month-to-month.
-- **No contract. No minimum commitment.** Either party may cancel with 30 days written notice.
-- Client may cancel by emailing **hello@trybookedout.com** or calling **(737) 260-5332**.
-- Upon cancellation, Services continue through the end of the paid billing period.
+The Growth Partner tier may be sold only when the attached statement of work is complete and accepted by both Parties.
 
----
+## 2. Scope and Launch
 
-## 3. FEES AND PAYMENT
+1. Company will provide the selected services using a written onboarding and launch plan.
+2. Launch timing begins only after Client provides the required content, approvals, account access, and legally usable customer data.
+3. Timing may depend on domain access, third-party platforms, carrier registration, messaging approval, and Client response time.
+4. Work outside the selected service requires written approval and may require a separate fee.
+5. No geographic or trade exclusivity is granted unless the Parties sign a separate written territory addendum.
 
-- Monthly fee: **$[399 / 697]** per month, billed in advance on the same date each month.
-- Payment method: Credit or debit card on file (auto-charge).
-- Late payments (7+ days past due) may result in suspension of Services until balance is resolved.
-- No refunds for partial months, except as described in Section 4.
+## 3. Term, Renewal, and Cancellation
 
----
+1. Service begins on the Effective Date and renews monthly until cancelled.
+2. Either Party may cancel before the next renewal date by written notice to **hello@trybookedout.com**. Client may also call **(737) 260-5332**, but written confirmation is required.
+3. Service continues through the current paid billing period. Except where required by law, partial months are not refunded.
+4. Company may suspend service for nonpayment, unlawful use, policy violations, security risks, or Client actions that prevent delivery.
+5. Sections intended by their nature to survive termination, including payment, ownership, confidentiality, warranty disclaimers, and liability limits, will survive.
 
-## 4. PERFORMANCE GUARANTEE
+## 4. Fees and Payment
 
-Company guarantees measurable results within the first 30 days of active Services. "Measurable results" is defined as at least one of the following:
-- New Google reviews generated via the review automation system
-- Increase in Google My Business profile views or calls
-- Website live and indexed by Google
+1. Monthly fee: **$[499 OR 997]**, billed in advance through Company’s approved payment processor.
+2. Client authorizes recurring charges until cancellation takes effect.
+3. Standard hosting, reporting, and ordinary workflow usage are included. Company will obtain Client’s written approval before charging for unusual messaging volume, premium third-party software, paid media, domain purchases, or out-of-scope work.
+4. Company may suspend services when an invoice is more than seven days past due.
+5. Taxes imposed on Client’s purchase are Client’s responsibility, excluding taxes on Company’s income.
 
-If none of the above are achieved within 30 days due to Company's performance (not Client's lack of cooperation), Client's first month fee will be refunded in full upon written request.
+## 5. Client Responsibilities and Messaging Compliance
 
-This guarantee does not apply if Client fails to provide required access, information, or cooperation as outlined in Section 6.
+Client will:
 
----
+1. Provide accurate business information, timely approvals, and required account access.
+2. Maintain ownership or lawful authorization for all logos, photos, copy, customer data, and other materials supplied to Company.
+3. Provide customer contact data only when Client has a lawful basis to use it for the selected communication channel.
+4. Maintain records of affirmative SMS consent where required and promptly communicate withdrawals of consent.
+5. Not request review gating, sentiment filtering, misleading reviews, purchased reviews, or other conduct prohibited by a review platform.
+6. Honor opt-outs and suppression requests and not re-add suppressed recipients without a new lawful basis.
+7. Avoid altering or disabling Company-managed systems without coordination.
 
-## 5. INTELLECTUAL PROPERTY
+Company may refuse or stop any campaign or workflow that it reasonably believes violates law, carrier rules, platform policy, or this Agreement.
 
-- **Website:** Upon full payment of all fees, Client owns the website content and design assets created for them. Company retains the right to use the website as a portfolio example unless Client requests otherwise in writing.
-- **Software and tools:** The review automation platform, missed call system, and any proprietary software remain the property of Company. Client is granted a license to use these tools while this Agreement is active. License terminates upon cancellation.
-- **Client content:** Any logos, photos, copy, or materials provided by Client remain Client's property.
+## 6. Results and Third-Party Platforms
 
----
+1. Company does not guarantee any specific number of calls, leads, reviews, rankings, jobs, sales, or revenue.
+2. Results vary by market, starting point, customer volume, competition, Client cooperation, and third-party platform behavior.
+3. Company will establish an available baseline and report observable work and changes, which may include messages sent, delivery failures, opt-outs, new reviews, rating movement, calls or forms captured, response time, website performance, and ranking movement.
+4. Google, telecommunications carriers, hosting providers, search engines, payment processors, and other third parties may change policies, availability, pricing, or algorithms outside Company’s control.
 
-## 6. CLIENT RESPONSIBILITIES
+## 7. Website, Content, and Intellectual Property
 
-Client agrees to:
-- Provide timely access to Google My Business account, website hosting (if transferring existing site), and any other accounts needed to deliver Services
-- Respond to Company communications within 5 business days
-- Provide accurate business information (name, address, phone, hours, services)
-- Not take actions that would undermine or circumvent the Services (e.g., disabling review request notifications, removing Company from GMB access)
+1. Client retains ownership of materials Client supplies.
+2. Company retains ownership of its pre-existing software, templates, processes, automations, integrations, libraries, and know-how.
+3. After three fully paid months, and provided the account is current, Client may request an export of Client-specific website content and core page files created under this Agreement.
+4. Hosting accounts, software integrations, automation logic, third-party licenses, and Company’s reusable systems are not transferred unless expressly agreed in writing.
+5. Before three paid months, the managed website remains part of the Booked Out service and no export is required.
+6. Company may display non-confidential work in its portfolio unless Client opts out in writing.
 
-Failure to cooperate may delay or limit results and voids the performance guarantee.
+## 8. Confidentiality and Data
 
----
+1. Each Party will protect the other Party’s non-public business information using reasonable care.
+2. Company may process Client and customer data only as needed to provide, secure, support, and document the services.
+3. Client will not send passwords by ordinary email or place secret credentials in public form fields.
+4. Each Party will promptly notify the other of a known incident materially affecting shared confidential information.
 
-## 7. LIMITATION OF LIABILITY
+## 9. Warranties and Disclaimers
 
-- Company is not liable for Google policy changes, algorithm updates, or any third-party platform changes outside Company's control (including changes to Google My Business, Google Search, or Yelp).
-- Company's total liability under this Agreement shall not exceed the total fees paid by Client in the 3 months preceding the claim.
-- Company is not liable for lost profits, lost revenue, or consequential damages of any kind.
+1. Company warrants that it will perform the services in a professional and workmanlike manner.
+2. Client’s exclusive remedy for a proven breach of this warranty is re-performance of the affected service, if reasonably possible.
+3. Except for the express warranty above, services are provided **“as is”** and **“as available”** to the fullest extent permitted by law.
 
----
+## 10. Limitation of Liability
 
-## 8. CONFIDENTIALITY
+To the fullest extent permitted by law:
 
-Both parties agree to keep confidential any proprietary business information shared during the term of this Agreement and for 2 years after termination.
+1. Neither Party is liable for indirect, incidental, special, punitive, or consequential damages, or for lost profits or revenue.
+2. Company’s total liability arising from this Agreement will not exceed the fees Client paid Company during the three months immediately before the event giving rise to the claim.
+3. These limitations do not apply where prohibited by law or to fraud, willful misconduct, or obligations that cannot legally be limited.
 
----
+## 11. Disputes and Governing Law
 
-## 9. DISPUTE RESOLUTION
+1. The Parties will first provide written notice of a dispute and attempt in good faith to resolve it for at least 15 days.
+2. Unless prohibited by law, unresolved disputes will be decided by binding arbitration in Hays County, Texas, under the applicable rules of the American Arbitration Association.
+3. Texas law governs this Agreement without regard to conflict-of-law rules.
 
-- Parties agree to attempt to resolve any dispute informally first (written notice + 15-day resolution window).
-- If unresolved, disputes shall be settled by binding arbitration in Hays County, Texas under the rules of the American Arbitration Association.
-- This Agreement is governed by the laws of the State of Texas.
+## 12. General Terms
 
----
+1. This Agreement and any signed statement of work or addendum are the entire agreement between the Parties concerning the services.
+2. Changes must be in writing and accepted by both Parties.
+3. Client may not assign this Agreement without Company’s written consent, except as part of a sale of substantially all of Client’s business.
+4. If one provision is unenforceable, the remaining provisions remain effective.
+5. Electronic signatures and counterparts are valid and enforceable to the extent permitted by law.
 
-## 10. ENTIRE AGREEMENT
+## Signatures
 
-This Agreement constitutes the entire agreement between the parties. Any modifications must be in writing and signed by both parties. If any provision is found unenforceable, the remaining provisions remain in full effect.
+### Booked Out
 
----
+- Name: Diego Campos
+- Title: Founder
+- Email: hello@trybookedout.com
+- Signature: ______________________________
+- Date: __________________
 
-## SIGNATURES
+### Client
 
-**Booked Out / Diego Campos**
-Signature: _________________________ Date: _____________
-Name: Diego Campos
-Title: Founder, Booked Out
-Email: hello@trybookedout.com
-Phone: (737) 260-5332
-
-**Client**
-Signature: _________________________ Date: _____________
-Name: _________________________
-Title: _________________________
-Business: _________________________
-Email: _________________________
-Phone: _________________________
-
----
-
-*Questions? Contact us at hello@trybookedout.com or (737) 260-5332*
+- Legal name: ______________________________
+- Signer name: ______________________________
+- Title: ______________________________
+- Email: ______________________________
+- Phone: ______________________________
+- Signature: ______________________________
+- Date: __________________

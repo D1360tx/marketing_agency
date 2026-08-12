@@ -134,7 +134,7 @@ export default function NewSequencePage() {
 
       if (res.ok) {
         toast.success("Sequence created!");
-        router.push("/sequences");
+        router.push("/app/sequences");
       } else {
         const data = await res.json();
         toast.error(data.error || "Failed to create sequence");

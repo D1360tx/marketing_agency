@@ -65,6 +65,9 @@ import {
   RefreshCw,
   FileText,
   Send,
+  CalendarDays,
+  FileSignature,
+  CreditCard,
 } from "lucide-react";
 import {
   Tooltip,
@@ -125,6 +128,13 @@ interface ProspectMessage {
   campaigns: { name: string; type: string } | null;
 }
 
+interface LatestPreview {
+  id: string;
+  share_token: string;
+  business_name: string;
+  created_at: string;
+}
+
 // Parse note log from plain text (entries separated by \n---\n)
 function parseNoteLog(raw: string | null): Array<{ timestamp: string; text: string; rawBody: string; images?: string[] }> {
   if (!raw) return [];
@@ -176,7 +186,7 @@ function generatePitch(prospect: ProspectWithAnalysis, analysis?: WebsiteAnalysi
     ? ` and only has ${prospect.review_count ?? 0} Google reviews`
     : "";
 
-  return `Hey ${name}! ${hook}${reviewNote}. I help local ${type} businesses in ${city} get more customers through professional websites and better Google reviews. Would you be open to a quick 5-minute chat? — Maria`;
+  return `Hey ${name}! ${hook}${reviewNote}. I help local ${type} businesses in ${city} present themselves clearly online and follow up with new leads consistently. Would you be open to a quick 5-minute chat? — Maria`;
 }
 
 function getTalkingPoints(prospect: ProspectWithAnalysis, analysis?: WebsiteAnalysis): string[] {
@@ -267,6 +277,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
   const [deleting, setDeleting] = useState(false);
   const [activities, setActivities] = useState<ProspectActivity[]>([]);
   const [messages, setMessages] = useState<ProspectMessage[]>([]);
+  const [latestPreview, setLatestPreview] = useState<LatestPreview | null>(null);
   const [followUpDate, setFollowUpDate] = useState<string>("");
   const [savingStatus, setSavingStatus] = useState(false);
   const [showCallDialog, setShowCallDialog] = useState(false);
@@ -295,6 +306,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
 
   // Find email state
   const [findingEmail, setFindingEmail] = useState(false);
+  const [creatingOnboarding, setCreatingOnboarding] = useState(false);
 
   // Note editing state
   const [editingNoteIndex, setEditingNoteIndex] = useState<number | null>(null);
@@ -331,6 +343,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
         const data = await res.json();
         if (data.prospect) {
           setProspect(data.prospect);
+          setLatestPreview(data.latest_preview || null);
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           setFollowUpDate((data.prospect as any).follow_up_date || "");
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -404,37 +417,10 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
       setProspect({ ...prospect, status: status as ProspectStatus });
       setTimeout(fetchActivities, 500);
 
-      // Show deal dialog when converting to client
+      // Show deal dialog when converting to client. The API route owns the
+      // conversion webhook so this client action cannot deliver it twice.
       if (status === "client") {
         setShowDealDialog(true);
-
-        // Fire webhook if configured
-        try {
-          const settingsRes = await fetch("/api/settings");
-          const { settings } = await settingsRes.json();
-          if (settings?.webhook_url) {
-            fetch(settings.webhook_url, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                event: "lead.converted",
-                timestamp: new Date().toISOString(),
-                prospect: {
-                  id: prospect.id,
-                  business_name: prospect.business_name,
-                  email: prospect.email,
-                  phone: prospect.phone,
-                  city: prospect.city,
-                  state: prospect.state,
-                  website: prospect.website_url,
-                  status: "client",
-                },
-              }),
-            }).catch(() => {}); // Fire and forget — don't block UI
-          }
-        } catch {
-          // Silently fail — webhook is best-effort
-        }
       }
     } catch {
       console.error("Failed to update status");
@@ -694,6 +680,29 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
     setEditValue("");
   }
 
+  async function handleCreateOnboarding() {
+    if (!prospect) return;
+    setCreatingOnboarding(true);
+    try {
+      const response = await fetch("/api/onboarding", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prospect_id: prospect.id }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.token) {
+        throw new Error(data.error || "Could not create client intake");
+      }
+      const url = `${window.location.origin}/onboarding/${data.token}`;
+      await navigator.clipboard.writeText(url);
+      toast.success(data.existing ? "Existing intake link copied" : "Client intake link copied");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not create client intake");
+    } finally {
+      setCreatingOnboarding(false);
+    }
+  }
+
   async function handleDelete() {
     if (!prospect || !confirm("Delete this lead? This cannot be undone.")) return;
     setDeleting(true);
@@ -703,7 +712,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: prospect.id }),
       });
-      router.push("/leads");
+      router.push("/app/leads");
     } catch {
       console.error("Failed to delete");
       setDeleting(false);
@@ -721,7 +730,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
   if (!prospect) {
     return (
       <div className="space-y-4">
-        <Link href="/leads">
+        <Link href="/app/leads">
           <Button variant="ghost" size="sm">
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Leads
           </Button>
@@ -749,7 +758,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
       <div className="flex flex-col gap-4">
         {/* Top row: back + prev/next + title */}
         <div className="flex items-start gap-3">
-          <Link href="/leads">
+          <Link href="/app/leads">
             <Button variant="ghost" size="icon" className="shrink-0">
               <ArrowLeft className="h-4 w-4" />
             </Button>
@@ -762,7 +771,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                 variant="ghost"
                 size="icon"
                 disabled={listIndex <= 0}
-                onClick={() => router.push(`/leads/${listIds[listIndex - 1]}`)}
+                onClick={() => router.push(`/app/leads/${listIds[listIndex - 1]}`)}
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
@@ -773,7 +782,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                 variant="ghost"
                 size="icon"
                 disabled={listIndex >= listIds.length - 1}
-                onClick={() => router.push(`/leads/${listIds[listIndex + 1]}`)}
+                onClick={() => router.push(`/app/leads/${listIds[listIndex + 1]}`)}
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>
@@ -918,6 +927,29 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
             )}
           </div>
           <div className="flex gap-2 w-full sm:w-auto sm:contents">
+            {latestPreview ? (
+              <>
+                <Link href={`/app/campaigns/new?prospect=${prospect.id}`} className="flex-1 sm:flex-none">
+                  <Button size="sm" className="w-full">
+                    <Send className="mr-1 h-4 w-4" />
+                    Review & Send
+                  </Button>
+                </Link>
+                <Button asChild variant="outline" size="sm" className="flex-1 sm:flex-none">
+                  <a href={`/preview/${latestPreview.share_token}`} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="mr-1 h-4 w-4" />
+                    Open Preview
+                  </a>
+                </Button>
+              </>
+            ) : (
+              <Link href={`/app/generator?prospect=${prospect.id}`} className="flex-1 sm:flex-none">
+                <Button size="sm" className="w-full">
+                  <Palette className="mr-1 h-4 w-4" />
+                  Create Preview
+                </Button>
+              </Link>
+            )}
             <Button variant="outline" size="sm" onClick={() => {
               const pitch = generatePitch(prospect, analysis);
               navigator.clipboard.writeText(pitch);
@@ -926,12 +958,48 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
               <Copy className="mr-1 h-4 w-4" />
               Pitch
             </Button>
-            <Link href={`/generator?prospect=${prospect.id}`} className="flex-1 sm:flex-none">
-              <Button variant="outline" size="sm" className="w-full">
-                <Palette className="mr-1 h-4 w-4" />
-                Generate
+            <Button asChild variant="outline" size="sm" className="flex-1 sm:flex-none">
+              <a href="/go/book" target="_blank" rel="noopener noreferrer">
+                <CalendarDays className="mr-1 h-4 w-4" />
+                Book Call
+              </a>
+            </Button>
+            <Button asChild variant="outline" size="sm" className="flex-1 sm:flex-none">
+              <a href="/go/agreement" target="_blank" rel="noopener noreferrer">
+                <FileSignature className="mr-1 h-4 w-4" />
+                Agreement
+              </a>
+            </Button>
+            <Button asChild variant="outline" size="sm" className="flex-1 sm:flex-none">
+              <a href="/go/start" target="_blank" rel="noopener noreferrer">
+                <CreditCard className="mr-1 h-4 w-4" />
+                $499 Payment
+              </a>
+            </Button>
+            {prospect.status === "client" && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCreateOnboarding}
+                disabled={creatingOnboarding}
+                className="flex-1 sm:flex-none"
+              >
+                {creatingOnboarding ? (
+                  <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                ) : (
+                  <UserPlus className="mr-1 h-4 w-4" />
+                )}
+                Create Client Intake
               </Button>
-            </Link>
+            )}
+            {latestPreview && (
+              <Link href={`/app/generator?prospect=${prospect.id}`} className="flex-1 sm:flex-none">
+                <Button variant="outline" size="sm" className="w-full">
+                  <Palette className="mr-1 h-4 w-4" />
+                  Regenerate
+                </Button>
+              </Link>
+            )}
             <Button variant="destructive" size="sm" onClick={handleDelete} disabled={deleting} className="shrink-0 px-3">
               {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
             </Button>
@@ -1523,13 +1591,12 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
           </Card>
 
           {/* Deal Value */}
-          {prospect.status === "client" && (prospect as any).deal_value && (
+          {prospect.status === "client" && prospect.deal_value && (
             <div className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 p-3">
               <DollarSign className="h-5 w-5 text-emerald-600" />
               <div>
                 <p className="text-xs text-muted-foreground">Monthly Value</p>
-                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                <p className="font-semibold text-emerald-700">${(prospect as any).deal_value}/mo</p>
+                <p className="font-semibold text-emerald-700">${prospect.deal_value}/mo</p>
               </div>
             </div>
           )}

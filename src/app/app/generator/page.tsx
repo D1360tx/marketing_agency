@@ -567,7 +567,7 @@ export default function GeneratorPage() {
                       srcDoc={getActiveHtml()!}
                       title={`${previewMode === "gemini" ? "Gemini" : "Claude"} Generated Website Preview`}
                       className="border-0"
-                      sandbox="allow-same-origin allow-scripts"
+                      sandbox=""
                       style={{
                         width: "1440px",
                         height: "900px",
@@ -644,7 +644,7 @@ export default function GeneratorPage() {
                 srcDoc={getActiveHtml()!}
                 title={`${previewMode === "claude" ? "Claude" : "Gemini"} Generated Website Full Preview`}
                 className="h-full w-full border-0"
-                sandbox="allow-same-origin allow-scripts"
+                sandbox=""
               />
             </div>
           </div>

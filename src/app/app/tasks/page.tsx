@@ -99,10 +99,10 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
             {tasks.length} due
           </Badge>
           <div className="flex gap-2">
-            <Link href="/tasks?view=today">
+            <Link href="/app/tasks?view=today">
               <Button variant={view === "today" ? "default" : "outline"} size="sm">Today</Button>
             </Link>
-            <Link href="/tasks?view=week">
+            <Link href="/app/tasks?view=week">
               <Button variant={view === "week" ? "default" : "outline"} size="sm">This Week</Button>
             </Link>
           </div>

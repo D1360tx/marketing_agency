@@ -11,11 +11,14 @@ export function WeeklyGoal({ contacted }: { contacted: number }) {
   const [draft, setDraft] = useState("50");
 
   useEffect(() => {
-    const stored = localStorage.getItem("weeklyContactGoal");
-    if (stored) {
-      setGoal(parseInt(stored));
-      setDraft(stored);
-    }
+    const frame = window.requestAnimationFrame(() => {
+      const stored = localStorage.getItem("weeklyContactGoal");
+      if (stored) {
+        setGoal(parseInt(stored));
+        setDraft(stored);
+      }
+    });
+    return () => window.cancelAnimationFrame(frame);
   }, []);
 
   function saveGoal() {
