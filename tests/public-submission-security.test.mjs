@@ -7,6 +7,7 @@ import {
   inboundLeadSchema,
   PUBLIC_SUBMISSION_MAX_BYTES,
   readBoundedJson,
+  verifyTurnstileToken,
 } from "../src/lib/public-submission-security.ts";
 
 const validLead = (overrides = {}) => ({
@@ -124,4 +125,75 @@ test("rate-limit fingerprints are deterministic and do not expose raw addresses"
   assert.equal(first, second);
   assert.match(first, /^[0-9a-f]{64}$/);
   assert.equal(first.includes("203.0.113.20"), false);
+});
+
+test("Turnstile remains optional unless both public and server keys are configured", async () => {
+  const previousSecret = process.env.TURNSTILE_SECRET_KEY;
+  const previousSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const previousFetch = globalThis.fetch;
+  let fetchCalls = 0;
+  globalThis.fetch = async () => {
+    fetchCalls += 1;
+    throw new Error("verification should not run for partial configuration");
+  };
+
+  try {
+    process.env.TURNSTILE_SECRET_KEY = "server-secret-only";
+    delete process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+    const result = await verifyTurnstileToken(
+      "",
+      new Request("https://trybookedout.com"),
+      "inbound_lead"
+    );
+    assert.deepEqual(result, { ok: true });
+    assert.equal(fetchCalls, 0);
+  } finally {
+    globalThis.fetch = previousFetch;
+    if (previousSecret === undefined) delete process.env.TURNSTILE_SECRET_KEY;
+    else process.env.TURNSTILE_SECRET_KEY = previousSecret;
+    if (previousSiteKey === undefined) delete process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+    else process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY = previousSiteKey;
+  }
+});
+
+test("Turnstile requires and verifies a token when both keys are configured", async () => {
+  const previousSecret = process.env.TURNSTILE_SECRET_KEY;
+  const previousSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const previousFetch = globalThis.fetch;
+
+  try {
+    process.env.TURNSTILE_SECRET_KEY = "server-secret";
+    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY = "public-site-key";
+
+    const missing = await verifyTurnstileToken(
+      "",
+      new Request("https://trybookedout.com"),
+      "inbound_lead"
+    );
+    assert.deepEqual(missing, {
+      ok: false,
+      status: 400,
+      error: "Please complete the security check",
+    });
+
+    globalThis.fetch = async () =>
+      new Response(JSON.stringify({ success: true, action: "inbound_lead" }), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      });
+    const verified = await verifyTurnstileToken(
+      "valid-token",
+      new Request("https://trybookedout.com", {
+        headers: { "x-vercel-forwarded-for": "203.0.113.20" },
+      }),
+      "inbound_lead"
+    );
+    assert.deepEqual(verified, { ok: true });
+  } finally {
+    globalThis.fetch = previousFetch;
+    if (previousSecret === undefined) delete process.env.TURNSTILE_SECRET_KEY;
+    else process.env.TURNSTILE_SECRET_KEY = previousSecret;
+    if (previousSiteKey === undefined) delete process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+    else process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY = previousSiteKey;
+  }
 });

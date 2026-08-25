@@ -1,5 +1,7 @@
 # Booked Out — Guía de Entrenamiento para el Equipo de Ventas
 
+> **Referencia histórica solamente.** Para el lanzamiento fundador, esta guía general queda reemplazada por `BUILD-PLAN.md` y `OFFER-SOURCE-OF-TRUTH.md`. No uses sus mercados, guiones, métricas o promesas para el piloto actual de HVAC.
+
 **Versión:** 1.1 | **Última actualización:** 2026-03-06
 **Preparado para:** Equipo de Ventas
 **Preparado por:** Booked Out

@@ -39,15 +39,28 @@ test("revenue provider URLs remain server-side and map to stable redirects", asy
   }
 });
 
-test("canonical public offer sells only the $499 Local Call System", async () => {
+test("canonical public offer sells only the scoped $499 founding system", async () => {
   const homepage = await read("src/app/landing_opus/page.tsx");
+  const spanish = await read("src/app/es/page.tsx");
   assert.match(homepage, /Local Call System/);
+  assert.match(homepage, /90-Day Booking Foundation/);
   assert.match(homepage, /\$499/);
   assert.match(homepage, /first 3 clients/);
+  assert.match(homepage, /review requests by email/i);
+  assert.match(homepage, /30-Day Foundation Promise/);
   assert.doesNotMatch(homepage, /Growth Partner/);
   assert.doesNotMatch(homepage, /price: "997"/);
   assert.doesNotMatch(homepage, /Review Engine/);
   assert.doesNotMatch(homepage, /We protect your spot/);
+  assert.doesNotMatch(homepage, /1 business per trade/i);
+  assert.doesNotMatch(homepage, /Missed-call text-back/i);
+  assert.doesNotMatch(homepage, /consented SMS/i);
+  assert.doesNotMatch(homepage, /SMS\/email usage/i);
+  assert.match(spanish, /Base de Reservas de 90 Días/);
+  assert.match(spanish, /Solicitudes de reseñas por email/);
+  assert.doesNotMatch(spanish, /SMS autorizado/i);
+  assert.doesNotMatch(spanish, /1 por oficio por ciudad/i);
+  assert.doesNotMatch(spanish, /Las llamadas llegan solas/i);
 });
 
 test("public booking and retired partner paths are wired safely", async () => {

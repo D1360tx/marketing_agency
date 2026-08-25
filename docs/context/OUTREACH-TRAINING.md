@@ -1,5 +1,7 @@
 # Booked Out — Outreach Rep Training Guide
 
+> **Historical reference only.** This broad-market guide is superseded for the founding launch by `BUILD-PLAN.md` and `OFFER-SOURCE-OF-TRUTH.md`. Do not use its target list, scripts, benchmarks, or promises for the current HVAC pilot.
+
 **Version:** 1.1 | **Last updated:** 2026-03-06
 **Prepared for:** Outreach Team
 **Prepared by:** Booked Out

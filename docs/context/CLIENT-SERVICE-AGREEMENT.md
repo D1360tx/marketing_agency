@@ -13,30 +13,23 @@ The Company and Client are each a **“Party”** and together the **“Parties.
 
 ## 1. Selected Service
 
-**Select one and delete the other before signing.**
+### Local Call System: 90-Day Booking Foundation, $499 per month
 
-### Local Call System: $499 per month
+For one business, one location, one domain, and one Google Business Profile:
 
-- Managed mobile-first website and hosting
-- Neutral review-request workflow by email and, when legally permitted and supported by recorded consent, SMS
-- Form-lead and missed-call follow-up configuration
-- Google Business Profile foundation and optimization work
-- Reasonable monthly website edits
-- Monthly evidence-based performance report
-- Direct support during normal business hours
+- Managed mobile-first website and hosting, up to seven core pages
+- Google Business Profile foundation audit and approved corrections
+- Neutral review-request workflow by email, up to 100 eligible requests per month
+- One primary lead form/inbox with routing and delivery tests
+- Supported email acknowledgment and manual-first follow-up process, up to 50 inbound leads per month
+- Two consolidated website revision rounds during implementation
+- Monthly website maintenance within the approved scope
+- One prioritized conversion improvement per month after launch
+- Monthly evidence report and 30-minute Growth Desk review
 
 **Founding-client setup fee:** $0 for the first three accepted clients.
 
-### Growth Partner: $997 per month
-
-- Everything in the Local Call System
-- Expanded Google Business Profile work
-- Ongoing content and citation work
-- Conversion optimization
-- Monthly strategy review
-- Additional deliverables listed in **[ATTACHED STATEMENT OF WORK]**
-
-The Growth Partner tier may be sold only when the attached statement of work is complete and accepted by both Parties.
+Automated SMS, missed-call text-back, paid advertising, custom software, CRM replacement, multiple locations, unlimited content or revisions, and territory exclusivity are excluded unless added by a signed change order.
 
 ## 2. Scope and Launch
 
@@ -45,6 +38,9 @@ The Growth Partner tier may be sold only when the attached statement of work is 
 3. Timing may depend on domain access, third-party platforms, carrier registration, messaging approval, and Client response time.
 4. Work outside the selected service requires written approval and may require a separate fee.
 5. No geographic or trade exclusivity is granted unless the Parties sign a separate written territory addendum.
+6. After Company receives the required access, accurate information, assets, and approvals, Company will complete the agreed core foundation within 30 calendar days.
+7. If a Company-caused delay prevents completion of the agreed core foundation within that period, Company will not charge the next recurring service month until the missing agreed foundation is complete.
+8. The 30-day commitment excludes delays caused by Client, missing or inaccurate information, slow approvals, domains, third-party platform review or enforcement, verification, outages, legal or policy restrictions, and material scope changes. It is a delivery commitment, not an outcome guarantee.
 
 ## 3. Term, Renewal, and Cancellation
 
@@ -56,9 +52,9 @@ The Growth Partner tier may be sold only when the attached statement of work is 
 
 ## 4. Fees and Payment
 
-1. Monthly fee: **$[499 OR 997]**, billed in advance through Company’s approved payment processor.
+1. Monthly fee: **$499**, billed in advance through Company’s approved payment processor.
 2. Client authorizes recurring charges until cancellation takes effect.
-3. Standard hosting, reporting, and ordinary workflow usage are included. Company will obtain Client’s written approval before charging for unusual messaging volume, premium third-party software, paid media, domain purchases, or out-of-scope work.
+3. Standard hosting, reporting, and usage within the stated scope are included. Company will obtain Client’s written approval before charging for premium third-party software, paid media, domain purchases, extra locations, unusual volume, or out-of-scope work.
 4. Company may suspend services when an invoice is more than seven days past due.
 5. Taxes imposed on Client’s purchase are Client’s responsibility, excluding taxes on Company’s income.
 
@@ -69,7 +65,7 @@ Client will:
 1. Provide accurate business information, timely approvals, and required account access.
 2. Maintain ownership or lawful authorization for all logos, photos, copy, customer data, and other materials supplied to Company.
 3. Provide customer contact data only when Client has a lawful basis to use it for the selected communication channel.
-4. Maintain records of affirmative SMS consent where required and promptly communicate withdrawals of consent.
+4. Not provide customer phone numbers for automated messaging unless the Parties later sign an SMS addendum and Client maintains the required consent records.
 5. Not request review gating, sentiment filtering, misleading reviews, purchased reviews, or other conduct prohibited by a review platform.
 6. Honor opt-outs and suppression requests and not re-add suppressed recipients without a new lawful basis.
 7. Avoid altering or disabling Company-managed systems without coordination.
@@ -80,7 +76,7 @@ Company may refuse or stop any campaign or workflow that it reasonably believes 
 
 1. Company does not guarantee any specific number of calls, leads, reviews, rankings, jobs, sales, or revenue.
 2. Results vary by market, starting point, customer volume, competition, Client cooperation, and third-party platform behavior.
-3. Company will establish an available baseline and report observable work and changes, which may include messages sent, delivery failures, opt-outs, new reviews, rating movement, calls or forms captured, response time, website performance, and ranking movement.
+3. Company will establish an available baseline and report separately: work completed; observable leading indicators such as email delivery, eligible review requests, new reviews, rating movement, form delivery, response handling, and website performance; and Client-reported or attribution-supported business outcomes.
 4. Google, telecommunications carriers, hosting providers, search engines, payment processors, and other third parties may change policies, availability, pricing, or algorithms outside Company’s control.
 
 ## 7. Website, Content, and Intellectual Property
@@ -90,7 +86,7 @@ Company may refuse or stop any campaign or workflow that it reasonably believes 
 3. After three fully paid months, and provided the account is current, Client may request an export of Client-specific website content and core page files created under this Agreement.
 4. Hosting accounts, software integrations, automation logic, third-party licenses, and Company’s reusable systems are not transferred unless expressly agreed in writing.
 5. Before three paid months, the managed website remains part of the Booked Out service and no export is required.
-6. Company may display non-confidential work in its portfolio unless Client opts out in writing.
+6. Company may display Client names, logos, quotations, results, or non-confidential work in a portfolio only with Client’s written permission.
 
 ## 8. Confidentiality and Data
 

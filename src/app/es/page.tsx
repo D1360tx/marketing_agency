@@ -361,7 +361,7 @@ export default function EsPage() {
               <Badge>Sin contratos largos</Badge>
               <Badge>Auditoría antes de recomendar</Badge>
               <Badge>Solicitudes de reseñas neutrales</Badge>
-              <Badge>1 por oficio por ciudad</Badge>
+              <Badge>Para servicios del hogar establecidos</Badge>
             </div>
 
             {/* Stats strip */}
@@ -662,19 +662,19 @@ export default function EsPage() {
                 {
                   step: "02",
                   title: "Lo Construimos",
-                  desc: "Tu sitio web profesional y el sistema de automatización de reseñas se construyen y lanzan. Toma aproximadamente una semana. Tú contestas unas preguntas. Nosotros nos encargamos del resto.",
+                  desc: "Construimos el sitio, configuramos las solicitudes de reseñas por email y probamos la ruta de contacto dentro del alcance aprobado.",
                   icon: Zap,
                 },
                 {
                   step: "03",
-                  title: "Las Reseñas Se Acumulan",
-                  desc: "La automatización entra en acción. Después de cada trabajo, tus clientes reciben un mensaje para dejar una reseña. Sin esfuerzo de tu parte. Las reseñas se siguen sumando.",
+                  title: "Lanzamos y Probamos",
+                  desc: "El sitio sale en vivo, las solicitudes elegibles comienzan y verificamos que los prospectos lleguen al lugar correcto.",
                   icon: Star,
                 },
                 {
                   step: "04",
-                  title: "El Teléfono Suena Más",
-                  desc: `Mejor sitio web + más reseñas + SEO local = apareces primero cuando alguien ${areaIn} busca tu servicio. Las llamadas llegan solas.`,
+                  title: "Medimos y Mejoramos",
+                  desc: "Cada mes separamos el trabajo realizado, los indicadores observables y los resultados respaldados por datos.",
                   icon: PhoneCall,
                 },
               ].map((s, i) => (
@@ -712,7 +712,7 @@ export default function EsPage() {
             <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg">
               <div className="border-b border-gray-200 bg-gray-900 px-6 py-8 text-center sm:px-10">
                 <p className="text-sm font-semibold text-orange-400">
-                  Un plan. Todo incluido.
+                  Base de Reservas de 90 Días
                 </p>
                 <div className="mt-4 flex items-baseline justify-center gap-1">
                   <span className="text-5xl font-extrabold text-white">
@@ -735,16 +735,16 @@ export default function EsPage() {
                       desc: "Construido a medida para tu oficio, tu ciudad, tus clientes",
                     },
                     {
-                      title: "Solicitudes de reseñas por email y SMS autorizado",
-                      desc: "La misma solicitud neutral para cada cliente elegible, con manejo de cancelación",
+                      title: "Solicitudes de reseñas por email",
+                      desc: "Una solicitud neutral para cada cliente elegible, sin filtrar opiniones",
                     },
                     {
-                      title: "Optimización SEO local",
-                      desc: "Páginas de ciudad + servicio, optimización de Google Business Profile",
+                      title: "Base de Google Business Profile",
+                      desc: "Correcciones documentadas a la información principal, servicios y señales de confianza",
                     },
                     {
                       title: "Actualizaciones continuas",
-                      desc: "Actualizaciones de contenido, monitoreo de velocidad, seguimiento de posiciones",
+                      desc: "Una mejora priorizada y un informe de evidencia cada mes",
                     },
                     {
                       title: "Soporte directo de personas reales",
@@ -776,7 +776,12 @@ export default function EsPage() {
                   <p className="text-sm font-semibold text-orange-800">
                     Medimos desde tu línea base y mostramos el trabajo realizado cada mes.
                   </p>
-
+                  <p className="mt-2 text-xs leading-relaxed text-orange-700">
+                    Promesa de Base de 30 Días: cuando recibimos accesos, información
+                    y aprobaciones, completamos la base acordada en 30 días. Si un
+                    retraso de Booked Out impide la entrega, no se cobra el siguiente
+                    mes hasta completar la base.
+                  </p>
                 </div>
 
                 <a
