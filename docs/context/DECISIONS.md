@@ -4,13 +4,13 @@
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| Pricing | $499/mo Local Call System; $997/mo Growth Partner | Approved Day 0 operating offer as of 2026-07-25; all active surfaces must use `OFFER-SOURCE-OF-TRUTH.md` |
-| Founding clients | First 3 at $499/mo, no setup fee, month-to-month; website ownership transfers after 3 paid months | Reduces initial friction while protecting unrecovered website work; no outcome guarantees |
-| Territory model | 1 per trade per city | Creates genuine scarcity + exclusivity; aligns our success with client success |
-| Target market | Local service trades, Texas | High need, low digital sophistication, high LTV potential |
-| Cold email persona | Maria Egil | Neutral name, female sender (higher open rates in trades) |
-| Sending domains | 3 separate domains, never main domain | Protect trybookedout.com reputation |
-| Lead sourcing | Brave Search + Scrapling (free) | Beat Apollo/ZoomInfo on accuracy for local businesses; 2-3% bounce vs 12-16% |
+| Pricing | First 3 qualified clients at $499/mo and $0 setup; no second public tier yet | Approved founding offer as of 2026-08-25; reprice from actual fulfillment data after the cohort |
+| Founding clients | First 3 at $499/mo, no setup fee, month-to-month; core page export after 3 paid months | Low-friction proof cohort with strict one-location scope and no outcome guarantees |
+| Territory model | No exclusivity by default | Any exclusivity requires a written addendum with defined trade, geography, payment, termination, and release rules |
+| Target market | Established owner-operated HVAC companies in one Austin-area cluster | Focused proof cohort with meaningful job economics and observable conversion leaks |
+| Cold email sender | Diego / Booked Out using accurate sender identity | CAN-SPAM compliant, replyable, and founder-led; no fabricated personas |
+| Initial sending | Low-volume manually approved email from a verified Booked Out mailbox/domain | Protect deliverability while validating message-market fit; scale only after inbox, bounce, reply, and opt-out evidence |
+| Lead sourcing | Brave Search + direct public business sources | Use observed or provider-sourced addresses only; no speculative email guessing |
 
 ## Technical
 

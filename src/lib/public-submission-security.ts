@@ -170,7 +170,14 @@ export async function verifyTurnstileToken(
   expectedAction: string
 ): Promise<TurnstileResult> {
   const secret = process.env.TURNSTILE_SECRET_KEY?.trim();
-  if (!secret) return { ok: true };
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim();
+  if (!secret && !siteKey) return { ok: true };
+  if (!secret || !siteKey) {
+    console.warn(
+      "[turnstile] Partial configuration detected; relying on the server-side public rate limit"
+    );
+    return { ok: true };
+  }
   if (!token) {
     return { ok: false, status: 400, error: "Please complete the security check" };
   }

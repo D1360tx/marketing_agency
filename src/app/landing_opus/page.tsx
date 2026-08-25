@@ -174,7 +174,6 @@ export default function LandingOpusPage() {
   const [status, setStatus] = useState<FormStatus>("idle");
   const [turnstileToken, setTurnstileToken] = useState("");
   const [contactTime, setContactTime] = useState("");
-  const [smsConsent, setSmsConsent] = useState(false);
 
   const set = useCallback(
     (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -213,14 +212,14 @@ export default function LandingOpusPage() {
           city: form.serviceArea.trim() || area,
           turnstileToken,
           contact_time: contactTime,
-          smsConsent,
+          smsConsent: false,
         }),
       });
       if (!res.ok) throw new Error();
       setStatus("success");
       setTurnstileToken("");
       setContactTime("");
-      setSmsConsent(false);
+
       setForm({
         name: "",
         business: "",
@@ -242,15 +241,15 @@ export default function LandingOpusPage() {
   const faqs = [
     {
       q: "I already have a website. Do I need a new one?",
-      a: "Maybe not. We audit what you have first. If it loads fast, ranks well, and converts visitors into calls, we'll focus on reviews and SEO instead. If it's hurting you, we'll rebuild only what's needed. No unnecessary work.",
+      a: "Maybe not. We audit what you have first. If the contact path works and the site clearly explains why customers should choose you, we improve what is already there. If it is creating friction, we rebuild only what the approved scope requires.",
     },
     {
       q: "How is this different from the last agency that burned me?",
-      a: "Most agencies sell you a retainer and a dashboard. We sell you a system with measurable outcomes: more reviews, better rankings, more calls. For clients who want to grow, we work like a partner, not a vendor hiding behind reports.",
+      a: "We begin with an observable baseline, deploy tangible assets, test the customer path, and show the work completed every month. Business outcomes are reported only when they are client-reported or attribution-supported.",
     },
     {
       q: "What do I actually have to do?",
-      a: "Answer a few questions about your business and service area. That's about 15 minutes of your time. We handle everything else: the build, the launch, the review automation setup, the ongoing optimization.",
+      a: "Join one kickoff, provide accurate business information and account access, and give consolidated approvals. We handle the audit, build, deployment, testing, review-request setup, and monthly evidence report.",
     },
     {
       q: "How fast will I see results?",
@@ -269,8 +268,8 @@ export default function LandingOpusPage() {
       a: "After three paid months, you can request an export of your website content and core page files for another provider to rebuild or migrate. Hosting, software integrations, automations, and third-party licenses remain part of the managed service.",
     },
     {
-      q: "Are SMS, email, hosting, and reporting included?",
-      a: "Yes. Hosting, monthly reporting, and standard review request messages are included. If your account ever needs unusually high SMS volume, we'll flag it before any billing changes happen.",
+      q: "Are email, hosting, and reporting included?",
+      a: "Yes. Hosting, monthly reporting, and the standard email-first review and follow-up workflows are included within the published founding scope.",
     },
     {
       q: "What happens in the first month?",
@@ -281,7 +280,7 @@ export default function LandingOpusPage() {
   const proofStats = [
     { label: "Review gap", before: "Behind local leaders", after: "Baseline + neutral request workflow", note: "Measured against real local competitors" },
     { label: "Call clarity", before: "Calls hard to find", after: "Tap-to-call on key pages", note: "Mobile-first website rebuild" },
-    { label: "Follow-up gap", before: "No automatic response", after: "Fast text-back", note: "Speed-to-lead workflow" },
+    { label: "Follow-up gap", before: "No defined response path", after: "Tested routing + email acknowledgment", note: "Manual-first founding workflow" },
     { label: "Audit depth", before: "Guesswork", after: "Speed, rankings, reviews, competitors", note: "Delivered before the sales call" },
   ];
 
@@ -346,7 +345,7 @@ export default function LandingOpusPage() {
     {
       title: "Measure your baseline",
       startingPoint: "Marketing activity without clear accountability",
-      work: "Track calls, lead response, review requests, and ranking movement",
+      work: "Test contact paths and document review requests, lead handling, and approved changes",
       deliverable: "Monthly evidence, lessons, and the next actions to take",
     },
   ];
@@ -432,10 +431,10 @@ export default function LandingOpusPage() {
             </h1>
 
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-gray-600 [text-wrap:pretty] sm:text-xl">
-              They&apos;re not better than you. They just look better online. We
-              build fast local websites, compliant review request systems, and
-              follow-up workflows that help serious service businesses get
-              found, trusted, and answered before the lead goes cold.
+              A good local business can still lose opportunities when its proof,
+              contact path, and follow-up are inconsistent. We install and manage
+              the customer-facing foundation that helps serious service businesses
+              get found, earn trust, and respond consistently.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -456,15 +455,15 @@ export default function LandingOpusPage() {
             </div>
             <p className="mt-4 flex max-w-2xl items-start gap-2 text-sm font-medium leading-relaxed text-gray-600">
               <Shield className="mt-0.5 h-4 w-4 shrink-0 text-orange-600" />
-              Your free audit shows review gaps, ranking gaps, website leaks,
-              and follow-up delays that cost booked jobs.
+              Your free Revenue Leak Snapshot documents review gaps, customer-path
+              friction, and follow-up risks before we recommend any work.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Badge>No long contracts</Badge>
               <Badge>Audit before we recommend a plan</Badge>
               <Badge>Compliant review requests</Badge>
-              <Badge>1 per trade per city</Badge>
+              <Badge>Built for established home services</Badge>
             </div>
 
             {/* Stats strip */}
@@ -490,12 +489,12 @@ export default function LandingOpusPage() {
                 No agency games
               </p>
               <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 [text-wrap:balance] sm:text-4xl">
-                Know exactly what your marketing is doing.
+                See exactly what changed and what needs attention next.
               </h2>
               <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-gray-600 [text-wrap:pretty]">
-                Most agencies sell reports, contracts, and vague SEO progress.
-                We keep it simple: more reviews, clearer rankings, more calls,
-                and no long-term contract keeping you stuck.
+                We document the baseline, deploy the agreed foundation, test the
+                customer path, and report completed work separately from business
+                outcomes. You keep control of your accounts and data.
               </p>
             </div>
 
@@ -689,7 +688,7 @@ export default function LandingOpusPage() {
                       "Direct Google review link",
                       "Separate service feedback form for every customer",
                       "Review growth tracked monthly",
-                      "Works by text and email",
+                      "Email-first workflow for the founding launch",
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-2.5">
                         <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
@@ -706,7 +705,7 @@ export default function LandingOpusPage() {
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.25),transparent_34%),linear-gradient(180deg,rgba(17,24,39,1),rgba(3,7,18,1))]" />
                   <div className="relative flex h-full flex-col justify-end">
                     <div className="mb-5 max-w-[92%] rounded-2xl rounded-bl-sm bg-white p-3 text-sm font-medium leading-relaxed text-gray-800 shadow-lg">
-                      Got your AC request. Is it blowing warm air, making noise, or not turning on at all?
+                      We received your AC service request and sent the details to the team responsible for the next step.
                     </div>
                     <span className="w-fit rounded-full bg-orange-600 px-3 py-1 text-xs font-bold text-white">
                       Included
@@ -718,17 +717,17 @@ export default function LandingOpusPage() {
                 </div>
                 <div className="p-6">
                   <p className="text-sm leading-relaxed text-gray-600">
-                    Most marketing stops when the lead comes in. We help you keep
-                    going with fast, relevant text follow-up when someone fills
-                    out a form, misses your call, or reaches out after hours.
+                    Most marketing stops when the lead comes in. We test where
+                    website inquiries go, prepare a clear acknowledgment email,
+                    and give the team a manual-first response process.
                   </p>
                   <ul className="mt-5 space-y-3">
                     {[
-                      "Fast missed-call text-back",
-                      "Fast form-lead response while your team is busy",
-                      "Qualifying questions for service, urgency, and location",
-                      "Lead details sent to your team before the callback",
-                      "Speed-to-lead tracked in reporting",
+                      "Tested form routing to the responsible inbox",
+                      "Clear email acknowledgment copy",
+                      "Service, urgency, and location fields captured",
+                      "Lead details organized before the callback",
+                      "Response handling reviewed in reporting",
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-2.5">
                         <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
@@ -953,7 +952,10 @@ export default function LandingOpusPage() {
             {/* Intro */}
             <div className="mb-10 text-center">
               <p className="mx-auto max-w-2xl text-base text-gray-600 [text-wrap:pretty]">
-                The founding Local Call System includes the website, compliant review requests, speed-to-lead follow-up, and reporting. The first three accepted clients receive setup at no additional charge.
+                The founding Local Call System is a 90-Day Booking Foundation:
+                website, Google Business Profile foundation, review requests by
+                email, supported lead follow-up, and evidence reporting. The first
+                3 accepted clients receive setup at no additional charge.
               </p>
             </div>
 
@@ -971,17 +973,17 @@ export default function LandingOpusPage() {
                 </div>
                 <div className="p-6 sm:p-8">
                   <div className="mb-5 rounded-xl bg-orange-50 p-4">
-                    <p className="text-sm font-semibold text-orange-800">The foundation for more local calls.</p>
-                    <p className="mt-1 text-xs text-orange-700 [text-wrap:pretty]">Your site, reviews, follow-up, and reporting are set up and managed for you.</p>
+                    <p className="text-sm font-semibold text-orange-800">90-Day Booking Foundation</p>
+                    <p className="mt-1 text-xs text-orange-700 [text-wrap:pretty]">A defined launch, a tested customer path, and monthly evidence without an outcome guarantee.</p>
                   </div>
                   <ul className="space-y-4">
                     {[
                       { title: "Managed mobile-first website", desc: "Built around service areas, proof, and tap-to-call CTAs" },
-                      { title: "Review requests by email + consented SMS", desc: "Neutral requests after completed jobs, with opt-out handling" },
-                      { title: "Missed-call text-back", desc: "A lead gets a fast reply if you miss the call" },
-                      { title: "Basic form-lead response", desc: "New website leads get acknowledged quickly while your team is busy" },
-                      { title: "Lead inbox + simple pipeline", desc: "Keep new audit and call opportunities from slipping through" },
-                      { title: "Monthly performance report", desc: "Calls, reviews, ranking movement, and next actions" },
+                      { title: "Google Business Profile foundation", desc: "Documented corrections to core business, service, and trust information" },
+                      { title: "Review requests by email", desc: "Neutral requests for eligible customers, without review gating" },
+                      { title: "Supported form-lead follow-up", desc: "Acknowledgment copy, routing tests, and a manual-first follow-up process" },
+                      { title: "Lead inbox + simple pipeline", desc: "A clear place to review opportunities and required next actions" },
+                      { title: "Monthly evidence report", desc: "Completed work, tested paths, observable activity, and next priorities" },
 
                     ].map((item, i) => (
                       <li key={i} className="flex gap-3">
@@ -1012,8 +1014,21 @@ export default function LandingOpusPage() {
             </p>
 
             <p className="mx-auto mt-3 max-w-2xl text-center text-xs leading-relaxed text-gray-500 [text-wrap:pretty]">
-              SMS/email usage is included for normal local business volume. If your account ever needs unusually high message volume or custom work outside the standard site build, we&apos;ll flag it before anything changes.
+              Founding scope covers one business, one location, one domain, one
+              Google Business Profile, and email-first workflows. Additional
+              locations, custom integrations, advertising, or high-volume work
+              require a separate written scope.
             </p>
+
+            <div className="mx-auto mt-6 max-w-2xl rounded-xl border border-emerald-200 bg-emerald-50 p-5 text-sm text-emerald-900">
+              <p className="font-bold">30-Day Foundation Promise</p>
+              <p className="mt-1 leading-relaxed">
+                Once required access, accurate information, and approvals are in,
+                we complete the agreed core foundation within 30 days. If a Booked
+                Out delay causes us to miss that delivery commitment, the next
+                service month is not charged until the agreed foundation is complete.
+              </p>
+            </div>
           </div>
         </section>
 
@@ -1086,7 +1101,7 @@ export default function LandingOpusPage() {
         </section>
 
         {/* ============================================================ */}
-        {/*  SCARCITY BANNER                                             */}
+        {/*  FOUNDING CAPACITY                                           */}
         {/* ============================================================ */}
         <section className="bg-gray-900">
           <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 py-10 sm:flex-row sm:justify-between sm:px-6">
@@ -1096,15 +1111,14 @@ export default function LandingOpusPage() {
                 <span className="relative inline-flex h-3 w-3 rounded-full bg-orange-500" />
               </span>
               <p className="text-sm font-semibold text-white [text-wrap:balance]">
-                We only take <span className="text-orange-400">1 business per trade</span> {areaIn}.
-                Once your spot is claimed, it&apos;s gone.
+                Founding capacity is limited to <span className="text-orange-400">3 qualified home-service companies</span> so implementation stays hands-on.
               </p>
             </div>
             <a
               href="#get-started"
               className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-orange-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-orange-700"
             >
-              Check Availability
+              Request a Fit Review
               <ArrowRight className="h-4 w-4" />
             </a>
           </div>
@@ -1401,20 +1415,6 @@ export default function LandingOpusPage() {
                         </div>
                       </div>
 
-                      <label className="flex items-start gap-3 text-xs leading-relaxed text-gray-500">
-                        <input
-                          type="checkbox"
-                          checked={smsConsent}
-                          onChange={(event) => setSmsConsent(event.target.checked)}
-                          className="mt-0.5 h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
-                        />
-                        <span>
-                          I agree to receive automated calls or texts about my
-                          audit and Booked Out services. Consent is not required
-                          to purchase. Message and data rates may apply. Reply
-                          STOP to opt out.
-                        </span>
-                      </label>
 
                       <PublicFormTurnstile
                         action="inbound_lead"
