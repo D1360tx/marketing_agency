@@ -63,6 +63,23 @@ test("canonical public offer sells only the scoped $499 founding system", async 
   assert.doesNotMatch(spanish, /Las llamadas llegan solas/i);
 });
 
+test("public legal pages name the operator and current contact details", async () => {
+  const [privacy, terms, agreement] = await Promise.all([
+    read("src/app/privacy/page.tsx"),
+    read("src/app/terms/page.tsx"),
+    read("docs/context/CLIENT-SERVICE-AGREEMENT.md"),
+  ]);
+  for (const source of [privacy, terms, agreement]) {
+    assert.match(source, /ICDC Ventures LLC/);
+    assert.match(source, /1309 Coffeen Avenue/);
+    assert.match(source, /Sheridan, Wyoming 82801/);
+  }
+  assert.match(privacy, /hello@trybookedout\.com/);
+  assert.match(terms, /hello@trybookedout\.com/);
+  assert.doesNotMatch(privacy, /info@trybookedout\.com/);
+  assert.doesNotMatch(terms, /info@trybookedout\.com/);
+});
+
 test("public booking and retired partner paths are wired safely", async () => {
   const middleware = await read("src/lib/supabase/middleware.ts");
   const homepage = await read("src/app/landing_opus/page.tsx");

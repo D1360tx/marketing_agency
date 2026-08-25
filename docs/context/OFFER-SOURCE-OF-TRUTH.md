@@ -2,7 +2,7 @@
 
 **Effective:** August 25, 2026
 **Status:** Approved founding-client operating default
-**Owner:** Diego Campos / Booked Out
+**Owner:** ICDC Ventures LLC, doing business as Booked Out
 
 This document is the source of truth for active pricing and founding-client terms. Public pages, agreements, proposals, payment links, sales scripts, onboarding emails, CRM values, and affiliate materials must match it.
 
