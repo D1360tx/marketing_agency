@@ -26,7 +26,7 @@ The public site and CRM use stable `/go/book`, `/go/agreement`, and `/go/start` 
 Before the first payment:
 
 - Service agreement reviewed by Texas counsel
-- Booked Out legal entity/DBA and mailing address completed
+- ICDC Ventures LLC / Booked Out DBA and mailing address completed
 - Agreement loaded into an e-sign tool
 - $499 recurring payment link created with quantity fixed at one
 - Cancellation, renewal, receipt, failed-payment, and refund processes tested
@@ -99,9 +99,9 @@ I put together a short Revenue Leak Snapshot covering the customer path, review 
 Would it be useful if I sent it over?
 
 Diego Campos
-Booked Out
-[Monitored Reply-To]
-[Required postal address]
+Booked Out, a brand of ICDC Ventures LLC
+hello@trybookedout.com
+1309 Coffeen Avenue, Suite 1200, Sheridan, Wyoming 82801
 [Working unsubscribe link]
 
 ### Snapshot Delivery

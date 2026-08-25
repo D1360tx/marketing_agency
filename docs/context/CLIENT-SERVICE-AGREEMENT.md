@@ -6,7 +6,7 @@
 
 This Service Agreement (the **“Agreement”**) is entered into as of **[EFFECTIVE DATE]** between:
 
-- **Booked Out**, operated by Diego Campos, with a mailing address at **[BOOKED OUT MAILING ADDRESS]** (**“Company”**); and
+- **ICDC Ventures LLC**, doing business as **Booked Out**, with a mailing address at **1309 Coffeen Avenue, Suite 1200, Sheridan, Wyoming 82801** (**“Company”**); and
 - **[CLIENT LEGAL NAME]**, located at **[CLIENT ADDRESS]** (**“Client”**).
 
 The Company and Client are each a **“Party”** and together the **“Parties.”**

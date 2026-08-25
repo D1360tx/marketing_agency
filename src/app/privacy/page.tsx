@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-const contactEmail = "info@trybookedout.com";
+const contactEmail = "hello@trybookedout.com";
+const mailingAddress =
+  "1309 Coffeen Avenue, Suite 1200, Sheridan, Wyoming 82801";
 
 export const metadata: Metadata = {
   title: "Privacy Policy - Booked Out",
@@ -38,14 +40,15 @@ export default function PrivacyPage() {
         <h1 className="mt-8 text-4xl font-black tracking-tight">
           Privacy Policy
         </h1>
-        <p className="mt-3 text-sm text-gray-500">Last updated May 19, 2026</p>
+        <p className="mt-3 text-sm text-gray-500">Last updated August 25, 2026</p>
 
         <div className="mt-10 space-y-9 text-base leading-7 text-gray-700 [text-wrap:pretty]">
           <Section title="Overview">
             <p>
-              This Privacy Policy explains how Booked Out collects, uses, and
-              protects information when you visit trybookedout.com, request a
-              free audit, call us, or otherwise communicate with us.
+              Booked Out is a brand operated by ICDC Ventures LLC. This Privacy
+              Policy explains how we collect, use, and protect information when
+              you visit trybookedout.com, request a free audit, call us, or
+              otherwise communicate with us.
             </p>
           </Section>
 
@@ -54,8 +57,7 @@ export default function PrivacyPage() {
               We collect information you choose to provide, including your name,
               email address, phone number, business name, website, Google
               Business Profile link, trade or business type, city, service area,
-              and any other details you send through a form, call, text, or
-              email.
+              and any other details you send through a form, call, or email.
             </p>
             <p>
               We may also collect basic technical information automatically, such
@@ -69,7 +71,7 @@ export default function PrivacyPage() {
             <p>We use collected information to:</p>
             <ul className="list-disc space-y-2 pl-6">
               <li>Prepare and deliver audit findings.</li>
-              <li>Respond to your form submission, call, email, or text.</li>
+              <li>Respond to your form submission, call, or email.</li>
               <li>Evaluate your website, reviews, Google profile, and market.</li>
               <li>Operate, secure, and improve Booked Out services.</li>
               <li>Send service-related messages and follow-up communications.</li>
@@ -78,12 +80,12 @@ export default function PrivacyPage() {
             </ul>
           </Section>
 
-          <Section title="SMS, calls, and email">
+          <Section title="Calls and email">
             <p>
               If you provide your phone number or email address, we may contact
               you about your audit request, service options, scheduling, and
-              related follow-up. Message and data rates may apply for SMS. You
-              can ask us to stop marketing follow-up at any time.
+              related follow-up. You can ask us to stop marketing follow-up at
+              any time.
             </p>
           </Section>
 
@@ -100,7 +102,7 @@ export default function PrivacyPage() {
           <Section title="Service providers">
             <p>
               We use third-party service providers to run our business, such as
-              hosting, database, email, SMS, analytics, lead management, audit
+              hosting, database, email, analytics, lead management, audit
               research, and automation providers. These providers may process
               information on our behalf only as needed to provide their services
               to us.
@@ -167,7 +169,7 @@ export default function PrivacyPage() {
               >
                 {contactEmail}
               </a>
-              .
+              . Our mailing address is {mailingAddress}.
             </p>
           </Section>
         </div>

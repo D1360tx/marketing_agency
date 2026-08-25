@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-const contactEmail = "info@trybookedout.com";
+const contactEmail = "hello@trybookedout.com";
+const mailingAddress =
+  "1309 Coffeen Avenue, Suite 1200, Sheridan, Wyoming 82801";
 
 export const metadata: Metadata = {
   title: "Terms of Service - Booked Out",
@@ -38,26 +40,27 @@ export default function TermsPage() {
         <h1 className="mt-8 text-4xl font-black tracking-tight">
           Terms of Service
         </h1>
-        <p className="mt-3 text-sm text-gray-500">Last updated May 19, 2026</p>
+        <p className="mt-3 text-sm text-gray-500">Last updated August 25, 2026</p>
 
         <div className="mt-10 space-y-9 text-base leading-7 text-gray-700 [text-wrap:pretty]">
           <Section title="Agreement to these terms">
             <p>
-              These Terms of Service govern your use of trybookedout.com and
-              your interactions with Booked Out through the website, forms,
-              calls, texts, emails, and related services. By using the site or
-              submitting information, you agree to these terms.
+              Booked Out is a brand operated by ICDC Ventures LLC. These Terms
+              of Service govern your use of trybookedout.com and your
+              interactions with Booked Out through the website, forms, calls,
+              emails, and related services. By using the site or submitting
+              information, you agree to these terms.
             </p>
           </Section>
 
           <Section title="What Booked Out does">
             <p>
-              Booked Out provides local service business marketing services,
-              including website strategy and buildout, review request systems,
-              local search support, speed-to-lead workflows, reporting, and
-              related consulting. Specific deliverables, pricing, billing, and
-              cancellation terms are controlled by the written agreement or order
-              form you accept with Booked Out.
+              Booked Out provides managed revenue-capture services for local
+              businesses, including website strategy and buildout, neutral review
+              requests by email, local-search foundation work, lead-routing and
+              follow-up processes, reporting, and related consulting. Specific
+              deliverables, pricing, billing, and cancellation terms are controlled
+              by the written agreement or order form you accept with Booked Out.
             </p>
           </Section>
 
@@ -130,7 +133,7 @@ export default function TermsPage() {
           <Section title="Third-party platforms">
             <p>
               Services may depend on third-party platforms such as Google,
-              hosting providers, email providers, SMS providers, analytics
+              hosting providers, email providers, analytics
               tools, CRM systems, review platforms, and payment processors. We
               are not responsible for outages, policy changes, account actions,
               or data issues caused by third-party platforms.
@@ -184,7 +187,7 @@ export default function TermsPage() {
               >
                 {contactEmail}
               </a>
-              .
+              . Our mailing address is {mailingAddress}.
             </p>
           </Section>
         </div>
