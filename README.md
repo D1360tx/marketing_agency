@@ -2,6 +2,10 @@
 
 Marketing automation platform for local service business agencies. Prospecting, lead management, outreach campaigns, AI website generation, review requests.
 
+## Simplified outbound engine
+
+The Booked Out Maps → enrich → score → QA workflow and local Phase 2 copy-learning loop are documented in [`docs/context/OUTBOUND_ENGINE.md`](docs/context/OUTBOUND_ENGINE.md). Build a review-ready cohort with `npm run outbound:build -- --input <maps.csv> --output <ready.csv>`, then evaluate manually imported evidence with `npm run outbound:learn -- --input <evidence.json|csv> --output <decisions.json>`. Neither command sends outreach or mutates Supabase; promotion output is a human-review recommendation only.
+
 **Stack:** Next.js 16 · React 19 · TypeScript · Tailwind CSS · shadcn/ui · Supabase (Postgres + Auth) · Resend · Twilio · Google Gemini
 
 ---

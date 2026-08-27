@@ -61,6 +61,37 @@ Each run produces:
 
 Batch runs produce per-query files + a `_combined_<timestamp>.csv`
 
+## Booked Out outbound cohort export
+
+Turn any scraper CSV (including a combined batch file) into a deduped, scored,
+pre-send-reviewed cohort without Supabase credentials or paid enrichment:
+
+```bash
+cd /path/to/trybookedout-launch
+npm run outbound:build -- \
+  --input tools/gmaps-scraper/output/_combined_<timestamp>.csv \
+  --output /tmp/booked-out-ready.csv
+```
+
+The command writes:
+
+- the requested CSV with only `qa_status=ready` rows;
+- a sibling `*.hold.csv` containing rejected rows and deterministic
+  `qa_reasons` for manual correction.
+
+Rows are normalized and deduped by Maps URL, phone, email, named website host,
+or name + address. The 100-point score is intentionally explainable:
+`revenue_leakage` (45), `ability_to_pay` (35), and `contact_confidence` (20).
+It assigns either `emerging_operator` or `established_under_optimized` and
+holds rows with no valid email, inadequate identity, or score below 45. This is
+a file-only QA/export step; it does not send outreach or write to Supabase.
+
+Run its focused tests with:
+
+```bash
+npm run test:outbound
+```
+
 ## Data fields
 
 | Field | Source |
