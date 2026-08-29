@@ -27,6 +27,7 @@ import { cn } from "@/lib/utils";
 const navigation = [
   { name: "Today", href: "/app", icon: LayoutDashboard },
   { name: "Leads", href: "/app/leads", icon: Users },
+  { name: "Website Leads", href: "/app/client-leads", icon: ClipboardList },
   { name: "Find Leads", href: "/app/prospector", icon: Search },
   { name: "Clients", href: "/app/onboarding", icon: ClipboardList },
 ];

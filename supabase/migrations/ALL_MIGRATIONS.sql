@@ -1,6 +1,7 @@
 -- ============================================
--- AgencyFlow - Complete Database Setup
--- Run this in your Supabase SQL Editor
+-- LEGACY SNAPSHOT — NOT CANONICAL OR COMPLETE
+-- Use numbered files in this directory in ascending order.
+-- Migration 033_client_lead_routing.sql is required for client lead routing.
 -- ============================================
 
 -- 1. Prospects table
