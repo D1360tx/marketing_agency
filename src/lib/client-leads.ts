@@ -178,13 +178,41 @@ export function shouldRetryDuplicateDelivery(
   return !isClientLeadDeliveryComplete(ownerStatus) || !isClientLeadDeliveryComplete(acknowledgmentStatus);
 }
 
-export function buildOwnerNotificationHtml(appUrl: string, leadId: string): string {
+function normalizedBusinessName(businessName: string | null): string {
+  const normalized = businessName?.trim().replace(/\s+/g, " ").slice(0, 80);
+  return normalized || "your client";
+}
+
+export function buildOwnerNotificationSubject(businessName: string | null): string {
+  return `New website lead for ${normalizedBusinessName(businessName)}`;
+}
+
+export function buildOwnerNotificationText(
+  appUrl: string,
+  leadId: string,
+  businessName: string | null
+): string {
   const baseUrl = appUrl.replace(/\/$/, "");
+  return [
+    `A new website lead was saved for ${normalizedBusinessName(businessName)}.`,
+    "Contact details are available only in the authenticated Booked Out dashboard.",
+    `${baseUrl}/app/client-leads?lead=${encodeURIComponent(leadId)}`,
+  ].join("\n\n");
+}
+
+export function buildOwnerNotificationHtml(
+  appUrl: string,
+  leadId: string,
+  businessName: string | null
+): string {
+  const baseUrl = appUrl.replace(/\/$/, "");
+  const business = escapeEmailHtml(normalizedBusinessName(businessName));
   return `<!doctype html><html><body style="font-family:Arial,sans-serif">
-<h2>New website inquiry saved</h2>
-<p>A new inquiry is available in your authenticated Booked Out dashboard.</p>
-<p>Contact details are intentionally omitted from this notification.</p>
-<p><a href="${escapeEmailHtml(`${baseUrl}/app/client-leads?lead=${leadId}`)}">Review the inquiry securely</a></p>
+<div style="display:none;max-height:0;overflow:hidden">A new website lead was saved for ${business}.</div>
+<h2>New website lead</h2>
+<p>A new website lead was saved for <strong>${business}</strong>.</p>
+<p>Contact details are available only in your authenticated Booked Out dashboard.</p>
+<p><a href="${escapeEmailHtml(`${baseUrl}/app/client-leads?lead=${encodeURIComponent(leadId)}`)}">Open Website Leads</a></p>
 </body></html>`;
 }
 

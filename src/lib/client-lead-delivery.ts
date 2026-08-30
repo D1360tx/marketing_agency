@@ -3,6 +3,8 @@ import { Resend } from "resend";
 import {
   buildLeadAcknowledgmentHtml,
   buildOwnerNotificationHtml,
+  buildOwnerNotificationSubject,
+  buildOwnerNotificationText,
   clientLeadIdempotencyKey,
   clientLeadRetryDelaySeconds,
   CLIENT_LEAD_STALE_CLAIM_SECONDS,
@@ -167,8 +169,9 @@ export async function deliverClientLeadEmails(
             ? {
                 from: `${fromName} <${fromEmail}>`,
                 to: recipient as string,
-                subject: "New website inquiry saved",
-                html: buildOwnerNotificationHtml(appUrl, lead.id),
+                subject: buildOwnerNotificationSubject(routing.business_name),
+                text: buildOwnerNotificationText(appUrl, lead.id, routing.business_name),
+                html: buildOwnerNotificationHtml(appUrl, lead.id, routing.business_name),
               }
             : {
                 from: `${fromName} <${fromEmail}>`,

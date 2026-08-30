@@ -6,6 +6,8 @@ import {
   allowedCorsOrigin,
   buildClientLeadDuplicateHash,
   buildOwnerNotificationHtml,
+  buildOwnerNotificationSubject,
+  buildOwnerNotificationText,
   clientLeadIdempotencyKey,
   clientLeadRetryDelaySeconds,
   clientLeadRoutingSchema,
@@ -109,10 +111,15 @@ test("duplicate hashes are deterministic and recent failed delivery is retryable
 
 test("email HTML escaping is safe and owner notification contains no submitted PII", () => {
   assert.equal(escapeEmailHtml(`<script>"x" & 'y'</script>`), "&lt;script&gt;&quot;x&quot; &amp; &#39;y&#39;&lt;/script&gt;");
-  const html = buildOwnerNotificationHtml("https://trybookedout.com", "lead-id");
+  const html = buildOwnerNotificationHtml("https://trybookedout.com", "lead/id", "Synthetic <HVAC>");
+  const text = buildOwnerNotificationText("https://trybookedout.com/", "lead/id", "Synthetic HVAC");
   assert.doesNotMatch(html, /Taylor Owner|owner@example\.com|512-555/i);
-  assert.match(html, /Contact details are intentionally omitted/);
-  assert.match(html, /\/app\/client-leads\?lead=lead-id/);
+  assert.match(html, /Synthetic &lt;HVAC&gt;/);
+  assert.match(html, /Contact details are available only/);
+  assert.match(html, /\/app\/client-leads\?lead=lead%2Fid/);
+  assert.match(text, /Synthetic HVAC/);
+  assert.match(text, /lead%2Fid/);
+  assert.equal(buildOwnerNotificationSubject("  Synthetic   HVAC  "), "New website lead for Synthetic HVAC");
 });
 
 test("migration enforces tenant ownership and denies direct anonymous access", () => {
