@@ -286,7 +286,7 @@
             <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="5"><circle cx="50" cy="50" r="34"/><path d="M50 24v52M24 50h52M31 31l38 38M69 31 31 69"/><circle cx="50" cy="50" r="10" fill="currentColor" stroke="none"/></svg>
           </div>
           <div class="visual-content">
-            <span class="test-chip">QA concept • Not live</span>
+            <span class="test-chip">QA concept • Controlled routing enabled</span>
             <strong>Synthetic HVAC QA LLC</strong>
             <p>Modern HVAC site fulfillment artifact.</p>
           </div>
@@ -343,11 +343,11 @@
         <div class="contact-copy">
           <span class="eyebrow">QA-only contact experience</span>
           <h2 id="contact-heading">Test the inquiry flow.</h2>
-          <p>This form remains honestly disconnected unless an operator configures its HTTP(S) data endpoint.</p>
+          <p>This controlled QA form stores synthetic inquiries and routes test-only email notifications through Booked Out.</p>
           <div class="contact-detail"><span class="icon-box" aria-hidden="true">☎</span><div><small>Preferred contact method</small><a href="tel:+15125550128">Phone call • 512-555-0128</a></div></div>
           <div class="contact-detail"><span class="icon-box" aria-hidden="true">⌖</span><div><small>Test business address</small><strong>123 Main St., Austin TX 78701</strong></div></div>
         </div>
-        <form class="form-card" id="qa-lead-form" data-endpoint="" data-site-key="" novalidate>
+        <form class="form-card" id="qa-lead-form" data-endpoint="/api/client-leads/f612ad14589a266e5b6880a95eb842b5ffd62629420b416f486a7a5e19d1de10" data-site-key="" novalidate>
           <h3>QA inquiry form</h3>
           <p>Required fields are marked with an asterisk.</p>
           <div class="form-grid">
@@ -361,16 +361,16 @@
           <div class="honeypot" aria-hidden="true"><label for="company-website">Company website — leave blank</label><input id="company-website" name="companyWebsite" type="text" tabindex="-1" autocomplete="off"></div>
           <input name="turnstileToken" type="hidden" value="">
           <div class="turnstile-slot" id="turnstile-slot" aria-label="Security check"></div>
-          <p class="form-note">Use this QA form only to test field validation. Without a configured endpoint, it does not send or store your information. When an operator connects an endpoint, the form reports saved and provider-acceptance states separately; delivery requires later webhook confirmation.</p>
+          <p class="form-note">Use this form only for controlled synthetic QA. It stores the test inquiry and reports provider-acceptance states separately; inbox delivery requires later provider or webhook confirmation.</p>
           <button class="button" type="submit">Submit test inquiry</button>
-          <p class="form-status" id="form-status" role="status" aria-live="polite">QA only — routing is not connected. No request was sent.</p>
+          <p class="form-status" id="form-status" role="status" aria-live="polite">Ready for one controlled synthetic inquiry.</p>
         </form>
       </div>
     </section>
   </main>
 
   <footer>
-    <div class="container footer-row"><span><strong>Synthetic HVAC QA LLC — Test Only</strong></span><span>Fulfillment QA artifact • No live submission routing</span></div>
+    <div class="container footer-row"><span><strong>Synthetic HVAC QA LLC — Test Only</strong></span><span>Fulfillment QA artifact • Controlled synthetic routing</span></div>
   </footer>
 
   <script>
