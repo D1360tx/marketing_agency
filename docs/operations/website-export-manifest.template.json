@@ -1,0 +1,25 @@
+{
+  "client_id": "REPLACE_WITH_CLIENT_ID",
+  "business_name": "REPLACE_WITH_BUSINESS_NAME",
+  "eligibility_verified_at": "YYYY-MM-DDTHH:MM:SSZ",
+  "approved_by": "REPLACE_WITH_APPROVER",
+  "included_files": [
+    {
+      "path": "index.html",
+      "rights": "Client-specific core page file"
+    },
+    {
+      "path": "assets/site.css",
+      "rights": "Client-specific core stylesheet"
+    }
+  ],
+  "excluded_categories": [
+    "Credentials and environment files",
+    "Hosting and deployment configuration",
+    "Book Out reusable systems and automation logic",
+    "Non-transferable third-party licenses"
+  ],
+  "notes": [
+    "Replace every placeholder and review each allowlisted path before packaging."
+  ]
+}
