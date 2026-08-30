@@ -22,7 +22,8 @@
   - `We received your request` reached the Inbox.
   - `New website inquiry saved` reached Spam.
 - No SMS was sent. No real consumer PII was used.
-- The synthetic endpoint remains enabled so the verified QA page stays functional; it should be disabled or rotated when testing ends.
+- After the notification remediation deployed, final submission `e6c734a6-2f2a-4103-b432-2c669560d89d` returned HTTP `201`, appeared in the authenticated dashboard, and its client-specific owner notification reached Gmail Inbox.
+- The synthetic endpoint was then revoked. A post-revocation submission probe returned HTTP `404` with `Lead capture is unavailable` and sent no email.
 
 ## Remaining gaps
 
@@ -30,7 +31,7 @@
 
 The owner notification reached Gmail Spam while the acknowledgment reached the Inbox. Gmail's original-message view showed SPF, DKIM, and DMARC all passing; Gmail classified the message because it resembled messages previously identified as spam. Provider acceptance is therefore not sufficient proof of inbox placement.
 
-**Remediation in this release:** replace the repetitive generic subject/body with a client-specific subject, a plain-text alternative, a clear preheader, and a direct authenticated-dashboard call to action while continuing to omit submitted PII. Re-test inbox placement after deployment, mark the known synthetic message as not spam, and test at least one additional mailbox provider before real traffic.
+**Remediation verified:** the repetitive generic subject/body was replaced with a client-specific subject, plain-text alternative, clear preheader, and direct authenticated-dashboard call to action while continuing to omit submitted PII. The known synthetic message was marked not spam, and the final production test reached Gmail Inbox. Test at least one additional mailbox provider before real traffic.
 
 ### P1 — Delivery reporting is incomplete
 
