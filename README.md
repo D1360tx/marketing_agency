@@ -100,8 +100,12 @@ Migrations live in `supabase/migrations/`. Run them in order against your Supaba
 supabase db push
 
 # Option B: Supabase Dashboard → SQL Editor
-# Paste and run ALL_MIGRATIONS.sql
+# Paste and run every numbered file in supabase/migrations/ in ascending order.
+# 033_client_lead_routing.sql is required for client website lead capture,
+# atomic email claims, retry scheduling, and exact-origin CORS configuration.
 ```
+
+`ALL_MIGRATIONS.sql` is a legacy bootstrap snapshot and is not the canonical migration source. Do not use it for a current environment; it intentionally is not copied forward as numbered migrations evolve.
 
 ---
 

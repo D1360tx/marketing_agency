@@ -11,7 +11,8 @@ export async function updateSession(request: NextRequest) {
 
   if (
     request.nextUrl.pathname.startsWith("/onboarding/") ||
-    request.nextUrl.pathname.startsWith("/api/onboarding/")
+    request.nextUrl.pathname.startsWith("/api/onboarding/") ||
+    request.nextUrl.pathname.startsWith("/api/client-leads/")
   ) {
     const response = NextResponse.next({ request });
     response.headers.set("Cache-Control", "private, no-store");
