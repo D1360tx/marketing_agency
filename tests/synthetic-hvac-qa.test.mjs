@@ -13,7 +13,7 @@ test("synthetic HVAC artifact is visibly and repeatedly labeled test-only", () =
   assert.match(html, /<title>Synthetic HVAC QA LLC — Test Only<\/title>/);
   assert.ok(countMatches(/test only/gi) >= 3, "expected at least three visible test-only labels");
   assert.match(html, /Synthetic fulfillment QA artifact/);
-  assert.match(html, /No live routing/);
+  assert.match(html, /Controlled routing enabled/);
   assert.match(html, /<meta name="robots" content="noindex, nofollow">/);
 });
 
@@ -79,18 +79,18 @@ test("QA lead form has labels, required fields, honeypot, and neutral privacy co
   assert.match(html, /id="city"[^>]+required/);
   assert.match(html, /id="service"[^>]+required/);
   assert.match(html, /name="companyWebsite"[^>]+tabindex="-1"[^>]+autocomplete="off"/);
-  assert.match(html, /Without a configured endpoint, it does not send or store your information/);
+  assert.match(html, /stores the test inquiry and reports provider-acceptance states separately/);
   assert.doesNotMatch(html, /I (?:agree|consent)|marketing messages|terms and conditions/i);
 });
 
-test("submission validates locally, stays disconnected by default, and permits only HTTP endpoints", () => {
+test("submission validates locally, uses one revocable relative endpoint, and permits only HTTP endpoints", () => {
   assert.match(html, /event\.preventDefault\(\)/);
   assert.match(html, /form\.checkValidity\(\)/);
   assert.match(html, /form\.reportValidity\(\)/);
   assert.match(html, /form\.elements\.companyWebsite\.value/);
-  assert.match(html, /data-endpoint=""/);
+  assert.match(html, /data-endpoint="\/api\/client-leads\/[0-9a-f]{64}"/);
   assert.match(html, /if \(!configuredEndpoint\)/);
-  assert.match(html, /QA only — routing is not connected\. No request was sent\./);
+  assert.match(html, /Ready for one controlled synthetic inquiry\./);
   assert.match(html, /endpoint\.protocol !== 'http:' && endpoint\.protocol !== 'https:'/);
   assert.match(html, /fetch\(endpoint\.href/);
   assert.match(html, /\['accepted', 'delivered'\]\.includes\(result\.delivery\?\.owner\)/);
@@ -98,7 +98,7 @@ test("submission validates locally, stays disconnected by default, and permits o
   assert.match(html, /action: 'client_lead'/);
   assert.match(html, /turnstile\.reset/);
   assert.match(html, /provider accepted the owner notification and acknowledgment/);
-  assert.doesNotMatch(html, /data-endpoint="https?:\/\/|[0-9a-f]{64}|diego@icdcventures\.com/i);
+  assert.doesNotMatch(html, /data-endpoint="https?:\/\/|diego@icdcventures\.com/i);
   assert.doesNotMatch(html, /XMLHttpRequest|action="https?:\/\//i);
   assert.doesNotMatch(html, /thank you|successfully (?:sent|submitted)|we(?:'|’)ll (?:call|contact)/i);
 });
