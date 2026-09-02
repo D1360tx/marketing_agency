@@ -79,6 +79,18 @@ test("impossible funnel counts require manual review and cannot be promoted", ()
   assert.match(decision.reasons.join(","), /audits_exceed_delivered/);
 });
 
+test("cross-row balancing cannot hide an impossible campaign snapshot", () => {
+  const balancedButInvalid = [
+    { campaign_id: "bad-a", variant_key: "bo2-emerging-inquiry-followup-v1", delivered: 40, ...zeroes, reply_positive: 4, audits_accepted: 0, meetings: 1 },
+    { campaign_id: "bad-b", variant_key: "bo2-emerging-inquiry-followup-v1", delivered: 40, ...zeroes, audits_accepted: 2 },
+  ];
+  const decision = runOutboundLearningLoop(balancedButInvalid).decisions.find(
+    (item) => item.variant_key === "bo2-emerging-inquiry-followup-v1"
+  );
+  assert.equal(decision.decision, "manual_review");
+  assert.match(decision.reasons.join(","), /meetings_exceed_audits/);
+});
+
 test("CSV fixture parsing uses the same controlled evidence contract", () => {
   const csv = `campaign_id,variant_key,delivered,reply_positive,reply_objection,reply_timing,reply_unsubscribe,reply_irrelevant,reply_unknown,audits_accepted,meetings,clients,complaints\nfirst,bo2-emerging-web-gap-v1,10,1,0,0,0,0,0,0,0,0,0\n`;
   assert.deepEqual(parseEvidenceFixture(csv, "csv"), [{

@@ -202,6 +202,8 @@ const METRIC_FIELDS = [
   "complaints",
 ] as const satisfies readonly (keyof OutboundEvidenceRow)[];
 
+type EvidenceMetrics = Pick<OutboundEvidenceRow, (typeof METRIC_FIELDS)[number]>;
+
 const toCount = (value: unknown, field: string): number => {
   const count = typeof value === "number" ? value : Number(String(value ?? "").trim());
   if (!Number.isInteger(count) || count < 0) throw new Error(`${field} must be a non-negative integer`);
@@ -253,7 +255,7 @@ export function calculateEvidenceScore(evidence: Omit<AggregateEvidence, "eviden
   return Math.round((weighted / evidence.delivered) * 1000) / 10;
 }
 
-const taggingProblems = (evidence: Omit<AggregateEvidence, "evidence_score">): string[] => {
+const taggingProblems = (evidence: EvidenceMetrics): string[] => {
   const categorizedReplies =
     evidence.reply_positive + evidence.reply_objection + evidence.reply_timing +
     evidence.reply_unsubscribe + evidence.reply_irrelevant + evidence.reply_unknown;
@@ -306,7 +308,10 @@ export function runOutboundLearningLoop(rows: OutboundEvidenceRow[]): LearningLo
       ...aggregateWithoutScore,
       evidence_score: calculateEvidenceScore(aggregateWithoutScore),
     };
-    const problems = taggingProblems(aggregateWithoutScore);
+    const problems = [...new Set([
+      ...evidenceRows.flatMap((row) => taggingProblems(row)),
+      ...taggingProblems(aggregateWithoutScore),
+    ])];
 
     if (!metadata) {
       return { variant_key, decision: "manual_review", reasons: ["unknown_variant_key"], evidence, metadata };

@@ -55,6 +55,17 @@ test("dedupe closes transitive identifier bridges and preserves keyless rows", (
   assert.equal(bridged.all.filter((lead) => !lead.business_name).length, 2);
 });
 
+test("dedupe selects the same canonical values regardless of input row order", () => {
+  const duplicates = [
+    { name: "Zulu HVAC", phone: "512-555-0100", email: "zulu@example.org", rating: 4.2, review_count: 10 },
+    { name: "Alpha HVAC", phone: "512-555-0100", email: "alpha@example.org", rating: 4.8, review_count: 20 },
+  ];
+  assert.deepEqual(
+    buildOutboundCohort(duplicates).all,
+    buildOutboundCohort([...duplicates].reverse()).all
+  );
+});
+
 test("Booked Out score exposes three bounded dimensions and assigns both cohorts", () => {
   const established = calculateBookedOutScore({
     website_url: null,
@@ -98,6 +109,16 @@ test("pre-send QA exports ready rows and holds unsafe rows with reasons", () => 
   assert.match(exported, /revenue_leakage,ability_to_pay,contact_confidence/);
   assert.match(exported, /established_under_optimized/);
   assert.doesNotMatch(exported, /Gamma Electric/);
+});
+
+test("pre-send QA holds tagged variants of unsafe no-reply addresses", () => {
+  const [lead] = buildOutboundCohort([{
+    name: "Unsafe HVAC",
+    email: "noreply+sales@example.org",
+    phone: "512-555-0100",
+  }]).all;
+  assert.equal(lead.qa_status, "hold");
+  assert.match(lead.qa_reasons.join(","), /unsafe_email/);
 });
 
 test("CSV export neutralizes spreadsheet formulas from untrusted Maps data", () => {

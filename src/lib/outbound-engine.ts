@@ -125,13 +125,35 @@ const mergeLead = (
   current: NormalizedOutboundLead,
   incoming: NormalizedOutboundLead
 ): NormalizedOutboundLead => {
-  const merged = { ...current };
-  for (const key of Object.keys(merged) as (keyof NormalizedOutboundLead)[]) {
-    if ((merged[key] === "" || merged[key] === null || merged[key] === 0) && incoming[key]) {
-      (merged as unknown as Record<string, unknown>)[key] = incoming[key];
-    }
-  }
-  return merged;
+  const chooseText = (left: string, right: string): string =>
+    [left, right].filter(Boolean).sort((a, b) => a.localeCompare(b))[0] ?? "";
+  const chooseBusinessName = (left: string, right: string): string =>
+    [left, right]
+      .filter(Boolean)
+      .sort((a, b) => b.length - a.length || a.localeCompare(b))[0] ?? "";
+  const chooseRating = (left: number | null, right: number | null): number | null => {
+    if (left === null) return right;
+    if (right === null) return left;
+    return Math.max(left, right);
+  };
+
+  return {
+    business_name: chooseBusinessName(current.business_name, incoming.business_name),
+    category: chooseText(current.category, incoming.category),
+    address: chooseText(current.address, incoming.address),
+    city: chooseText(current.city, incoming.city),
+    state: chooseText(current.state, incoming.state),
+    phone: chooseText(current.phone, incoming.phone),
+    email: chooseText(current.email, incoming.email),
+    website_url: chooseText(current.website_url, incoming.website_url),
+    rating: chooseRating(current.rating, incoming.rating),
+    review_count: Math.max(current.review_count, incoming.review_count),
+    maps_url: chooseText(current.maps_url, incoming.maps_url),
+    facebook: chooseText(current.facebook, incoming.facebook),
+    instagram: chooseText(current.instagram, incoming.instagram),
+    linkedin: chooseText(current.linkedin, incoming.linkedin),
+    source: chooseText(current.source, incoming.source),
+  };
 };
 
 export function dedupeOutboundLeads(
@@ -170,7 +192,7 @@ export function runPreSendQa(lead: NormalizedOutboundLead, score: number): strin
   if (!lead.business_name) reasons.push("missing_business_name");
   if (!lead.email) reasons.push("missing_email");
   else if (!EMAIL_RE.test(lead.email)) reasons.push("invalid_email");
-  else if (UNSAFE_EMAIL_LOCAL_PARTS.has(lead.email.split("@")[0])) {
+  else if (UNSAFE_EMAIL_LOCAL_PARTS.has(lead.email.split("@")[0].split("+")[0])) {
     reasons.push("unsafe_email");
   }
   if (score < 45) reasons.push("score_below_45");
