@@ -52,6 +52,17 @@ test("canonical workflow pages do not link to obsolete root dashboard routes", a
   }
 });
 
+test("lead detail keeps navigation and actions usable on mobile", async () => {
+  const source = await read("src/app/app/leads/[id]/page.tsx");
+
+  assert.match(source, /flex flex-col gap-3 sm:flex-row sm:items-start/);
+  assert.match(source, /grid w-full grid-cols-2 gap-2 sm:contents/);
+  assert.match(source, /h-11 w-full sm:min-h-9 sm:w-auto/);
+  assert.match(source, /grid-cols-\[auto_minmax\(0,1fr\)_auto_auto\]/);
+  assert.match(source, /grid-cols-\[minmax\(0,1fr\)\] gap-4 sm:grid-cols-2/);
+  assert.doesNotMatch(source, /flex gap-2 w-full sm:w-auto sm:contents/);
+});
+
 test("campaign and recipient creation is one consent-aware database transaction", async () => {
   const route = await read("src/app/api/campaigns/route.ts");
   const migration = await read("supabase/migrations/028_atomic_campaign_creation.sql");
