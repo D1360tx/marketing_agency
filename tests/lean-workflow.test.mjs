@@ -34,6 +34,7 @@ test("canonical workflow pages do not link to obsolete root dashboard routes", a
   const pages = [
     "src/app/app/page.tsx",
     "src/app/app/tasks/page.tsx",
+    "src/app/app/leads/page.tsx",
     "src/app/app/leads/[id]/page.tsx",
     "src/app/app/campaigns/page.tsx",
     "src/app/app/campaigns/new/page.tsx",
@@ -45,7 +46,7 @@ test("canonical workflow pages do not link to obsolete root dashboard routes", a
     const source = await read(path);
     assert.doesNotMatch(
       source,
-      /(?:href=|router\.push\()[`"]\/(?:tasks|leads|campaigns|sequences)(?:[/?`"])/,
+      /(?:href=\{?|router\.push\()[`"]\/(?:tasks|leads|campaigns|sequences)(?:[/?`"])/,
       path
     );
   }

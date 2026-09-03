@@ -130,7 +130,7 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
                   {dayTasks.length === 0 ? (
                     <p className="text-xs text-muted-foreground/50">—</p>
                   ) : dayTasks.map(t => (
-                    <Link key={t.id} href={`/leads/${t.id}`}>
+                    <Link key={t.id} href={`/app/leads/${t.id}`}>
                       <div className={`mb-1 rounded px-1.5 py-1 text-xs ${t.status === "call_scheduled" ? "bg-indigo-100 text-indigo-800" : "bg-orange-100 text-orange-800"}`}>
                         {t.business_name}
                         {t.phone && <span className="block text-[10px] opacity-75">{t.phone}</span>}
@@ -194,7 +194,7 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
                             {notesPreview}
                           </p>
                         )}
-                        <Link href={`/leads/${prospect.id}`}>
+                        <Link href={`/app/leads/${prospect.id}`}>
                           <Button size="sm" className="w-full mt-1 bg-indigo-600 hover:bg-indigo-700">
                             View Lead <ArrowRight className="ml-2 h-3.5 w-3.5" />
                           </Button>
@@ -268,7 +268,7 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
                             {notesPreview}
                           </p>
                         )}
-                        <Link href={`/leads/${prospect.id}`}>
+                        <Link href={`/app/leads/${prospect.id}`}>
                           <Button size="sm" className="w-full mt-1">
                             View Lead <ArrowRight className="ml-2 h-3.5 w-3.5" />
                           </Button>
