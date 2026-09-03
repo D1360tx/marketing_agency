@@ -2,7 +2,8 @@
 
 import { use, useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { ArrowLeft, Loader2, Printer } from "lucide-react";
+import { ArrowLeft, Copy, FileSignature, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -181,6 +182,25 @@ export default function LeadAgreementPage({ params }: { params: Promise<{ id: st
     loadLead();
   }, [id]);
 
+  async function copyClientDetails() {
+    const details = [
+      `Effective date: ${effectiveDate}`,
+      `Client legal name: ${legalName}`,
+      `Client address: ${address}`,
+      `Signer name: ${signerName}`,
+      `Signer title: ${signerTitle}`,
+      `Signer email: ${email}`,
+      `Signer phone: ${phone}`,
+    ].join("\n");
+
+    try {
+      await navigator.clipboard.writeText(details);
+      toast.success("Client details copied for SignWell");
+    } catch {
+      toast.error("Could not copy client details");
+    }
+  }
+
   if (loading) return <div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>;
 
   return (
@@ -193,13 +213,22 @@ export default function LeadAgreementPage({ params }: { params: Promise<{ id: st
           </Button>
           <div className="min-w-0"><h1 className="text-xl font-bold sm:text-2xl">Agreement</h1><p className="truncate text-sm text-muted-foreground">{lead?.business_name || "Lead"}</p></div>
         </div>
-        <Button onClick={() => window.print()} className="min-h-11 shrink-0"><Printer className="mr-2 h-4 w-4" />Print / Save PDF</Button>
+        <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+          <Button variant="outline" onClick={copyClientDetails} className="min-h-11">
+            <Copy className="mr-2 h-4 w-4" />Copy Client Details
+          </Button>
+          <Button asChild className="min-h-11">
+            <a href="/go/agreement" target="_blank" rel="noopener noreferrer">
+              <FileSignature className="mr-2 h-4 w-4" />Open SignWell Template
+            </a>
+          </Button>
+        </div>
       </div>
 
       {error ? <Card className="border-red-200"><CardContent className="p-4 text-sm text-red-700 sm:p-6">{error}</CardContent></Card> : (
         <>
           <Card className="agreement-fields">
-            <CardHeader className="p-4 sm:p-6"><CardTitle>Confirm client details</CardTitle><CardDescription>Lead data is prefilled. Confirm the client’s legal name and signer details before sending for signature.</CardDescription></CardHeader>
+            <CardHeader className="p-4 sm:p-6"><CardTitle>Confirm client details</CardTitle><CardDescription>Lead data is prefilled. Confirm the client’s legal name and signer details, copy them, then open the SignWell template to prepare and send the agreement.</CardDescription></CardHeader>
             <CardContent className="grid gap-4 p-4 pt-0 sm:grid-cols-2 sm:p-6 sm:pt-0">
               <Field label="Effective date" value={effectiveDate} setValue={setEffectiveDate} type="date" />
               <Field label="Client legal name" value={legalName} setValue={setLegalName} />
@@ -243,7 +272,7 @@ export default function LeadAgreementPage({ params }: { params: Promise<{ id: st
               </div>
             </Section>
           </article>
-          <p className="agreement-fields text-xs text-muted-foreground">Operational template, not legal advice. Texas counsel should review this template before the first client signs it.</p>
+          <p className="agreement-fields text-xs text-muted-foreground">This page is a preparation aid, not a signing system. Complete the signature workflow in SignWell. Texas counsel should review this template before the first client signs it.</p>
         </>
       )}
     </div>

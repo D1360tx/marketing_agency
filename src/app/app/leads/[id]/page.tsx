@@ -949,15 +949,18 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
               </Link>
             </Button>
             <Button asChild variant="outline" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto">
-              <Link href={`/app/leads/${prospect.id}/agreement`}>
+              <Link
+                href={`/app/leads/${prospect.id}/agreement`}
+                title="Confirm the client details before preparing the agreement in SignWell"
+              >
                 <FileSignature className="mr-1 h-4 w-4" />
-                Agreement
+                Prepare Agreement
               </Link>
             </Button>
             <Button asChild variant="outline" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto">
               <a href="/go/start" target="_blank" rel="noopener noreferrer">
                 <CreditCard className="mr-1 h-4 w-4" />
-                $499 Payment
+                Payment After Signing
               </a>
             </Button>
             {prospect.status === "client" && (
