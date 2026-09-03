@@ -808,7 +808,7 @@ export default function LeadsPage() {
               return (
                 <div key={prospect.id} className="rounded-lg border bg-white p-3 shadow-sm">
                   <Link
-                    href={`/leads/${prospect.id}`}
+                    href={`/app/leads/${prospect.id}`}
                     onClick={() => sessionStorage.setItem("leadListIds", JSON.stringify(sortedIds))}
                     className="block"
                   >
@@ -852,7 +852,7 @@ export default function LeadsPage() {
                       <Phone className="h-3 w-3 mr-1" /> Log Call
                     </Button>
                     <Link
-                      href={`/leads/${prospect.id}`}
+                      href={`/app/leads/${prospect.id}`}
                       onClick={() => sessionStorage.setItem("leadListIds", JSON.stringify(sortedIds))}
                       className="flex-1"
                     >
@@ -917,7 +917,7 @@ export default function LeadsPage() {
                           </TableCell>
                           <TableCell>
                             <Link
-                              href={`/leads/${prospect.id}`}
+                              href={`/app/leads/${prospect.id}`}
                               className="hover:underline"
                               onClick={() => sessionStorage.setItem("leadListIds", JSON.stringify(sortedIds))}
                             >
@@ -985,7 +985,7 @@ export default function LeadsPage() {
                           </TableCell>
                           <TableCell className="text-right">
                             <Link
-                              href={`/leads/${prospect.id}`}
+                              href={`/app/leads/${prospect.id}`}
                               onClick={() => sessionStorage.setItem("leadListIds", JSON.stringify(sortedIds))}
                             >
                               <Button variant="ghost" size="sm">
@@ -1036,7 +1036,7 @@ export default function LeadsPage() {
                 {phoneDuplicate && (
                   <p className="text-xs text-amber-600">
                     ⚠️ This phone number already exists —{" "}
-                    <Link href={`/leads/${phoneDuplicate.id}`} className="underline font-medium">{phoneDuplicate.business_name}</Link>
+                    <Link href={`/app/leads/${phoneDuplicate.id}`} className="underline font-medium">{phoneDuplicate.business_name}</Link>
                   </p>
                 )}
               </div>
@@ -1319,7 +1319,7 @@ function ProspectMiniCard({
 
   return (
     <Link
-      href={`/leads/${prospect.id}`}
+      href={`/app/leads/${prospect.id}`}
       onClick={() => {
         if (listIds) sessionStorage.setItem("leadListIds", JSON.stringify(listIds));
       }}
