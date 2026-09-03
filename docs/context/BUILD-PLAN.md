@@ -27,7 +27,11 @@ Before the first payment:
 
 - Service agreement reviewed by Texas counsel
 - ICDC Ventures LLC / Booked Out DBA and mailing address completed
-- Agreement loaded into an e-sign tool
+- Agreement loaded into a SignWell template with Diego as the default Company signer
+- SignWell email verification, audit report, and digital certificate remain enabled
+- The authenticated lead-record action opens the SignWell preparation workflow; it does not expose a public self-sign link
+- Diego personalizes and sends the agreement only after approving the lead
+- Payment is sent only after SignWell reports the agreement completed
 - $499 recurring payment link created with quantity fixed at one
 - Cancellation, renewal, receipt, failed-payment, and refund processes tested
 - Payment link returns to the approved onboarding path
