@@ -71,18 +71,19 @@ export default function GeneratorPage() {
   // Save state
   const [saving, setSaving] = useState(false);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [prospectLoadState, setProspectLoadState] = useState<"idle" | "loading" | "loaded" | "error">("idle");
 
   // Auto-fill from prospect
   useEffect(() => {
     if (!prospectId) return;
 
     async function loadProspect() {
+      setProspectLoadState("loading");
       try {
-        const res = await fetch("/api/prospects");
+        const res = await fetch(`/api/prospects/${encodeURIComponent(prospectId!)}`);
         const result = await res.json();
-        const prospect = (result.prospects || []).find(
-          (p: ProspectWithAnalysis) => p.id === prospectId
-        );
+        if (!res.ok || !result.prospect) throw new Error(result.error || "Lead not found");
+        const prospect = result.prospect as ProspectWithAnalysis;
         if (prospect) {
           setData((prev) => ({
             ...prev,
@@ -109,9 +110,11 @@ export default function GeneratorPage() {
           } else {
             setSelectedTemplate("contractor");
           }
+          setProspectLoadState("loaded");
         }
       } catch {
         console.error("Failed to load prospect");
+        setProspectLoadState("error");
       }
     }
     loadProspect();
@@ -275,6 +278,14 @@ export default function GeneratorPage() {
         </p>
       </div>
 
+      {prospectId && (
+        <div className={`rounded-lg border px-4 py-3 text-sm ${prospectLoadState === "error" ? "border-red-200 bg-red-50 text-red-700" : "border-blue-200 bg-blue-50 text-blue-800"}`}>
+          {prospectLoadState === "loading" && "Loading this lead’s information…"}
+          {prospectLoadState === "loaded" && `Loaded lead information for ${data.businessName}.`}
+          {prospectLoadState === "error" && "Could not load this lead. Return to the lead record and try again."}
+        </div>
+      )}
+
       {/* Template picker */}
       <div>
         <h2 className="mb-3 text-sm font-medium">Choose a Style</h2>
@@ -417,7 +428,7 @@ export default function GeneratorPage() {
                     onChange={(e) => setNewService(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addService())}
                   />
-                  <Button variant="outline" size="icon" onClick={addService}>
+                  <Button variant="outline" size="icon" onClick={addService} className="h-11 w-11 sm:h-9 sm:w-9">
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
@@ -428,7 +439,7 @@ export default function GeneratorPage() {
           {/* Action buttons */}
           <div className="space-y-2">
             <Button
-              className="w-full"
+              className="min-h-11 w-full sm:min-h-9"
               onClick={handleGenerateAI}
               disabled={generating}
             >
@@ -444,7 +455,7 @@ export default function GeneratorPage() {
             )}
             <div className="flex gap-2">
               <Button
-                className="flex-1"
+                className="min-h-11 flex-1 sm:min-h-9"
                 variant="outline"
                 onClick={handleExportHTML}
               >
@@ -452,7 +463,7 @@ export default function GeneratorPage() {
                 {aiHTML || claudeHTML ? "Download AI Website" : "Export HTML"}
               </Button>
               <Button
-                className="flex-1"
+                className="min-h-11 flex-1 sm:min-h-9"
                 variant="outline"
                 onClick={handleSave}
                 disabled={saving}

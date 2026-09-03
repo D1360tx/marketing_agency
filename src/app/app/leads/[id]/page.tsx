@@ -77,6 +77,7 @@ import {
 } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 import type { ProspectStatus, ProspectWithAnalysis, WebsiteAnalysis } from "@/types";
+import { toLocalDateTimeInputValue } from "@/lib/lead-sales";
 
 const statusConfig: Record<ProspectStatus, { label: string; color: string }> = {
   new: { label: "New", color: "bg-blue-100 text-blue-800 border-blue-200" },
@@ -166,27 +167,6 @@ function formatNoteTimestamp(): string {
     hour: "numeric",
     minute: "2-digit",
   });
-}
-
-function generatePitch(prospect: ProspectWithAnalysis, analysis?: WebsiteAnalysis): string {
-  const name = prospect.business_name;
-  const city = prospect.city || "your area";
-  const type = prospect.business_type || "business";
-
-  let hook = "";
-  if (!prospect.website_url) {
-    hook = `I noticed ${name} doesn't have a website yet`;
-  } else if (analysis?.overall_grade === "F" || analysis?.overall_grade === "D") {
-    hook = `I noticed ${name}'s website could use some work`;
-  } else {
-    hook = `I came across ${name} while looking for ${type} businesses in ${city}`;
-  }
-
-  const reviewNote = (prospect.review_count ?? 0) < 10
-    ? ` and only has ${prospect.review_count ?? 0} Google reviews`
-    : "";
-
-  return `Hey ${name}! ${hook}${reviewNote}. I help local ${type} businesses in ${city} present themselves clearly online and follow up with new leads consistently. Would you be open to a quick 5-minute chat? — Maria`;
 }
 
 function getTalkingPoints(prospect: ProspectWithAnalysis, analysis?: WebsiteAnalysis): string[] {
@@ -349,7 +329,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           setDealValue(String((data.prospect as any).deal_value || ""));
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          setCallScheduledAt((data.prospect as any).call_scheduled_at?.slice(0, 16) || "");
+          setCallScheduledAt(toLocalDateTimeInputValue((data.prospect as any).call_scheduled_at));
         }
 
         const msgRes = await fetch(`/api/prospects/${id}/messages`);
@@ -956,25 +936,23 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                 </Button>
               </Link>
             )}
-            <Button variant="outline" size="sm" onClick={() => {
-              const pitch = generatePitch(prospect, analysis);
-              navigator.clipboard.writeText(pitch);
-              toast.success("Pitch copied to clipboard!");
-            }} className="min-h-11 w-full sm:min-h-9 sm:w-auto">
-              <Copy className="mr-1 h-4 w-4" />
-              Pitch
+            <Button asChild variant="outline" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto">
+              <Link href={`/app/leads/${prospect.id}/pitch`}>
+                <Copy className="mr-1 h-4 w-4" />
+                Pitch
+              </Link>
             </Button>
             <Button asChild variant="outline" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto">
-              <a href="/go/book" target="_blank" rel="noopener noreferrer">
+              <Link href={`/app/leads/${prospect.id}/book`}>
                 <CalendarDays className="mr-1 h-4 w-4" />
                 Book Call
-              </a>
+              </Link>
             </Button>
             <Button asChild variant="outline" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto">
-              <a href="/go/agreement" target="_blank" rel="noopener noreferrer">
+              <Link href={`/app/leads/${prospect.id}/agreement`}>
                 <FileSignature className="mr-1 h-4 w-4" />
                 Agreement
-              </a>
+              </Link>
             </Button>
             <Button asChild variant="outline" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto">
               <a href="/go/start" target="_blank" rel="noopener noreferrer">

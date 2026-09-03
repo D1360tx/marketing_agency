@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 import { escapeEmailHtml, isGoogleReviewUrl } from "../src/lib/review-security.ts";
+import { buildGoogleCalendarDraft, generateLeadPitch, toLocalDateTimeInputValue } from "../src/lib/lead-sales.ts";
 
 const root = new URL("../", import.meta.url);
 const read = async (path) => readFile(new URL(path, root), "utf8");
@@ -61,6 +62,69 @@ test("lead detail keeps navigation and actions usable on mobile", async () => {
   assert.match(source, /grid-cols-\[auto_minmax\(0,1fr\)_auto_auto\]/);
   assert.match(source, /grid-cols-\[minmax\(0,1fr\)\] gap-4 sm:grid-cols-2/);
   assert.doesNotMatch(source, /flex gap-2 w-full sm:w-auto sm:contents/);
+});
+
+test("lead sales actions stay prospect-linked and open real workspaces", async () => {
+  const lead = await read("src/app/app/leads/[id]/page.tsx");
+  const generator = await read("src/app/app/generator/page.tsx");
+  const pitch = await read("src/app/app/leads/[id]/pitch/page.tsx");
+  const booking = await read("src/app/app/leads/[id]/book/page.tsx");
+  const agreement = await read("src/app/app/leads/[id]/agreement/page.tsx");
+
+  assert.match(lead, /generator\?prospect=\$\{prospect\.id\}/);
+  assert.match(lead, /\$\{prospect\.id\}\/pitch/);
+  assert.match(lead, /\$\{prospect\.id\}\/book/);
+  assert.match(lead, /\$\{prospect\.id\}\/agreement/);
+  assert.doesNotMatch(lead, /href="\/go\/(?:book|agreement)"/);
+
+  assert.match(generator, /fetch\(`\/api\/prospects\/\$\{encodeURIComponent\(prospectId!\)\}`\)/);
+  assert.doesNotMatch(generator, /fetch\("\/api\/prospects"\)/);
+  assert.match(pitch, /Editable lead pitch/);
+  assert.match(pitch, /generateLeadPitch/);
+  assert.match(booking, /Open Calendar Draft/);
+  assert.match(booking, /Mark Call Scheduled/);
+  assert.match(booking, /openedCalendarUrl === calendarUrl/);
+  assert.match(booking, /call_scheduled_at/);
+  assert.match(pitch, /Could not copy\. Select the pitch and copy it manually\./);
+  assert.match(agreement, /Local Call System: 90-Day Booking Foundation, \$499 per month/);
+  assert.match(agreement, /Print \/ Save PDF/);
+});
+
+test("lead pitch and calendar drafts contain the selected lead", () => {
+  const prospect = {
+    business_name: "Austin Test HVAC",
+    city: "Austin",
+    business_type: "HVAC",
+    website_url: null,
+    review_count: 6,
+  };
+  const pitch = generateLeadPitch(prospect);
+  assert.match(pitch, /Austin Test HVAC/);
+  assert.match(pitch, /Austin/);
+  assert.match(pitch, /6 Google reviews/);
+
+  const calendar = new URL(buildGoogleCalendarDraft({
+    businessName: prospect.business_name,
+    startsAt: "2026-09-08T10:00",
+    durationMinutes: 30,
+    phone: "512-555-0100",
+    email: "owner@example.com",
+  }));
+  assert.equal(calendar.hostname, "calendar.google.com");
+  assert.equal(calendar.searchParams.get("action"), "TEMPLATE");
+  assert.equal(calendar.searchParams.get("text"), "Booked Out Fit Call: Austin Test HVAC");
+  assert.match(calendar.searchParams.get("details"), /owner@example\.com/);
+});
+
+test("stored UTC call times convert back to local datetime input values", () => {
+  const instant = "2026-09-08T15:00:00.000Z";
+  const date = new Date(instant);
+  const pad = (value) => String(value).padStart(2, "0");
+  const expected = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+
+  assert.equal(toLocalDateTimeInputValue(instant), expected);
+  assert.equal(toLocalDateTimeInputValue("not-a-date"), "");
+  assert.equal(toLocalDateTimeInputValue(null), "");
 });
 
 test("campaign and recipient creation is one consent-aware database transaction", async () => {
