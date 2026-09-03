@@ -87,7 +87,8 @@ test("lead sales actions stay prospect-linked and open real workspaces", async (
   assert.match(booking, /call_scheduled_at/);
   assert.match(pitch, /Could not copy\. Select the pitch and copy it manually\./);
   assert.match(agreement, /Local Call System: 90-Day Booking Foundation, \$499 per month/);
-  assert.match(agreement, /Print \/ Save PDF/);
+  assert.match(agreement, /Open SignWell Template/);
+  assert.doesNotMatch(agreement, /Print \/ Save PDF/);
 });
 
 test("lead pitch and calendar drafts contain the selected lead", () => {

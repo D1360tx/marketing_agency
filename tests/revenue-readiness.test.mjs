@@ -39,6 +39,27 @@ test("revenue provider URLs remain server-side and map to stable redirects", asy
   }
 });
 
+test("agreement preparation is internal and keeps signing inside SignWell", async () => {
+  const [route, lead, agreement, env] = await Promise.all([
+    read("src/app/go/agreement/route.ts"),
+    read("src/app/app/leads/[id]/page.tsx"),
+    read("src/app/app/leads/[id]/agreement/page.tsx"),
+    read(".env.local.example"),
+  ]);
+
+  assert.match(route, /supabase\.auth\.getUser\(\)/);
+  assert.match(route, /status: 401/);
+  assert.match(lead, /Prepare Agreement/);
+  assert.match(lead, /Payment After Signing/);
+  assert.match(lead, /\/app\/leads\/\$\{prospect\.id\}\/agreement/);
+  assert.match(agreement, /Copy Client Details/);
+  assert.match(agreement, /Open SignWell Template/);
+  assert.match(agreement, /href="\/go\/agreement"/);
+  assert.doesNotMatch(agreement, /Print \/ Save PDF/);
+  assert.match(env, /Internal SignWell template\/workflow URL/);
+  assert.doesNotMatch(lead, /Sign on Booked Out/);
+});
+
 test("canonical public offer sells only the scoped $499 founding system", async () => {
   const homepage = await read("src/app/landing_opus/page.tsx");
   const spanish = await read("src/app/es/page.tsx");
