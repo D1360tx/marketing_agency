@@ -49,8 +49,12 @@ export default function LeadPitchPage({ params }: { params: Promise<{ id: string
   }, [id]);
 
   async function copyPitch() {
-    await navigator.clipboard.writeText(pitch);
-    toast.success("Pitch copied");
+    try {
+      await navigator.clipboard.writeText(pitch);
+      toast.success("Pitch copied");
+    } catch {
+      toast.error("Could not copy. Select the pitch and copy it manually.");
+    }
   }
 
   if (loading) {

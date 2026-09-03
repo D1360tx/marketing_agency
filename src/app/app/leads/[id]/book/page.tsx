@@ -17,7 +17,7 @@ export default function LeadBookPage({ params }: { params: Promise<{ id: string 
   const [prospect, setProspect] = useState<ProspectWithAnalysis | null>(null);
   const [startsAt, setStartsAt] = useState("");
   const [duration, setDuration] = useState("30");
-  const [calendarOpened, setCalendarOpened] = useState(false);
+  const [openedCalendarUrl, setOpenedCalendarUrl] = useState("");
   const [updating, setUpdating] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -57,7 +57,7 @@ export default function LeadBookPage({ params }: { params: Promise<{ id: string 
   function openCalendar() {
     if (!prospect || !calendarUrl) return;
     window.open(calendarUrl, "_blank", "noopener,noreferrer");
-    setCalendarOpened(true);
+    setOpenedCalendarUrl(calendarUrl);
   }
 
   async function markScheduled() {
@@ -140,7 +140,7 @@ export default function LeadBookPage({ params }: { params: Promise<{ id: string 
                 <CalendarPlus className="mr-2 h-4 w-4" />Open Calendar Draft
               </Button>
             </div>
-            {calendarOpened && (
+            {openedCalendarUrl === calendarUrl && calendarUrl && (
               <Button onClick={markScheduled} disabled={updating} className="min-h-11 w-full">
                 {updating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CalendarPlus className="mr-2 h-4 w-4" />}
                 Mark Call Scheduled

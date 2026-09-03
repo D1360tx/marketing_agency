@@ -77,6 +77,7 @@ import {
 } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 import type { ProspectStatus, ProspectWithAnalysis, WebsiteAnalysis } from "@/types";
+import { toLocalDateTimeInputValue } from "@/lib/lead-sales";
 
 const statusConfig: Record<ProspectStatus, { label: string; color: string }> = {
   new: { label: "New", color: "bg-blue-100 text-blue-800 border-blue-200" },
@@ -328,7 +329,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           setDealValue(String((data.prospect as any).deal_value || ""));
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          setCallScheduledAt((data.prospect as any).call_scheduled_at?.slice(0, 16) || "");
+          setCallScheduledAt(toLocalDateTimeInputValue((data.prospect as any).call_scheduled_at));
         }
 
         const msgRes = await fetch(`/api/prospects/${id}/messages`);
