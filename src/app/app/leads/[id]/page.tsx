@@ -753,25 +753,28 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
   const noteLog = parseNoteLog(prospect.notes);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 pb-6 sm:space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-4">
         {/* Top row: back + prev/next + title */}
-        <div className="flex items-start gap-3">
-          <Link href="/app/leads">
-            <Button variant="ghost" size="icon" className="shrink-0">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-          </Link>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+          <div className="flex w-full items-center justify-between sm:w-auto sm:justify-start sm:gap-2">
+            <Link href="/app/leads" aria-label="Back to leads">
+              <Button variant="ghost" size="icon" className="h-11 w-11 shrink-0 sm:h-9 sm:w-9">
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            </Link>
 
-          {/* Prev/Next navigation */}
-          {listIds.length > 0 && (
-            <div className="flex items-center gap-1 shrink-0 mt-1">
+            {/* Prev/Next navigation */}
+            {listIds.length > 0 && (
+              <div className="flex shrink-0 items-center gap-1">
               <Button
                 variant="ghost"
                 size="icon"
+                className="h-11 w-11 sm:h-9 sm:w-9"
                 disabled={listIndex <= 0}
                 onClick={() => router.push(`/app/leads/${listIds[listIndex - 1]}`)}
+                aria-label="Previous lead"
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
@@ -781,18 +784,21 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
               <Button
                 variant="ghost"
                 size="icon"
+                className="h-11 w-11 sm:h-9 sm:w-9"
                 disabled={listIndex >= listIds.length - 1}
                 onClick={() => router.push(`/app/leads/${listIds[listIndex + 1]}`)}
+                aria-label="Next lead"
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>
-            </div>
-          )}
+              </div>
+            )}
+          </div>
 
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
               {editing === "business_name" ? (
-                <div className="flex items-center gap-2 flex-1">
+                <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-center">
                   <Input
                     value={editValue}
                     onChange={(e) => setEditValue(e.target.value)}
@@ -877,7 +883,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-start">
           <div className="flex flex-col gap-1 w-full sm:flex-1 sm:min-w-[160px]">
             <Select value={prospect.status} onValueChange={handleStatusChange} disabled={savingStatus}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="h-11 w-full sm:h-9">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -926,16 +932,16 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
               </p>
             )}
           </div>
-          <div className="flex gap-2 w-full sm:w-auto sm:contents">
+          <div className="grid w-full grid-cols-2 gap-2 sm:contents">
             {latestPreview ? (
               <>
                 <Link href={`/app/campaigns/new?prospect=${prospect.id}`} className="flex-1 sm:flex-none">
-                  <Button size="sm" className="w-full">
+                  <Button size="sm" className="min-h-11 w-full sm:min-h-9">
                     <Send className="mr-1 h-4 w-4" />
                     Review & Send
                   </Button>
                 </Link>
-                <Button asChild variant="outline" size="sm" className="flex-1 sm:flex-none">
+                <Button asChild variant="outline" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto">
                   <a href={`/preview/${latestPreview.share_token}`} target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="mr-1 h-4 w-4" />
                     Open Preview
@@ -944,7 +950,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
               </>
             ) : (
               <Link href={`/app/generator?prospect=${prospect.id}`} className="flex-1 sm:flex-none">
-                <Button size="sm" className="w-full">
+                <Button size="sm" className="min-h-11 w-full sm:min-h-9">
                   <Palette className="mr-1 h-4 w-4" />
                   Create Preview
                 </Button>
@@ -954,23 +960,23 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
               const pitch = generatePitch(prospect, analysis);
               navigator.clipboard.writeText(pitch);
               toast.success("Pitch copied to clipboard!");
-            }} className="flex-1 sm:flex-none">
+            }} className="min-h-11 w-full sm:min-h-9 sm:w-auto">
               <Copy className="mr-1 h-4 w-4" />
               Pitch
             </Button>
-            <Button asChild variant="outline" size="sm" className="flex-1 sm:flex-none">
+            <Button asChild variant="outline" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto">
               <a href="/go/book" target="_blank" rel="noopener noreferrer">
                 <CalendarDays className="mr-1 h-4 w-4" />
                 Book Call
               </a>
             </Button>
-            <Button asChild variant="outline" size="sm" className="flex-1 sm:flex-none">
+            <Button asChild variant="outline" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto">
               <a href="/go/agreement" target="_blank" rel="noopener noreferrer">
                 <FileSignature className="mr-1 h-4 w-4" />
                 Agreement
               </a>
             </Button>
-            <Button asChild variant="outline" size="sm" className="flex-1 sm:flex-none">
+            <Button asChild variant="outline" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto">
               <a href="/go/start" target="_blank" rel="noopener noreferrer">
                 <CreditCard className="mr-1 h-4 w-4" />
                 $499 Payment
@@ -982,7 +988,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                 size="sm"
                 onClick={handleCreateOnboarding}
                 disabled={creatingOnboarding}
-                className="flex-1 sm:flex-none"
+                className="col-span-2 min-h-11 w-full sm:col-span-1 sm:min-h-9 sm:w-auto"
               >
                 {creatingOnboarding ? (
                   <Loader2 className="mr-1 h-4 w-4 animate-spin" />
@@ -994,32 +1000,33 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
             )}
             {latestPreview && (
               <Link href={`/app/generator?prospect=${prospect.id}`} className="flex-1 sm:flex-none">
-                <Button variant="outline" size="sm" className="w-full">
+                <Button variant="outline" size="sm" className="min-h-11 w-full sm:min-h-9">
                   <Palette className="mr-1 h-4 w-4" />
                   Regenerate
                 </Button>
               </Link>
             )}
-            <Button variant="destructive" size="sm" onClick={handleDelete} disabled={deleting} className="shrink-0 px-3">
-              {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+            <Button variant="destructive" size="sm" onClick={handleDelete} disabled={deleting} className="col-span-2 min-h-11 w-full sm:col-span-1 sm:min-h-9 sm:w-auto sm:shrink-0 sm:px-3">
+              {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4 sm:mr-0" />}
+              <span className="sm:sr-only">Delete lead</span>
             </Button>
           </div>
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-4 lg:grid-cols-3 lg:gap-6">
         {/* Left: Contact info + Notes + Messages + Activity */}
-        <div className="space-y-6 lg:col-span-2 min-w-0 overflow-hidden">
+        <div className="min-w-0 space-y-4 overflow-hidden sm:space-y-6 lg:col-span-2">
           {/* Contact info */}
           <Card>
-            <CardHeader>
+            <CardHeader className="p-4 sm:p-6">
               <CardTitle>Contact Information</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2 min-w-0">
+            <CardContent className="space-y-4 p-4 pt-0 sm:p-6 sm:pt-0">
+              <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-4 sm:grid-cols-2">
                 {/* Phone */}
                 {editing === "phone" ? (
-                  <div className="flex items-center gap-2 rounded-lg border p-3">
+                  <div className="grid grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-2 rounded-lg border p-3">
                     <Phone className="h-5 w-5 text-muted-foreground shrink-0" />
                     <Input
                       value={editValue}
@@ -1029,10 +1036,10 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                       placeholder="(512) 555-0100"
                       onKeyDown={(e) => { if (e.key === "Enter") handleInlineEditSave(); if (e.key === "Escape") cancelEdit(); }}
                     />
-                    <Button size="sm" onClick={handleInlineEditSave} disabled={savingEdit}>
+                    <Button size="icon" className="h-9 w-9" onClick={handleInlineEditSave} disabled={savingEdit} aria-label="Save edit">
                       {savingEdit ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
                     </Button>
-                    <Button size="sm" variant="ghost" onClick={cancelEdit}><X className="h-3 w-3" /></Button>
+                    <Button size="icon" className="h-9 w-9" variant="ghost" onClick={cancelEdit} aria-label="Cancel edit"><X className="h-3 w-3" /></Button>
                   </div>
                 ) : (
                   <div className="col-span-full sm:col-span-1 space-y-2">
@@ -1068,7 +1075,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
 
                 {/* Email */}
                 {editing === "email" ? (
-                  <div className="flex items-center gap-2 rounded-lg border p-3">
+                  <div className="grid grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-2 rounded-lg border p-3">
                     <Mail className="h-5 w-5 text-muted-foreground shrink-0" />
                     <Input
                       type="email"
@@ -1079,10 +1086,10 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                       placeholder="email@example.com"
                       onKeyDown={(e) => { if (e.key === "Enter") handleInlineEditSave(); if (e.key === "Escape") cancelEdit(); }}
                     />
-                    <Button size="sm" onClick={handleInlineEditSave} disabled={savingEdit}>
+                    <Button size="icon" className="h-9 w-9" onClick={handleInlineEditSave} disabled={savingEdit} aria-label="Save edit">
                       {savingEdit ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
                     </Button>
-                    <Button size="sm" variant="ghost" onClick={cancelEdit}><X className="h-3 w-3" /></Button>
+                    <Button size="icon" className="h-9 w-9" variant="ghost" onClick={cancelEdit} aria-label="Cancel edit"><X className="h-3 w-3" /></Button>
                   </div>
                 ) : (
                   <div className="group flex items-center gap-2">
@@ -1231,11 +1238,11 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
 
           {/* Notes */}
           <Card>
-            <CardHeader>
+            <CardHeader className="p-4 sm:p-6">
               <CardTitle>Notes</CardTitle>
               <CardDescription>Keep track of your interactions</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-4 pt-0 sm:p-6 sm:pt-0">
               {/* Existing note log */}
               {noteLog.length > 0 && (
                 <div className="space-y-3 max-h-72 overflow-y-auto overflow-x-hidden rounded-lg border bg-muted/30 p-3">
@@ -1325,7 +1332,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                     key={t}
                     type="button"
                     onClick={() => setNewNote((prev) => (prev ? `${prev} — ${t}` : t))}
-                    className="text-xs rounded-full border px-2.5 py-1.5 hover:bg-muted transition-colors"
+                    className="min-h-9 rounded-full border px-2.5 py-1.5 text-xs transition-colors hover:bg-muted"
                   >
                     {t}
                   </button>
@@ -1403,19 +1410,19 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
           {/* Messages / Communication History */}
           {messages.length > 0 && (
             <Card>
-              <CardHeader>
+              <CardHeader className="p-4 sm:p-6">
                 <CardTitle className="flex items-center gap-2">
                   <MessageSquare className="h-5 w-5" />
                   Messages ({messages.length})
                 </CardTitle>
                 <CardDescription>All outreach sent to this lead</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
                 <div className="space-y-3">
                   {messages.map((msg) => (
                     <div key={msg.id} className="rounded-lg border p-3">
-                      <div className="flex items-center justify-between mb-1">
-                        <div className="flex items-center gap-2">
+                      <div className="mb-1 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex min-w-0 flex-wrap items-center gap-2">
                           <Badge variant="outline" className="text-xs">
                             {msg.channel === "email" ? "Email" : "SMS"}
                           </Badge>
@@ -1425,7 +1432,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                           <Badge
                             variant="outline"
                             className={
@@ -1464,13 +1471,13 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
           {/* Activity Timeline */}
           {activities.length > 0 && (
             <Card>
-              <CardHeader>
+              <CardHeader className="p-4 sm:p-6">
                 <CardTitle className="flex items-center gap-2">
                   <Activity className="h-5 w-5" />
                   Activity Log
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
                 <div className="relative space-y-0 overflow-hidden">
                   {activities.map((act, i) => (
                     <div key={act.id} className="flex gap-3 pb-4 min-w-0">
@@ -1525,12 +1532,12 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
         </div>
 
         {/* Right column: Website Analysis + Tags */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           <Card>
-            <CardHeader>
+            <CardHeader className="p-4 sm:p-6">
               <CardTitle>Website Analysis</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
               {!prospect.website_url ? (
                 <div className="flex flex-col items-center gap-2 py-4">
                   <NoWebsiteBadge />
@@ -1603,10 +1610,10 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
 
           {/* Tags */}
           <Card>
-            <CardHeader>
+            <CardHeader className="p-4 sm:p-6">
               <CardTitle className="text-sm">Tags</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-3 p-4 pt-0 sm:p-6 sm:pt-0">
               {/* Current tags */}
               <div className="flex flex-wrap gap-1.5">
                 {(prospect.tags || []).map((tag) => (
@@ -1631,7 +1638,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                   <button
                     key={tag}
                     onClick={() => handleAddTag(tag)}
-                    className="text-xs border rounded-full px-2 py-0.5 hover:bg-muted text-muted-foreground"
+                    className="min-h-9 rounded-full border px-2 py-1 text-xs text-muted-foreground hover:bg-muted"
                   >
                     + {tag}
                   </button>
@@ -1661,12 +1668,12 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
 
           {/* Talking Points */}
           <Card>
-            <CardHeader>
+            <CardHeader className="p-4 sm:p-6">
               <CardTitle className="text-sm flex items-center gap-2">
                 <Lightbulb className="h-4 w-4" /> Talking Points
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
               <ul className="space-y-2">
                 {getTalkingPoints(prospect, analysis).map((point, i) => (
                   <li key={i} className="text-sm">{point}</li>
