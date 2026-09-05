@@ -105,3 +105,42 @@ Add these only after the file-based pilot proves conversion:
 6. Scheduled 90-day refresh with cost ceilings and failure alerts.
 
 Paid enrichment and automated sending remain intentionally out of scope for Version 1.
+
+## Cached local-SERP evidence review
+
+The first Signal Outbound evidence slice processes already-captured Maps and
+organic result sets. It makes no network, provider, CRM, or outreach calls.
+
+```bash
+npm run outbound:serp -- \
+  --input tests/fixtures/cached-serp.synthetic.json \
+  --output artifacts/outbound/serp-review-001 \
+  --now 2026-09-05T12:00:00.000Z
+```
+
+The command creates a new immutable review directory containing:
+
+- `ready.json`: records whose evidence and supplied draft both pass.
+- `hold.json`: every rejected record with deterministic reason codes.
+- `evidence.jsonl`: re-derived evidence blocks for review.
+- `manifest.json`: reconciled counts and hard safety flags.
+
+The evaluator preserves `verified`, `unavailable`, `blocked`, `not_due`, and
+`stale` source states. Missing or unavailable data never becomes a zero or a
+ranking absence. Supported classifications are `MAPS_NEAR_WIN`,
+`RANKING_GAP`, `DIRECTORY_DEPENDENT`, `TOP_3_WINNER`, and `QUERY_MISMATCH`.
+
+Draft validation uses a closed, evidence-locked format. It blocks changed
+competitors, cities, queries, positions, URLs, offers, CTAs, unsupported
+numbers, guarantees, traffic or revenue claims, AI-visibility claims, em
+dashes, and drafts of 80 words or more. Three failed attempts produce a hold.
+
+This slice is review-only. The manifest always records `send_allowed: false`,
+`import_allowed: false`, and `provider_calls: 0`. It does not generate copy,
+import prospects into Instantly, activate campaigns, or send outreach.
+
+Run its deterministic suite with:
+
+```bash
+npm run test:outbound-serp
+```
