@@ -1,0 +1,243 @@
+{
+  "schema_version": "1.0.0",
+  "batch_id": "synthetic-cached-serp-demo",
+  "tenant_id": "demo-booked-out",
+  "records": [
+    {
+      "evidence_id": "demo-evidence-alpha",
+      "context": {
+        "identity": {
+          "tenant_id": "demo-booked-out",
+          "subject_id": "demo-alpha",
+          "business_name": "Alpha HVAC",
+          "website_url": "https://alpha.example/",
+          "maps_url": "https://maps.example/alpha"
+        },
+        "service": "HVAC repair",
+        "query": "HVAC repair Austin",
+        "geography": {
+          "city": "Austin",
+          "region": "TX",
+          "country": "US"
+        }
+      },
+      "observations": [
+        {
+          "schema_version": "1.0.0",
+          "observation_id": "demo-maps",
+          "tenant_id": "demo-booked-out",
+          "subject_type": "prospect",
+          "subject_id": "demo-alpha",
+          "identity": {
+            "tenant_id": "demo-booked-out",
+            "subject_id": "demo-alpha",
+            "business_name": "Alpha HVAC",
+            "website_url": "https://alpha.example/",
+            "maps_url": "https://maps.example/alpha"
+          },
+          "source_type": "cached_local_serp",
+          "source_url": "https://search.example/cached-demo",
+          "source_status": "verified",
+          "observed_at": "2026-09-01T12:00:00.000Z",
+          "expires_at": "2026-09-08T12:00:00.000Z",
+          "query": "HVAC repair Austin",
+          "geography": {
+            "city": "Austin",
+            "region": "TX",
+            "country": "US"
+          },
+          "device": "desktop",
+          "language": "en",
+          "channel": "maps",
+          "value": {
+            "depth": 4,
+            "complete": true,
+            "results": [
+              {
+                "position": 1,
+                "name": "Beta HVAC",
+                "url": "https://maps.example/beta",
+                "kind": "business"
+              },
+              {
+                "position": 2,
+                "name": "Gamma HVAC",
+                "url": "https://maps.example/gamma",
+                "kind": "business"
+              },
+              {
+                "position": 3,
+                "name": "Delta HVAC",
+                "url": "https://maps.example/delta",
+                "kind": "business"
+              },
+              {
+                "position": 4,
+                "name": "Alpha HVAC",
+                "url": "https://maps.example/alpha",
+                "kind": "business"
+              }
+            ]
+          },
+          "confidence": 1,
+          "limitations": [
+            "Synthetic test data only; not a real business audit."
+          ],
+          "collector_version": "synthetic-fixture-v1"
+        },
+        {
+          "schema_version": "1.0.0",
+          "observation_id": "demo-organic",
+          "tenant_id": "demo-booked-out",
+          "subject_type": "prospect",
+          "subject_id": "demo-alpha",
+          "identity": {
+            "tenant_id": "demo-booked-out",
+            "subject_id": "demo-alpha",
+            "business_name": "Alpha HVAC",
+            "website_url": "https://alpha.example/",
+            "maps_url": "https://maps.example/alpha"
+          },
+          "source_type": "cached_local_serp",
+          "source_url": "https://search.example/cached-demo",
+          "source_status": "verified",
+          "observed_at": "2026-09-01T12:00:00.000Z",
+          "expires_at": "2026-09-08T12:00:00.000Z",
+          "query": "HVAC repair Austin",
+          "geography": {
+            "city": "Austin",
+            "region": "TX",
+            "country": "US"
+          },
+          "device": "desktop",
+          "language": "en",
+          "channel": "organic",
+          "value": {
+            "depth": 2,
+            "complete": true,
+            "results": [
+              {
+                "position": 1,
+                "name": "Beta HVAC",
+                "url": "https://beta.example/",
+                "kind": "business"
+              },
+              {
+                "position": 2,
+                "name": "Alpha HVAC",
+                "url": "https://alpha.example/repair",
+                "kind": "business"
+              }
+            ]
+          },
+          "confidence": 1,
+          "limitations": [
+            "Synthetic test data only; not a real business audit."
+          ],
+          "collector_version": "synthetic-fixture-v1"
+        }
+      ],
+      "drafts": [
+        {
+          "evidence_id": "demo-evidence-alpha",
+          "tenant_id": "demo-booked-out",
+          "subject_id": "demo-alpha",
+          "subject": "Local search baseline",
+          "body": "For \"HVAC repair Austin\" in Austin, TX, US, the cached Maps results showed Alpha HVAC at position 4; Beta HVAC appeared at position 1 (https://maps.example/beta). I can offer a free audit. Would you like me to send it over?",
+          "offer": "I can offer a free audit.",
+          "cta": "Would you like me to send it over?"
+        }
+      ]
+    },
+    {
+      "evidence_id": "demo-evidence-unavailable",
+      "context": {
+        "identity": {
+          "tenant_id": "demo-booked-out",
+          "subject_id": "demo-unavailable",
+          "business_name": "Alpha HVAC",
+          "website_url": "https://alpha.example/",
+          "maps_url": "https://maps.example/alpha"
+        },
+        "service": "HVAC repair",
+        "query": "HVAC repair Austin",
+        "geography": {
+          "city": "Austin",
+          "region": "TX",
+          "country": "US"
+        }
+      },
+      "observations": [
+        {
+          "schema_version": "1.0.0",
+          "observation_id": "demo-maps-unavailable",
+          "tenant_id": "demo-booked-out",
+          "subject_type": "prospect",
+          "subject_id": "demo-unavailable",
+          "identity": {
+            "tenant_id": "demo-booked-out",
+            "subject_id": "demo-unavailable",
+            "business_name": "Alpha HVAC",
+            "website_url": "https://alpha.example/",
+            "maps_url": "https://maps.example/alpha"
+          },
+          "source_type": "cached_local_serp",
+          "source_url": "https://search.example/cached-demo",
+          "source_status": "unavailable",
+          "observed_at": "2026-09-01T12:00:00.000Z",
+          "expires_at": "2026-09-08T12:00:00.000Z",
+          "query": "HVAC repair Austin",
+          "geography": {
+            "city": "Austin",
+            "region": "TX",
+            "country": "US"
+          },
+          "device": "desktop",
+          "language": "en",
+          "channel": "maps",
+          "value": null,
+          "confidence": 1,
+          "limitations": [
+            "Synthetic test data only; not a real business audit."
+          ],
+          "collector_version": "synthetic-fixture-v1"
+        },
+        {
+          "schema_version": "1.0.0",
+          "observation_id": "demo-organic-unavailable",
+          "tenant_id": "demo-booked-out",
+          "subject_type": "prospect",
+          "subject_id": "demo-unavailable",
+          "identity": {
+            "tenant_id": "demo-booked-out",
+            "subject_id": "demo-unavailable",
+            "business_name": "Alpha HVAC",
+            "website_url": "https://alpha.example/",
+            "maps_url": "https://maps.example/alpha"
+          },
+          "source_type": "cached_local_serp",
+          "source_url": "https://search.example/cached-demo",
+          "source_status": "unavailable",
+          "observed_at": "2026-09-01T12:00:00.000Z",
+          "expires_at": "2026-09-08T12:00:00.000Z",
+          "query": "HVAC repair Austin",
+          "geography": {
+            "city": "Austin",
+            "region": "TX",
+            "country": "US"
+          },
+          "device": "desktop",
+          "language": "en",
+          "channel": "organic",
+          "value": null,
+          "confidence": 1,
+          "limitations": [
+            "Synthetic test data only; not a real business audit."
+          ],
+          "collector_version": "synthetic-fixture-v1"
+        }
+      ],
+      "drafts": []
+    }
+  ]
+}
