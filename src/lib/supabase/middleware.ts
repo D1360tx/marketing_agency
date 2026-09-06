@@ -2,6 +2,12 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function updateSession(request: NextRequest) {
+  // Close public agency registration before creating an auth client. Do not
+  // forward query parameters; invitation callbacks have their own /auth route.
+  if (request.nextUrl.pathname === "/signup" || request.nextUrl.pathname === "/signup/") {
+    return NextResponse.redirect(new URL("/login", request.url), 307);
+  }
+
   // Root / serves landing_opus content but keeps URL as trybookedout.com
   if (request.nextUrl.pathname === "/") {
     const url = request.nextUrl.clone();
@@ -92,11 +98,8 @@ export async function updateSession(request: NextRequest) {
     return supabaseResponse;
   }
 
-  // Login/signup redirect to /app if already logged in
-  if (
-    request.nextUrl.pathname.startsWith("/login") ||
-    request.nextUrl.pathname.startsWith("/signup")
-  ) {
+  // Invited team members already signed in go to their dashboard.
+  if (request.nextUrl.pathname.startsWith("/login")) {
     const {
       data: { user },
     } = await supabase.auth.getUser();

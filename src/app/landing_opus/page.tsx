@@ -273,7 +273,7 @@ export default function LandingOpusPage() {
     },
     {
       q: "What happens in the first month?",
-      a: "We audit your current presence, launch or improve the website, set up review requests for every customer, clean up obvious Google Business Profile gaps, and give you a first report showing what changed and what we are watching next.",
+      a: "We audit your current presence, launch or improve the website, set up neutral review requests by email for up to 100 eligible customers per month, clean up obvious Google Business Profile gaps, and give you a first report showing what changed and what we are watching next.",
     },
   ];
 
@@ -294,15 +294,15 @@ export default function LandingOpusPage() {
         url: "https://trybookedout.com/",
         telephone: "+17372605332",
         description:
-          "Websites and compliant review automation for local service businesses.",
+          "Managed websites and neutral email review requests for local service businesses.",
       },
       {
         "@type": "Service",
         "@id": "https://trybookedout.com/#service",
-        name: "Local service business website and review automation",
+        name: "Local Call System: 90-Day Booking Foundation",
         provider: { "@id": "https://trybookedout.com/#organization" },
         areaServed: "United States",
-        serviceType: "Website design, local SEO, and review automation",
+        serviceType: "Managed website, Google Business Profile foundation, and capped email review requests",
         offers: [
           {
             "@type": "Offer",
@@ -333,7 +333,7 @@ export default function LandingOpusPage() {
     {
       title: "Find the leaks",
       startingPoint: "Website, Google profile, reviews, and lead response",
-      work: "Compare your business with the local competitors winning calls",
+      work: "Compare your public website and profile with local competitors",
       deliverable: "A prioritized audit with the first fixes clearly ranked",
     },
     {
@@ -507,7 +507,7 @@ export default function LandingOpusPage() {
                 },
                 {
                   bad: "Paid for reports you couldn't measure",
-                  good: "Track calls, reviews, and leads.",
+                  good: "See completed work and verified activity.",
                   icon: X,
                 },
                 {
@@ -603,7 +603,7 @@ export default function LandingOpusPage() {
                 The system
               </p>
               <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 [text-wrap:balance] sm:text-4xl">
-                Three moves that turn Google searches into booked jobs
+                Three moves toward a clearer customer path
               </h2>
               <p className="mt-4 text-lg text-gray-600 [text-wrap:pretty]">
                 A better website gets prospects to trust you. Consistent review
@@ -643,9 +643,9 @@ export default function LandingOpusPage() {
                     {[
                       "Mobile-first pages built for callers",
                       "Tap-to-call CTAs above the fold",
-                      "Service + city pages Google can understand",
+                      "Up to seven core pages with clear services and coverage",
                       "Reviews, licenses, warranties, and proof placed where buyers look",
-                      "Monthly edits included as your business changes",
+                      "Monthly maintenance within the approved scope",
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-2.5">
                         <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
@@ -659,36 +659,33 @@ export default function LandingOpusPage() {
               {/* Service 2 */}
               <div className="overflow-hidden rounded-2xl border border-gray-200">
                 <div className="relative h-52 sm:h-64">
-                  <Image
-                    src="/marketing/review-request-system.png"
-                    alt="Automated review request flow with text message and five-star review card"
-                    fill
-                    sizes="(min-width: 1024px) 50vw, 100vw"
-                    className="object-cover"
-                  />
+                  <div className="h-full bg-gray-950 p-5 text-white">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-orange-300">Sample review-request email</p>
+                    <p className="mt-3 max-w-sm text-sm leading-relaxed">Thank you for choosing our team. You are welcome to share an honest Google review of your experience.</p>
+                  </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-4 left-5 right-5">
                     <span className="rounded-full bg-orange-600 px-3 py-1 text-xs font-bold text-white">
                       Included
                     </span>
                     <h3 className="mt-2 text-xl font-bold text-white">
-                      Review Requests That Happen After Every Job
+                      Neutral Review Requests by Email
                     </h3>
                   </div>
                 </div>
                 <div className="p-6">
                   <p className="text-sm leading-relaxed text-gray-600">
-                    Your team should not have to remember to ask. Every customer
-                    gets a simple, compliant request by text or email, so new
-                    reviews keep showing up while you focus on the work.
+                    Give eligible customers a clear way to share honest feedback.
+                    We set up neutral review requests by email, up to 100 eligible
+                    requests per month, with opt-outs respected and no review gating.
                   </p>
                   <ul className="mt-5 space-y-3">
                     {[
-                      "Request sent after every completed job",
+                      "Up to 100 eligible email requests per month",
                       "Direct Google review link",
-                      "Separate service feedback form for every customer",
-                      "Review growth tracked monthly",
-                      "Email-first workflow for the founding launch",
+                      "No sentiment filtering or positive-review incentives",
+                      "Review-request activity documented monthly",
+                      "Email-only workflow for the founding launch",
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-2.5">
                         <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
@@ -907,14 +904,14 @@ export default function LandingOpusPage() {
                 },
                 {
                   step: "03",
-                  title: "Ask every customer",
-                  desc: "Every completed job triggers a compliant review request by text or email, so recent proof keeps building.",
+                  title: "Invite honest feedback",
+                  desc: "We prepare neutral review requests by email for eligible customers, within the 100-request monthly cap. Your team confirms eligibility before sending.",
                   icon: Star,
                 },
                 {
                   step: "04",
-                  title: "Turn trust into calls",
-                  desc: "Better pages, stronger reviews, and clearer Google signals help more ready-to-buy customers call you first.",
+                  title: "Measure and improve",
+                  desc: "We report completed work and observable activity, then prioritize one conversion improvement each month. Business outcomes need client confirmation or attribution evidence.",
                   icon: PhoneCall,
                 },
               ].map((s, i) => (
@@ -978,12 +975,12 @@ export default function LandingOpusPage() {
                   </div>
                   <ul className="space-y-4">
                     {[
-                      { title: "Managed mobile-first website", desc: "Built around service areas, proof, and tap-to-call CTAs" },
+                      { title: "Managed mobile-first website", desc: "Up to seven core pages, hosting, and two consolidated implementation revision rounds" },
                       { title: "Google Business Profile foundation", desc: "Documented corrections to core business, service, and trust information" },
-                      { title: "Review requests by email", desc: "Neutral requests for eligible customers, without review gating" },
-                      { title: "Supported form-lead follow-up", desc: "Acknowledgment copy, routing tests, and a manual-first follow-up process" },
-                      { title: "Lead inbox + simple pipeline", desc: "A clear place to review opportunities and required next actions" },
-                      { title: "Monthly evidence report", desc: "Completed work, tested paths, observable activity, and next priorities" },
+                      { title: "Review requests by email", desc: "Up to 100 eligible requests per month, without review gating" },
+                      { title: "Supported form-lead follow-up", desc: "One primary form/inbox, routing tests, email acknowledgment, and manual-first follow-up for up to 50 inbound leads per month" },
+                      { title: "Monthly conversion improvement", desc: "One prioritized conversion improvement per month after launch" },
+                      { title: "Monthly evidence report", desc: "Completed work, observable indicators, and a 30-minute Growth Desk review" },
 
                     ].map((item, i) => (
                       <li key={i} className="flex gap-3">
@@ -992,7 +989,7 @@ export default function LandingOpusPage() {
                         </div>
                         <div>
                           <span className="text-sm font-semibold text-gray-900">{item.title}</span>
-                          <span className="text-sm text-gray-500"> — {item.desc}</span>
+                          <span className="text-sm text-gray-500">; {item.desc}</span>
                         </div>
                       </li>
                     ))}
@@ -1015,18 +1012,25 @@ export default function LandingOpusPage() {
 
             <p className="mx-auto mt-3 max-w-2xl text-center text-xs leading-relaxed text-gray-500 [text-wrap:pretty]">
               Founding scope covers one business, one location, one domain, one
-              Google Business Profile, and email-first workflows. Additional
+              Google Business Profile, and email-only review requests. Additional
               locations, custom integrations, advertising, or high-volume work
-              require a separate written scope.
+              require a separate written scope. Automated messaging by phone and
+              full local SEO programs are not included. No calls, leads, reviews,
+              rankings, bookings, sales, or revenue are guaranteed.
             </p>
 
             <div className="mx-auto mt-6 max-w-2xl rounded-xl border border-emerald-200 bg-emerald-50 p-5 text-sm text-emerald-900">
               <p className="font-bold">30-Day Foundation Promise</p>
               <p className="mt-1 leading-relaxed">
-                Once required access, accurate information, and approvals are in,
+                Once required access, accurate information, client assets, and timely approvals are in,
                 we complete the agreed core foundation within 30 days. If a Booked
                 Out delay causes us to miss that delivery commitment, the next
                 service month is not charged until the agreed foundation is complete.
+              </p>
+              <p className="mt-3 text-xs leading-relaxed text-gray-600">
+                This is a delivery promise, not an outcome guarantee. Client delays,
+                domain disputes, platform reviews or enforcement, third-party outages,
+                legal restrictions, and material scope changes are excluded.
               </p>
             </div>
           </div>
