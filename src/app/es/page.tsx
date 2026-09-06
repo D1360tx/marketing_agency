@@ -167,7 +167,6 @@ export default function EsPage() {
   const [status, setStatus] = useState<FormStatus>("idle");
   const [turnstileToken, setTurnstileToken] = useState("");
   const [contactTime, setContactTime] = useState("");
-  const [smsConsent, setSmsConsent] = useState(false);
 
   const set = useCallback(
     (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -195,14 +194,13 @@ export default function EsPage() {
           city: area,
           turnstileToken,
           contact_time: contactTime,
-          smsConsent,
+          smsConsent: false,
         }),
       });
       if (!res.ok) throw new Error();
       setStatus("success");
       setTurnstileToken("");
       setContactTime("");
-      setSmsConsent(false);
       setForm({ name: "", business: "", phone: "", email: "" });
     } catch {
       setStatus("error");
@@ -215,15 +213,15 @@ export default function EsPage() {
   const faqs = [
     {
       q: "Ya tengo un sitio web. ¿Necesito uno nuevo?",
-      a: "Puede que no. Primero auditamos lo que tienes. Si carga rápido, posiciona bien y convierte visitas en llamadas, nos enfocamos en reseñas y SEO. Si te está perjudicando, reconstruimos solo lo necesario. Sin trabajo innecesario.",
+      a: "Puede que no. Primero auditamos lo que tienes. Si la ruta de contacto funciona, mejoramos lo existente. Si crea obstáculos, reconstruimos solo lo que requiere el alcance aprobado.",
     },
     {
       q: "¿En qué se diferencia esto de la última agencia que me falló?",
-      a: "La mayoría de las agencias te venden actividad y un panel. Nosotros empezamos con una auditoría, priorizamos los problemas y medimos llamadas, solicitudes de reseñas, tiempo de respuesta y movimiento en posiciones desde tu propio punto de partida. Sin contratos largos.",
+      a: "Empezamos con una línea base observable, probamos la ruta de contacto y mostramos el trabajo realizado cada mes. Solo reportamos resultados comerciales confirmados por el cliente o respaldados por atribución. Sin contratos largos.",
     },
     {
       q: "¿Qué tengo que hacer yo?",
-      a: "Contestar unas preguntas sobre tu negocio y área de servicio. Son unos 15 minutos de tu tiempo. Nosotros nos encargamos de todo lo demás: la construcción, el lanzamiento, la configuración de la automatización de reseñas y la optimización continua.",
+      a: "Participa en una reunión inicial, proporciona información precisa y accesos, y entrega aprobaciones consolidadas. Nosotros gestionamos la construcción, las pruebas, las solicitudes de reseñas por email y el informe mensual dentro del alcance aprobado.",
     },
     {
       q: "¿Qué tan rápido veré resultados?",
@@ -244,7 +242,7 @@ export default function EsPage() {
     {
       title: "Encontrar las fugas",
       startingPoint: "Sitio, perfil de Google, reseñas y respuesta a prospectos",
-      work: "Comparamos tu negocio con los competidores locales que reciben llamadas",
+      work: "Comparamos tu sitio y perfil públicos con competidores locales",
       deliverable: "Una auditoría priorizada con las primeras correcciones claras",
     },
     {
@@ -256,7 +254,7 @@ export default function EsPage() {
     {
       title: "Medir desde tu línea base",
       startingPoint: "Marketing sin responsabilidad clara",
-      work: "Medimos llamadas, respuesta, solicitudes y movimiento en posiciones",
+      work: "Probamos la ruta de contacto y documentamos solicitudes, atención de prospectos y cambios aprobados",
       deliverable: "Evidencia mensual, aprendizajes y próximas acciones",
     },
   ];
@@ -335,9 +333,9 @@ export default function EsPage() {
             </h1>
 
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-gray-600 sm:text-xl">
-              No son mejores que tú. Solo se ven mejor en línea. Construimos
-              sitios locales rápidos, solicitudes de reseñas que cumplen las
-              políticas y seguimiento para que cada prospecto reciba una respuesta.
+              Un buen negocio puede perder oportunidades si su información y
+              ruta de contacto no son claras. Creamos sitios orientados a móvil,
+              solicitudes neutrales de reseñas por email y seguimiento manual primero.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -402,7 +400,7 @@ export default function EsPage() {
                 },
                 {
                   bad: "Pagaste por 'SEO' que no podías medir",
-                  good: "Verás reseñas, posiciones y llamadas.",
+                  good: "Verás trabajo realizado y actividad verificable.",
                   icon: X,
                 },
                 {
@@ -452,7 +450,7 @@ export default function EsPage() {
                 {
                   icon: TrendingUp,
                   title: "No tienes un sitio web de verdad",
-                  body: `Una página de Facebook no es un sitio web. Un sitio del 2019 tampoco. Cuando alguien ${areaIn} busca tu servicio, o pareces la opción obvia — o no apareces. Ya no hay término medio.`,
+                  body: `Cuando alguien ${areaIn} busca tu servicio, necesita información clara y una forma fácil de contactarte. Un sitio confuso puede hacer que busque otra opción.`,
                 },
                 {
                   icon: Star,
@@ -462,7 +460,7 @@ export default function EsPage() {
                 {
                   icon: PhoneCall,
                   title: "Google no sabe quién eres",
-                  body: `Puede que seas el mejor en 50 millas a la redonda. No importa. Google posiciona lo que puede entender: sitios rápidos, páginas de servicios claras, actividad constante y reseñas reales. Todo lo demás queda enterrado en la página 2. Y nadie va a la página 2.`,
+                  body: `La información incompleta o contradictoria puede dificultar que un cliente entienda tu negocio. Auditamos tu Google Business Profile y aplicamos correcciones aprobadas, sin prometer posiciones.`,
                 },
               ].map((card, i) => (
                 <div
@@ -497,8 +495,8 @@ export default function EsPage() {
                 Dos cosas que realmente hacen la diferencia
               </h2>
               <p className="mt-4 text-lg text-gray-600">
-                No son 15 servicios. No es una mensualidad misteriosa. Dos
-                cosas, bien hechas, que hacen que tu teléfono suene más.
+                Un sitio claro y una forma neutral de pedir reseñas.
+                La base incluye también pruebas de contacto y seguimiento por email.
               </p>
             </div>
 
@@ -523,17 +521,16 @@ export default function EsPage() {
                 </div>
                 <div className="p-6">
                   <p className="text-sm leading-relaxed text-gray-600">
-                    No es una plantilla. Es un sitio rápido, optimizado para
-                    móvil, construido específicamente para tu oficio y tu
-                    ciudad. Llamadas a la acción claras, señales de confianza,
-                    páginas de servicio que posicionan. El tipo de sitio que
-                    hace que los clientes llamen en vez de cerrar la pestaña.
+                    Un sitio orientado a móvil y a tu negocio, con hasta siete
+                    páginas principales. Servicios claros, cobertura y botones
+                    de llamada para facilitar el siguiente paso, sin prometer
+                    posiciones ni una cantidad de llamadas.
                   </p>
                   <ul className="mt-5 space-y-3">
                     {[
-                      "Carga en menos de 2 segundos en cualquier celular",
+                      "Diseño móvil con pruebas de rendimiento",
                       "Botón de llamada en cada página",
-                      "Páginas de servicio + ciudad para SEO local",
+                      "Hasta siete páginas principales con servicios y cobertura",
                       "Elementos de confianza: licencias, reseñas, garantías",
                       "Escrito por personas que entienden tu industria",
                     ].map((item, i) => (
@@ -560,24 +557,23 @@ export default function EsPage() {
                       Incluido
                     </span>
                     <h3 className="mt-2 text-xl font-bold text-white">
-                      Automatización de Reseñas en Google
+                      Solicitudes Neutrales de Reseñas por Email
                     </h3>
                   </div>
                 </div>
                 <div className="p-6">
                   <p className="text-sm leading-relaxed text-gray-600">
-                    Después de cada trabajo, tu cliente recibe un mensaje o
-                    correo pidiéndole una reseña. Sin conversaciones incómodas.
-                    Sin tener que recordar preguntar. Pasa automáticamente, y
-                    funciona. Enviamos la misma solicitud neutral a cada cliente
-                    elegible y medimos las respuestas desde tu línea base.
+                    Dale a tus clientes elegibles una forma clara de compartir su
+                    experiencia. Configuramos solicitudes neutrales por email,
+                    hasta 100 solicitudes elegibles al mes. Tu equipo confirma
+                    la elegibilidad antes del envío. Respetamos las bajas sin filtrar opiniones.
                   </p>
                   <ul className="mt-5 space-y-3">
                     {[
-                      "Mensaje/correo automático después de cada trabajo",
+                      "Hasta 100 solicitudes elegibles por email al mes",
                       "Enlace directo con un toque a tu página de Google",
-                      "Formulario separado de servicio para cada cliente",
-                      "Panel para seguir el crecimiento",
+                      "Sin filtrar opiniones ni incentivar reseñas positivas",
+                      "Actividad de solicitudes documentada en el informe mensual",
                       "Seguimiento mensual desde tu línea base",
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-2.5">
@@ -732,11 +728,11 @@ export default function EsPage() {
                   {[
                     {
                       title: "Sitio web profesional",
-                      desc: "Construido a medida para tu oficio, tu ciudad, tus clientes",
+                      desc: "Hasta siete páginas principales, hosting y dos rondas consolidadas de revisiones durante la implementación",
                     },
                     {
                       title: "Solicitudes de reseñas por email",
-                      desc: "Una solicitud neutral para cada cliente elegible, sin filtrar opiniones",
+                      desc: "Hasta 100 solicitudes elegibles al mes, sin filtrar opiniones",
                     },
                     {
                       title: "Base de Google Business Profile",
@@ -744,11 +740,11 @@ export default function EsPage() {
                     },
                     {
                       title: "Actualizaciones continuas",
-                      desc: "Una mejora priorizada y un informe de evidencia cada mes",
+                      desc: "Mantenimiento dentro del alcance, una mejora de conversión priorizada al mes después del lanzamiento, informe de evidencia y revisión Growth Desk de 30 minutos",
                     },
                     {
-                      title: "Soporte directo de personas reales",
-                      desc: "Sin colas de tickets. Llama o manda mensaje a tu gestor de cuenta.",
+                      title: "Seguimiento de prospectos por email",
+                      desc: "Un formulario/bandeja principal con pruebas de entrega, acuse por email y seguimiento manual primero para hasta 50 prospectos entrantes al mes",
                     },
                     {
                       title: "Capacidad limitada",
@@ -772,15 +768,25 @@ export default function EsPage() {
                   ))}
                 </ul>
 
+                <p className="mt-6 text-xs leading-relaxed text-gray-500">
+                  Alcance fundador: un negocio, una ubicación, un dominio y un Google Business Profile.
+                  Las solicitudes de reseñas son solo por email. No incluye mensajes automatizados
+                  por teléfono, publicidad, programas completos de SEO local ni trabajo ilimitado.
+                  El alcance adicional requiere aprobación escrita. No garantizamos llamadas,
+                  prospectos, reseñas, posiciones, reservas, ventas ni ingresos.
+                </p>
                 <div className="mt-8 rounded-xl bg-orange-50 p-4 text-center">
                   <p className="text-sm font-semibold text-orange-800">
                     Medimos desde tu línea base y mostramos el trabajo realizado cada mes.
                   </p>
                   <p className="mt-2 text-xs leading-relaxed text-orange-700">
                     Promesa de Base de 30 Días: cuando recibimos accesos, información
-                    y aprobaciones, completamos la base acordada en 30 días. Si un
-                    retraso de Booked Out impide la entrega, no se cobra el siguiente
-                    mes hasta completar la base.
+                    precisa, materiales y aprobaciones oportunas, completamos la base
+                    acordada en 30 días. Si un retraso de Booked Out impide la entrega,
+                    no se cobra el siguiente mes hasta completar la base. Es una promesa
+                    de entrega, no de resultados. Se excluyen retrasos del cliente,
+                    disputas de dominio, revisiones o sanciones de plataformas, fallas
+                    de terceros, restricciones legales y cambios materiales de alcance.
                   </p>
                 </div>
 
@@ -876,8 +882,8 @@ export default function EsPage() {
                 <span className="relative inline-flex h-3 w-3 rounded-full bg-orange-500" />
               </span>
               <p className="text-sm font-semibold text-white">
-                Solo aceptamos <span className="text-orange-400">1 negocio por oficio</span> {areaIn}.
-                Una vez que tu lugar sea tomado, se acabó.
+                Oferta limitada a <span className="text-orange-400">3 empresas calificadas</span>
+                para mantener una implementación cercana. Sin exclusividad territorial.
               </p>
             </div>
             <a
@@ -1103,21 +1109,6 @@ export default function EsPage() {
                         </div>
                       </div>
 
-                      <label className="flex items-start gap-3 text-xs leading-relaxed text-gray-500">
-                        <input
-                          type="checkbox"
-                          checked={smsConsent}
-                          onChange={(event) => setSmsConsent(event.target.checked)}
-                          className="mt-0.5 h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
-                        />
-                        <span>
-                          Acepto recibir llamadas o textos automatizados sobre mi
-                          auditoría y los servicios de Booked Out. El consentimiento
-                          no es requisito para comprar. Pueden aplicar tarifas.
-                          Responde STOP para cancelar.
-                        </span>
-                      </label>
-
                       <PublicFormTurnstile
                         action="inbound_lead"
                         onToken={setTurnstileToken}
@@ -1170,7 +1161,7 @@ export default function EsPage() {
                 <span className="text-sm font-bold">Booked Out</span>
               </div>
               <p className="mt-2 text-sm text-gray-500">
-                Sitios web + automatización de reseñas para negocios de servicios locales.
+                Sitios web y solicitudes neutrales de reseñas por email para negocios locales.
               </p>
               <a
                 href="tel:+17372605332"

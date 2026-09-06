@@ -54,7 +54,7 @@ export default function LoginPage() {
           </div>
           <CardTitle className="text-2xl">Welcome back</CardTitle>
           <CardDescription>
-            Sign in to your marketing dashboard
+            Invited team members only. Sign in to the internal Booked Out dashboard.
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleLogin}>
@@ -92,9 +92,9 @@ export default function LoginPage() {
               {loading ? "Signing in..." : "Sign In"}
             </Button>
             <p className="text-sm text-muted-foreground">
-              Don&apos;t have an account?{" "}
-              <Link href="/signup" className="text-primary underline">
-                Sign up
+              Clients: use the secure onboarding link sent by your Booked Out contact.{" "}
+              <Link href="/" className="text-primary underline">
+                Back to Booked Out
               </Link>
             </p>
           </CardFooter>
