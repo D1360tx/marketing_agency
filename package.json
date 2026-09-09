@@ -10,8 +10,10 @@
     "test:security": "node --experimental-strip-types --test tests/*.test.mjs",
     "test:outbound": "node --experimental-strip-types --test tests/outbound-engine.test.mjs",
     "test:outbound-learning": "node --experimental-strip-types --test tests/outbound-learning.test.mjs",
+    "test:outbound-serp": "node --experimental-strip-types --test tests/cached-serp.test.mjs",
     "outbound:build": "node --experimental-strip-types scripts/build-outbound-cohort.ts",
     "outbound:learn": "node --experimental-strip-types scripts/learn-outbound-copy.ts",
+    "outbound:serp": "node --experimental-strip-types scripts/build-cached-serp-review.ts",
     "provision:inbound-sequence": "node --env-file=.env.local scripts/provision-inbound-sequence.mjs"
   },
   "dependencies": {

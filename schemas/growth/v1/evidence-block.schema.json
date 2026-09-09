@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trybookedout.com/schemas/growth/v1/evidence-block.schema.json",
+  "title": "evidence-block",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "evidence_id",
+    "identity",
+    "query",
+    "geography",
+    "evaluated_at",
+    "expires_at",
+    "classification",
+    "eligible",
+    "reasons",
+    "observations",
+    "maps_position",
+    "organic_position",
+    "competitors",
+    "calculation_method",
+    "allowed_wording",
+    "prohibited_inference"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "evidence_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenant_id",
+        "subject_id",
+        "business_name",
+        "website_url",
+        "maps_url"
+      ],
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "subject_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "business_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "website_url": {
+          "type": "string",
+          "format": "uri",
+          "maxLength": 2048
+        },
+        "maps_url": {
+          "type": "string",
+          "format": "uri",
+          "maxLength": 2048
+        }
+      }
+    },
+    "query": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "geography": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "city",
+        "region",
+        "country"
+      ],
+      "properties": {
+        "city": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "region": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "country": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        }
+      }
+    },
+    "evaluated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "classification": {
+      "anyOf": [
+        {
+          "enum": [
+            "MAPS_NEAR_WIN",
+            "RANKING_GAP",
+            "DIRECTORY_DEPENDENT",
+            "TOP_3_WINNER",
+            "QUERY_MISMATCH"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "eligible": {
+      "type": "boolean"
+    },
+    "reasons": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 300
+      }
+    },
+    "observations": {
+      "type": "array",
+      "maxItems": 2,
+      "items": {
+        "$ref": "observation.schema.json"
+      }
+    },
+    "maps_position": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "organic_position": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "competitors": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "channel",
+          "position",
+          "name",
+          "url",
+          "kind"
+        ],
+        "properties": {
+          "channel": {
+            "enum": [
+              "maps",
+              "organic"
+            ]
+          },
+          "position": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 2048
+          },
+          "kind": {
+            "enum": [
+              "business",
+              "directory"
+            ]
+          }
+        }
+      }
+    },
+    "calculation_method": {
+      "const": "bounded-serp-v1; no impact estimate"
+    },
+    "allowed_wording": {
+      "type": "string",
+      "maxLength": 4000
+    },
+    "prohibited_inference": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 300
+      }
+    }
+  }
+}
