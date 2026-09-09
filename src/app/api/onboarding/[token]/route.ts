@@ -30,8 +30,9 @@ async function sendTelegramNotification(data: {
   ].join("\n");
 
   try {
-    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: "POST",
+      signal: AbortSignal.timeout(5000),
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         chat_id: chatId,
@@ -41,8 +42,12 @@ async function sendTelegramNotification(data: {
           : {}),
       }),
     });
-  } catch (err) {
-    console.error("[onboarding] Telegram notification failed:", err);
+    if (!response.ok) {
+      console.error("[onboarding] Telegram notification rejected:", response.status);
+    }
+  } catch {
+    // Provider exception URLs can contain the bot token. Never log them.
+    console.error("[onboarding] Telegram notification failed or timed out");
   }
 }
 
@@ -225,10 +230,12 @@ export async function POST(
     return noStoreJson({ error: "Link has expired or was already submitted" }, { status: 409 });
   }
 
-  sendTelegramNotification({
+  // Complete the bounded provider attempt before a serverless response can end
+  // this invocation. Intake is already durable; delivery failure must not undo it.
+  await sendTelegramNotification({
     business_name: body.business_name,
     services_offered: body.services_offered,
-  }).catch(() => {});
+  });
 
   return noStoreJson({ success: true });
 }
