@@ -7,7 +7,21 @@ export async function GET(request: Request) {
   const code = searchParams.get("code");
   const next = safeRelativePath(searchParams.get("next"));
 
-  if (code) {
+  // Dashboard invitations have no browser PKCE verifier. The invite email
+  // template must link here with TokenHash, not a fragment-only ConfirmationURL.
+  const tokenHash = searchParams.get("token_hash");
+  if (tokenHash && searchParams.get("type") === "invite" && !code) {
+    const supabase = await createClient();
+    const { error } = await supabase.auth.verifyOtp({
+      token_hash: tokenHash,
+      type: "invite",
+    });
+    if (!error) {
+      return NextResponse.redirect(`${origin}/auth/accept-invite`);
+    }
+  }
+
+  if (code && !tokenHash) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
