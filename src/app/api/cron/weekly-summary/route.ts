@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { verifyBearerSecret } from "@/lib/server-auth";
+import { SYNTHETIC_HANDOFF_SOURCE } from "@/lib/synthetic-handoff";
 
 async function sendTelegram(token: string, chatId: string, threadId: string | null, text: string) {
   const body: Record<string, unknown> = {
@@ -47,6 +48,7 @@ export async function GET(request: Request) {
     const { data: newLeads } = await supabase
       .from("prospects")
       .select("id, business_name, city, state, status, source")
+      .or(`source.is.null,source.neq.${SYNTHETIC_HANDOFF_SOURCE}`)
       .gte("created_at", weekStart.toISOString());
 
     // Best source this week — by lead count
@@ -77,6 +79,7 @@ export async function GET(request: Request) {
     const { data: pipeline } = await supabase
       .from("prospects")
       .select("status")
+      .or(`source.is.null,source.neq.${SYNTHETIC_HANDOFF_SOURCE}`)
       .neq("status", "not_interested")
       .neq("status", "lost");
 
@@ -89,6 +92,7 @@ export async function GET(request: Request) {
     const { data: stale } = await supabase
       .from("prospects")
       .select("id, business_name")
+      .or(`source.is.null,source.neq.${SYNTHETIC_HANDOFF_SOURCE}`)
       .in("status", ["new", "contacted", "follow_up"])
       .lt("updated_at", weekStart.toISOString());
 
@@ -98,6 +102,7 @@ export async function GET(request: Request) {
     const { data: upcoming } = await supabase
       .from("prospects")
       .select("id, business_name, follow_up_date")
+      .or(`source.is.null,source.neq.${SYNTHETIC_HANDOFF_SOURCE}`)
       .eq("status", "follow_up")
       .gte("follow_up_date", new Date().toISOString().split("T")[0])
       .lte("follow_up_date", nextWeekEnd.toISOString().split("T")[0])

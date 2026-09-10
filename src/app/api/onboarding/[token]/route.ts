@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { isSyntheticHandoffProspect, SYNTHETIC_HANDOFF_SOURCE, SYNTHETIC_HANDOFF_NAME, SYNTHETIC_HANDOFF_EMAIL } from "@/lib/synthetic-handoff";
 import {
   isAssetPathForOnboarding,
   isPendingOnboardingLinkActive,
@@ -145,7 +146,7 @@ export async function POST(
 
   const { data: existing, error: lookupError } = await supabase
     .from("client_onboarding")
-    .select("id, submitted_at, expires_at, revoked_at")
+    .select("id, user_id, prospect_id, submitted_at, expires_at, revoked_at")
     .eq("token", token)
     .single();
 
@@ -179,6 +180,29 @@ export async function POST(
   }
 
   const body = parsed.data;
+  // Resolve notification policy before the atomic save. Neither the public
+  // token holder nor submitted fields can opt a real client out of alerts.
+  let synthetic = false;
+  if (existing.prospect_id) {
+    const { data: prospect, error: prospectError } = await supabase
+      .from("prospects")
+      .select("source, business_name, email, phone")
+      .eq("id", existing.prospect_id)
+      .eq("user_id", existing.user_id)
+      .single();
+    if (prospectError || !prospect) {
+      return noStoreJson({ error: "Could not verify intake ownership" }, { status: 503 });
+    }
+    if (prospect.source === SYNTHETIC_HANDOFF_SOURCE) {
+      if (!isSyntheticHandoffProspect(prospect)
+        || body.business_name !== SYNTHETIC_HANDOFF_NAME
+        || body.primary_contact_email !== SYNTHETIC_HANDOFF_EMAIL
+        || body.phone || body.primary_contact_phone) {
+        return noStoreJson({ error: "Synthetic intake must use reserved test-only details" }, { status: 400 });
+      }
+      synthetic = true;
+    }
+  }
   if (body.logo_url && !isAssetPathForOnboarding(body.logo_url, existing.id)) {
     return noStoreJson({ error: "Invalid logo asset" }, { status: 400 });
   }
@@ -232,6 +256,10 @@ export async function POST(
 
   // Complete the bounded provider attempt before a serverless response can end
   // this invocation. Intake is already durable; delivery failure must not undo it.
+  if (synthetic) {
+    console.info("[onboarding] synthetic notification suppressed", { onboarding_id: existing.id, prospect_id: existing.prospect_id });
+    return noStoreJson({ success: true, notification: { status: "suppressed", reason: "synthetic_handoff" } });
+  }
   await sendTelegramNotification({
     business_name: body.business_name,
     services_offered: body.services_offered,

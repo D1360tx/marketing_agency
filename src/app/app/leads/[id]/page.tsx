@@ -963,7 +963,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                 Payment After Signing
               </a>
             </Button>
-            {prospect.status === "client" && (
+            {(prospect.status === "client" || prospect.source === "Synthetic Handoff QA - No Notifications") && (
               <Button
                 variant="outline"
                 size="sm"
