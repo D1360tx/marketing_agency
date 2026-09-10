@@ -1,0 +1,37 @@
+{
+  "at": "2026-09-10T22:02:41.981593+00:00",
+  "responses": [
+    {
+      "method": "GET",
+      "path": "/",
+      "status": 200,
+      "location": null,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "body": "HTML response"
+    },
+    {
+      "method": "GET",
+      "path": "/api/onboarding/invalid",
+      "status": 404,
+      "location": null,
+      "cache_control": "private, no-store",
+      "body": "{\"valid\":false,\"error\":\"Link not found or expired\"}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/prospects",
+      "status": 401,
+      "location": null,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "body": "{\"error\":\"Unauthorized\"}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/onboarding",
+      "status": 401,
+      "location": null,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "body": "{\"error\":\"Unauthorized\"}"
+    }
+  ]
+}

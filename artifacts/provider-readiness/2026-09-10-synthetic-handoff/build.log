@@ -1,0 +1,122 @@
+npm notice run marketing_agency@0.1.0 build
+npm notice run next build
+▲ Next.js 16.3.0 (Turbopack)
+✓ Running next.config.ts took 22ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 862ms
+  Running TypeScript ...
+  Finished TypeScript in 6.1s ...
+  Collecting page data using 7 workers ...
+⚠ The Edge Runtime is deprecated. You can use the "nodejs" runtime instead. Learn more: https://nextjs.org/docs/messages/edge-runtime-deprecated
+⚠ Using edge runtime on a page currently disables static generation for that page
+  Generating static pages using 7 workers (0/72) ...
+  Generating static pages using 7 workers (18/72) 
+  Generating static pages using 7 workers (36/72) 
+  Generating static pages using 7 workers (54/72) 
+✓ Generating static pages using 7 workers (72/72) in 566ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /_not-found
+├ ƒ /api/analytics
+├ ƒ /api/audit/lookup
+├ ƒ /api/audit/pdf
+├ ƒ /api/audit/run
+├ ƒ /api/audit/submit
+├ ƒ /api/campaigns
+├ ƒ /api/campaigns/[id]
+├ ƒ /api/campaigns/send
+├ ƒ /api/client-lead-routing/[onboardingId]
+├ ƒ /api/client-leads
+├ ƒ /api/client-leads/[token]
+├ ƒ /api/cron/client-lead-retry
+├ ƒ /api/cron/daily-summary
+├ ƒ /api/cron/drip
+├ ƒ /api/cron/followup-reminder
+├ ƒ /api/cron/weekly-summary
+├ ƒ /api/drip
+├ ƒ /api/drip/[id]
+├ ƒ /api/drip/enroll
+├ ƒ /api/drip/process
+├ ƒ /api/generator/ai
+├ ƒ /api/generator/save
+├ ƒ /api/generator/scrape
+├ ƒ /api/geo
+├ ƒ /api/leads/inbound
+├ ƒ /api/onboarding
+├ ƒ /api/onboarding/[token]
+├ ƒ /api/onboarding/[token]/upload
+├ ƒ /api/onboarding/assets
+├ ƒ /api/preview/[token]
+├ ƒ /api/prospects
+├ ƒ /api/prospects/[id]
+├ ƒ /api/prospects/[id]/activities
+├ ƒ /api/prospects/[id]/find-email
+├ ƒ /api/prospects/[id]/messages
+├ ƒ /api/prospects/[id]/upload
+├ ƒ /api/prospects/analyze
+├ ƒ /api/prospects/export
+├ ƒ /api/prospects/search
+├ ƒ /api/reviews/send
+├ ƒ /api/scraper/jobs
+├ ƒ /api/scraper/queue
+├ ƒ /api/scraper/run
+├ ƒ /api/scraper/status
+├ ƒ /api/scraper/status/[id]
+├ ƒ /api/settings
+├ ƒ /api/track/click
+├ ƒ /api/track/open
+├ ƒ /api/unsubscribe
+├ ƒ /app
+├ ƒ /app/analytics
+├ ƒ /app/campaigns
+├ ƒ /app/campaigns/[id]
+├ ƒ /app/campaigns/new
+├ ƒ /app/client-leads
+├ ƒ /app/generator
+├ ƒ /app/leads
+├ ƒ /app/leads/[id]
+├ ƒ /app/leads/[id]/agreement
+├ ƒ /app/leads/[id]/book
+├ ƒ /app/leads/[id]/pitch
+├ ƒ /app/onboarding
+├ ƒ /app/playbook
+├ ƒ /app/prospector
+├ ƒ /app/reviews
+├ ƒ /app/sequences
+├ ƒ /app/sequences/new
+├ ƒ /app/settings
+├ ƒ /app/tasks
+├ ƒ /auth/accept-invite
+├ ƒ /auth/callback
+├ ○ /es
+├ ○ /free-audit
+├ ƒ /go/agreement
+├ ƒ /go/book
+├ ƒ /go/start
+├ ○ /landing
+├ ○ /landing_gemini
+├ ○ /landing_gpt1
+├ ○ /landing_opus
+├ ○ /landing_original1
+├ ○ /login
+├ ƒ /onboarding/[token]
+├ ƒ /opengraph-image.png
+├ ○ /partners
+├ ƒ /preview/[token]
+├ ○ /privacy
+├ ○ /quick-add
+├ ○ /robots.txt
+├ ○ /signup
+├ ○ /sitemap.xml
+├ ○ /terms
+├ ƒ /twitter-image.png
+└ ○ /unsubscribe
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

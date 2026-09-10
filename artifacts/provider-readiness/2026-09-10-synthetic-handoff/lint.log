@@ -1,0 +1,31 @@
+npm notice run marketing_agency@0.1.0 lint
+npm notice run eslint
+
+/home/d1360/workspaces/trybookedout-synthetic-handoff/src/app/app/analytics/page.tsx
+  248:21  warning  'height' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/d1360/workspaces/trybookedout-synthetic-handoff/src/app/app/campaigns/[id]/page.tsx
+  71:6  warning  React Hook useEffect has a missing dependency: 'fetchCampaign'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/home/d1360/workspaces/trybookedout-synthetic-handoff/src/app/app/campaigns/page.tsx
+  117:107  warning  Do not use `window.location.href` to navigate to internal Next.js pages. Use `redirect()` in the render phase, or `useRouter().push()` in Client Components' event handlers instead. See: https://nextjs.org/docs/messages/no-location-assign-relative-destination  @next/next/no-location-assign-relative-destination
+
+/home/d1360/workspaces/trybookedout-synthetic-handoff/src/app/app/generator/page.tsx
+  38:3  warning  'Minimize2' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/d1360/workspaces/trybookedout-synthetic-handoff/src/app/app/leads/[id]/page.tsx
+  280:10  warning  'dealValue' is assigned a value but never used                                                                      @typescript-eslint/no-unused-vars
+  346:6   warning  React Hook useEffect has a missing dependency: 'fetchActivities'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/home/d1360/workspaces/trybookedout-synthetic-handoff/src/app/app/leads/page.tsx
+  130:10  warning  'updating' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/d1360/workspaces/trybookedout-synthetic-handoff/src/app/es/page.tsx
+  507:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  549:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/d1360/workspaces/trybookedout-synthetic-handoff/src/lib/outscraper.ts
+  20:11  warning  'OutscraperResponse' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 10 problems (0 errors, 10 warnings)
+

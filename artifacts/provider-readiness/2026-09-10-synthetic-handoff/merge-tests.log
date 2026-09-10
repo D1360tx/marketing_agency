@@ -1,0 +1,787 @@
+npm notice run marketing_agency@0.1.0 test:security
+npm notice run node --experimental-strip-types --test tests/*.test.mjs
+TAP version 13
+# (node:846794) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/d1360/workspaces/trybookedout-synthetic-handoff/src/lib/client-leads.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/d1360/workspaces/trybookedout-synthetic-handoff/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: client lead tokens require exactly 256 bits of lowercase hex
+ok 1 - client lead tokens require exactly 256 bits of lowercase hex
+  ---
+  duration_ms: 1.88246
+  type: 'test'
+  ...
+# Subtest: client lead schema is strict, bounded, normalized, and keeps honeypot detectable
+ok 2 - client lead schema is strict, bounded, normalized, and keeps honeypot detectable
+  ---
+  duration_ms: 5.723409
+  type: 'test'
+  ...
+# Subtest: routing config requires an explicit recipient and enabled state
+ok 3 - routing config requires an explicit recipient and enabled state
+  ---
+  duration_ms: 2.471122
+  type: 'test'
+  ...
+# Subtest: allowed origins are exact, HTTPS-only, and never reflected arbitrarily
+ok 4 - allowed origins are exact, HTTPS-only, and never reflected arbitrarily
+  ---
+  duration_ms: 1.1151
+  type: 'test'
+  ...
+# Subtest: delivery retries use stable provider keys and bounded exponential backoff
+ok 5 - delivery retries use stable provider keys and bounded exponential backoff
+  ---
+  duration_ms: 0.24391
+  type: 'test'
+  ...
+# Subtest: duplicate hashes are deterministic and recent failed delivery is retryable
+ok 6 - duplicate hashes are deterministic and recent failed delivery is retryable
+  ---
+  duration_ms: 1.350609
+  type: 'test'
+  ...
+# Subtest: email HTML escaping is safe and owner notification contains no submitted PII
+ok 7 - email HTML escaping is safe and owner notification contains no submitted PII
+  ---
+  duration_ms: 0.827
+  type: 'test'
+  ...
+# Subtest: migration enforces tenant ownership and denies direct anonymous access
+ok 8 - migration enforces tenant ownership and denies direct anonymous access
+  ---
+  duration_ms: 0.438126
+  type: 'test'
+  ...
+# Subtest: public route uses reusable guards, service role, awaited email, no SMS, and duplicate retry
+ok 9 - public route uses reusable guards, service role, awaited email, no SMS, and duplicate retry
+  ---
+  duration_ms: 0.629966
+  type: 'test'
+  ...
+# Subtest: authenticated APIs scope config and lead inspection to the signed-in owner
+ok 10 - authenticated APIs scope config and lead inspection to the signed-in owner
+  ---
+  duration_ms: 0.736098
+  type: 'test'
+  ...
+# (node:846795) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/d1360/workspaces/trybookedout-synthetic-handoff/src/lib/generator-security.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/d1360/workspaces/trybookedout-synthetic-handoff/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: generator rejects internal and non-http scrape targets
+ok 11 - generator rejects internal and non-http scrape targets
+  ---
+  duration_ms: 8.165959
+  type: 'test'
+  ...
+# Subtest: private and metadata IP ranges are blocked
+ok 12 - private and metadata IP ranges are blocked
+  ---
+  duration_ms: 0.554612
+  type: 'test'
+  ...
+# Subtest: generated claims must be grounded in supplied source text
+ok 13 - generated claims must be grounded in supplied source text
+  ---
+  duration_ms: 2.852697
+  type: 'test'
+  ...
+# Subtest: share tokens require exactly 128 bits of lowercase hex
+ok 14 - share tokens require exactly 128 bits of lowercase hex
+  ---
+  duration_ms: 0.358509
+  type: 'test'
+  ...
+# Subtest: dashboard and public previews never combine scripts with same-origin
+ok 15 - dashboard and public previews never combine scripts with same-origin
+  ---
+  duration_ms: 22.258203
+  type: 'test'
+  ...
+# Subtest: public preview uses strict token validation and server-only lookup
+ok 16 - public preview uses strict token validation and server-only lookup
+  ---
+  duration_ms: 9.41679
+  type: 'test'
+  ...
+# Subtest: generator uses one AI provider with fallback rather than parallel paid calls
+ok 17 - generator uses one AI provider with fallback rather than parallel paid calls
+  ---
+  duration_ms: 1.771054
+  type: 'test'
+  ...
+# Subtest: scraper uses bounded safe fetches for the lean four-page set
+ok 18 - scraper uses bounded safe fetches for the lean four-page set
+  ---
+  duration_ms: 4.237943
+  type: 'test'
+  ...
+# (node:846801) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/d1360/workspaces/trybookedout-synthetic-handoff/src/lib/safe-redirect.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/d1360/workspaces/trybookedout-synthetic-handoff/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: dashboard TokenHash invite verifies without a PKCE cookie and goes to password setup
+ok 19 - dashboard TokenHash invite verifies without a PKCE cookie and goes to password setup
+  ---
+  duration_ms: 126.530094
+  type: 'test'
+  ...
+# Subtest: missing, unsupported and ambiguous invite credentials fail closed without auth calls
+ok 20 - missing, unsupported and ambiguous invite credentials fail closed without auth calls
+  ---
+  duration_ms: 16.788525
+  type: 'test'
+  ...
+# Subtest: expired or already-used invite is rejected by Supabase; no successful redirect
+ok 21 - expired or already-used invite is rejected by Supabase; no successful redirect
+  ---
+  duration_ms: 10.971928
+  type: 'test'
+  ...
+# Subtest: existing PKCE flow preserves same-origin redirect protection
+ok 22 - existing PKCE flow preserves same-origin redirect protection
+  ---
+  duration_ms: 12.214929
+  type: 'test'
+  ...
+# Subtest: password setup rejects invalid length and mismatch without updating
+ok 23 - password setup rejects invalid length and mismatch without updating
+  ---
+  duration_ms: 10.935983
+  type: 'test'
+  ...
+# Subtest: password setup requires a server-verified user, not a claimed session
+ok 24 - password setup requires a server-verified user, not a claimed session
+  ---
+  duration_ms: 20.151913
+  type: 'test'
+  ...
+# Subtest: password update errors stay on setup; success redirects only after update
+ok 25 - password update errors stay on setup; success redirects only after update
+  ---
+  duration_ms: 25.377016
+  type: 'test'
+  ...
+# Subtest: auth routes are no-store and suppress referrers/indexing
+ok 26 - auth routes are no-store and suppress referrers/indexing
+  ---
+  duration_ms: 10.706606
+  type: 'test'
+  ...
+# (node:846807) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/d1360/workspaces/trybookedout-synthetic-handoff/src/lib/review-security.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/d1360/workspaces/trybookedout-synthetic-handoff/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: the canonical authenticated UI is the only dashboard route tree
+ok 27 - the canonical authenticated UI is the only dashboard route tree
+  ---
+  duration_ms: 18.004151
+  type: 'test'
+  ...
+# Subtest: primary navigation exposes only the lean acquisition workflow
+ok 28 - primary navigation exposes only the lean acquisition workflow
+  ---
+  duration_ms: 3.278691
+  type: 'test'
+  ...
+# Subtest: canonical workflow pages do not link to obsolete root dashboard routes
+ok 29 - canonical workflow pages do not link to obsolete root dashboard routes
+  ---
+  duration_ms: 6.386894
+  type: 'test'
+  ...
+# Subtest: lead detail keeps navigation and actions usable on mobile
+ok 30 - lead detail keeps navigation and actions usable on mobile
+  ---
+  duration_ms: 8.207616
+  type: 'test'
+  ...
+# Subtest: lead sales actions stay prospect-linked and open real workspaces
+ok 31 - lead sales actions stay prospect-linked and open real workspaces
+  ---
+  duration_ms: 14.367336
+  type: 'test'
+  ...
+# Subtest: lead pitch and calendar drafts contain the selected lead
+ok 32 - lead pitch and calendar drafts contain the selected lead
+  ---
+  duration_ms: 1.072727
+  type: 'test'
+  ...
+# Subtest: stored UTC call times convert back to local datetime input values
+ok 33 - stored UTC call times convert back to local datetime input values
+  ---
+  duration_ms: 0.240878
+  type: 'test'
+  ...
+# Subtest: campaign and recipient creation is one consent-aware database transaction
+ok 34 - campaign and recipient creation is one consent-aware database transaction
+  ---
+  duration_ms: 2.33036
+  type: 'test'
+  ...
+# Subtest: outreach requires explicit reviewed message IDs and preserves preview context
+ok 35 - outreach requires explicit reviewed message IDs and preserves preview context
+  ---
+  duration_ms: 2.953774
+  type: 'test'
+  ...
+# Subtest: won leads create idempotent, prospect-linked client intake
+ok 36 - won leads create idempotent, prospect-linked client intake
+  ---
+  duration_ms: 2.787668
+  type: 'test'
+  ...
+# Subtest: prospect workflow fields and statuses are reproducible from migrations
+ok 37 - prospect workflow fields and statuses are reproducible from migrations
+  ---
+  duration_ms: 1.402065
+  type: 'test'
+  ...
+# Subtest: sequence list has no link to a nonexistent detail route
+ok 38 - sequence list has no link to a nonexistent detail route
+  ---
+  duration_ms: 6.090771
+  type: 'test'
+  ...
+# Subtest: manual review requests cannot become phishing or HTML injection emails
+ok 39 - manual review requests cannot become phishing or HTML injection emails
+  ---
+  duration_ms: 0.605148
+  type: 'test'
+  ...
+# (node:846808) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/d1360/workspaces/trybookedout-synthetic-handoff/src/lib/onboarding-security.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/d1360/workspaces/trybookedout-synthetic-handoff/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: persisted owner-scoped synthetic cohort saves and audits with ZERO provider calls
+ok 40 - persisted owner-scoped synthetic cohort saves and audits with ZERO provider calls
+  ---
+  duration_ms: 154.485831
+  type: 'test'
+  ...
+# Subtest: synthetic policy lookup and reserved field failures stop BEFORE save or notification
+ok 41 - synthetic policy lookup and reserved field failures stop BEFORE save or notification
+  ---
+  duration_ms: 154.753663
+  type: 'test'
+  ...
+# Subtest: public synthetic-looking fields cannot suppress a normal prospect notification
+ok 42 - public synthetic-looking fields cannot suppress a normal prospect notification
+  ---
+  duration_ms: 22.04369
+  type: 'test'
+  ...
+# Subtest: lost synthetic atomic claim has no alert and no suppression success audit
+ok 43 - lost synthetic atomic claim has no alert and no suppression success audit
+  ---
+  duration_ms: 25.458235
+  type: 'test'
+  ...
+# Subtest: intake response waits for bounded notification after durable save
+ok 44 - intake response waits for bounded notification after durable save
+  ---
+  duration_ms: 21.26752
+  type: 'test'
+  ...
+# Subtest: provider rejection is logged safely and does not undo saved intake
+ok 45 - provider rejection is logged safely and does not undo saved intake
+  ---
+  duration_ms: 15.389702
+  type: 'test'
+  ...
+# Subtest: network failures do not leak token-bearing exception URLs
+ok 46 - network failures do not leak token-bearing exception URLs
+  ---
+  duration_ms: 20.999291
+  type: 'test'
+  ...
+# Subtest: unconfigured notification and lost atomic claim send no alerts
+ok 47 - unconfigured notification and lost atomic claim send no alerts
+  ---
+  duration_ms: 32.91106
+  type: 'test'
+  ...
+# (node:846814) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/d1360/workspaces/trybookedout-synthetic-handoff/src/lib/onboarding-security.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/d1360/workspaces/trybookedout-synthetic-handoff/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: onboarding tokens require exactly 128 bits of lowercase hex
+ok 48 - onboarding tokens require exactly 128 bits of lowercase hex
+  ---
+  duration_ms: 1.391671
+  type: 'test'
+  ...
+# Subtest: pending links reject submitted, revoked, expired, and invalid expiry records
+ok 49 - pending links reject submitted, revoked, expired, and invalid expiry records
+  ---
+  duration_ms: 0.38005
+  type: 'test'
+  ...
+# Subtest: submission schema accepts bounded valid data and rejects unknown fields
+ok 50 - submission schema accepts bounded valid data and rejects unknown fields
+  ---
+  duration_ms: 8.591507
+  type: 'test'
+  ...
+# Subtest: submission schema rejects invalid email, URL, and oversized notes
+ok 51 - submission schema rejects invalid email, URL, and oversized notes
+  ---
+  duration_ms: 1.832044
+  type: 'test'
+  ...
+# Subtest: submission schema enforces deterministic asset paths and unique photo slots
+ok 52 - submission schema enforces deterministic asset paths and unique photo slots
+  ---
+  duration_ms: 2.916463
+  type: 'test'
+  ...
+# Subtest: asset paths must stay inside the matching onboarding record
+ok 53 - asset paths must stay inside the matching onboarding record
+  ---
+  duration_ms: 0.78547
+  type: 'test'
+  ...
+# Subtest: legacy public asset URLs normalize to private storage paths
+ok 54 - legacy public asset URLs normalize to private storage paths
+  ---
+  duration_ms: 0.349817
+  type: 'test'
+  ...
+# Subtest: image validation enforces type and 5 MB size limit
+ok 55 - image validation enforces type and 5 MB size limit
+  ---
+  duration_ms: 0.965294
+  type: 'test'
+  ...
+# Subtest: image signatures must match the declared MIME type
+ok 56 - image signatures must match the declared MIME type
+  ---
+  duration_ms: 0.674457
+  type: 'test'
+  ...
+# (node:846815) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/d1360/workspaces/trybookedout-synthetic-handoff/src/lib/outbound-engine.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/d1360/workspaces/trybookedout-synthetic-handoff/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Maps CSV parsing, normalization, and multi-identifier dedupe are deterministic
+ok 57 - Maps CSV parsing, normalization, and multi-identifier dedupe are deterministic
+  ---
+  duration_ms: 14.908071
+  type: 'test'
+  ...
+# Subtest: dedupe closes transitive identifier bridges and preserves keyless rows
+ok 58 - dedupe closes transitive identifier bridges and preserves keyless rows
+  ---
+  duration_ms: 0.735237
+  type: 'test'
+  ...
+# Subtest: dedupe selects the same canonical values regardless of input row order
+ok 59 - dedupe selects the same canonical values regardless of input row order
+  ---
+  duration_ms: 0.619697
+  type: 'test'
+  ...
+# Subtest: Booked Out score exposes three bounded dimensions and assigns both cohorts
+ok 60 - Booked Out score exposes three bounded dimensions and assigns both cohorts
+  ---
+  duration_ms: 0.345084
+  type: 'test'
+  ...
+# Subtest: pre-send QA exports ready rows and holds unsafe rows with reasons
+ok 61 - pre-send QA exports ready rows and holds unsafe rows with reasons
+  ---
+  duration_ms: 2.596472
+  type: 'test'
+  ...
+# Subtest: pre-send QA holds tagged variants of unsafe no-reply addresses
+ok 62 - pre-send QA holds tagged variants of unsafe no-reply addresses
+  ---
+  duration_ms: 0.310152
+  type: 'test'
+  ...
+# Subtest: CSV export neutralizes spreadsheet formulas from untrusted Maps data
+ok 63 - CSV export neutralizes spreadsheet formulas from untrusted Maps data
+  ---
+  duration_ms: 0.405255
+  type: 'test'
+  ...
+# Subtest: CLI creates missing output directories and writes separate ready and QA hold exports
+ok 64 - CLI creates missing output directories and writes separate ready and QA hold exports
+  ---
+  duration_ms: 227.479243
+  type: 'test'
+  ...
+# (node:846862) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/d1360/workspaces/trybookedout-synthetic-handoff/src/lib/outbound-learning.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/d1360/workspaces/trybookedout-synthetic-handoff/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: six controlled variants are stable and split three per Booked Out cohort
+ok 65 - six controlled variants are stable and split three per Booked Out cohort
+  ---
+  duration_ms: 1.433801
+  type: 'test'
+  ...
+# Subtest: learning loop recommends promotion, retires only at separate volume, and emits review-only library candidates
+ok 66 - learning loop recommends promotion, retires only at separate volume, and emits review-only library candidates
+  ---
+  duration_ms: 2.557813
+  type: 'test'
+  ...
+# Subtest: duplicate campaign and variant snapshots are rejected instead of double counted
+ok 67 - duplicate campaign and variant snapshots are rejected instead of double counted
+  ---
+  duration_ms: 14.878456
+  type: 'test'
+  ...
+# Subtest: impossible funnel counts require manual review and cannot be promoted
+ok 68 - impossible funnel counts require manual review and cannot be promoted
+  ---
+  duration_ms: 0.495517
+  type: 'test'
+  ...
+# Subtest: cross-row balancing cannot hide an impossible campaign snapshot
+ok 69 - cross-row balancing cannot hide an impossible campaign snapshot
+  ---
+  duration_ms: 0.692848
+  type: 'test'
+  ...
+# Subtest: CSV fixture parsing uses the same controlled evidence contract
+ok 70 - CSV fixture parsing uses the same controlled evidence contract
+  ---
+  duration_ms: 1.498124
+  type: 'test'
+  ...
+# Subtest: CLI processes JSON fixture and writes deterministic decisions and library output
+ok 71 - CLI processes JSON fixture and writes deterministic decisions and library output
+  ---
+  duration_ms: 255.858761
+  type: 'test'
+  ...
+# Subtest: CLI also processes CSV evidence
+ok 72 - CLI also processes CSV evidence
+  ---
+  duration_ms: 204.723344
+  type: 'test'
+  ...
+# Subtest: Phase 2 migration is rerunnable, controlled, owner-scoped, and review-only
+ok 73 - Phase 2 migration is rerunnable, controlled, owner-scoped, and review-only
+  ---
+  duration_ms: 4.216269
+  type: 'test'
+  ...
+# Subtest: src/app/landing_opus/page.tsx: public offer stays email-only, capped, and claim-safe
+ok 74 - src/app/landing_opus/page.tsx: public offer stays email-only, capped, and claim-safe
+  ---
+  duration_ms: 10.555729
+  type: 'test'
+  ...
+# Subtest: src/app/es/page.tsx: public offer stays email-only, capped, and claim-safe
+ok 75 - src/app/es/page.tsx: public offer stays email-only, capped, and claim-safe
+  ---
+  duration_ms: 6.035748
+  type: 'test'
+  ...
+# Subtest: signup redirects before auth setup and drops untrusted query parameters
+ok 76 - signup redirects before auth setup and drops untrusted query parameters
+  ---
+  duration_ms: 108.32134
+  type: 'test'
+  ...
+# (node:846872) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/d1360/workspaces/trybookedout-synthetic-handoff/src/lib/safe-redirect.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/d1360/workspaces/trybookedout-synthetic-handoff/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: signup page has no registration path even without middleware; login explains invite access
+ok 77 - signup page has no registration path even without middleware; login explains invite access
+  ---
+  duration_ms: 10.304081
+  type: 'test'
+  ...
+# Subtest: invitation callback still exchanges valid codes and uses safe next path
+ok 78 - invitation callback still exchanges valid codes and uses safe next path
+  ---
+  duration_ms: 50.590358
+  type: 'test'
+  ...
+# [turnstile] Partial configuration detected; relying on the server-side public rate limit
+# (node:846880) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/d1360/workspaces/trybookedout-synthetic-handoff/src/lib/public-submission-security.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/d1360/workspaces/trybookedout-synthetic-handoff/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: inbound lead schema accepts and normalizes a bounded valid payload
+ok 79 - inbound lead schema accepts and normalizes a bounded valid payload
+  ---
+  duration_ms: 4.45611
+  type: 'test'
+  ...
+# Subtest: inbound lead schema rejects unknown fields and missing business names
+ok 80 - inbound lead schema rejects unknown fields and missing business names
+  ---
+  duration_ms: 1.692248
+  type: 'test'
+  ...
+# Subtest: inbound lead schema rejects non-HTTP URLs and malformed contact data
+ok 81 - inbound lead schema rejects non-HTTP URLs and malformed contact data
+  ---
+  duration_ms: 1.07448
+  type: 'test'
+  ...
+# Subtest: honeypot is bounded but remains detectable by the route
+ok 82 - honeypot is bounded but remains detectable by the route
+  ---
+  duration_ms: 0.340219
+  type: 'test'
+  ...
+# Subtest: bounded JSON parser accepts valid bodies and rejects malformed JSON
+ok 83 - bounded JSON parser accepts valid bodies and rejects malformed JSON
+  ---
+  duration_ms: 51.73765
+  type: 'test'
+  ...
+# Subtest: bounded JSON parser rejects declared and actual oversized bodies
+ok 84 - bounded JSON parser rejects declared and actual oversized bodies
+  ---
+  duration_ms: 2.044791
+  type: 'test'
+  ...
+# Subtest: Vercel-controlled address takes precedence over generic forwarded headers
+ok 85 - Vercel-controlled address takes precedence over generic forwarded headers
+  ---
+  duration_ms: 0.756907
+  type: 'test'
+  ...
+# Subtest: rate-limit fingerprints are deterministic and do not expose raw addresses
+ok 86 - rate-limit fingerprints are deterministic and do not expose raw addresses
+  ---
+  duration_ms: 1.261081
+  type: 'test'
+  ...
+# Subtest: Turnstile remains optional unless both public and server keys are configured
+ok 87 - Turnstile remains optional unless both public and server keys are configured
+  ---
+  duration_ms: 2.499268
+  type: 'test'
+  ...
+# Subtest: Turnstile requires and verifies a token when both keys are configured
+ok 88 - Turnstile requires and verifies a token when both keys are configured
+  ---
+  duration_ms: 2.407451
+  type: 'test'
+  ...
+# (node:846881) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/d1360/workspaces/trybookedout-synthetic-handoff/src/lib/revenue-url.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/d1360/workspaces/trybookedout-synthetic-handoff/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: revenue destinations require non-placeholder external HTTPS URLs
+ok 89 - revenue destinations require non-placeholder external HTTPS URLs
+  ---
+  duration_ms: 1.637134
+  type: 'test'
+  ...
+# Subtest: revenue provider URLs remain server-side and map to stable redirects
+ok 90 - revenue provider URLs remain server-side and map to stable redirects
+  ---
+  duration_ms: 15.052867
+  type: 'test'
+  ...
+# Subtest: agreement preparation is internal and keeps signing inside SignWell
+ok 91 - agreement preparation is internal and keeps signing inside SignWell
+  ---
+  duration_ms: 3.833846
+  type: 'test'
+  ...
+# Subtest: canonical public offer sells only the scoped $499 founding system
+ok 92 - canonical public offer sells only the scoped $499 founding system
+  ---
+  duration_ms: 5.132189
+  type: 'test'
+  ...
+# Subtest: public legal pages name the operator and current contact details
+ok 93 - public legal pages name the operator and current contact details
+  ---
+  duration_ms: 7.962454
+  type: 'test'
+  ...
+# Subtest: public booking and retired partner paths are wired safely
+ok 94 - public booking and retired partner paths are wired safely
+  ---
+  duration_ms: 6.116158
+  type: 'test'
+  ...
+# (node:846910) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/d1360/workspaces/trybookedout-synthetic-handoff/src/lib/server-auth.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/d1360/workspaces/trybookedout-synthetic-handoff/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: cron auth fails closed when CRON_SECRET is missing
+ok 95 - cron auth fails closed when CRON_SECRET is missing
+  ---
+  duration_ms: 1.881542
+  type: 'test'
+  ...
+# Subtest: cron auth rejects a missing authorization header
+ok 96 - cron auth rejects a missing authorization header
+  ---
+  duration_ms: 0.213416
+  type: 'test'
+  ...
+# Subtest: cron auth rejects the wrong bearer secret
+ok 97 - cron auth rejects the wrong bearer secret
+  ---
+  duration_ms: 0.230558
+  type: 'test'
+  ...
+# Subtest: cron auth accepts the exact configured bearer secret
+ok 98 - cron auth accepts the exact configured bearer secret
+  ---
+  duration_ms: 0.241413
+  type: 'test'
+  ...
+# Subtest: cron auth trims deployment whitespace from the configured secret
+ok 99 - cron auth trims deployment whitespace from the configured secret
+  ---
+  duration_ms: 0.647461
+  type: 'test'
+  ...
+# (node:846928) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/d1360/workspaces/trybookedout-synthetic-handoff/src/lib/synthetic-handoff.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/d1360/workspaces/trybookedout-synthetic-handoff/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: synthetic creation is authenticated and validates reserved non-deliverable identity
+ok 100 - synthetic creation is authenticated and validates reserved non-deliverable identity
+  ---
+  duration_ms: 254.825308
+  type: 'test'
+  ...
+# Subtest: synthetic mode cannot be assigned through PATCH or converted to a real client
+ok 101 - synthetic mode cannot be assigned through PATCH or converted to a real client
+  ---
+  duration_ms: 100.90795
+  type: 'test'
+  ...
+# Subtest: automatic prospect summaries and reminders exclude synthetic source and preserve null sources
+ok 102 - automatic prospect summaries and reminders exclude synthetic source and preserve null sources
+  ---
+  duration_ms: 2.085053
+  type: 'test'
+  ...
+# Subtest: synthetic HVAC artifact is visibly and repeatedly labeled test-only
+ok 103 - synthetic HVAC artifact is visibly and repeatedly labeled test-only
+  ---
+  duration_ms: 1.488168
+  type: 'test'
+  ...
+# Subtest: artifact preserves exact onboarding contact and service-area data
+ok 104 - artifact preserves exact onboarding contact and service-area data
+  ---
+  duration_ms: 0.414981
+  type: 'test'
+  ...
+# Subtest: all requested HVAC categories are present and clearly synthetic
+ok 105 - all requested HVAC categories are present and clearly synthetic
+  ---
+  duration_ms: 0.243995
+  type: 'test'
+  ...
+# Subtest: artifact contains no common unsupported commercial claims
+ok 106 - artifact contains no common unsupported commercial claims
+  ---
+  duration_ms: 1.157454
+  type: 'test'
+  ...
+# Subtest: QA lead form has labels, required fields, honeypot, and neutral privacy copy
+ok 107 - QA lead form has labels, required fields, honeypot, and neutral privacy copy
+  ---
+  duration_ms: 0.879823
+  type: 'test'
+  ...
+# Subtest: submission validates locally, uses one revocable relative endpoint, and permits only HTTP endpoints
+ok 108 - submission validates locally, uses one revocable relative endpoint, and permits only HTTP endpoints
+  ---
+  duration_ms: 0.784903
+  type: 'test'
+  ...
+# (node:846950) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/d1360/workspaces/trybookedout-synthetic-handoff/src/lib/unsubscribe.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/d1360/workspaces/trybookedout-synthetic-handoff/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: unsubscribe tokens are signed, normalized, and expiring
+ok 109 - unsubscribe tokens are signed, normalized, and expiring
+  ---
+  duration_ms: 6.076631
+  type: 'test'
+  ...
+# Subtest: unsubscribe tokens refuse short or missing secrets
+ok 110 - unsubscribe tokens refuse short or missing secrets
+  ---
+  duration_ms: 0.404869
+  type: 'test'
+  ...
+# Subtest: auth callback destinations remain same-origin
+ok 111 - auth callback destinations remain same-origin
+  ---
+  duration_ms: 0.340217
+  type: 'test'
+  ...
+# Subtest: unsubscribe has no public or hardcoded secret fallback
+ok 112 - unsubscribe has no public or hardcoded secret fallback
+  ---
+  duration_ms: 29.844079
+  type: 'test'
+  ...
+# Subtest: public unsubscribe writes use the service role and anon inserts are revoked
+ok 113 - public unsubscribe writes use the service role and anon inserts are revoked
+  ---
+  duration_ms: 1.700193
+  type: 'test'
+  ...
+# (node:846968) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/d1360/workspaces/trybookedout-synthetic-handoff/src/lib/tracking.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/d1360/workspaces/trybookedout-synthetic-handoff/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: tracking tokens are signed, destination-bound, and expire
+ok 114 - tracking tokens are signed, destination-bound, and expire
+  ---
+  duration_ms: 3.570441
+  type: 'test'
+  ...
+# Subtest: tracking accepts only external HTTP(S) destinations
+ok 115 - tracking accepts only external HTTP(S) destinations
+  ---
+  duration_ms: 0.311066
+  type: 'test'
+  ...
+# Subtest: tracking routes require signed tokens and never trust a url query parameter
+ok 116 - tracking routes require signed tokens and never trust a url query parameter
+  ---
+  duration_ms: 11.719433
+  type: 'test'
+  ...
+# Subtest: tracking migration revokes anonymous writes and deduplicates events
+ok 117 - tracking migration revokes anonymous writes and deduplicates events
+  ---
+  duration_ms: 2.896061
+  type: 'test'
+  ...
+# Subtest: campaign analytics query includes terminal delivery states
+ok 118 - campaign analytics query includes terminal delivery states
+  ---
+  duration_ms: 2.107744
+  type: 'test'
+  ...
+# Subtest: mock prospect data is impossible in production
+ok 119 - mock prospect data is impossible in production
+  ---
+  duration_ms: 0.312537
+  type: 'test'
+  ...
+1..119
+# tests 119
+# suites 0
+# pass 119
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1630.601055

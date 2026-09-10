@@ -1,0 +1,1531 @@
+{
+ "app": "",
+ "window_title": "",
+ "total_elements": 127,
+ "elements": [
+  {
+   "index": 0,
+   "role": "Button",
+   "label": "Minimize",
+   "bounds": [
+    1188,
+    141,
+    45,
+    39
+   ],
+   "app": ""
+  },
+  {
+   "index": 1,
+   "role": "Button",
+   "label": "Maximize",
+   "bounds": [
+    1233,
+    141,
+    46,
+    39
+   ],
+   "app": ""
+  },
+  {
+   "index": 2,
+   "role": "Button",
+   "label": "Close",
+   "bounds": [
+    1279,
+    141,
+    46,
+    39
+   ],
+   "app": ""
+  },
+  {
+   "index": 3,
+   "role": "Button",
+   "label": "Back",
+   "bounds": [
+    294,
+    186,
+    34,
+    34
+   ],
+   "app": ""
+  },
+  {
+   "index": 4,
+   "role": "Button",
+   "label": "Reload",
+   "bounds": [
+    366,
+    186,
+    34,
+    34
+   ],
+   "app": ""
+  },
+  {
+   "index": 5,
+   "role": "Button",
+   "label": "View site information",
+   "bounds": [
+    414,
+    191,
+    24,
+    24
+   ],
+   "app": ""
+  },
+  {
+   "index": 6,
+   "role": "Edit",
+   "label": "Address and search bar",
+   "bounds": [
+    446,
+    191,
+    544,
+    24
+   ],
+   "app": ""
+  },
+  {
+   "index": 7,
+   "role": "Button",
+   "label": "Install Supabase Studio",
+   "bounds": [
+    998,
+    191,
+    24,
+    24
+   ],
+   "app": ""
+  },
+  {
+   "index": 8,
+   "role": "Button",
+   "label": "Bookmark this tab",
+   "bounds": [
+    1030,
+    191,
+    24,
+    24
+   ],
+   "app": ""
+  },
+  {
+   "index": 9,
+   "role": "Button",
+   "label": "Dashlane\nHas access to this site",
+   "bounds": [
+    1075,
+    186,
+    34,
+    34
+   ],
+   "app": ""
+  },
+  {
+   "index": 10,
+   "role": "Button",
+   "label": "Extensions",
+   "bounds": [
+    1111,
+    186,
+    34,
+    34
+   ],
+   "app": ""
+  },
+  {
+   "index": 11,
+   "role": "Button",
+   "label": "Control your music, videos, and more",
+   "bounds": [
+    1165,
+    186,
+    34,
+    34
+   ],
+   "app": ""
+  },
+  {
+   "index": 12,
+   "role": "Button",
+   "label": "Work",
+   "bounds": [
+    1204,
+    186,
+    76,
+    34
+   ],
+   "app": ""
+  },
+  {
+   "index": 13,
+   "role": "Button",
+   "label": "Chrome",
+   "bounds": [
+    1285,
+    186,
+    34,
+    34
+   ],
+   "app": ""
+  },
+  {
+   "index": 14,
+   "role": "Document",
+   "label": "Untitled query | SQL Editor | MarketingAgency | ICDC 2 | Supabase",
+   "bounds": [
+    288,
+    227,
+    1037,
+    577
+   ],
+   "app": ""
+  },
+  {
+   "index": 15,
+   "role": "Group",
+   "label": "",
+   "bounds": [
+    288,
+    227,
+    1037,
+    577
+   ],
+   "app": ""
+  },
+  {
+   "index": 16,
+   "role": "Group",
+   "label": "__next",
+   "bounds": [
+    288,
+    227,
+    1037,
+    577
+   ],
+   "app": ""
+  },
+  {
+   "index": 17,
+   "role": "Hyperlink",
+   "label": "Skip to content",
+   "bounds": [
+    298,
+    201,
+    108,
+    26
+   ],
+   "app": ""
+  },
+  {
+   "index": 18,
+   "role": "Hyperlink",
+   "label": "Supabase Back to organization home",
+   "bounds": [
+    304,
+    234,
+    18,
+    18
+   ],
+   "app": ""
+  },
+  {
+   "index": 19,
+   "role": "Hyperlink",
+   "label": "ICDC 2 FREE",
+   "bounds": [
+    353,
+    233,
+    112,
+    20
+   ],
+   "app": ""
+  },
+  {
+   "index": 20,
+   "role": "Button",
+   "label": "Show organizations",
+   "bounds": [
+    468,
+    226,
+    29,
+    34
+   ],
+   "app": ""
+  },
+  {
+   "index": 21,
+   "role": "Hyperlink",
+   "label": "MarketingAgency",
+   "bounds": [
+    520,
+    233,
+    132,
+    20
+   ],
+   "app": ""
+  },
+  {
+   "index": 22,
+   "role": "Button",
+   "label": "Show organization projects",
+   "bounds": [
+    655,
+    226,
+    29,
+    34
+   ],
+   "app": ""
+  },
+  {
+   "index": 23,
+   "role": "Hyperlink",
+   "label": "main PRODUCTION",
+   "bounds": [
+    707,
+    233,
+    118,
+    20
+   ],
+   "app": ""
+  },
+  {
+   "index": 24,
+   "role": "Button",
+   "label": "Show project branches",
+   "bounds": [
+    828,
+    226,
+    29,
+    34
+   ],
+   "app": ""
+  },
+  {
+   "index": 25,
+   "role": "Button",
+   "label": "Connect",
+   "bounds": [
+    868,
+    230,
+    94,
+    26
+   ],
+   "app": ""
+  },
+  {
+   "index": 26,
+   "role": "Button",
+   "label": "Feedback",
+   "bounds": [
+    975,
+    227,
+    79,
+    32
+   ],
+   "app": ""
+  },
+  {
+   "index": 27,
+   "role": "Button",
+   "label": "Search...",
+   "bounds": [
+    1061,
+    228,
+    136,
+    30
+   ],
+   "app": ""
+  },
+  {
+   "index": 28,
+   "role": "Button",
+   "label": "Help",
+   "bounds": [
+    1204,
+    227,
+    33,
+    32
+   ],
+   "app": ""
+  },
+  {
+   "index": 29,
+   "role": "Button",
+   "label": "Advisor Center",
+   "bounds": [
+    1244,
+    227,
+    33,
+    32
+   ],
+   "app": ""
+  },
+  {
+   "index": 30,
+   "role": "Button",
+   "label": "SQL Editor",
+   "bounds": [
+    1284,
+    227,
+    33,
+    32
+   ],
+   "app": ""
+  },
+  {
+   "index": 31,
+   "role": "Button",
+   "label": "AI Assistant",
+   "bounds": [
+    1324,
+    227,
+    33,
+    32
+   ],
+   "app": ""
+  },
+  {
+   "index": 32,
+   "role": "Button",
+   "label": "radix-_r_4m_",
+   "bounds": [
+    1364,
+    227,
+    33,
+    32
+   ],
+   "app": ""
+  },
+  {
+   "index": 33,
+   "role": "Hyperlink",
+   "label": "Project Overview",
+   "bounds": [
+    296,
+    283,
+    32,
+    32
+   ],
+   "app": ""
+  },
+  {
+   "index": 34,
+   "role": "Hyperlink",
+   "label": "Table Editor",
+   "bounds": [
+    296,
+    319,
+    32,
+    32
+   ],
+   "app": ""
+  },
+  {
+   "index": 35,
+   "role": "Hyperlink",
+   "label": "SQL Editor",
+   "bounds": [
+    296,
+    355,
+    32,
+    32
+   ],
+   "app": ""
+  },
+  {
+   "index": 36,
+   "role": "Hyperlink",
+   "label": "Database",
+   "bounds": [
+    296,
+    404,
+    32,
+    32
+   ],
+   "app": ""
+  },
+  {
+   "index": 37,
+   "role": "Hyperlink",
+   "label": "Authentication",
+   "bounds": [
+    296,
+    440,
+    32,
+    32
+   ],
+   "app": ""
+  },
+  {
+   "index": 38,
+   "role": "Hyperlink",
+   "label": "Storage",
+   "bounds": [
+    296,
+    476,
+    32,
+    32
+   ],
+   "app": ""
+  },
+  {
+   "index": 39,
+   "role": "Hyperlink",
+   "label": "Edge Functions",
+   "bounds": [
+    296,
+    512,
+    32,
+    32
+   ],
+   "app": ""
+  },
+  {
+   "index": 40,
+   "role": "Hyperlink",
+   "label": "Realtime",
+   "bounds": [
+    296,
+    548,
+    32,
+    32
+   ],
+   "app": ""
+  },
+  {
+   "index": 41,
+   "role": "Hyperlink",
+   "label": "Advisors",
+   "bounds": [
+    296,
+    597,
+    32,
+    32
+   ],
+   "app": ""
+  },
+  {
+   "index": 42,
+   "role": "Hyperlink",
+   "label": "Observability",
+   "bounds": [
+    296,
+    633,
+    32,
+    32
+   ],
+   "app": ""
+  },
+  {
+   "index": 43,
+   "role": "Hyperlink",
+   "label": "Logs",
+   "bounds": [
+    296,
+    669,
+    32,
+    32
+   ],
+   "app": ""
+  },
+  {
+   "index": 44,
+   "role": "Hyperlink",
+   "label": "Integrations",
+   "bounds": [
+    296,
+    705,
+    32,
+    32
+   ],
+   "app": ""
+  },
+  {
+   "index": 45,
+   "role": "Hyperlink",
+   "label": "Project Settings",
+   "bounds": [
+    296,
+    754,
+    32,
+    32
+   ],
+   "app": ""
+  },
+  {
+   "index": 46,
+   "role": "Button",
+   "label": "Sidebar control",
+   "bounds": [
+    298,
+    770,
+    28,
+    26
+   ],
+   "app": ""
+  },
+  {
+   "index": 47,
+   "role": "Text",
+   "label": "Search queries",
+   "bounds": [
+    351,
+    339,
+    108,
+    19
+   ],
+   "app": ""
+  },
+  {
+   "index": 48,
+   "role": "Edit",
+   "label": "Search queries...",
+   "bounds": [
+    352,
+    339,
+    175,
+    28
+   ],
+   "app": ""
+  },
+  {
+   "index": 49,
+   "role": "Button",
+   "label": "radix-_r_c5_",
+   "bounds": [
+    505,
+    343,
+    18,
+    19
+   ],
+   "app": ""
+  },
+  {
+   "index": 50,
+   "role": "Button",
+   "label": "Create a new query",
+   "bounds": [
+    535,
+    340,
+    26,
+    26
+   ],
+   "app": ""
+  },
+  {
+   "index": 51,
+   "role": "Button",
+   "label": "SHARED",
+   "bounds": [
+    336,
+    400,
+    241,
+    19
+   ],
+   "app": ""
+  },
+  {
+   "index": 52,
+   "role": "Button",
+   "label": "FAVORITES",
+   "bounds": [
+    336,
+    451,
+    241,
+    20
+   ],
+   "app": ""
+  },
+  {
+   "index": 53,
+   "role": "Button",
+   "label": "PRIVATE (12)",
+   "bounds": [
+    336,
+    503,
+    241,
+    19
+   ],
+   "app": ""
+  },
+  {
+   "index": 54,
+   "role": "Group",
+   "label": "Untitled query",
+   "bounds": [
+    336,
+    529,
+    241,
+    29
+   ],
+   "app": ""
+  },
+  {
+   "index": 55,
+   "role": "Text",
+   "label": "Untitled query",
+   "bounds": [
+    384,
+    535,
+    88,
+    17
+   ],
+   "app": ""
+  },
+  {
+   "index": 56,
+   "role": "Group",
+   "label": "Untitled query",
+   "bounds": [
+    336,
+    557,
+    241,
+    29
+   ],
+   "app": ""
+  },
+  {
+   "index": 57,
+   "role": "Text",
+   "label": "Untitled query",
+   "bounds": [
+    384,
+    563,
+    88,
+    17
+   ],
+   "app": ""
+  },
+  {
+   "index": 58,
+   "role": "Group",
+   "label": "Untitled query",
+   "bounds": [
+    336,
+    585,
+    241,
+    29
+   ],
+   "app": ""
+  },
+  {
+   "index": 59,
+   "role": "Text",
+   "label": "Untitled query",
+   "bounds": [
+    384,
+    591,
+    88,
+    17
+   ],
+   "app": ""
+  },
+  {
+   "index": 60,
+   "role": "Group",
+   "label": "Untitled query",
+   "bounds": [
+    336,
+    613,
+    241,
+    29
+   ],
+   "app": ""
+  },
+  {
+   "index": 61,
+   "role": "Text",
+   "label": "Untitled query",
+   "bounds": [
+    384,
+    619,
+    88,
+    17
+   ],
+   "app": ""
+  },
+  {
+   "index": 62,
+   "role": "Group",
+   "label": "Untitled query",
+   "bounds": [
+    336,
+    641,
+    241,
+    29
+   ],
+   "app": ""
+  },
+  {
+   "index": 63,
+   "role": "Text",
+   "label": "Untitled query",
+   "bounds": [
+    384,
+    647,
+    88,
+    17
+   ],
+   "app": ""
+  },
+  {
+   "index": 64,
+   "role": "Group",
+   "label": "Untitled query",
+   "bounds": [
+    336,
+    669,
+    241,
+    29
+   ],
+   "app": ""
+  },
+  {
+   "index": 65,
+   "role": "Text",
+   "label": "Untitled query",
+   "bounds": [
+    384,
+    675,
+    88,
+    17
+   ],
+   "app": ""
+  },
+  {
+   "index": 66,
+   "role": "Group",
+   "label": "Untitled query",
+   "bounds": [
+    336,
+    697,
+    241,
+    29
+   ],
+   "app": ""
+  },
+  {
+   "index": 67,
+   "role": "Text",
+   "label": "Untitled query",
+   "bounds": [
+    384,
+    703,
+    88,
+    17
+   ],
+   "app": ""
+  },
+  {
+   "index": 68,
+   "role": "Group",
+   "label": "Untitled query",
+   "bounds": [
+    336,
+    725,
+    241,
+    29
+   ],
+   "app": ""
+  },
+  {
+   "index": 69,
+   "role": "Text",
+   "label": "Untitled query",
+   "bounds": [
+    384,
+    731,
+    88,
+    17
+   ],
+   "app": ""
+  },
+  {
+   "index": 70,
+   "role": "Group",
+   "label": "Client onboarding intake form",
+   "bounds": [
+    336,
+    753,
+    241,
+    29
+   ],
+   "app": ""
+  },
+  {
+   "index": 71,
+   "role": "Text",
+   "label": "Client onboarding intake form",
+   "bounds": [
+    384,
+    759,
+    184,
+    17
+   ],
+   "app": ""
+  },
+  {
+   "index": 72,
+   "role": "Group",
+   "label": "Watchlist Items RLS Policy",
+   "bounds": [
+    336,
+    781,
+    241,
+    29
+   ],
+   "app": ""
+  },
+  {
+   "index": 73,
+   "role": "Text",
+   "label": "Watchlist Items RLS Policy",
+   "bounds": [
+    384,
+    787,
+    163,
+    17
+   ],
+   "app": ""
+  },
+  {
+   "index": 74,
+   "role": "Group",
+   "label": "AgencyFlow schema and RLS setup",
+   "bounds": [
+    336,
+    809,
+    241,
+    29
+   ],
+   "app": ""
+  },
+  {
+   "index": 75,
+   "role": "Text",
+   "label": "AgencyFlow schema and RLS setup",
+   "bounds": [
+    384,
+    815,
+    186,
+    17
+   ],
+   "app": ""
+  },
+  {
+   "index": 76,
+   "role": "Group",
+   "label": "Add gemini_api_key to user_settings",
+   "bounds": [
+    336,
+    837,
+    241,
+    29
+   ],
+   "app": ""
+  },
+  {
+   "index": 77,
+   "role": "Text",
+   "label": "Add gemini_api_key to user_settings",
+   "bounds": [
+    384,
+    843,
+    187,
+    17
+   ],
+   "app": ""
+  },
+  {
+   "index": 78,
+   "role": "Group",
+   "label": "AgencyFlow schema setup",
+   "bounds": [
+    336,
+    865,
+    241,
+    29
+   ],
+   "app": ""
+  },
+  {
+   "index": 79,
+   "role": "Text",
+   "label": "AgencyFlow schema setup",
+   "bounds": [
+    384,
+    871,
+    167,
+    17
+   ],
+   "app": ""
+  },
+  {
+   "index": 80,
+   "role": "Button",
+   "label": "LOGS",
+   "bounds": [
+    336,
+    926,
+    241,
+    20
+   ],
+   "app": ""
+  },
+  {
+   "index": 81,
+   "role": "Button",
+   "label": "REFERENCE",
+   "bounds": [
+    336,
+    978,
+    241,
+    19
+   ],
+   "app": ""
+  },
+  {
+   "index": 82,
+   "role": "Hyperlink",
+   "label": "Templates",
+   "bounds": [
+    336,
+    1004,
+    241,
+    29
+   ],
+   "app": ""
+  },
+  {
+   "index": 83,
+   "role": "Hyperlink",
+   "label": "Examples",
+   "bounds": [
+    336,
+    1032,
+    241,
+    29
+   ],
+   "app": ""
+  },
+  {
+   "index": 84,
+   "role": "Hyperlink",
+   "label": "View running queries",
+   "bounds": [
+    352,
+    762,
+    209,
+    26
+   ],
+   "app": ""
+  },
+  {
+   "index": 85,
+   "role": "Thumb",
+   "label": "25.911",
+   "bounds": [
+    592,
+    275,
+    1,
+    529
+   ],
+   "app": ""
+  },
+  {
+   "index": 86,
+   "role": "Button",
+   "label": "Collapse sidebar",
+   "bounds": [
+    593,
+    275,
+    40,
+    48
+   ],
+   "app": ""
+  },
+  {
+   "index": 87,
+   "role": "TabItem",
+   "label": "Untitled query",
+   "bounds": [
+    634,
+    275,
+    157,
+    48
+   ],
+   "app": ""
+  },
+  {
+   "index": 88,
+   "role": "Button",
+   "label": "Close tab",
+   "bounds": [
+    760,
+    289,
+    21,
+    20
+   ],
+   "app": ""
+  },
+  {
+   "index": 89,
+   "role": "Button",
+   "label": "",
+   "bounds": [
+    791,
+    275,
+    41,
+    48
+   ],
+   "app": ""
+  },
+  {
+   "index": 90,
+   "role": "Text",
+   "label": "Unsaved edits",
+   "bounds": [
+    893,
+    335,
+    82,
+    16
+   ],
+   "app": ""
+  },
+  {
+   "index": 91,
+   "role": "Button",
+   "label": "More actions",
+   "bounds": [
+    982,
+    330,
+    25,
+    27
+   ],
+   "app": ""
+  },
+  {
+   "index": 92,
+   "role": "Button",
+   "label": "Query source: Database",
+   "bounds": [
+    1014,
+    330,
+    121,
+    27
+   ],
+   "app": ""
+  },
+  {
+   "index": 93,
+   "role": "Button",
+   "label": "Save",
+   "bounds": [
+    1142,
+    330,
+    87,
+    27
+   ],
+   "app": ""
+  },
+  {
+   "index": 94,
+   "role": "Button",
+   "label": "Run",
+   "bounds": [
+    1228,
+    330,
+    81,
+    27
+   ],
+   "app": ""
+  },
+  {
+   "index": 95,
+   "role": "Group",
+   "label": "",
+   "bounds": [
+    593,
+    365,
+    732,
+    219
+   ],
+   "app": ""
+  },
+  {
+   "index": 96,
+   "role": "Text",
+   "label": "",
+   "bounds": [
+    593,
+    365,
+    732,
+    219
+   ],
+   "app": ""
+  },
+  {
+   "index": 97,
+   "role": "Edit",
+   "label": "Editor content",
+   "bounds": [
+    645,
+    369,
+    658,
+    1
+   ],
+   "app": ""
+  },
+  {
+   "index": 98,
+   "role": "Thumb",
+   "label": "50",
+   "bounds": [
+    593,
+    584,
+    732,
+    1
+   ],
+   "app": ""
+  },
+  {
+   "index": 99,
+   "role": "Tab",
+   "label": "",
+   "bounds": [
+    593,
+    585,
+    732,
+    42
+   ],
+   "app": ""
+  },
+  {
+   "index": 100,
+   "role": "TabItem",
+   "label": "Results",
+   "bounds": [
+    609,
+    584,
+    42,
+    43
+   ],
+   "app": ""
+  },
+  {
+   "index": 101,
+   "role": "TabItem",
+   "label": "Chart",
+   "bounds": [
+    666,
+    584,
+    33,
+    43
+   ],
+   "app": ""
+  },
+  {
+   "index": 102,
+   "role": "Button",
+   "label": "5 rows(Limited to only 100 rows)",
+   "bounds": [
+    1007,
+    597,
+    190,
+    17
+   ],
+   "app": ""
+  },
+  {
+   "index": 103,
+   "role": "Button",
+   "label": "Export",
+   "bounds": [
+    1212,
+    592,
+    82,
+    27
+   ],
+   "app": ""
+  },
+  {
+   "index": 104,
+   "role": "DataGrid",
+   "label": "",
+   "bounds": [
+    593,
+    627,
+    732,
+    177
+   ],
+   "app": ""
+  },
+  {
+   "index": 105,
+   "role": "DataItem",
+   "label": "tgrelid",
+   "bounds": [
+    593,
+    627,
+    174,
+    35
+   ],
+   "app": ""
+  },
+  {
+   "index": 106,
+   "role": "Group",
+   "label": "",
+   "bounds": [
+    755,
+    627,
+    11,
+    34
+   ],
+   "app": ""
+  },
+  {
+   "index": 107,
+   "role": "DataItem",
+   "label": "tgname",
+   "bounds": [
+    766,
+    627,
+    281,
+    35
+   ],
+   "app": ""
+  },
+  {
+   "index": 108,
+   "role": "Group",
+   "label": "",
+   "bounds": [
+    1035,
+    627,
+    11,
+    34
+   ],
+   "app": ""
+  },
+  {
+   "index": 109,
+   "role": "DataItem",
+   "label": "realtime.subscription",
+   "bounds": [
+    593,
+    662,
+    174,
+    35
+   ],
+   "app": ""
+  },
+  {
+   "index": 110,
+   "role": "DataItem",
+   "label": "tr_check_filters",
+   "bounds": [
+    766,
+    662,
+    281,
+    35
+   ],
+   "app": ""
+  },
+  {
+   "index": 111,
+   "role": "DataItem",
+   "label": "storage.objects",
+   "bounds": [
+    593,
+    697,
+    174,
+    35
+   ],
+   "app": ""
+  },
+  {
+   "index": 112,
+   "role": "DataItem",
+   "label": "update_objects_updated_at",
+   "bounds": [
+    766,
+    697,
+    281,
+    35
+   ],
+   "app": ""
+  },
+  {
+   "index": 113,
+   "role": "DataItem",
+   "label": "storage.buckets",
+   "bounds": [
+    593,
+    732,
+    174,
+    35
+   ],
+   "app": ""
+  },
+  {
+   "index": 114,
+   "role": "DataItem",
+   "label": "enforce_bucket_name_length_trigger",
+   "bounds": [
+    766,
+    732,
+    281,
+    35
+   ],
+   "app": ""
+  },
+  {
+   "index": 115,
+   "role": "DataItem",
+   "label": "storage.buckets",
+   "bounds": [
+    593,
+    767,
+    174,
+    35
+   ],
+   "app": ""
+  },
+  {
+   "index": 116,
+   "role": "DataItem",
+   "label": "protect_buckets_delete",
+   "bounds": [
+    766,
+    767,
+    281,
+    35
+   ],
+   "app": ""
+  },
+  {
+   "index": 117,
+   "role": "DataItem",
+   "label": "storage.objects",
+   "bounds": [
+    593,
+    802,
+    174,
+    35
+   ],
+   "app": ""
+  },
+  {
+   "index": 118,
+   "role": "DataItem",
+   "label": "protect_objects_delete",
+   "bounds": [
+    766,
+    802,
+    281,
+    35
+   ],
+   "app": ""
+  },
+  {
+   "index": 119,
+   "role": "Group",
+   "label": "",
+   "bounds": [
+    287,
+    226,
+    1,
+    1
+   ],
+   "app": ""
+  },
+  {
+   "index": 120,
+   "role": "Text",
+   "label": "__next-route-announcer__",
+   "bounds": [
+    287,
+    226,
+    1,
+    1
+   ],
+   "app": ""
+  },
+  {
+   "index": 121,
+   "role": "Text",
+   "label": "SQL Editor | MarketingAgency | ICDC 2 | Supabase",
+   "bounds": [
+    287,
+    227,
+    363,
+    19
+   ],
+   "app": ""
+  },
+  {
+   "index": 122,
+   "role": "Button",
+   "label": "Tab search",
+   "bounds": [
+    294,
+    146,
+    28,
+    28
+   ],
+   "app": ""
+  },
+  {
+   "index": 123,
+   "role": "TabItem",
+   "label": "Untitled query | SQL Editor | MarketingAgency | ICDC 2 | Supabase - Memory usage - 294 MB",
+   "bounds": [
+    316,
+    140,
+    256,
+    41
+   ],
+   "app": ""
+  },
+  {
+   "index": 124,
+   "role": "Button",
+   "label": "Close",
+   "bounds": [
+    530,
+    146,
+    28,
+    28
+   ],
+   "app": ""
+  },
+  {
+   "index": 125,
+   "role": "Button",
+   "label": "New Tab",
+   "bounds": [
+    566,
+    140,
+    28,
+    41
+   ],
+   "app": ""
+  },
+  {
+   "index": 126,
+   "role": "Button",
+   "label": "Open Gemini in Chrome",
+   "bounds": [
+    1056,
+    140,
+    120,
+    40
+   ],
+   "app": ""
+  }
+ ]
+}
