@@ -33,6 +33,7 @@ export async function updateSession(request: NextRequest) {
     "/auth",
     "/landing",
     "/landing_opus",
+    "/hvac-variants",
     "/landing_gemini",
     "/landing_gpt1",
     "/es",
