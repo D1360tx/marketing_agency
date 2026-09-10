@@ -1066,6 +1066,7 @@ export default function LeadsPage() {
                   <SelectItem value="Cold Email">Cold Email</SelectItem>
                   <SelectItem value="Referral">Referral</SelectItem>
                   <SelectItem value="Manual">Manual</SelectItem>
+                  <SelectItem value="Synthetic Handoff QA - No Notifications">Synthetic Handoff QA - No Notifications</SelectItem>
                 </SelectContent>
               </Select>
             </div>

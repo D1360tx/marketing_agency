@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { verifyBearerSecret } from "@/lib/server-auth";
+import { SYNTHETIC_HANDOFF_SOURCE } from "@/lib/synthetic-handoff";
 
 async function sendTelegram(token: string, chatId: string, text: string) {
   await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
@@ -35,6 +36,7 @@ export async function GET(request: Request) {
     const { data: prospects, error } = await supabase
       .from("prospects")
       .select("id, business_name, phone, notes")
+      .or(`source.is.null,source.neq.${SYNTHETIC_HANDOFF_SOURCE}`)
       .eq("status", "follow_up")
       .eq("follow_up_date", today);
 
