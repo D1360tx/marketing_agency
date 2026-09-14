@@ -58,7 +58,9 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith(route)
   );
 
-  if (isPublicRoute) {
+  // Unknown public URLs must reach Next's real 404 even without auth configuration.
+  // Only dashboard and login routes need an auth client.
+  if (isPublicRoute || (!request.nextUrl.pathname.startsWith("/app") && !request.nextUrl.pathname.startsWith("/login"))) {
     return NextResponse.next({ request });
   }
 
