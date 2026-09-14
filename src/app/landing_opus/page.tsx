@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { PublicFormTurnstile } from "@/components/public-form-turnstile";
 import {
   ArrowRight,
@@ -35,6 +35,8 @@ type FormData = {
   serviceArea: string;
   googleProfile: string;
 };
+
+import { inboundFormFailure, type InboundFormFailure } from "@/lib/inbound-form-feedback";
 
 type FormStatus = "idle" | "submitting" | "success" | "error";
 
@@ -172,6 +174,9 @@ export default function LandingOpusPage() {
     googleProfile: "",
   });
   const [status, setStatus] = useState<FormStatus>("idle");
+  const [failure, setFailure] = useState<InboundFormFailure | null>(null);
+  const [securityAttempt, setSecurityAttempt] = useState(0);
+  const submitting = useRef(false);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [contactTime, setContactTime] = useState("");
 
@@ -183,6 +188,8 @@ export default function LandingOpusPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (submitting.current) return;
+    setFailure(null);
     if (
       !form.name.trim() ||
       !form.business.trim() ||
@@ -191,13 +198,16 @@ export default function LandingOpusPage() {
       !form.businessType.trim() ||
       !form.serviceArea.trim()
     ) {
+      setFailure({ kind: "validation", message: "Please fill out your contact info, business type, and service area so we can prepare the audit." });
       setStatus("error");
       return;
     }
+    submitting.current = true;
     setStatus("submitting");
     try {
       const res = await fetch("/api/leads/inbound", {
         method: "POST",
+        signal: AbortSignal.timeout(30_000),
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: form.name.trim(),
@@ -215,7 +225,12 @@ export default function LandingOpusPage() {
           smsConsent: false,
         }),
       });
-      if (!res.ok) throw new Error();
+      const body = await res.json().catch(() => null);
+      if (!res.ok || body?.success !== true) {
+        setFailure(inboundFormFailure(res.status, body));
+        setStatus("error");
+        return;
+      }
       setStatus("success");
       setTurnstileToken("");
       setContactTime("");
@@ -231,7 +246,12 @@ export default function LandingOpusPage() {
         googleProfile: "",
       });
     } catch {
+      setFailure(inboundFormFailure(0, null));
       setStatus("error");
+    } finally {
+      submitting.current = false;
+      setTurnstileToken("");
+      setSecurityAttempt((attempt) => attempt + 1);
     }
   }
 
@@ -842,7 +862,7 @@ export default function LandingOpusPage() {
               {proofCards.map((card, i) => (
                 <div
                   key={i}
-                  className="flex flex-col rounded-2xl border border-gray-700 bg-gray-800/50 p-6"
+                  className="flex min-w-0 flex-col rounded-2xl border border-gray-700 bg-gray-800/50 p-6"
                 >
                   <div className="text-sm font-bold uppercase tracking-wider text-orange-400">
                     {card.title}
@@ -853,13 +873,13 @@ export default function LandingOpusPage() {
                       ["Our work", card.work],
                       ["You receive", card.deliverable],
                     ].map(([label, value]) => (
-                      <div key={label} className="grid grid-cols-[92px_1fr] gap-3 text-sm">
+                      <div key={label} className="grid min-w-0 grid-cols-1 gap-1 text-sm lg:grid-cols-[92px_minmax(0,1fr)] lg:gap-3">
                         <div className="font-semibold text-gray-500">
                           {label}
                         </div>
                         <div
                           className={cl(
-                            "font-semibold",
+                            "min-w-0 break-words font-semibold",
                             label === "You receive" ? "text-emerald-300" : "text-gray-200"
                           )}
                         >
@@ -1421,6 +1441,7 @@ export default function LandingOpusPage() {
 
 
                       <PublicFormTurnstile
+                        key={securityAttempt}
                         action="inbound_lead"
                         onToken={setTurnstileToken}
                       />
@@ -1435,16 +1456,18 @@ export default function LandingOpusPage() {
                       >
                         {status === "submitting"
                           ? "Sending..."
-                          : "Get My Free Audit"}
+                          : failure?.kind === "service" ? "Try Again" : "Get My Free Audit"}
                         {status !== "submitting" && (
                           <ArrowRight className="h-5 w-5" />
                         )}
                       </button>
 
-                      {status === "error" && (
-                        <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-                          Please fill out your contact info, business type, and
-                          service area so we can prepare the audit.
+                      {status === "error" && failure && (
+                        <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                          {failure.message}
+                          {failure.kind === "service" && (
+                            <a href="tel:+17372605332" className="mt-2 inline-flex min-h-11 items-center font-semibold underline">Call (737) 260-5332</a>
+                          )}
                         </div>
                       )}
 
@@ -1475,6 +1498,10 @@ export default function LandingOpusPage() {
               <p className="mt-2 text-sm text-gray-500 [text-wrap:balance]">
                 Websites, reviews, and fast follow-up for local service
                 businesses.
+              </p>
+              <p className="mt-3 max-w-md text-xs leading-relaxed text-gray-500">
+                Booked Out is a brand of ICDC Ventures LLC.
+                <br />Mailing address: 1309 Coffeen Avenue, Suite 1200, Sheridan, Wyoming 82801.
               </p>
               <a
                 href="tel:+17372605332"
