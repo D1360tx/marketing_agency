@@ -28,11 +28,19 @@ export async function updateSession(request: NextRequest) {
     return response;
   }
 
+  // Isolated website-first preview is public, but must stay out of indexes.
+  if (request.nextUrl.pathname === "/website-first" || request.nextUrl.pathname === "/website-first/") {
+    const response = NextResponse.next({ request });
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
+    return response;
+  }
+
   // Public routes should not require Supabase env vars during local QA.
   const publicRoutes = [
     "/auth",
     "/landing",
     "/landing_opus",
+    "/hvac-variants",
     "/landing_gemini",
     "/landing_gpt1",
     "/es",
