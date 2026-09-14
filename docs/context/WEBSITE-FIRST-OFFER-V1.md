@@ -17,7 +17,7 @@ Prioritize established, owner-operated local service businesses, initially Austi
 - Confirm scope, exact fixed project price, schedule, hosting costs and third-party costs in writing before work or payment.
 - The approved quote and 50% deposit reserve and start the build, subject to the agreed access/content prerequisites.
 - Client reviews the finished project and launch checklist. Remaining 50% is due before launch.
-- Requesting a website plan does not book a meeting, authorize payment or start a subscription.
+- Requesting a homepage concept does not book a meeting, authorize payment or start a subscription.
 - No required marketing retainer. Hosting is necessary, but its provider, cost and responsibility must be explicit in the quote. Ongoing care is optional.
 - No numeric price is proposed by this document. Do not reuse the old recurring price as a project price.
 - Cancellation, refund, pause, late-payment, acceptance and change-order terms require approval in the new project agreement. Do not imply a nonrefundable deposit without approved terms.
@@ -37,7 +37,7 @@ For one legal business/brand, one location and one domain:
 
 ## Process and tangible plan
 
-1. **Plan:** Confirm business details by email, discuss business priorities, prepare recommended page outline and initial design direction, then issue a fixed quote. A plan request is not a promise of a completed free bespoke design.
+1. **Concept:** Confirm business and project fit by email. Accepted businesses receive a tailored homepage visual direction, a recommended page map and a fixed scope/price before any build deposit. No charge to request, no obligation to commission the full build. This is a design proposal, not a finished free website; not every requester is accepted.
 2. **Build:** After agreement, deposit and necessary access, prepare design/copy, connect the contact/tracking foundations and complete agreed revisions. Confirm delivery schedule only when prerequisites are known.
 3. **Launch:** Obtain documented client approval, finish permission-based routing and analytics checks, collect the final balance before launch, launch and hand over. Present optional next steps only after the website's value is visible.
 
@@ -60,7 +60,7 @@ Choose the next service from observed needs, not a forced progression. The clien
 
 ## Claims and page rules
 
-- One primary CTA: **Request My Website Plan**.
+- One primary CTA: **Request My Homepage Concept**.
 - No guaranteed leads, rankings, calls, bookings or revenue; no fake urgency, client counts, reviews or testimonials.
 - Label every sample as illustrative. The preview's fictional home-service layout is a design example, not a delivered client site or performance proof.
 - Report delivered inputs, observable indicators and attribution-supported/client-reported outcomes separately.

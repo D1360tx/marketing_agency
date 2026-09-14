@@ -58,12 +58,20 @@ const results = { viewports: [], forms: [], screenshots: [], errors: [], realSub
     });
     return {h1:document.querySelectorAll('h1').length,scrollWidth:document.documentElement.scrollWidth,robots:document.querySelector('meta[name="robots"]')?.content,bodyEmDash:document.body.innerText.includes('—'),missingAnchors:[...document.querySelectorAll('a[href^="#"]')].filter(a=>!document.getElementById(a.hash.slice(1))).map(a=>a.hash),smallTargets:[...document.querySelectorAll('a,button,summary,input:not([tabindex="-1"])')].filter(el=>{const r=el.getBoundingClientRect();return r.width>0&&r.height>0&&r.height<44;}).map(el=>el.textContent||el.name),headings};
    });
+   assert.equal(await page.locator('h1').innerText(), 'See the website we’d build for your business.\nBefore you hire us.');
+   const pageCopy = await page.locator('body').innerText();
+   for (const oldCopy of ['You do good work.', 'should show it.', 'useful foundation', 'clear way forward', 'Room to grow']) assert.ok(!pageCopy.toLowerCase().includes(oldCopy.toLowerCase()));
+   assert.equal(await page.locator('form button').textContent(), 'Request My Homepage Concept↗');
+   assert.equal(await page.locator('[id]').evaluateAll(els => new Set(els.map(el => el.id)).size === els.length), true, 'unique DOM and SVG IDs');
+   await page.emulateMedia({reducedMotion:'reduce'});
+   assert.equal(await page.locator('[class*=phoneMock]').evaluate(el=>getComputedStyle(el).animationName),'none');
+   await page.emulateMedia({reducedMotion:'no-preference'});
    assert.equal(checks.h1,1);assert.ok(checks.scrollWidth<=width,`overflow ${width}`);assert.match(checks.robots,/noindex/);assert.match(checks.robots,/nofollow/);assert.equal(checks.bodyEmDash,false);assert.deepEqual(checks.missingAnchors,[]);assert.deepEqual(checks.smallTargets,[]);
    assert.deepEqual(checks.headings.filter(h=>h.orphan),[],`heading orphans at ${width}`);
-   for(const kind of ['hero','full']) {const file=path.join(out,`website-first-${width}-${kind}.png`);await page.screenshot({path:file,fullPage:kind==='full'});results.screenshots.push(file);}
+   for(const kind of ['hero','full']) {const file=path.join(out,`website-first-${width}-${kind}.png`);await page.screenshot({path:file,fullPage:true,animations:'disabled',...(kind==='hero'?{clip:{x:0,y:0,width,height:Math.ceil(await page.locator('main>section').first().evaluate(el=>el.getBoundingClientRect().bottom+scrollY))}}:{})});results.screenshots.push(file);}
    results.viewports.push({width,...checks});
    const form=page.locator('form'); const submit=form.getByRole('button');
-   await page.getByRole('link',{name:'Request My Website Plan',exact:false}).first().click();assert.equal(new URL(page.url()).hash,'#website-plan');
+   await page.getByRole('link',{name:'Request My Homepage Concept',exact:false}).first().click();assert.equal(new URL(page.url()).hash,'#website-plan');
    await submit.click();assert.equal(captured.length,0);assert.equal(await form.evaluate(f=>f.checkValidity()),false);
    await page.getByLabel('Business name',{exact:true}).fill('   ');await page.getByLabel('Work email').fill('qa@example.com');await submit.click();assert.equal(captured.length,0);
    await page.getByLabel('Business name',{exact:true}).fill('QA WEBSITE - INTERCEPT ONLY');await page.getByLabel('Work email').fill('invalid');await submit.click();assert.equal(captured.length,0);
