@@ -2,6 +2,14 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function updateSession(request: NextRequest) {
+  // Exact, credential-free design preview. No lead submission or CRM connection.
+  if (request.nextUrl.pathname === "/website-crm" || request.nextUrl.pathname === "/website-crm/") {
+    const response = NextResponse.next({ request });
+    response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+    response.headers.set("Referrer-Policy", "no-referrer");
+    return response;
+  }
+
   // Close public agency registration before creating an auth client. Do not
   // forward query parameters; invitation callbacks have their own /auth route.
   if (request.nextUrl.pathname === "/signup" || request.nextUrl.pathname === "/signup/") {
