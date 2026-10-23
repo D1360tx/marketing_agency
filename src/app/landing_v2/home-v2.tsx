@@ -966,7 +966,7 @@ export function HomeV2({ bookingHref }: { bookingHref: string }) {
                   <span className={cl(DISPLAY, "text-[56px] font-semibold leading-none tracking-[-0.04em]")}>{plan.price}</span>
                   <span className={plan.featured ? "text-[#B7C0BA]" : "text-[#4F5753]"}>/month</span>
                 </div>
-                <div className={cl("mt-2.5 min-h-[42px] text-sm", plan.featured ? "text-[#B7C0BA]" : "text-[#4F5753]")}>{plan.priceNote}</div>
+                <div className={cl("mt-2.5 text-sm lg:min-h-[84px]", plan.featured ? "text-[#B7C0BA]" : "text-[#4F5753]")}>{plan.priceNote}</div>
                 <a
                   href="#get-started"
                   className={cl(
@@ -1000,7 +1000,7 @@ export function HomeV2({ bookingHref }: { bookingHref: string }) {
                 </div>
               </div>
               <p className="m-0 mt-3.5 text-base leading-relaxed text-[#2B3530]">Keep your current agency, or keep running ads yourself. We rebuild your tracking so Meta and Google learn who actually becomes a customer, then hand you proof it works.</p>
-              <div className="mt-3.5 text-sm text-[#4F5753]">Full price credited toward setup if you move to Growth + Ads within 60 days.</div>
+              <div className="mt-3.5 text-sm text-[#4F5753]">One website, Meta and Google. Full price credited toward setup if you move to Growth + Ads within 60 days. Multiple locations or field-service software like ServiceTitan are quoted separately.</div>
             </div>
             <div className="flex min-w-0 flex-[1_1_380px] flex-col gap-[18px]">
               <ul className="m-0 flex list-none flex-col gap-3 p-0 text-[15px] leading-[1.45]">

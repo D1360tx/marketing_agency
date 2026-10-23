@@ -97,8 +97,8 @@ export const PLANS: Plan[] = [
     key: "foundation",
     eyebrow: "GET FOUND & TRUSTED",
     name: "Foundation",
-    price: "$499",
-    priceNote: "Setup included for founding clients.",
+    price: "$797",
+    priceNote: "Plus $1,000 one-time setup, waived for founding clients.",
     cta: "Start with a free audit",
     features: [
       "Managed mobile-first website, up to 7 pages",
@@ -112,7 +112,7 @@ export const PLANS: Plan[] = [
     key: "growth",
     eyebrow: "NEVER MISS A LEAD",
     name: "Growth",
-    price: "$997",
+    price: "$1,297",
     priceNote: "Plus $1,500 one-time setup.",
     cta: "Get my free audit",
     features: [
@@ -128,8 +128,8 @@ export const PLANS: Plan[] = [
     key: "ads",
     eyebrow: "THE FULL SYSTEM",
     name: "Growth + Ads",
-    price: "$1,750",
-    priceNote: "Plus $2,500 one-time setup. Ad spend is paid to Meta and Google directly.",
+    price: "$2,750",
+    priceNote: "Plus $3,500 one-time setup. Covers up to $10k/mo in ad spend, then 10% of spend above that. $3k/mo minimum spend, paid to Meta and Google directly.",
     cta: "Get my free audit",
     featured: true,
     features: [
@@ -143,7 +143,7 @@ export const PLANS: Plan[] = [
 ];
 
 export const TRACKING_FIX = {
-  price: "$997",
+  price: "$1,997",
   features: [
     "Server-side Meta Conversions API and Google conversion setup",
     "Click IDs and UTMs saved on every lead in your CRM",
@@ -209,7 +209,7 @@ export const TRADES = [
 
 export const FAQS = [
   {
-    q: "Is the CRM included in the $499 plan?",
+    q: "Is the CRM included in Foundation?",
     a: "No. Foundation covers your website, Google profile, review requests and form follow-up. The CRM, text follow-up and automations start with Growth.",
   },
   {

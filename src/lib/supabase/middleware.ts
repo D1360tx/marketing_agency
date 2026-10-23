@@ -8,6 +8,12 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url), 307);
   }
 
+  // The previous homepage stays in the codebase for rollback but should not
+  // show retired pricing publicly. Remove this redirect when rolling back.
+  if (request.nextUrl.pathname === "/landing_opus" || request.nextUrl.pathname === "/landing_opus/") {
+    return NextResponse.redirect(new URL("/", request.url), 307);
+  }
+
   // Root / serves the current homepage (landing_v2) but keeps the URL as
   // trybookedout.com. Roll back by pointing this at "/landing_opus".
   if (request.nextUrl.pathname === "/") {

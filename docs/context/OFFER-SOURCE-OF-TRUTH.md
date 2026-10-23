@@ -8,16 +8,16 @@ This document is the source of truth for active pricing and founding-client term
 
 ## Pending Change: Public Tiers and Day-One Ownership (homepage v2)
 
-**Status:** Proposed by the owner on October 23, 2026. Becomes effective when the homepage v2 pull request is merged; the founding offer below stays in force until then.
-
-The new homepage (`src/app/landing_v2/content.ts`) publicly lists these tiers. Prices marked *placeholder* must be confirmed by the owner before merge.
+**Status:** Approved by the owner on October 23, 2026, based on the competitor pricing research (see the Local growth agency pricing report). Becomes effective when the homepage v2 pull request is merged; the founding offer below stays in force for already-signed clients.
 
 | Offer | Price | Adds |
 | --- | --- | --- |
-| Foundation | $499/mo, setup included for founding clients | The Local Call System scope below |
-| Growth | $997/mo + $1,500 setup (*placeholder*) | Booked Out CRM, instant text reply, missed-call text-back, reminders, win-back campaigns, weekly report |
-| Growth + Ads | $1,750/mo + $2,500 setup (*placeholder*); ad spend billed by Meta and Google | Managed Meta and Google ads, server-side conversion tracking with booked and paid events, monthly creative tests, Monday report |
-| Tracking Fix | $997 one-time (*placeholder*); credited toward Growth + Ads setup within 60 days | Server-side Meta and Google conversion setup, click IDs and UTMs on every CRM lead, booked and paid events sent back, written verification report |
+| Foundation | $797/mo + $1,000 setup, setup waived for founding clients | The Local Call System scope below |
+| Growth | $1,297/mo + $1,500 setup | Booked Out CRM, instant text reply, missed-call text-back, reminders, win-back campaigns, weekly report |
+| Growth + Ads | $2,750/mo + $3,500 setup; covers up to $10k/mo combined Meta + Google spend, then 10% of spend above $10k; $3k/mo minimum spend billed by Meta and Google | Managed Meta and Google ads, server-side conversion tracking with booked and paid events, monthly creative tests, Monday report |
+| Tracking Fix | $1,997 one-time for one website on Meta + Google; custom quote for multiple locations or field-service software; credited toward Growth + Ads setup within 60 days | Server-side Meta and Google conversion setup, click IDs and UTMs on every CRM lead, booked and paid events sent back, written verification report |
+
+**Terms:** Every plan is month-to-month with no lock-in. Clients are told to plan on about 90 days for the system to build momentum; it is a recommendation, never a contract term.
 
 Texting tiers require A2P 10DLC registration before launch; text and call usage is billed separately.
 
