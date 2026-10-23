@@ -945,7 +945,7 @@ export function HomeV2({ bookingHref }: { bookingHref: string }) {
           <div className="mx-auto max-w-[760px] text-center">
             <div className={cl(EYEBROW, "text-[#4F5753]")}>PRICING</div>
             <h2 className={cl(H2, "mt-[18px]")}>Pick where to start. Upgrade anytime.</h2>
-            <p className="mx-auto mt-5 max-w-[600px] text-[17px] leading-relaxed text-[#4F5753]">Every plan is month-to-month, and everything we build is in your name from day one.</p>
+            <p className="mx-auto mt-5 max-w-[600px] text-[17px] leading-relaxed text-[#4F5753]">Every plan is month-to-month, and everything we build is in your name from day one. Give it about 90 days to hit its stride.</p>
           </div>
 
           <div className="mt-14 grid grid-cols-1 items-stretch gap-5 lg:grid-cols-3">

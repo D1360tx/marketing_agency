@@ -230,7 +230,7 @@ export const FAQS = [
   },
   {
     q: "Am I locked into a long contract?",
-    a: "No. Everything is month-to-month. Service stays active through the paid billing period if you cancel.",
+    a: "No. Every plan is month-to-month. We do ask you to plan on about 90 days, because your site, reviews and ad accounts need that long to build momentum, and stopping sooner usually means paying for the setup without seeing the payoff. But if you’re not satisfied, you can cancel anytime. Service stays active through the paid billing period.",
   },
   {
     q: "Do I own everything?",
@@ -238,7 +238,7 @@ export const FAQS = [
   },
   {
     q: "How fast will I see results?",
-    a: "Your site, review requests and follow-up go live within 30 days of getting what we need. Paid ads usually need 2 to 4 weeks of data to settle in. Reviews and search visibility build month over month, and every report compares against your starting baseline.",
+    a: "Your site, review requests and follow-up go live within 30 days of getting what we need. Paid ads usually need 2 to 4 weeks of data to settle in. Reviews and search visibility build month over month. Most businesses see the system hit its stride around the 90-day mark, and every report compares against your starting baseline.",
   },
 ];
 
