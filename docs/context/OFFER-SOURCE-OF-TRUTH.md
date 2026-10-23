@@ -21,9 +21,9 @@ The new homepage (`src/app/landing_v2/content.ts`) publicly lists these tiers. P
 
 Texting tiers require A2P 10DLC registration before launch; text and call usage is billed separately.
 
-**Ownership:** The homepage promises that the domain, website content, Google Business Profile, ad accounts, and lead and customer data are set up in the client's name from day one. This replaces the three-paid-month export rule below once merged. `docs/context/CLIENT-SERVICE-AGREEMENT.md` and the agreement generator (`src/app/app/leads/[id]/agreement/page.tsx`) still carry the three-month rule and must be updated by the owner before merge.
+**Ownership:** The homepage promises that the domain, website content, Google Business Profile, ad accounts, and lead and customer data are set up in the client's name from day one. The client agreement (`docs/context/CLIENT-SERVICE-AGREEMENT.md` and the agreement generator) was updated to match on October 23, 2026.
 
-**Claims:** The Joao Crus BJJ case study (name, photo, metrics, quote) requires the client's written permission before merge. The quote stays hidden until `quoteApproved` is set to true.
+**Claims:** The owner confirmed on October 23, 2026 that Joao Crus BJJ approved publishing the gym name, photo and metrics. The quote stays hidden until Joao's own words are added and `quoteApproved` is set to true.
 
 ## Active Offer
 
@@ -89,7 +89,7 @@ This is a delivery promise, not an outcome guarantee.
 - $499 per month with no setup fee
 - Month-to-month service
 - A 90-day success plan is recommended but not contractually required
-- Website content and core page files may be exported after three paid months
+- Domain, Google Business Profile, ad accounts, analytics and lead/customer data are in the client's name from day one; website content and page files belong to the client on delivery and can be exported anytime while current or within 30 days after termination
 - Client-controlled accounts and data remain client controlled
 - Permission for a case study may be requested but is never required
 - Any testimonial request must be earned and cannot require positive sentiment

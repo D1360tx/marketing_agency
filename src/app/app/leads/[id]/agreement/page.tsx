@@ -91,9 +91,9 @@ const agreementSections: AgreementSection[] = [
     items: [
       "Client retains ownership of materials Client supplies.",
       "Company retains ownership of its pre-existing software, templates, processes, automations, integrations, libraries, and know-how.",
-      "After three fully paid months, and provided the account is current, Client may request an export of Client-specific website content and core page files created under this Agreement.",
+      "Client’s domain, Google Business Profile, advertising accounts, analytics properties, and lead and customer data are registered in or connected to Client’s own accounts from the start of service and remain Client’s property.",
       "Hosting accounts, software integrations, automation logic, third-party licenses, and Company’s reusable systems are not transferred unless expressly agreed in writing.",
-      "Before three paid months, the managed website remains part of the Booked Out service and no export is required.",
+      "Client-specific website content and page files created under this Agreement belong to Client upon delivery. At Client’s request at any time while the account is current, or within 30 days after termination, Company will provide an export of that content and those files and a copy of Client’s lead and customer records in a standard format.",
       "Company may display Client names, logos, quotations, results, or non-confidential work in a portfolio only with Client’s written permission.",
     ],
   },
