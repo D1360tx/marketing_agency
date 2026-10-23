@@ -6,6 +6,25 @@
 
 This document is the source of truth for active pricing and founding-client terms. Public pages, agreements, proposals, payment links, sales scripts, onboarding emails, CRM values, and affiliate materials must match it.
 
+## Pending Change: Public Tiers and Day-One Ownership (homepage v2)
+
+**Status:** Proposed by the owner on October 23, 2026. Becomes effective when the homepage v2 pull request is merged; the founding offer below stays in force until then.
+
+The new homepage (`src/app/landing_v2/content.ts`) publicly lists these tiers. Prices marked *placeholder* must be confirmed by the owner before merge.
+
+| Offer | Price | Adds |
+| --- | --- | --- |
+| Foundation | $499/mo, setup included for founding clients | The Local Call System scope below |
+| Growth | $997/mo + $1,500 setup (*placeholder*) | Booked Out CRM, instant text reply, missed-call text-back, reminders, win-back campaigns, weekly report |
+| Growth + Ads | $1,750/mo + $2,500 setup (*placeholder*); ad spend billed by Meta and Google | Managed Meta and Google ads, server-side conversion tracking with booked and paid events, monthly creative tests, Monday report |
+| Tracking Fix | $997 one-time (*placeholder*); credited toward Growth + Ads setup within 60 days | Server-side Meta and Google conversion setup, click IDs and UTMs on every CRM lead, booked and paid events sent back, written verification report |
+
+Texting tiers require A2P 10DLC registration before launch; text and call usage is billed separately.
+
+**Ownership:** The homepage promises that the domain, website content, Google Business Profile, ad accounts, and lead and customer data are set up in the client's name from day one. This replaces the three-paid-month export rule below once merged. `docs/context/CLIENT-SERVICE-AGREEMENT.md` and the agreement generator (`src/app/app/leads/[id]/agreement/page.tsx`) still carry the three-month rule and must be updated by the owner before merge.
+
+**Claims:** The Joao Crus BJJ case study (name, photo, metrics, quote) requires the client's written permission before merge. The quote stays hidden until `quoteApproved` is set to true.
+
 ## Active Offer
 
 ### Local Call System: 90-Day Booking Foundation

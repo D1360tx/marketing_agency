@@ -25,6 +25,40 @@ const optionalHttpUrl = z
   .optional()
   .default("");
 
+const trackingText = (max: number) => z.string().trim().max(max).optional();
+
+const attributionTouchSchema = z
+  .object({
+    utm_source: trackingText(200),
+    utm_medium: trackingText(200),
+    utm_campaign: trackingText(200),
+    utm_content: trackingText(200),
+    utm_term: trackingText(200),
+    fbclid: trackingText(200),
+    gclid: trackingText(200),
+    gbraid: trackingText(200),
+    wbraid: trackingText(200),
+    msclkid: trackingText(200),
+    landing_page: trackingText(200),
+    referrer: trackingText(200),
+    captured_at: trackingText(40),
+  })
+  .strict();
+
+export const leadTrackingSchema = z
+  .object({
+    eventId: z.string().trim().regex(/^[A-Za-z0-9-]{8,64}$/).optional(),
+    fbp: trackingText(200),
+    fbc: trackingText(500),
+    gaClientId: trackingText(100),
+    pageUrl: optionalHttpUrl,
+    attribution: z
+      .object({ first: attributionTouchSchema.optional(), last: attributionTouchSchema.optional() })
+      .strict()
+      .optional(),
+  })
+  .strict();
+
 export const inboundLeadSchema = z
   .object({
     business_name: optionalText(160),
@@ -47,6 +81,8 @@ export const inboundLeadSchema = z
     smsConsent: z.boolean().optional().default(false),
     turnstileToken: optionalText(2048),
     contact_time: optionalText(120),
+    interest: optionalText(80),
+    tracking: leadTrackingSchema.optional(),
   })
   .strict()
   .superRefine((value, ctx) => {

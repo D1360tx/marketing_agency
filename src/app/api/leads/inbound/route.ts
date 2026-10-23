@@ -1,8 +1,11 @@
 import { after, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
+import { randomUUID } from "node:crypto";
 import { runAudit } from "@/lib/audit-runner";
 import { enrollProspect } from "@/lib/drip-engine";
+import { attributionNoteLines } from "@/lib/lead-attribution";
+import { parseServiceArea, sendMetaLeadEvent } from "@/lib/meta-capi";
 import {
   consumePublicRateLimit,
   inboundLeadSchema,
@@ -115,6 +118,8 @@ export async function POST(request: Request) {
     const firstName = contactName ? contactName.split(" ")[0] : null;
     const resolvedCity = input.serviceArea || input.city || "Austin";
     const resolvedBusinessType = input.businessType || "service business";
+    const tracking = input.tracking;
+    const conversionEventId = tracking?.eventId || randomUUID();
 
     // Avoid duplicate records from refreshes/double-clicks without requiring a
     // potentially unsafe global unique-index migration over historical data.
@@ -169,6 +174,8 @@ export async function POST(request: Request) {
           `Website: ${websiteUrl || "none"}`,
           `Google Business Profile: ${googleProfileUrl || "none"}`,
           `SMS consent: ${input.smsConsent ? "yes" : "no"}`,
+          ...(input.interest ? [`Interested in: ${input.interest}`] : []),
+          ...attributionNoteLines(tracking ? { ...tracking, eventId: conversionEventId } : undefined),
         ].join("\n"),
       })
       .select("id")
@@ -193,7 +200,34 @@ export async function POST(request: Request) {
 
     // Next.js after() keeps longer audit/notification work in the supported
     // post-response lifecycle without making the form wait on external services.
+    const clientIp =
+      request.headers.get("x-real-ip")?.trim() ||
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      undefined;
+    const userAgent = request.headers.get("user-agent") || undefined;
+    const area = parseServiceArea(resolvedCity);
+
     after(async () => {
+      // Server-side Lead event for Meta. Shares event_id with the browser
+      // Pixel so Meta deduplicates; skipped when CAPI is not configured.
+      const meta = await sendMetaLeadEvent({
+        eventId: conversionEventId,
+        eventSourceUrl: tracking?.pageUrl || undefined,
+        email: emailAddress,
+        phone: phoneNumber || undefined,
+        fullName: contactName || undefined,
+        city: area.city,
+        state: area.state || "tx",
+        externalId: prospectId,
+        clientIp,
+        userAgent,
+        fbc: tracking?.fbc,
+        fbp: tracking?.fbp,
+      });
+      if (!meta.ok && !("reason" in meta)) {
+        console.error("[inbound] Meta CAPI error:", meta.status ?? "", meta.error);
+      }
+
       await runAudit(prospectId).catch((error) =>
         console.error("[inbound] Audit error:", error)
       );
