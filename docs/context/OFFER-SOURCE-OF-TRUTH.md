@@ -6,6 +6,25 @@
 
 This document is the source of truth for active pricing and founding-client terms. Public pages, agreements, proposals, payment links, sales scripts, onboarding emails, CRM values, and affiliate materials must match it.
 
+## Pending Change: Public Tiers and Day-One Ownership (homepage v2)
+
+**Status:** Approved by the owner on October 23, 2026, based on the competitor pricing research (see the Local growth agency pricing report). Becomes effective when the homepage v2 pull request is merged; the founding offer below stays in force for already-signed clients.
+
+| Offer | Price | Adds |
+| --- | --- | --- |
+| Foundation | $797/mo + $1,000 setup, setup waived for founding clients | The Local Call System scope below |
+| Growth | $1,297/mo + $1,500 setup | Booked Out CRM, instant text reply, missed-call text-back, reminders, win-back campaigns, weekly report |
+| Growth + Ads | $2,750/mo + $3,500 setup; covers up to $10k/mo combined Meta + Google spend, then 10% of spend above $10k; $3k/mo minimum spend billed by Meta and Google | Managed Meta and Google ads, server-side conversion tracking with booked and paid events, monthly creative tests, Monday report |
+| Tracking Fix | $1,997 one-time for one website on Meta + Google; custom quote for multiple locations or field-service software; credited toward Growth + Ads setup within 60 days | Server-side Meta and Google conversion setup, click IDs and UTMs on every CRM lead, booked and paid events sent back, written verification report |
+
+**Terms:** Every plan is month-to-month with no lock-in. Clients are told to plan on about 90 days for the system to build momentum; it is a recommendation, never a contract term.
+
+Texting tiers require A2P 10DLC registration before launch; text and call usage is billed separately.
+
+**Ownership:** The homepage promises that the domain, website content, Google Business Profile, ad accounts, and lead and customer data are set up in the client's name from day one. The client agreement (`docs/context/CLIENT-SERVICE-AGREEMENT.md` and the agreement generator) was updated to match on October 23, 2026.
+
+**Claims:** The owner confirmed on October 23, 2026 that Joao Crus BJJ approved publishing the gym name, photo and metrics. The quote stays hidden until Joao's own words are added and `quoteApproved` is set to true.
+
 ## Active Offer
 
 ### Local Call System: 90-Day Booking Foundation
@@ -70,7 +89,7 @@ This is a delivery promise, not an outcome guarantee.
 - $499 per month with no setup fee
 - Month-to-month service
 - A 90-day success plan is recommended but not contractually required
-- Website content and core page files may be exported after three paid months
+- Domain, Google Business Profile, ad accounts, analytics and lead/customer data are in the client's name from day one; website content and page files belong to the client on delivery and can be exported anytime while current or within 30 days after termination
 - Client-controlled accounts and data remain client controlled
 - Permission for a case study may be requested but is never required
 - Any testimonial request must be earned and cannot require positive sentiment

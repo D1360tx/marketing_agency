@@ -5,7 +5,7 @@
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
 | Pricing | First 3 qualified clients at $499/mo and $0 setup; no second public tier yet | Approved founding offer as of 2026-08-25; reprice from actual fulfillment data after the cohort |
-| Founding clients | First 3 at $499/mo, no setup fee, month-to-month; core page export after 3 paid months | Low-friction proof cohort with strict one-location scope and no outcome guarantees |
+| Founding clients | First 3 at $499/mo, no setup fee, month-to-month; client owns domain, accounts, data and site content from day one | Low-friction proof cohort with strict one-location scope and no outcome guarantees |
 | Territory model | No exclusivity by default | Any exclusivity requires a written addendum with defined trade, geography, payment, termination, and release rules |
 | Target market | Established owner-operated HVAC companies in one Austin-area cluster | Focused proof cohort with meaningful job economics and observable conversion leaks |
 | Cold email sender | Diego / Booked Out using accurate sender identity | CAN-SPAM compliant, replyable, and founder-led; no fabricated personas |

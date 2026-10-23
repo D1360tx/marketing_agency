@@ -23,7 +23,7 @@ Booked Out is a managed revenue-capture and growth partnership for established l
 - Two consolidated implementation revision rounds
 - Monthly maintenance, one prioritized conversion improvement, evidence report, and Growth Desk review
 
-**Founding terms:** First three accepted clients pay $499 per month with no setup fee. Website content and core page files may be exported after three paid months.
+**Founding terms:** First three accepted clients pay $499 per month with no setup fee. Client owns domain, accounts, data and website content from day one; export available anytime while current.
 
 ### 30-Day Foundation Promise
 
