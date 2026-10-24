@@ -168,19 +168,30 @@ test("inbound schema accepts tracking data and still rejects unknown fields", ()
   assert.equal(inboundLeadSchema.safeParse({ ...base, tracking: { pageUrl: "javascript:alert(1)" } }).success, false);
 });
 
-test("homepage v2 stays claim-safe and is served at /", async () => {
-  const content = await read("src/app/landing_v2/content.ts");
+test("homepage v2 stays claim-safe in both languages and is served at / and /es", async () => {
+  const copy = await read("src/app/landing_v2/copy.ts");
   const page = await read("src/app/landing_v2/home-v2.tsx");
-  const text = (content + page).replace(/\/\*[\s\S]*?\*\//g, "");
+  const text = (copy + page).replace(/\/\*[\s\S]*?\*\//g, "");
   assert.doesNotMatch(text, /—|&mdash;|&#8212;/);
-  assert.match(content, /No calls, leads, reviews, rankings or revenue are guaranteed/);
-  assert.match(content, /This is a delivery promise|We guarantee delivery of the agreed foundation/);
+  assert.match(copy, /No calls, leads, reviews, rankings or revenue are guaranteed/);
+  assert.match(copy, /No garantizamos llamadas, prospectos, reseñas, posiciones ni ingresos/);
+  assert.match(copy, /We guarantee delivery of the agreed foundation/);
+  assert.match(copy, /Garantizamos la entrega de la base acordada/);
   assert.match(page, /smsConsent: false/);
   // Client quotes render only after written approval (Claims Rule).
-  assert.match(content, /quoteApproved: false/);
-  assert.match(page, /CASE_STUDY\.quoteApproved && \(/);
-  assert.match(page, /EXAMPLE/);
-  assert.match(page, /SAMPLE SNAPSHOT/);
+  assert.match(copy, /CASE_STUDY_QUOTE_APPROVED = false/);
+  assert.match(page, /CASE_STUDY_QUOTE_APPROVED && \(/);
+  assert.match(copy, /exampleLabel: "EXAMPLE"/);
+  assert.match(copy, /exampleLabel: "EJEMPLO"/);
+  assert.match(copy, /sampleLabel: "SAMPLE SNAPSHOT"/);
+  assert.match(copy, /sampleLabel: "DIAGNÓSTICO DE EJEMPLO"/);
+  // Prices must be identical in both languages.
+  const prices = (lang) => [...copy.split("export const COPY_ES")[lang === "en" ? 0 : 1].matchAll(/price: "([^"]+)"/g)].map((m) => m[1]);
+  assert.deepEqual(prices("es"), prices("en"));
+  assert.deepEqual(prices("en"), ["$797", "$1,297", "$2,750", "$1,997"]);
   const middleware = await read("src/lib/supabase/middleware.ts");
   assert.match(middleware, /url\.pathname = "\/landing_v2"/);
+  const es = await read("src/app/es/page.tsx");
+  assert.match(es, /t=\{COPY_ES\}/);
+  assert.match(page, /href: "\/es"/);
 });
