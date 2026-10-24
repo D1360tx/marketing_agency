@@ -60,9 +60,10 @@ test("agreement preparation is internal and keeps signing inside SignWell", asyn
   assert.doesNotMatch(lead, /Sign on Booked Out/);
 });
 
-test("canonical public offer sells only the scoped $499 founding system", async () => {
+test("retired founding page keeps the scoped $499 offer; Spanish homepage stays claim-safe", async () => {
   const homepage = await read("src/app/landing_opus/page.tsx");
-  const spanish = await read("src/app/es/page.tsx");
+  const copy = await read("src/app/landing_v2/copy.ts");
+  const spanish = copy.slice(copy.indexOf("export const COPY_ES"));
   assert.match(homepage, /Local Call System/);
   assert.match(homepage, /90-Day Booking Foundation/);
   assert.match(homepage, /\$499/);
@@ -77,8 +78,9 @@ test("canonical public offer sells only the scoped $499 founding system", async 
   assert.doesNotMatch(homepage, /Missed-call text-back/i);
   assert.doesNotMatch(homepage, /consented SMS/i);
   assert.doesNotMatch(homepage, /SMS\/email usage/i);
-  assert.match(spanish, /Base de Reservas de 90 Días/);
-  assert.match(spanish, /Solicitudes de reseñas por email/);
+  assert.match(spanish, /lang: "es"/);
+  assert.match(spanish, /No garantizamos llamadas/);
+  assert.match(spanish, /Garantizamos la entrega de la base acordada en 30 días/);
   assert.doesNotMatch(spanish, /SMS autorizado/i);
   assert.doesNotMatch(spanish, /1 por oficio por ciudad/i);
   assert.doesNotMatch(spanish, /Las llamadas llegan solas/i);
@@ -109,6 +111,6 @@ test("public booking and retired partner paths are wired safely", async () => {
 
   assert.match(middleware, /"\/go"/);
   assert.match(homepage, /href="\/go\/book"/);
-  assert.match(spanish, /href="\/go\/book"/);
+  assert.match(spanish, /"\/go\/book"/);
   assert.match(partners, /permanentRedirect\("\/"\)/);
 });

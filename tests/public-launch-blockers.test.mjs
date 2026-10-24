@@ -5,7 +5,9 @@ import vm from "node:vm";
 import ts from "typescript";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
-const pages = ["src/app/landing_opus/page.tsx", "src/app/es/page.tsx"];
+// /es now renders the bilingual homepage (covered in homepage-v2-tracking.test.mjs);
+// the retired English page keeps the founding-offer rules for rollback.
+const pages = ["src/app/landing_opus/page.tsx"];
 
 for (const [index, path] of pages.entries()) {
   test(`${path}: public offer stays email-only, capped, and claim-safe`, async () => {
